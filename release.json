@@ -1,0 +1,20 @@
+{
+  "version": "v2026.10.16-qa8",
+  "file": "SC1_Roguelike_20261016_QA8.zip",
+  "sha256": "5315877488701968705a9f9d957a97b8ee0d751f031a5b530be93de46fa379fd",
+  "bytes": 24531987,
+  "runtime_source_commit": "98db690f77ba4aa7916924e213005c8702e31857",
+  "native_dll_sha256": "ff9b41f3c48dbf9f246dfc189a37382b0133eb602ac48be236735cfe216b2d50",
+  "native_dll_compiled_from_source": true,
+  "launcher_compiled_from_source": true,
+  "native_host_groups": 252,
+  "native_host_checks": 814124,
+  "python_regressions": 17,
+  "map_count": 63,
+  "maps_unchanged_from_qa7": true,
+  "lurker_research_completion_native_guard_fixed": true,
+  "research_tooltip_cost_routing_fixed": true,
+  "game_started": false,
+  "live_game_verified": false,
+  "created_at_utc": "2026-10-16T13:46:55.376463+00:00"
+}
