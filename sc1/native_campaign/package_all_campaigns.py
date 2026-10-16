@@ -165,6 +165,7 @@ def validate_maps(receipt_path):
             raise ValueError("Original string IDs or runtime authentication marker changed")
         verify_mineral_layout(source_chk, output_chk, mission, row)
         outputs[asset] = output
+        print(json.dumps({'resource_map_verified':row['mission_id']}),flush=True)
     return receipt_path, receipt, outputs, header
 
 

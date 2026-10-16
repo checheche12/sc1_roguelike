@@ -397,6 +397,7 @@ def native_inputs(plain_receipt_path, dll_receipt_path):
         'iscript_effects/iscript.bin', 'iscript_effects/iscript_effects_evidence.json',
         'objective_guards_evidence.json',
     )}
+    generated_inputs.add((SC1 / 'build_environment.py').resolve())
     for entry in dll['sources']:
         path, raw = checked_file(entry['path'], entry['sha256'])
         if (not path.is_relative_to((ROOT / 'plugin').resolve())
