@@ -259,7 +259,7 @@ def build(map_receipt=DEFAULT_MAP_RECEIPT, dll_receipt=DEFAULT_DLL_RECEIPT, *, a
         _, raw = legacy.checked_file(row["path"], row["sha256"])
         members[row["name"]] = raw
     stamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S_%f")
-    folder = ROOT / "builds" / ("all_campaigns_" + stamp + "_" + legacy.sha(plugin)[:12])
+    folder = ROOT / "builds" / ("all_" + stamp)
     folder.mkdir(parents=True, exist_ok=False)
     files = []
     for name, data in sorted(members.items()):
