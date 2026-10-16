@@ -1,0 +1,362 @@
+{
+  "repository": "neivv/tatti3",
+  "commit": "eb940dab410e9e197db9634322e91fb67a0b7f0f",
+  "behavioral_sources_unmodified": true,
+  "media_only_stubs": [
+    "StringTable",
+    "SfxData",
+    "DdsGrp"
+  ],
+  "compile_command": [
+    "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Current\\Bin\\Roslyn\\csc.exe",
+    "/nologo",
+    "/noconfig",
+    "/nostdlib+",
+    "/target:exe",
+    "/nullable:enable",
+    "/langversion:latest",
+    "/deterministic+",
+    "/out:C:\\Users\\chech\\Desktop\\SC2 Custom Campaign Manager v1.05r\\self_made\\sc1\\native_campaign\\support_dat_sources\\headless\\writer.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\Microsoft.CSharp.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\Microsoft.VisualBasic.Core.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\Microsoft.VisualBasic.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\Microsoft.Win32.Primitives.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\Microsoft.Win32.Registry.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\mscorlib.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\netstandard.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.AppContext.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Buffers.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Collections.Concurrent.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Collections.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Collections.Immutable.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Collections.NonGeneric.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Collections.Specialized.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.ComponentModel.Annotations.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.ComponentModel.DataAnnotations.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.ComponentModel.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.ComponentModel.EventBasedAsync.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.ComponentModel.Primitives.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.ComponentModel.TypeConverter.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Configuration.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Console.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Core.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Data.Common.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Data.DataSetExtensions.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Data.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Diagnostics.Contracts.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Diagnostics.Debug.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Diagnostics.DiagnosticSource.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Diagnostics.FileVersionInfo.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Diagnostics.Process.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Diagnostics.StackTrace.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Diagnostics.TextWriterTraceListener.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Diagnostics.Tools.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Diagnostics.TraceSource.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Diagnostics.Tracing.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Drawing.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Drawing.Primitives.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Dynamic.Runtime.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Formats.Asn1.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Formats.Tar.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Globalization.Calendars.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Globalization.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Globalization.Extensions.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.IO.Compression.Brotli.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.IO.Compression.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.IO.Compression.FileSystem.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.IO.Compression.ZipFile.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.IO.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.IO.FileSystem.AccessControl.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.IO.FileSystem.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.IO.FileSystem.DriveInfo.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.IO.FileSystem.Primitives.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.IO.FileSystem.Watcher.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.IO.IsolatedStorage.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.IO.MemoryMappedFiles.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.IO.Pipes.AccessControl.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.IO.Pipes.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.IO.UnmanagedMemoryStream.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Linq.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Linq.Expressions.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Linq.Parallel.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Linq.Queryable.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Memory.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Net.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Net.Http.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Net.Http.Json.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Net.HttpListener.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Net.Mail.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Net.NameResolution.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Net.NetworkInformation.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Net.Ping.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Net.Primitives.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Net.Quic.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Net.Requests.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Net.Security.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Net.ServicePoint.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Net.Sockets.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Net.WebClient.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Net.WebHeaderCollection.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Net.WebProxy.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Net.WebSockets.Client.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Net.WebSockets.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Numerics.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Numerics.Vectors.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.ObjectModel.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Private.CoreLib.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Private.DataContractSerialization.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Private.Uri.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Private.Xml.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Private.Xml.Linq.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Reflection.DispatchProxy.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Reflection.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Reflection.Emit.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Reflection.Emit.ILGeneration.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Reflection.Emit.Lightweight.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Reflection.Extensions.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Reflection.Metadata.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Reflection.Primitives.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Reflection.TypeExtensions.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Resources.Reader.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Resources.ResourceManager.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Resources.Writer.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Runtime.CompilerServices.Unsafe.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Runtime.CompilerServices.VisualC.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Runtime.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Runtime.Extensions.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Runtime.Handles.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Runtime.InteropServices.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Runtime.InteropServices.JavaScript.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Runtime.InteropServices.RuntimeInformation.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Runtime.Intrinsics.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Runtime.Loader.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Runtime.Numerics.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Runtime.Serialization.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Runtime.Serialization.Formatters.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Runtime.Serialization.Json.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Runtime.Serialization.Primitives.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Runtime.Serialization.Xml.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Security.AccessControl.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Security.Claims.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Security.Cryptography.Algorithms.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Security.Cryptography.Cng.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Security.Cryptography.Csp.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Security.Cryptography.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Security.Cryptography.Encoding.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Security.Cryptography.OpenSsl.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Security.Cryptography.Primitives.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Security.Cryptography.X509Certificates.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Security.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Security.Principal.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Security.Principal.Windows.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Security.SecureString.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.ServiceModel.Web.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.ServiceProcess.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Text.Encoding.CodePages.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Text.Encoding.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Text.Encoding.Extensions.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Text.Encodings.Web.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Text.Json.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Text.RegularExpressions.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Threading.Channels.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Threading.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Threading.Overlapped.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Threading.Tasks.Dataflow.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Threading.Tasks.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Threading.Tasks.Extensions.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Threading.Tasks.Parallel.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Threading.Thread.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Threading.ThreadPool.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Threading.Timer.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Transactions.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Transactions.Local.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.ValueTuple.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Web.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Web.HttpUtility.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Windows.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Xml.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Xml.Linq.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Xml.ReaderWriter.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Xml.Serialization.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Xml.XDocument.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Xml.XmlDocument.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Xml.XmlSerializer.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Xml.XPath.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\System.Xml.XPath.XDocument.dll",
+    "/r:C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\8.0.21\\WindowsBase.dll",
+    "C:\\Users\\chech\\Desktop\\SC2 Custom Campaign Manager v1.05r\\self_made\\sc1\\native_campaign\\support_dat_sources\\headless\\upstream\\ArrayFileType.cs",
+    "C:\\Users\\chech\\Desktop\\SC2 Custom Campaign Manager v1.05r\\self_made\\sc1\\native_campaign\\support_dat_sources\\headless\\upstream\\Filesystem.cs",
+    "C:\\Users\\chech\\Desktop\\SC2 Custom Campaign Manager v1.05r\\self_made\\sc1\\native_campaign\\support_dat_sources\\headless\\upstream\\Requirement.cs",
+    "C:\\Users\\chech\\Desktop\\SC2 Custom Campaign Manager v1.05r\\self_made\\sc1\\native_campaign\\support_dat_sources\\headless\\upstream\\WriteTempFiles.cs",
+    "C:\\Users\\chech\\Desktop\\SC2 Custom Campaign Manager v1.05r\\self_made\\sc1\\native_campaign\\dat_sources\\tatti3\\GameData\\DatTable.cs",
+    "C:\\Users\\chech\\Desktop\\SC2 Custom Campaign Manager v1.05r\\self_made\\sc1\\native_campaign\\dat_sources\\tatti3\\GameData\\Firegraft.cs",
+    "C:\\Users\\chech\\Desktop\\SC2 Custom Campaign Manager v1.05r\\self_made\\sc1\\native_campaign\\dat_sources\\tatti3\\GameData\\GameData.cs",
+    "C:\\Users\\chech\\Desktop\\SC2 Custom Campaign Manager v1.05r\\self_made\\sc1\\native_campaign\\dat_sources\\tatti3\\GameData\\LegacyDatDecl.cs",
+    "C:\\Users\\chech\\Desktop\\SC2 Custom Campaign Manager v1.05r\\self_made\\sc1\\native_campaign\\support_dat_sources\\headless\\Headless.cs"
+  ],
+  "execute_command": [
+    "C:/Program Files/dotnet/dotnet.exe",
+    "C:\\Users\\chech\\Desktop\\SC2 Custom Campaign Manager v1.05r\\self_made\\sc1\\native_campaign\\support_dat_sources\\headless\\writer.dll",
+    "C:\\Users\\chech\\Desktop\\SC2 Custom Campaign Manager v1.05r\\self_made\\sc1\\campaign_sources\\raw",
+    "C:\\Users\\chech\\Desktop\\SC2 Custom Campaign Manager v1.05r\\self_made\\sc1\\native_campaign\\support_dat_sources",
+    "C:\\Users\\chech\\Desktop\\SC2 Custom Campaign Manager v1.05r\\self_made\\sc1\\native_campaign\\support_dat_sources\\headless\\reference"
+  ],
+  "compiler_sha256": "1aff8f10e6bc0d7a8f2dffa9b56f3fd625aa930a68d0e080e4e586c05044e31c",
+  "writer_sha256": "c572560fc30f0347680bc3310e01897025299aeb9eb8b5bcc46f9404394f7806",
+  "stdout": "Pinned Tatti GameData.Save: all eleven tables written; DAT writer roundtrip checks passed.",
+  "sources": [
+    {
+      "path": "sc1/native_campaign/support_dat_sources/headless/upstream/ArrayFileType.cs",
+      "sha256": "f580424dfc879b543e14c97bc905cb386ac9d867407e76925f29c74622b42360"
+    },
+    {
+      "path": "sc1/native_campaign/support_dat_sources/headless/upstream/Filesystem.cs",
+      "sha256": "e95b3c2bf310939c68c30d344a2f24cae3129376b293fe89239940b62fb3848b"
+    },
+    {
+      "path": "sc1/native_campaign/support_dat_sources/headless/upstream/Requirement.cs",
+      "sha256": "f59ff7d8fe74a3b3637e8a832b95a58688a66961de9fd5b5c847a757dee1452d"
+    },
+    {
+      "path": "sc1/native_campaign/support_dat_sources/headless/upstream/WriteTempFiles.cs",
+      "sha256": "4cf636d25d41a79a755cf0f46aeed0592a5d222d3b7ace53fe88ed8dae8493b5"
+    },
+    {
+      "path": "sc1/native_campaign/dat_sources/tatti3/GameData/DatTable.cs",
+      "sha256": "1c411b14deb76d36fe0b0d40b9f1de2529c37439f3beb7728b42170aa3d5f2bc"
+    },
+    {
+      "path": "sc1/native_campaign/dat_sources/tatti3/GameData/Firegraft.cs",
+      "sha256": "ff5cb196d50e2111ccbc016a912fcae456d106807b79d511625e45d4e0c15315"
+    },
+    {
+      "path": "sc1/native_campaign/dat_sources/tatti3/GameData/GameData.cs",
+      "sha256": "4b2dfb0618ed32c26d2e4e7682fd8204fb7bdcde347a343f965a680edbe9c5b4"
+    },
+    {
+      "path": "sc1/native_campaign/dat_sources/tatti3/GameData/LegacyDatDecl.cs",
+      "sha256": "d0e86ec141c8d39076998ba23b2f5ae891d19641ef13a4e7a695257fcf3de616"
+    },
+    {
+      "path": "sc1/native_campaign/support_dat_sources/headless/Headless.cs",
+      "sha256": "5a6c0701945ff084a083b8cb3357dfa05ae0f68b3e10a1250fb1ddbf16c16b5f"
+    },
+    {
+      "path": "sc1/native_campaign/support_dat_sources/headless/run_reference.py",
+      "sha256": "ba435b53f1c067e2c4025a04b712a87e1d59fe82914ee4628854fdc7c94d09c8"
+    },
+    {
+      "path": "sc1/native_campaign/support_dat_sources/headless/upstream_pin.json",
+      "sha256": "7eec07c8368c4cb59a3fd8824f4e3824e7174ea04e88abbeeb1b55975ab94320"
+    }
+  ],
+  "inputs": [
+    {
+      "path": "sc1/campaign_sources/raw/arr/flingy.dat",
+      "sha256": "89013fa6d81edad96b68efcfc0bb5342f1c7fa2ef7a0880a71b0169eab13d1ad"
+    },
+    {
+      "path": "sc1/campaign_sources/raw/arr/images.dat",
+      "sha256": "6b6123e2cc6771d96f914fc9bb92d34da17cc3319dc02e2db0cd10b4f3d2efdc"
+    },
+    {
+      "path": "sc1/campaign_sources/raw/arr/mapdata.dat",
+      "sha256": "06ce3127b9c77739f32ad606637943f022e5d0344afcf1e978494449ace37967"
+    },
+    {
+      "path": "sc1/campaign_sources/raw/arr/orders.dat",
+      "sha256": "0b79cc64f1cd8b23c77419bdf1fb39fb91cde1359c1ad9cb73884d5cceb8f7c9"
+    },
+    {
+      "path": "sc1/campaign_sources/raw/arr/portdata.dat",
+      "sha256": "ca864e3153336d072fd3467345c4661aaf7f9362bec7d033e674450c531a0e5e"
+    },
+    {
+      "path": "sc1/campaign_sources/raw/arr/sprites.dat",
+      "sha256": "3e5ea29bf9937558d0a3a302cd85852c220cd126ec049c0da176c77739bb4a71"
+    },
+    {
+      "path": "sc1/campaign_sources/raw/arr/techdata.dat",
+      "sha256": "98f9805ebc8efc707492b7406871298d39d6e94931458aca1f82feaf18a271af"
+    },
+    {
+      "path": "sc1/campaign_sources/raw/arr/units.dat",
+      "sha256": "da2ee6f116b77329048ec6be9e02721a527fde23d4b05b1b1336e634490abcba"
+    },
+    {
+      "path": "sc1/campaign_sources/raw/arr/upgrades.dat",
+      "sha256": "787ff7dff69c0a0bb417ce1aabdcc11fa8b0959f77372b635c4882bdc3adb59b"
+    },
+    {
+      "path": "sc1/campaign_sources/raw/arr/weapons.dat",
+      "sha256": "80de165015519f9bed46ea8858195c2d2d0120b65b9e55e1c0a50b19135f4b62"
+    },
+    {
+      "path": "sc1/native_campaign/support_dat_sources/buttons.bin",
+      "sha256": "2edd96868b9164743c357ed3c50d649ef44c0dc8cc5f3a948f481ffd676b274b"
+    },
+    {
+      "path": "sc1/native_campaign/dat_sources/tatti3/Resources/firegraft.fgp",
+      "sha256": "1a64ce14dbb7e947ac3c4ff3e929f7b02bca6f1da2746ec7728d449180177c68"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "sc1/native_campaign/support_dat_sources/headless/reference/arr/buttons.dat",
+      "sha256": "c1ef3f8043521fb85ecc591c58c7767b92c0d77a438496c3f677ba3e388f7384",
+      "bytes": 8941
+    },
+    {
+      "path": "sc1/native_campaign/support_dat_sources/headless/reference/arr/flingy.dat",
+      "sha256": "26754ecd69318ab43f04e2dcd62e339e8b6008e7c2640cc958e9950852bc04d2",
+      "bytes": 3235
+    },
+    {
+      "path": "sc1/native_campaign/support_dat_sources/headless/reference/arr/images.dat",
+      "sha256": "aa7d6938e27967a86e2cf60863d7ab522d080a67fb52452996c3fd94b0d13f35",
+      "bytes": 38146
+    },
+    {
+      "path": "sc1/native_campaign/support_dat_sources/headless/reference/arr/mapdata.dat",
+      "sha256": "1303b61288a052c9f692bbca198656c6dcfb675c3427e967bb137546dd724359",
+      "bytes": 288
+    },
+    {
+      "path": "sc1/native_campaign/support_dat_sources/headless/reference/arr/orders.dat",
+      "sha256": "38ddbed0c9f30dd77052b7f4456a7e7708951bf6bc8f7e0df8f09e7118d7beeb",
+      "bytes": 6868
+    },
+    {
+      "path": "sc1/native_campaign/support_dat_sources/headless/reference/arr/portdata.dat",
+      "sha256": "bb0779323bf41dab7124d9953e6b17ab80a928604c1b4cb963be0ca37df092f9",
+      "bytes": 1408
+    },
+    {
+      "path": "sc1/native_campaign/support_dat_sources/headless/reference/arr/sprites.dat",
+      "sha256": "4c2791b07f6993985c9c2f4fe3f2018aa05cabf6bee3da62b1bc69bddf60639d",
+      "bytes": 3707
+    },
+    {
+      "path": "sc1/native_campaign/support_dat_sources/headless/reference/arr/techdata.dat",
+      "sha256": "f85e71d8dae02eb21165385071a4d04249fe6d40d2f5b525dabbc31f7c9eaacb",
+      "bytes": 2372
+    },
+    {
+      "path": "sc1/native_campaign/support_dat_sources/headless/reference/arr/units.dat",
+      "sha256": "f724ce3c3cede8d5aed757a83aa414a3363217fcc9eba47250c6ed6a1ca39d5e",
+      "bytes": 40670
+    },
+    {
+      "path": "sc1/native_campaign/support_dat_sources/headless/reference/arr/upgrades.dat",
+      "sha256": "e43f2bbcd6fb7c95f05b1d1ca1b32274c51d5611af9dc9dc2f461003e0e5e2fe",
+      "bytes": 3574
+    },
+    {
+      "path": "sc1/native_campaign/support_dat_sources/headless/reference/arr/weapons.dat",
+      "sha256": "d95108ece3405cc6c9c754a100ae3f8cd67f5049963cadfe9646f241161775a3",
+      "bytes": 6199
+    }
+  ],
+  "native_game_execution": false
+}

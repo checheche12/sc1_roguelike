@@ -1,0 +1,250 @@
+{
+  "schema": "sc1_curse_diversity_v2",
+  "catalog_pool_revision": 2,
+  "wire_version": 1,
+  "existing_slots_0_to_8_preserved": true,
+  "curses": [
+    {
+      "slot": 9,
+      "name": "기다렸던 첫 발",
+      "id": "627eb6b5-6ffd-53f8-ad40-6f47334b67ed",
+      "rarity": "common",
+      "max_stacks": 3,
+      "source_file": "sc1/design/variety_more_drafts.json",
+      "source": {
+        "id": "627eb6b5-6ffd-53f8-ad40-6f47334b67ed",
+        "race": "shared",
+        "kind": "curse",
+        "rarity": "common",
+        "name": "기다렸던 첫 발",
+        "target": "적 정규 전투 유닛",
+        "description": "오랫동안 공격하지 않은 적의 첫 일반 공격이 강해집니다. 작은 교전으로 첫 공격을 빼거나 앞줄을 바꾸어 받을 수 있습니다.",
+        "trigger": "적이 8초 동안 공격하지 않고 피해도 받지 않은 뒤 시작하는 첫 공격",
+        "numbers": "다음 주 공격 묶음 피해 +20/30/40%(n=1/2/3). 발사 시 충전 소모, 적 개체별 재무장 최소 8초. 반복 상한 3.",
+        "notes": "AI 초안 / 게임 미구현 / EUD 검증 필요. 수치·희귀도는 플레이 테스트 전 제안. n은 같은 저주의 보유 중첩 수이며 아래 반복 상한에 도달하면 다음 선택 후보에서 제외한다. 이 초안의 적은 적대 정규 전투 유닛만 뜻하며 영웅·환상·추가 소환물·중립·구출 대상·임무 필수 이벤트 개체는 제외. 새 유닛을 플레이어 옆에 생성하지 않고 최대 인구도 줄이지 않는다. 추가 공세에 붙는 효과는 원래 편성과 출발 위치·유예 시간·지도별 유닛 예산을 지키며 건너뛴 회차를 몰아서 내보내지 않는다. 시간은 게임 시간, 거리 1은 지형 타일 1칸. 실제 게임 동작·표식·외관은 미검증. 주문·자폭·건물 무기·보조 공격 제외. 여러 미사일이나 2타 공격은 하나의 묶음에만 배율 적용. 초기 충전 여부를 표식으로 알리며 피격되면 준비 시간이 초기화되어 원거리 견제가 대응이 된다.",
+        "status": "draft",
+        "updatedAt": "2026-10-14T07:01:09.253Z",
+        "source": "sc1/design/variety_more_drafts.json"
+      },
+      "effect": {
+        "type": "enemy_first_attack_charge",
+        "idle_frames": 192,
+        "damage_percent_by_stack": [
+          20,
+          30,
+          40
+        ],
+        "consume_on": "primary_attack_launch",
+        "exclude": [
+          "spells",
+          "suicide",
+          "building_weapons",
+          "secondary_attacks"
+        ],
+        "whole_primary_attack_bundle": true,
+        "damage_resets_charge": true,
+        "visual_charge_marker": true
+      }
+    },
+    {
+      "slot": 10,
+      "name": "마지막에 남기는 폭약",
+      "id": "8ebeaec8-a158-5106-872f-15076ff01781",
+      "rarity": "common",
+      "max_stacks": 3,
+      "source_file": "sc1/design/variety_more_drafts.json",
+      "source": {
+        "id": "8ebeaec8-a158-5106-872f-15076ff01781",
+        "race": "shared",
+        "kind": "curse",
+        "rarity": "common",
+        "name": "마지막에 남기는 폭약",
+        "target": "적 추가 공세 병력",
+        "description": "추가 공세의 적이 죽으면 잠시 뒤 작은 폭발이 남습니다. 근접 병력을 계속 같은 자리에 두면 피해가 쌓입니다.",
+        "trigger": "추가 공세의 정규 전투 유닛이 플레이어의 전투 피해로 사망",
+        "numbers": "사망 지점 반경 0.75에 1초 예고 후 지상 플레이어 전투 유닛에 피해 8/12/16(n=1/2/3). 대상별 이 저주 피해 간격 최소 1초. 반복 상한 3.",
+        "notes": "AI 초안 / 게임 미구현 / EUD 검증 필요. 수치·희귀도는 플레이 테스트 전 제안. n은 같은 저주의 보유 중첩 수이며 아래 반복 상한에 도달하면 다음 선택 후보에서 제외한다. 이 초안의 적은 적대 정규 전투 유닛만 뜻하며 영웅·환상·추가 소환물·중립·구출 대상·임무 필수 이벤트 개체는 제외. 새 유닛을 플레이어 옆에 생성하지 않고 최대 인구도 줄이지 않는다. 추가 공세에 붙는 효과는 원래 편성과 출발 위치·유예 시간·지도별 유닛 예산을 지키며 건너뛴 회차를 몰아서 내보내지 않는다. 시간은 게임 시간, 거리 1은 지형 타일 1칸. 실제 게임 동작·표식·외관은 미검증. 보호막을 먼저 깎는 고정 피해이며 방어력에는 영향받지 않음. 공중·건물·일꾼·영웅·임무 필수 개체에는 미적용. 한 지점 반경 1 안에서 0.5초 안에 여러 적이 죽으면 예고 1개로 합치고 피해를 합산하지 않는다. 죽기 전에 자폭한 적은 제외. 지면 경고를 보고 이동하거나 원거리에서 처치해 대응.",
+        "status": "draft",
+        "updatedAt": "2026-10-14T07:01:09.253Z",
+        "source": "sc1/design/variety_more_drafts.json"
+      },
+      "effect": {
+        "type": "extra_wave_death_bomb",
+        "warning_frames": 24,
+        "radius_pixels": 24,
+        "damage_by_stack": [
+          8,
+          12,
+          16
+        ],
+        "target_damage_cooldown_frames": 24,
+        "merge_radius_pixels": 32,
+        "merge_deaths_within_frames": 12,
+        "damage_stacks": false,
+        "damage_type": "fixed_armor_ignoring_shields_first",
+        "exclude_targets": [
+          "air",
+          "buildings",
+          "workers",
+          "heroes",
+          "mission_required_units"
+        ],
+        "exclude_source_suicide": true,
+        "requires_player_combat_kill": true,
+        "ground_warning": true
+      }
+    },
+    {
+      "slot": 11,
+      "name": "흡혈 병사",
+      "id": "af31dc50-9617-5f01-8301-fd5913531f91",
+      "rarity": "uncommon",
+      "max_stacks": 255,
+      "source_file": "sc1/campaign/design_snapshots/r469_20261014_153314_623339/board.json",
+      "source": {
+        "id": "af31dc50-9617-5f01-8301-fd5913531f91",
+        "name": "흡혈 병사",
+        "target": "적 비건물 전투 유닛",
+        "description": "적이 일반 공격으로 실제 입힌 체력 피해의 10%를 회복합니다.",
+        "trigger": "해당 효과 설명의 조건을 충족할 때",
+        "numbers": "반복 획득마다 흡혈 +10%p. 보호막 피해·아군 공격·자해·회복의 재발동 제외.",
+        "notes": "사용자 요청에 따른 AI 초안 · 게임 효과 미구현. 수치와 EUD 구현 가능성은 검증 전입니다. 반복 획득 가능. 증가분은 기본값을 기준으로 합산합니다. 참고: SC2 Curse Life Steal의 50%를 여러 선택에 나눈 초안",
+        "updatedAt": "2026-10-14T06:10:00.000Z",
+        "race": "shared",
+        "status": "draft",
+        "rarity": "uncommon",
+        "kind": "curse",
+        "source": "sc1/campaign/design_snapshots/r469_20261014_153314_623339/board.json"
+      },
+      "effect": {
+        "type": "enemy_normal_attack_lifesteal",
+        "percent_per_stack": 10,
+        "base": "actual_hp_damage",
+        "exclude": [
+          "shield_damage",
+          "friendly_fire",
+          "self_damage",
+          "healing_retrigger"
+        ]
+      }
+    },
+    {
+      "slot": 12,
+      "name": "공세의 구호반",
+      "id": "e8099fe1-cac1-5c0d-bffc-1d41e9b54959",
+      "rarity": "uncommon",
+      "max_stacks": 3,
+      "source_file": "sc1/design/variety_more_drafts.json",
+      "source": {
+        "id": "e8099fe1-cac1-5c0d-bffc-1d41e9b54959",
+        "race": "shared",
+        "kind": "curse",
+        "rarity": "uncommon",
+        "name": "공세의 구호반",
+        "target": "적 추가 공세의 표식 지원병",
+        "description": "추가 공세의 일부가 구호반이 되어 근처의 다친 동료를 회복합니다. 표식 지원병을 먼저 끊으면 회복이 멎습니다.",
+        "trigger": "공세 출발 때 원래 편성에서 구호반 1/2/3기 선정(n=1/2/3)",
+        "numbers": "구호반마다 1초에 반경 3의 체력 비율이 가장 낮은 다른 공세 유닛 1기의 체력 6 회복. 대상별 이 저주 회복 상한 초당 6. 반복 상한 3, 공세당 최대 3기.",
+        "notes": "AI 초안 / 게임 미구현 / EUD 검증 필요. 수치·희귀도는 플레이 테스트 전 제안. n은 같은 저주의 보유 중첩 수이며 아래 반복 상한에 도달하면 다음 선택 후보에서 제외한다. 이 초안의 적은 적대 정규 전투 유닛만 뜻하며 영웅·환상·추가 소환물·중립·구출 대상·임무 필수 이벤트 개체는 제외. 새 유닛을 플레이어 옆에 생성하지 않고 최대 인구도 줄이지 않는다. 추가 공세에 붙는 효과는 원래 편성과 출발 위치·유예 시간·지도별 유닛 예산을 지키며 건너뛴 회차를 몰아서 내보내지 않는다. 시간은 게임 시간, 거리 1은 지형 타일 1칸. 실제 게임 동작·표식·외관은 미검증. 구호반 자신·다른 구호반·건물은 회복 대상 제외. 유닛을 새로 추가하거나 최대 체력을 늘리지 않는다. 구호반이 죽거나 원래 공세가 소멸하면 효과 종료. 출발 전 지원병 수와 표식을 표시하고 원래 사거리·공격력은 유지.",
+        "status": "draft",
+        "updatedAt": "2026-10-14T07:01:09.253Z",
+        "source": "sc1/design/variety_more_drafts.json"
+      },
+      "effect": {
+        "type": "extra_wave_medic",
+        "medics_by_stack": [
+          1,
+          2,
+          3
+        ],
+        "period_frames": 24,
+        "radius_pixels": 96,
+        "heal_hp": 6,
+        "target_max_heal_hp_per_second": 6,
+        "target": "lowest_hp_ratio_other_non_medic_same_wave_unit",
+        "adds_units": false,
+        "visual_medic_marker": true
+      }
+    },
+    {
+      "slot": 13,
+      "name": "지휘관의 마지막 명령",
+      "id": "9b03167c-e96a-5726-a710-0787e8d406af",
+      "rarity": "rare",
+      "max_stacks": 3,
+      "source_file": "sc1/design/variety_more_drafts.json",
+      "source": {
+        "id": "9b03167c-e96a-5726-a710-0787e8d406af",
+        "race": "shared",
+        "kind": "curse",
+        "rarity": "rare",
+        "name": "지휘관의 마지막 명령",
+        "target": "적 추가 공세의 지휘 표식 유닛",
+        "description": "공세의 지휘관을 쓰러뜨리면 살아 있는 부대가 잠시 분노합니다. 지휘관을 마지막에 처치하면 강화되는 적을 줄일 수 있습니다.",
+        "trigger": "원래 추가 공세에서 지정한 지휘관 1기가 전투 피해로 사망",
+        "numbers": "같은 공세의 남은 병력 중 지휘관 반경 6 안 최대 8/12/16기(n=1/2/3)가 8초 동안 일반 공격 피해 +25%, 이동 속도 +20%. 반복 상한 3.",
+        "notes": "AI 초안 / 게임 미구현 / EUD 검증 필요. 수치·희귀도는 플레이 테스트 전 제안. n은 같은 저주의 보유 중첩 수이며 아래 반복 상한에 도달하면 다음 선택 후보에서 제외한다. 이 초안의 적은 적대 정규 전투 유닛만 뜻하며 영웅·환상·추가 소환물·중립·구출 대상·임무 필수 이벤트 개체는 제외. 새 유닛을 플레이어 옆에 생성하지 않고 최대 인구도 줄이지 않는다. 추가 공세에 붙는 효과는 원래 편성과 출발 위치·유예 시간·지도별 유닛 예산을 지키며 건너뛴 회차를 몰아서 내보내지 않는다. 시간은 게임 시간, 거리 1은 지형 타일 1칸. 실제 게임 동작·표식·외관은 미검증. 지휘관 자체의 체력·공격력은 이 저주로 늘지 않음. 추가 지휘관·유닛을 생성하지 않으며 지휘관 1기당 발동 1회. 이후 공세로 효과를 전달하거나 같은 효과를 갱신하지 않음. 지휘관 표식과 남은 병력 범위를 시각적으로 구분해야 하며 다른 표식 저주와 함께여도 동일 개체에 지휘관 역할은 1개뿐.",
+        "status": "draft",
+        "updatedAt": "2026-10-14T07:01:09.253Z",
+        "source": "sc1/design/variety_more_drafts.json"
+      },
+      "effect": {
+        "type": "extra_wave_commander_last_order",
+        "commanders_per_wave": 1,
+        "trigger": "commander_death_from_combat",
+        "radius_pixels": 192,
+        "targets_by_stack": [
+          8,
+          12,
+          16
+        ],
+        "duration_frames": 192,
+        "normal_damage_percent": 25,
+        "move_speed_percent": 20,
+        "applies_once": true,
+        "same_wave_only": true,
+        "refresh": false,
+        "visual_commander_and_range_marker": true
+      }
+    },
+    {
+      "slot": 14,
+      "name": "짝을 잃은 재정비",
+      "id": "2743de38-d9b0-5006-b1e6-a8f4b258d12f",
+      "rarity": "rare",
+      "max_stacks": 3,
+      "source_file": "sc1/design/variety_more_drafts.json",
+      "source": {
+        "id": "2743de38-d9b0-5006-b1e6-a8f4b258d12f",
+        "race": "shared",
+        "kind": "curse",
+        "rarity": "rare",
+        "name": "짝을 잃은 재정비",
+        "target": "적 추가 공세의 연결된 두 유닛",
+        "description": "공세 일부가 둘씩 짝을 이룹니다. 한쪽만 먼저 처치하면 살아 있는 짝이 한 번 회복하므로 두 적을 함께 약화시키는 편이 유리합니다.",
+        "trigger": "공세 출발 때 원래 편성에서 1/2/3쌍 지정(n=1/2/3)",
+        "numbers": "짝 중 한쪽 사망 후 2초 뒤 다른 한쪽이 살아 있으면 그 개체 최대 체력의 35% 회복. 쌍당 1회, 반복 상한 3·공세당 최대 3쌍.",
+        "notes": "AI 초안 / 게임 미구현 / EUD 검증 필요. 수치·희귀도는 플레이 테스트 전 제안. n은 같은 저주의 보유 중첩 수이며 아래 반복 상한에 도달하면 다음 선택 후보에서 제외한다. 이 초안의 적은 적대 정규 전투 유닛만 뜻하며 영웅·환상·추가 소환물·중립·구출 대상·임무 필수 이벤트 개체는 제외. 새 유닛을 플레이어 옆에 생성하지 않고 최대 인구도 줄이지 않는다. 추가 공세에 붙는 효과는 원래 편성과 출발 위치·유예 시간·지도별 유닛 예산을 지키며 건너뛴 회차를 몰아서 내보내지 않는다. 시간은 게임 시간, 거리 1은 지형 타일 1칸. 실제 게임 동작·표식·외관은 미검증. 대상 부족 시 완성 가능한 쌍만 선정. 한 유닛은 한 쌍에만 속하고 사망한 개체를 되살리지 않음. 2초 안에 나머지 적도 처치하면 회복 없음. 최대 체력·보호막은 늘리지 않고 다른 공세와 연결하지 않음. 쌍 연결 표식과 회복 예고를 표시해 동시 공격·집중 화력으로 대응하게 한다.",
+        "status": "draft",
+        "updatedAt": "2026-10-14T07:01:09.253Z",
+        "source": "sc1/design/variety_more_drafts.json"
+      },
+      "effect": {
+        "type": "extra_wave_paired_heal",
+        "pairs_by_stack": [
+          1,
+          2,
+          3
+        ],
+        "survivor_delay_frames": 48,
+        "heal_max_hp_percent": 35,
+        "once_per_pair": true,
+        "same_wave_only": true,
+        "revive": false,
+        "one_pair_per_unit": true,
+        "visual_pair_and_heal_warning": true
+      }
+    }
+  ],
+  "live_verified": false
+}

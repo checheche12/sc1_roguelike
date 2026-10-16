@@ -1,0 +1,11 @@
+{
+  "repository": "neivv/tatti3",
+  "commit": "eb940dab410e9e197db9634322e91fb67a0b7f0f",
+  "source_url": "https://raw.githubusercontent.com/neivv/tatti3/eb940dab410e9e197db9634322e91fb67a0b7f0f/Resources/buttons.bin",
+  "sha256": "2edd96868b9164743c357ed3c50d649ef44c0dc8cc5f3a948f481ffd676b274b",
+  "bytes": 9460,
+  "base_sets": 99,
+  "base_buttons": 554,
+  "unit_mappings": 250,
+  "mapping_note": "Mapping bytes are retained as source evidence; support builder never edits managed units fields0x44/45."
+}

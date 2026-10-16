@@ -1,0 +1,26 @@
+{
+  "repository": "neivv/tatti3",
+  "commit": "eb940dab410e9e197db9634322e91fb67a0b7f0f",
+  "sources": [
+    {
+      "path": "sc1/native_campaign/support_dat_sources/headless/upstream/ArrayFileType.cs",
+      "url": "https://raw.githubusercontent.com/neivv/tatti3/eb940dab410e9e197db9634322e91fb67a0b7f0f/GameData/ArrayFileType.cs",
+      "sha256": "f580424dfc879b543e14c97bc905cb386ac9d867407e76925f29c74622b42360"
+    },
+    {
+      "path": "sc1/native_campaign/support_dat_sources/headless/upstream/Filesystem.cs",
+      "url": "https://raw.githubusercontent.com/neivv/tatti3/eb940dab410e9e197db9634322e91fb67a0b7f0f/GameData/Filesystem.cs",
+      "sha256": "e95b3c2bf310939c68c30d344a2f24cae3129376b293fe89239940b62fb3848b"
+    },
+    {
+      "path": "sc1/native_campaign/support_dat_sources/headless/upstream/Requirement.cs",
+      "url": "https://raw.githubusercontent.com/neivv/tatti3/eb940dab410e9e197db9634322e91fb67a0b7f0f/GameData/Requirement.cs",
+      "sha256": "f59ff7d8fe74a3b3637e8a832b95a58688a66961de9fd5b5c847a757dee1452d"
+    },
+    {
+      "path": "sc1/native_campaign/support_dat_sources/headless/upstream/WriteTempFiles.cs",
+      "url": "https://raw.githubusercontent.com/neivv/tatti3/eb940dab410e9e197db9634322e91fb67a0b7f0f/GameData/WriteTempFiles.cs",
+      "sha256": "4cf636d25d41a79a755cf0f46aeed0592a5d222d3b7ace53fe88ed8dae8493b5"
+    }
+  ]
+}

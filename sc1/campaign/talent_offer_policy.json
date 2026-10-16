@@ -1,0 +1,6292 @@
+{
+  "schema_version": 1,
+  "policy_revision": 1,
+  "status": "rank_family_data_ready_runtime_integration_owned_by_main_task",
+  "created_at_utc": "2026-10-15T13:21:38.847583+00:00",
+  "source_catalog": {
+    "path": "analysis/talent_curation_20261015/legacy_catalog_baseline.json",
+    "sha256": "26c654ee690850f9f85fde92e0299c3fbf80574b2f4673d55568db46cc78ff7a",
+    "catalog_version": 1,
+    "talent_pool_revision": 2,
+    "talents": 106,
+    "curses": 15
+  },
+  "not_runtime_effects": true,
+  "compatibility": {
+    "all_legacy_ids_and_bits_preserved": true,
+    "legacy_catalog_records_must_remain_exact": true,
+    "existing_owned_effects_preserved": true,
+    "issued_offers_and_snapshots_immutable": true,
+    "no_individual_legacy_fallback": true,
+    "catalog_migration_owned_by_main_task": true,
+    "new_rank_bits_are_provisional_reservations": true,
+    "deduplication_rule": "Preserve every legacy effect and add each newly owned rank increment once. New ranks are extra growth; do not regrant donor bits or rerun donor effects. Multi-target mechanics remain one activation even if legacy and new rank both own the same mode.",
+    "legacy_and_new_rank_effects": "additive_positive_increments"
+  },
+  "selection": {
+    "military_checkpoints_per_mission": 3,
+    "military_candidates": 4,
+    "ranks_per_family": 3,
+    "families_per_race": 13,
+    "one_candidate_per_family": true,
+    "offer_only_next_unowned_rank": true,
+    "campaign_partition": "campaign_id including independent secret campaign7; not race",
+    "worst_case_campaign_picks": 30,
+    "proof": "Before pick30 at most floor(29/3)=9 of13 families are complete, leaving at least4 candidates.12 families fail after27 picks.",
+    "availability": "Prefer current mission's available roles; do not hard-filter to fewer than4 eligible families. Production and unit requirements must still be checked.",
+    "economy_separate": true,
+    "no_production_economy": "Do not offer production-only effects; skip/defer according to the implementation's explicit rule.",
+    "shared_squad_families": 5,
+    "rank_bits": [
+      106,
+      237
+    ]
+  },
+  "entries": [
+    {
+      "id": "b0b87a48-4e2f-4d83-b1e9-d31ab203442a",
+      "bit_index": 0,
+      "race": "terran",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "terran:marine_firepower",
+      "compact_bundle_anchor": true,
+      "exclude_reason": null
+    },
+    {
+      "id": "9da04c9f-9ddd-4e51-8333-e40eb7fafd1a",
+      "bit_index": 1,
+      "race": "terran",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "terran:infantry_guard",
+      "compact_bundle_anchor": true,
+      "exclude_reason": null
+    },
+    {
+      "id": "11add15f-8880-4db0-9697-91723ffdfd57",
+      "bit_index": 2,
+      "race": "terran",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "terran:marine_firepower",
+      "compact_bundle_anchor": true,
+      "exclude_reason": null
+    },
+    {
+      "id": "b4a56885-dcef-4fd7-9b1d-1d07fa0cbd5c",
+      "bit_index": 3,
+      "race": "terran",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "terran:firebat_assault",
+      "compact_bundle_anchor": true,
+      "exclude_reason": null
+    },
+    {
+      "id": "3de768b5-3b1c-4aa2-a80f-fa72d5e37a73",
+      "bit_index": 4,
+      "race": "terran",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "terran:ghost_covert",
+      "compact_bundle_anchor": false,
+      "exclude_reason": null
+    },
+    {
+      "id": "61ca33c4-6b46-45fd-bf48-36e92fc30067",
+      "bit_index": 5,
+      "race": "terran",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "terran:ghost_covert",
+      "compact_bundle_anchor": true,
+      "exclude_reason": null
+    },
+    {
+      "id": "bec5aa24-1479-4c55-9de9-ddb843ddc039",
+      "bit_index": 6,
+      "race": "terran",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "terran:vulture_raider",
+      "compact_bundle_anchor": true,
+      "exclude_reason": null
+    },
+    {
+      "id": "e52e8e8a-090c-48dd-80d2-03142775c1d4",
+      "bit_index": 7,
+      "race": "terran",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": null,
+      "compact_bundle_anchor": false,
+      "exclude_reason": "할인과 함께 체력을50으로 낮추는 교환효과라 양수 강화 패키지에서 제외"
+    },
+    {
+      "id": "8b6431dd-5553-4743-a43f-ef61172b46f6",
+      "bit_index": 8,
+      "race": "terran",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "terran:tank_siege",
+      "compact_bundle_anchor": false,
+      "exclude_reason": null
+    },
+    {
+      "id": "fde47c79-594b-4731-9669-0df4044da1f4",
+      "bit_index": 9,
+      "race": "terran",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "terran:tank_siege",
+      "compact_bundle_anchor": true,
+      "exclude_reason": null
+    },
+    {
+      "id": "911cc0df-8191-49ff-a058-8390ce15e910",
+      "bit_index": 10,
+      "race": "terran",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "terran:goliath_dual",
+      "compact_bundle_anchor": true,
+      "exclude_reason": null
+    },
+    {
+      "id": "adcf3a4f-948d-4c2e-b184-e48544c7afcf",
+      "bit_index": 11,
+      "race": "terran",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "terran:wraith_wing",
+      "compact_bundle_anchor": true,
+      "exclude_reason": null
+    },
+    {
+      "id": "61c98944-9414-47f2-bcdf-6d4ff0ba5598",
+      "bit_index": 12,
+      "race": "terran",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "terran:wraith_wing",
+      "compact_bundle_anchor": false,
+      "exclude_reason": null
+    },
+    {
+      "id": "31e8e8c8-347d-456b-bd0d-cae47f591eb8",
+      "bit_index": 13,
+      "race": "terran",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "terran:valkyrie_barrage",
+      "compact_bundle_anchor": true,
+      "exclude_reason": null
+    },
+    {
+      "id": "e4565c77-cc6f-43ea-91ee-1448e52cc757",
+      "bit_index": 14,
+      "race": "terran",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "terran:battlecruiser_flagship",
+      "compact_bundle_anchor": true,
+      "exclude_reason": null
+    },
+    {
+      "id": "676ab7d6-96fb-5748-8796-d8570dc554e6",
+      "bit_index": 15,
+      "race": "shared",
+      "category": "economy",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": null,
+      "compact_bundle_anchor": false,
+      "exclude_reason": null
+    },
+    {
+      "id": "7bd974f2-42ce-5442-b22f-6e82fcb8fe51",
+      "bit_index": 16,
+      "race": "shared",
+      "category": "economy",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": null,
+      "compact_bundle_anchor": false,
+      "exclude_reason": null
+    },
+    {
+      "id": "0f78b098-5745-47de-b9cb-c74e3beb411f",
+      "bit_index": 17,
+      "race": "terran",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "terran:goliath_dual",
+      "compact_bundle_anchor": false,
+      "exclude_reason": null
+    },
+    {
+      "id": "dc005b01-501a-4861-9d56-b971125e134a",
+      "bit_index": 18,
+      "race": "terran",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "terran:wraith_wing",
+      "compact_bundle_anchor": false,
+      "exclude_reason": null
+    },
+    {
+      "id": "08dc86c3-0018-43d7-a1ca-092a863bf4dd",
+      "bit_index": 19,
+      "race": "terran",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "terran:dropship_assault",
+      "compact_bundle_anchor": true,
+      "exclude_reason": null
+    },
+    {
+      "id": "af9ac5eb-ba74-4fe5-b3bf-b9e69a3a87f4",
+      "bit_index": 20,
+      "race": "terran",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "terran:battlecruiser_flagship",
+      "compact_bundle_anchor": false,
+      "exclude_reason": null
+    },
+    {
+      "id": "4e6aec23-a4ae-587b-b726-a1bc3b99de85",
+      "bit_index": 21,
+      "race": "terran",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "terran:firebat_assault",
+      "compact_bundle_anchor": false,
+      "exclude_reason": null
+    },
+    {
+      "id": "d417aff9-333a-5843-895f-3d38c611f470",
+      "bit_index": 22,
+      "race": "terran",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "terran:firebat_assault",
+      "compact_bundle_anchor": false,
+      "exclude_reason": null
+    },
+    {
+      "id": "6d59aecf-b1a8-50e1-b33f-8fba3bc851a0",
+      "bit_index": 23,
+      "race": "terran",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "terran:medic_support",
+      "compact_bundle_anchor": false,
+      "exclude_reason": null
+    },
+    {
+      "id": "4b4ddc45-9884-5bf3-8063-ad76c6d43495",
+      "bit_index": 24,
+      "race": "terran",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "terran:medic_support",
+      "compact_bundle_anchor": false,
+      "exclude_reason": null
+    },
+    {
+      "id": "ff284e41-e8d7-53dd-946a-de2807c134dd",
+      "bit_index": 25,
+      "race": "terran",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "terran:goliath_dual",
+      "compact_bundle_anchor": false,
+      "exclude_reason": null
+    },
+    {
+      "id": "f4828e4e-8b66-5d82-96fe-02763018b98f",
+      "bit_index": 26,
+      "race": "terran",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "terran:goliath_dual",
+      "compact_bundle_anchor": false,
+      "exclude_reason": null
+    },
+    {
+      "id": "31325774-f8b6-5124-b076-05c2e94f0555",
+      "bit_index": 27,
+      "race": "terran",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "terran:dropship_assault",
+      "compact_bundle_anchor": false,
+      "exclude_reason": null
+    },
+    {
+      "id": "5494c103-af5a-59a2-bb3e-491784fa4a32",
+      "bit_index": 28,
+      "race": "terran",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "terran:valkyrie_barrage",
+      "compact_bundle_anchor": false,
+      "exclude_reason": null
+    },
+    {
+      "id": "220b33e4-9460-5610-b765-86c536482a8d",
+      "bit_index": 29,
+      "race": "terran",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "terran:science_support",
+      "compact_bundle_anchor": true,
+      "exclude_reason": null
+    },
+    {
+      "id": "9316f1ce-9294-54ea-b4e4-812d1c75dfba",
+      "bit_index": 30,
+      "race": "terran",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "terran:valkyrie_barrage",
+      "compact_bundle_anchor": false,
+      "exclude_reason": null
+    },
+    {
+      "id": "d6f25615-a491-5eee-87fd-73031e4a18b2",
+      "bit_index": 31,
+      "race": "terran",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "terran:dropship_assault",
+      "compact_bundle_anchor": false,
+      "exclude_reason": null
+    },
+    {
+      "id": "02639414-0de5-5a1d-afdc-04e3fe871032",
+      "bit_index": 32,
+      "race": "terran",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "terran:valkyrie_barrage",
+      "compact_bundle_anchor": true,
+      "exclude_reason": null
+    },
+    {
+      "id": "f6286deb-00ba-5ade-bade-5f51b4f22e7b",
+      "bit_index": 33,
+      "race": "terran",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "terran:science_support",
+      "compact_bundle_anchor": false,
+      "exclude_reason": null
+    },
+    {
+      "id": "a6948251-7b11-51ce-899d-0816edd0995a",
+      "bit_index": 34,
+      "race": "zerg",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "zerg:zergling_carapace",
+      "compact_bundle_anchor": true,
+      "exclude_reason": null
+    },
+    {
+      "id": "ef8ab539-27b9-50d7-8334-ab5f9c8d9a5f",
+      "bit_index": 35,
+      "race": "zerg",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "zerg:zergling_claws",
+      "compact_bundle_anchor": true,
+      "exclude_reason": null
+    },
+    {
+      "id": "50397b65-4a2d-537f-9f37-cc535b98cde4",
+      "bit_index": 36,
+      "race": "zerg",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "zerg:hydralisk_spines",
+      "compact_bundle_anchor": true,
+      "exclude_reason": null
+    },
+    {
+      "id": "10a554d6-3258-50f2-bcce-f0cc05a5a21c",
+      "bit_index": 37,
+      "race": "zerg",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "zerg:hydralisk_spines",
+      "compact_bundle_anchor": true,
+      "exclude_reason": null
+    },
+    {
+      "id": "19e4b7ea-bd4b-5e25-a362-6379770f253e",
+      "bit_index": 38,
+      "race": "zerg",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "zerg:lurker_ambush",
+      "compact_bundle_anchor": true,
+      "exclude_reason": null
+    },
+    {
+      "id": "bcc8fdd9-aa12-55c0-a747-7bfb3ba0df69",
+      "bit_index": 39,
+      "race": "zerg",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "zerg:ultralisk_behemoth",
+      "compact_bundle_anchor": true,
+      "exclude_reason": null
+    },
+    {
+      "id": "62773fb3-a08d-5eea-a5f8-afc4fa240491",
+      "bit_index": 40,
+      "race": "zerg",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "zerg:ultralisk_behemoth",
+      "compact_bundle_anchor": false,
+      "exclude_reason": null
+    },
+    {
+      "id": "474028ba-4784-5ea6-a4d6-5be6025d4289",
+      "bit_index": 41,
+      "race": "zerg",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "zerg:mutalisk_wing",
+      "compact_bundle_anchor": true,
+      "exclude_reason": null
+    },
+    {
+      "id": "937deca5-e0df-518a-9db5-738801a7d78a",
+      "bit_index": 42,
+      "race": "zerg",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "zerg:guardian_siege",
+      "compact_bundle_anchor": true,
+      "exclude_reason": null
+    },
+    {
+      "id": "5323e004-5669-5f9b-b74f-eb4feb45c0bd",
+      "bit_index": 43,
+      "race": "zerg",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "zerg:devourer_acid",
+      "compact_bundle_anchor": false,
+      "exclude_reason": null
+    },
+    {
+      "id": "88179125-fb11-56f7-a6e5-fdbe01513202",
+      "bit_index": 44,
+      "race": "zerg",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "zerg:devourer_acid",
+      "compact_bundle_anchor": true,
+      "exclude_reason": null
+    },
+    {
+      "id": "70868f85-8196-5c56-b775-4b247f32bf3a",
+      "bit_index": 45,
+      "race": "zerg",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "zerg:scourge_intercept",
+      "compact_bundle_anchor": false,
+      "exclude_reason": null
+    },
+    {
+      "id": "8453bd7a-0f86-5415-b26b-e3dcafab73d8",
+      "bit_index": 46,
+      "race": "zerg",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "zerg:scourge_intercept",
+      "compact_bundle_anchor": true,
+      "exclude_reason": null
+    },
+    {
+      "id": "a1fbb3c9-68f7-5b77-a131-9415ba633222",
+      "bit_index": 47,
+      "race": "zerg",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "zerg:overlord_network",
+      "compact_bundle_anchor": true,
+      "exclude_reason": null
+    },
+    {
+      "id": "4c71f828-2be8-5786-8902-c45333a38e40",
+      "bit_index": 48,
+      "race": "zerg",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "zerg:infested_demolition",
+      "compact_bundle_anchor": false,
+      "exclude_reason": null
+    },
+    {
+      "id": "51941deb-1b6b-50b6-a8b8-b25bd1fb43c7",
+      "bit_index": 49,
+      "race": "zerg",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "zerg:zergling_claws",
+      "compact_bundle_anchor": false,
+      "exclude_reason": null
+    },
+    {
+      "id": "08063950-39d5-5e62-8488-d5226f097db1",
+      "bit_index": 50,
+      "race": "zerg",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "zerg:zergling_carapace",
+      "compact_bundle_anchor": false,
+      "exclude_reason": null
+    },
+    {
+      "id": "7c993c03-1411-5c14-9661-51056fca369d",
+      "bit_index": 51,
+      "race": "zerg",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "zerg:hydralisk_spines",
+      "compact_bundle_anchor": true,
+      "exclude_reason": null
+    },
+    {
+      "id": "50938e75-f810-50e5-9755-2b624f55a663",
+      "bit_index": 52,
+      "race": "zerg",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "zerg:hydralisk_spines",
+      "compact_bundle_anchor": false,
+      "exclude_reason": null
+    },
+    {
+      "id": "1ef2e74d-c3fb-5667-bf75-0695ec30f019",
+      "bit_index": 53,
+      "race": "zerg",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "zerg:lurker_ambush",
+      "compact_bundle_anchor": false,
+      "exclude_reason": null
+    },
+    {
+      "id": "a78ec969-f1e0-5b81-be72-2c100c1cb6c8",
+      "bit_index": 54,
+      "race": "zerg",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "zerg:lurker_ambush",
+      "compact_bundle_anchor": true,
+      "exclude_reason": null
+    },
+    {
+      "id": "55cb0c50-2498-5194-ad1e-935baf84b110",
+      "bit_index": 55,
+      "race": "zerg",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "zerg:ultralisk_behemoth",
+      "compact_bundle_anchor": true,
+      "exclude_reason": null
+    },
+    {
+      "id": "807cc622-fda9-5ceb-a96a-3457b0074753",
+      "bit_index": 56,
+      "race": "zerg",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "zerg:ultralisk_behemoth",
+      "compact_bundle_anchor": false,
+      "exclude_reason": null
+    },
+    {
+      "id": "fec86599-89dc-5015-afab-a207e9258707",
+      "bit_index": 57,
+      "race": "zerg",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "zerg:mutalisk_wing",
+      "compact_bundle_anchor": false,
+      "exclude_reason": null
+    },
+    {
+      "id": "2e8b32df-a697-5eaf-85b1-eb0999c0754e",
+      "bit_index": 58,
+      "race": "zerg",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "zerg:mutalisk_wing",
+      "compact_bundle_anchor": true,
+      "exclude_reason": null
+    },
+    {
+      "id": "bc1c87d6-a946-5e55-a727-db572294557c",
+      "bit_index": 59,
+      "race": "zerg",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "zerg:guardian_siege",
+      "compact_bundle_anchor": false,
+      "exclude_reason": null
+    },
+    {
+      "id": "7651ad59-5052-56c1-85fe-74133ad7660e",
+      "bit_index": 60,
+      "race": "zerg",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "zerg:guardian_siege",
+      "compact_bundle_anchor": false,
+      "exclude_reason": null
+    },
+    {
+      "id": "93d79797-e57b-52c1-8a79-4f75774fb40d",
+      "bit_index": 61,
+      "race": "zerg",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "zerg:devourer_acid",
+      "compact_bundle_anchor": false,
+      "exclude_reason": null
+    },
+    {
+      "id": "8deedc39-6d94-5ecf-b7d2-1ef08292a610",
+      "bit_index": 62,
+      "race": "zerg",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "zerg:scourge_intercept",
+      "compact_bundle_anchor": false,
+      "exclude_reason": null
+    },
+    {
+      "id": "df095ca0-42a6-5230-b976-4a8f6588db92",
+      "bit_index": 63,
+      "race": "zerg",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "zerg:queen_brood",
+      "compact_bundle_anchor": true,
+      "exclude_reason": null
+    },
+    {
+      "id": "25652a52-018d-5c53-9f56-9b0f2a8e1cef",
+      "bit_index": 64,
+      "race": "zerg",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "zerg:defiler_support",
+      "compact_bundle_anchor": false,
+      "exclude_reason": null
+    },
+    {
+      "id": "793931fa-f87a-5a0f-a575-bff6bcce6a5d",
+      "bit_index": 65,
+      "race": "zerg",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "zerg:overlord_network",
+      "compact_bundle_anchor": false,
+      "exclude_reason": null
+    },
+    {
+      "id": "c1855946-9678-5a02-83a6-4c30e6011f17",
+      "bit_index": 66,
+      "race": "zerg",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "zerg:infested_demolition",
+      "compact_bundle_anchor": false,
+      "exclude_reason": null
+    },
+    {
+      "id": "6e4f04ef-f498-5852-b175-cc46b156c4fc",
+      "bit_index": 67,
+      "race": "zerg",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "zerg:guardian_siege",
+      "compact_bundle_anchor": true,
+      "exclude_reason": null
+    },
+    {
+      "id": "58810cf9-1b79-5226-8734-f11735a024e0",
+      "bit_index": 68,
+      "race": "zerg",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "zerg:infested_demolition",
+      "compact_bundle_anchor": true,
+      "exclude_reason": null
+    },
+    {
+      "id": "6133f55d-779f-567a-94ad-6f354e50cd41",
+      "bit_index": 69,
+      "race": "protoss",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "protoss:zealot_frontline",
+      "compact_bundle_anchor": true,
+      "exclude_reason": null
+    },
+    {
+      "id": "d8b24b05-1222-5d5f-95ab-2888640519b4",
+      "bit_index": 70,
+      "race": "protoss",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "protoss:zealot_frontline",
+      "compact_bundle_anchor": true,
+      "exclude_reason": null
+    },
+    {
+      "id": "6be08978-7d28-5f6d-a9ee-621e4f6b236c",
+      "bit_index": 71,
+      "race": "protoss",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "protoss:dragoon_phalanx",
+      "compact_bundle_anchor": true,
+      "exclude_reason": null
+    },
+    {
+      "id": "15752ea5-1048-5307-b4d6-89e1f92376c1",
+      "bit_index": 72,
+      "race": "protoss",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "protoss:dragoon_phalanx",
+      "compact_bundle_anchor": true,
+      "exclude_reason": null
+    },
+    {
+      "id": "8a5dc9f5-bb51-5c09-8f7f-12890b39a04f",
+      "bit_index": 73,
+      "race": "protoss",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "protoss:dark_templar_shadow",
+      "compact_bundle_anchor": true,
+      "exclude_reason": null
+    },
+    {
+      "id": "bc13f025-ec31-53d6-bb9b-3b378f8b7d9e",
+      "bit_index": 74,
+      "race": "protoss",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "protoss:archon_storm",
+      "compact_bundle_anchor": true,
+      "exclude_reason": null
+    },
+    {
+      "id": "a45b1173-35e7-5c3d-957a-7d1483a281fa",
+      "bit_index": 75,
+      "race": "protoss",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "protoss:archon_storm",
+      "compact_bundle_anchor": true,
+      "exclude_reason": null
+    },
+    {
+      "id": "25930078-74c8-5c75-8ad2-44ebefb8db05",
+      "bit_index": 76,
+      "race": "protoss",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "protoss:shuttle_assault",
+      "compact_bundle_anchor": true,
+      "exclude_reason": null
+    },
+    {
+      "id": "26ef37d2-4048-5abd-aba5-7c9e510361cc",
+      "bit_index": 77,
+      "race": "protoss",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "protoss:shuttle_assault",
+      "compact_bundle_anchor": false,
+      "exclude_reason": null
+    },
+    {
+      "id": "60f86c7c-f4f0-5a0a-8b81-94dee26bc64b",
+      "bit_index": 78,
+      "race": "protoss",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "protoss:reaver_siege",
+      "compact_bundle_anchor": true,
+      "exclude_reason": null
+    },
+    {
+      "id": "91425e65-1f04-5ea4-a848-59e2c2c7f39b",
+      "bit_index": 79,
+      "race": "protoss",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "protoss:reaver_siege",
+      "compact_bundle_anchor": true,
+      "exclude_reason": null
+    },
+    {
+      "id": "5792be66-e81b-5b2d-b908-a7819f4fcf33",
+      "bit_index": 80,
+      "race": "protoss",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "protoss:observer_network",
+      "compact_bundle_anchor": false,
+      "exclude_reason": null
+    },
+    {
+      "id": "e12772d8-620e-5550-b33f-000515770bec",
+      "bit_index": 81,
+      "race": "protoss",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "protoss:observer_network",
+      "compact_bundle_anchor": true,
+      "exclude_reason": null
+    },
+    {
+      "id": "35005b20-4108-57d7-ac38-5c468f0482e5",
+      "bit_index": 82,
+      "race": "protoss",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "protoss:scout_wing",
+      "compact_bundle_anchor": true,
+      "exclude_reason": null
+    },
+    {
+      "id": "dc0cd4aa-13b0-5fa9-aa16-e049aa803700",
+      "bit_index": 83,
+      "race": "protoss",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "protoss:scout_wing",
+      "compact_bundle_anchor": false,
+      "exclude_reason": null
+    },
+    {
+      "id": "b183e8bf-f97d-57e9-b3bd-e2baaebeb92f",
+      "bit_index": 84,
+      "race": "protoss",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "protoss:carrier_fleet",
+      "compact_bundle_anchor": false,
+      "exclude_reason": null
+    },
+    {
+      "id": "692a2bd1-5537-568c-b6b5-75e1317b1a4d",
+      "bit_index": 85,
+      "race": "protoss",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "protoss:zealot_frontline",
+      "compact_bundle_anchor": false,
+      "exclude_reason": null
+    },
+    {
+      "id": "0c4c4678-5be2-5f3b-8eb0-dddb701c121b",
+      "bit_index": 86,
+      "race": "protoss",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "protoss:zealot_frontline",
+      "compact_bundle_anchor": false,
+      "exclude_reason": null
+    },
+    {
+      "id": "55808e0e-ea2d-57a3-a2c7-2554e8fa55be",
+      "bit_index": 87,
+      "race": "protoss",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "protoss:dragoon_phalanx",
+      "compact_bundle_anchor": false,
+      "exclude_reason": null
+    },
+    {
+      "id": "935452ab-4e90-5aab-9c90-eb9cc55ed087",
+      "bit_index": 88,
+      "race": "protoss",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "protoss:dragoon_phalanx",
+      "compact_bundle_anchor": true,
+      "exclude_reason": null
+    },
+    {
+      "id": "d763e2fb-431a-50ba-bfc7-de9279922b42",
+      "bit_index": 89,
+      "race": "protoss",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "protoss:high_templar_support",
+      "compact_bundle_anchor": true,
+      "exclude_reason": null
+    },
+    {
+      "id": "daa8e37c-7b5a-576c-9ba9-ce97b724dedf",
+      "bit_index": 90,
+      "race": "protoss",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "protoss:high_templar_support",
+      "compact_bundle_anchor": false,
+      "exclude_reason": null
+    },
+    {
+      "id": "06f4d7f5-202f-51cb-a81d-1ef2aa8bc78e",
+      "bit_index": 91,
+      "race": "protoss",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "protoss:dark_templar_shadow",
+      "compact_bundle_anchor": false,
+      "exclude_reason": null
+    },
+    {
+      "id": "82e789b7-6fa9-5ced-af07-d966b5749d39",
+      "bit_index": 92,
+      "race": "protoss",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "protoss:dark_templar_shadow",
+      "compact_bundle_anchor": false,
+      "exclude_reason": null
+    },
+    {
+      "id": "e34227bb-1234-5802-899f-a7ff46a4f649",
+      "bit_index": 93,
+      "race": "protoss",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "protoss:dark_archon_support",
+      "compact_bundle_anchor": true,
+      "exclude_reason": null
+    },
+    {
+      "id": "fe5b3fad-5ebc-5573-8296-a9d91b138c22",
+      "bit_index": 94,
+      "race": "protoss",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "protoss:shuttle_assault",
+      "compact_bundle_anchor": false,
+      "exclude_reason": null
+    },
+    {
+      "id": "4fedad7f-2fb9-504e-9454-c768e09d905c",
+      "bit_index": 95,
+      "race": "protoss",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "protoss:reaver_siege",
+      "compact_bundle_anchor": false,
+      "exclude_reason": null
+    },
+    {
+      "id": "2c49c57a-0bb8-5bc4-a725-e61e966fc586",
+      "bit_index": 96,
+      "race": "protoss",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "protoss:observer_network",
+      "compact_bundle_anchor": false,
+      "exclude_reason": null
+    },
+    {
+      "id": "02b80d02-b3d1-59a1-bd16-f8a31dc292ea",
+      "bit_index": 97,
+      "race": "protoss",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "protoss:scout_wing",
+      "compact_bundle_anchor": false,
+      "exclude_reason": null
+    },
+    {
+      "id": "8ca6d74c-c10f-537b-98e3-8d2a6583f046",
+      "bit_index": 98,
+      "race": "protoss",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "protoss:corsair_disruption",
+      "compact_bundle_anchor": false,
+      "exclude_reason": null
+    },
+    {
+      "id": "a81b8e17-c7f6-507f-8474-5c35a2d9116d",
+      "bit_index": 99,
+      "race": "protoss",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "protoss:carrier_fleet",
+      "compact_bundle_anchor": false,
+      "exclude_reason": null
+    },
+    {
+      "id": "dbf5c3bc-dcba-5215-b5dd-e713baa4fe73",
+      "bit_index": 100,
+      "race": "protoss",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "protoss:arbiter_support",
+      "compact_bundle_anchor": false,
+      "exclude_reason": null
+    },
+    {
+      "id": "40e316b0-df99-5b23-b712-60b863f6fd19",
+      "bit_index": 101,
+      "race": "protoss",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "protoss:scout_wing",
+      "compact_bundle_anchor": true,
+      "exclude_reason": null
+    },
+    {
+      "id": "461b08f1-9cc2-5373-a555-65779ae7e14c",
+      "bit_index": 102,
+      "race": "protoss",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "protoss:corsair_disruption",
+      "compact_bundle_anchor": true,
+      "exclude_reason": null
+    },
+    {
+      "id": "57102deb-c97b-57d0-ba5c-43cce2d4305d",
+      "bit_index": 103,
+      "race": "protoss",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "protoss:carrier_fleet",
+      "compact_bundle_anchor": true,
+      "exclude_reason": null
+    },
+    {
+      "id": "5e871f9a-f71b-475b-82a1-0879d54d9d30",
+      "bit_index": 104,
+      "race": "terran",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "terran:goliath_dual",
+      "compact_bundle_anchor": true,
+      "exclude_reason": null
+    },
+    {
+      "id": "f08eec6e-b40c-4b25-8fb2-cd5710d54401",
+      "bit_index": 105,
+      "race": "terran",
+      "category": "military",
+      "legacy_effect_preserved": true,
+      "legacy_individual_offer_enabled": false,
+      "family_id": "terran:battlecruiser_flagship",
+      "compact_bundle_anchor": true,
+      "exclude_reason": null
+    }
+  ],
+  "families": [
+    {
+      "family_id": "terran:marine_firepower",
+      "race": "terran",
+      "name": "소총 분대 화력",
+      "role": "ranged_core",
+      "target_units": [
+        0
+      ],
+      "legacy_donor_bits": [
+        0,
+        2
+      ],
+      "legacy_donor_ids": [
+        "b0b87a48-4e2f-4d83-b1e9-d31ab203442a",
+        "11add15f-8880-4db0-9697-91723ffdfd57"
+      ],
+      "legacy_effects": [
+        {
+          "bit_index": 0,
+          "id": "b0b87a48-4e2f-4d83-b1e9-d31ab203442a",
+          "name": "조준경",
+          "description": "아군 마린 사거리 +1",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [
+              {
+                "table": "weapons",
+                "ids": [
+                  0
+                ],
+                "field": "maxRange",
+                "op": "add",
+                "value": 32
+              },
+              {
+                "table": "units",
+                "ids": [
+                  0
+                ],
+                "field": "seekRange",
+                "op": "add",
+                "value": 1
+              }
+            ]
+          }
+        },
+        {
+          "bit_index": 2,
+          "id": "11add15f-8880-4db0-9697-91723ffdfd57",
+          "name": "기관단총",
+          "description": "아군 마린 공격속도 30% 증가",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [
+              {
+                "table": "weapons",
+                "ids": [
+                  0
+                ],
+                "field": "cooldown",
+                "op": "ratio",
+                "value": [
+                  100,
+                  130
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "ranks": [
+        {
+          "rank": 1,
+          "reserved_bit_index": 106,
+          "proposed_id": "3091b919-2563-5550-af35-da8f966ef449",
+          "implemented": true,
+          "effect": null
+        },
+        {
+          "rank": 2,
+          "reserved_bit_index": 107,
+          "proposed_id": "93f2f2b1-475c-5bb6-8759-cdb0ae623dcf",
+          "implemented": true,
+          "effect": null
+        },
+        {
+          "rank": 3,
+          "reserved_bit_index": 108,
+          "proposed_id": "fbbb4110-b782-54af-9513-c980f7a1da5a",
+          "implemented": true,
+          "effect": null
+        }
+      ],
+      "design_requirement": "각 단계는2~3효효과를 묶은 추가강화. 다음 단계 하나만 후보에 표시. 기존 donor효과는 재부여하지 않고 기존 보유만 정확히 유지.",
+      "special_mechanic_legacy_bits": []
+    },
+    {
+      "family_id": "terran:infantry_guard",
+      "race": "terran",
+      "name": "보병 전열 방호",
+      "role": "frontline_support",
+      "target_units": [
+        0,
+        32,
+        34
+      ],
+      "legacy_donor_bits": [
+        1
+      ],
+      "legacy_donor_ids": [
+        "9da04c9f-9ddd-4e51-8333-e40eb7fafd1a"
+      ],
+      "legacy_effects": [
+        {
+          "bit_index": 1,
+          "id": "9da04c9f-9ddd-4e51-8333-e40eb7fafd1a",
+          "name": "튼튼한 갑옷",
+          "description": "아군 마린 최대체력 +10",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [
+              {
+                "table": "units",
+                "ids": [
+                  0
+                ],
+                "field": "maxHp",
+                "op": "add",
+                "value": 2560
+              }
+            ]
+          }
+        }
+      ],
+      "ranks": [
+        {
+          "rank": 1,
+          "reserved_bit_index": 109,
+          "proposed_id": "561e719a-e0ee-5b67-955a-3088aede2842",
+          "implemented": true,
+          "effect": null
+        },
+        {
+          "rank": 2,
+          "reserved_bit_index": 110,
+          "proposed_id": "6a313d65-c54c-503c-afa0-611b8166e3f5",
+          "implemented": true,
+          "effect": null
+        },
+        {
+          "rank": 3,
+          "reserved_bit_index": 111,
+          "proposed_id": "2cd00cef-1ce6-57cc-bb01-866909ee266b",
+          "implemented": true,
+          "effect": null
+        }
+      ],
+      "design_requirement": "각 단계는2~3효효과를 묶은 추가강화. 다음 단계 하나만 후보에 표시. 기존 donor효과는 재부여하지 않고 기존 보유만 정확히 유지.",
+      "special_mechanic_legacy_bits": []
+    },
+    {
+      "family_id": "terran:firebat_assault",
+      "race": "terran",
+      "name": "화염 돌격대",
+      "role": "anti_light_splash",
+      "target_units": [
+        32
+      ],
+      "legacy_donor_bits": [
+        3,
+        21,
+        22
+      ],
+      "legacy_donor_ids": [
+        "b4a56885-dcef-4fd7-9b1d-1d07fa0cbd5c",
+        "4e6aec23-a4ae-587b-b726-a1bc3b99de85",
+        "d417aff9-333a-5843-895f-3d38c611f470"
+      ],
+      "legacy_effects": [
+        {
+          "bit_index": 3,
+          "id": "b4a56885-dcef-4fd7-9b1d-1d07fa0cbd5c",
+          "name": "화염갑옷",
+          "description": "아군 파이어뱃 최대체력 100으로 변경",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [
+              {
+                "table": "units",
+                "ids": [
+                  32
+                ],
+                "field": "maxHp",
+                "op": "set",
+                "value": 25600
+              }
+            ]
+          }
+        },
+        {
+          "bit_index": 21,
+          "id": "4e6aec23-a4ae-587b-b726-a1bc3b99de85",
+          "name": "두꺼운 방열 장갑",
+          "description": "아군 파이어뱃 방어력 +1",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [
+              {
+                "table": "units",
+                "ids": [
+                  32
+                ],
+                "field": "armor",
+                "op": "add",
+                "value": 1
+              }
+            ]
+          }
+        },
+        {
+          "bit_index": 22,
+          "id": "d417aff9-333a-5843-895f-3d38c611f470",
+          "name": "고압 화염 노즐",
+          "description": "아군 파이어뱃 화염 타격당 공격력 +2",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [
+              {
+                "table": "weapons",
+                "ids": [
+                  25
+                ],
+                "field": "damageAmount",
+                "op": "add",
+                "value": 2
+              }
+            ]
+          }
+        }
+      ],
+      "ranks": [
+        {
+          "rank": 1,
+          "reserved_bit_index": 112,
+          "proposed_id": "6f0d2f26-897a-5d7c-b9ae-fb6df39ec611",
+          "implemented": true,
+          "effect": null
+        },
+        {
+          "rank": 2,
+          "reserved_bit_index": 113,
+          "proposed_id": "ac585973-cd5f-5489-bbfa-6e299be74ca6",
+          "implemented": true,
+          "effect": null
+        },
+        {
+          "rank": 3,
+          "reserved_bit_index": 114,
+          "proposed_id": "f1e4a234-52d8-5b5e-9b3e-5705d29f3e60",
+          "implemented": true,
+          "effect": null
+        }
+      ],
+      "design_requirement": "각 단계는2~3효효과를 묶은 추가강화. 다음 단계 하나만 후보에 표시. 기존 donor효과는 재부여하지 않고 기존 보유만 정확히 유지.",
+      "special_mechanic_legacy_bits": []
+    },
+    {
+      "family_id": "terran:ghost_covert",
+      "race": "terran",
+      "name": "유령 특수전",
+      "role": "specialist",
+      "target_units": [
+        1
+      ],
+      "legacy_donor_bits": [
+        4,
+        5
+      ],
+      "legacy_donor_ids": [
+        "3de768b5-3b1c-4aa2-a80f-fa72d5e37a73",
+        "61ca33c4-6b46-45fd-bf48-36e92fc30067"
+      ],
+      "legacy_effects": [
+        {
+          "bit_index": 4,
+          "id": "3de768b5-3b1c-4aa2-a80f-fa72d5e37a73",
+          "name": "유령이 나타났다!",
+          "description": "아군 고스트 최대체력 +30",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [
+              {
+                "table": "units",
+                "ids": [
+                  1
+                ],
+                "field": "maxHp",
+                "op": "add",
+                "value": 7680
+              }
+            ]
+          }
+        },
+        {
+          "bit_index": 5,
+          "id": "61ca33c4-6b46-45fd-bf48-36e92fc30067",
+          "name": "유령의 저격총",
+          "description": "아군 고스트 공격 유형을 일반형으로 변경",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [
+              {
+                "table": "weapons",
+                "ids": [
+                  2
+                ],
+                "field": "damageType",
+                "op": "set",
+                "value": 3
+              }
+            ]
+          }
+        }
+      ],
+      "ranks": [
+        {
+          "rank": 1,
+          "reserved_bit_index": 115,
+          "proposed_id": "8720d880-b17d-56e1-9a3b-9e10b245bc0b",
+          "implemented": true,
+          "effect": null
+        },
+        {
+          "rank": 2,
+          "reserved_bit_index": 116,
+          "proposed_id": "ad8d81dd-9389-54e7-92c2-59b9a5289c3a",
+          "implemented": true,
+          "effect": null
+        },
+        {
+          "rank": 3,
+          "reserved_bit_index": 117,
+          "proposed_id": "0b46572c-e90b-5df5-9018-36f1f44f4776",
+          "implemented": true,
+          "effect": null
+        }
+      ],
+      "design_requirement": "각 단계는2~3효효과를 묶은 추가강화. 다음 단계 하나만 후보에 표시. 기존 donor효과는 재부여하지 않고 기존 보유만 정확히 유지.",
+      "special_mechanic_legacy_bits": []
+    },
+    {
+      "family_id": "terran:vulture_raider",
+      "race": "terran",
+      "name": "기동 유격대",
+      "role": "fast_ground",
+      "target_units": [
+        2
+      ],
+      "legacy_donor_bits": [
+        6
+      ],
+      "legacy_donor_ids": [
+        "bec5aa24-1479-4c55-9de9-ddb843ddc039"
+      ],
+      "legacy_effects": [
+        {
+          "bit_index": 6,
+          "id": "bec5aa24-1479-4c55-9de9-ddb843ddc039",
+          "name": "75원짜리가 이게 말이되냐?",
+          "description": "아군 벌쳐 공격 주기 20% 감소",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [
+              {
+                "table": "weapons",
+                "ids": [
+                  4
+                ],
+                "field": "cooldown",
+                "op": "ratio",
+                "value": [
+                  4,
+                  5
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "ranks": [
+        {
+          "rank": 1,
+          "reserved_bit_index": 118,
+          "proposed_id": "abca8a15-8b69-516b-87ec-475b85d4db6c",
+          "implemented": true,
+          "effect": null
+        },
+        {
+          "rank": 2,
+          "reserved_bit_index": 119,
+          "proposed_id": "0d6c41bf-a4eb-5c3d-a3ac-123ba227ceef",
+          "implemented": true,
+          "effect": null
+        },
+        {
+          "rank": 3,
+          "reserved_bit_index": 120,
+          "proposed_id": "7e425b9c-843c-546f-8ec4-09206be2c273",
+          "implemented": true,
+          "effect": null
+        }
+      ],
+      "design_requirement": "각 단계는2~3효효과를 묶은 추가강화. 다음 단계 하나만 후보에 표시. 기존 donor효과는 재부여하지 않고 기존 보유만 정확히 유지.",
+      "special_mechanic_legacy_bits": []
+    },
+    {
+      "family_id": "terran:tank_siege",
+      "race": "terran",
+      "name": "기갑 공성대",
+      "role": "siege",
+      "target_units": [
+        5,
+        6,
+        30,
+        31
+      ],
+      "legacy_donor_bits": [
+        8,
+        9
+      ],
+      "legacy_donor_ids": [
+        "8b6431dd-5553-4743-a43f-ef61172b46f6",
+        "fde47c79-594b-4731-9669-0df4044da1f4"
+      ],
+      "legacy_effects": [
+        {
+          "bit_index": 8,
+          "id": "8b6431dd-5553-4743-a43f-ef61172b46f6",
+          "name": "일부는 퉁퉁퉁퉁퉁퉁!",
+          "description": "아군 시즈탱크 탱크 모드 사거리 +1",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [
+              {
+                "table": "weapons",
+                "ids": [
+                  11
+                ],
+                "field": "maxRange",
+                "op": "add",
+                "value": 32
+              },
+              {
+                "table": "units",
+                "ids": [
+                  5,
+                  6
+                ],
+                "field": "seekRange",
+                "op": "add",
+                "value": 1
+              }
+            ]
+          }
+        },
+        {
+          "bit_index": 9,
+          "id": "fde47c79-594b-4731-9669-0df4044da1f4",
+          "name": "일부는 시즈모드 됐고",
+          "description": "아군 시즈탱크 시즈 모드 사거리 +2",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [
+              {
+                "table": "weapons",
+                "ids": [
+                  27
+                ],
+                "field": "maxRange",
+                "op": "add",
+                "value": 64
+              },
+              {
+                "table": "units",
+                "ids": [
+                  30,
+                  31
+                ],
+                "field": "seekRange",
+                "op": "add",
+                "value": 2
+              }
+            ]
+          }
+        }
+      ],
+      "ranks": [
+        {
+          "rank": 1,
+          "reserved_bit_index": 121,
+          "proposed_id": "96d727c0-2753-5fc1-bf65-cb3c501522ba",
+          "implemented": true,
+          "effect": null
+        },
+        {
+          "rank": 2,
+          "reserved_bit_index": 122,
+          "proposed_id": "0d2773e8-56a1-5351-8bae-0d20ce6b9c71",
+          "implemented": true,
+          "effect": null
+        },
+        {
+          "rank": 3,
+          "reserved_bit_index": 123,
+          "proposed_id": "27c83ba7-a9c2-5d1e-8903-b4628196cd75",
+          "implemented": true,
+          "effect": null
+        }
+      ],
+      "design_requirement": "각 단계는2~3효효과를 묶은 추가강화. 다음 단계 하나만 후보에 표시. 기존 donor효과는 재부여하지 않고 기존 보유만 정확히 유지.",
+      "special_mechanic_legacy_bits": []
+    },
+    {
+      "family_id": "terran:goliath_dual",
+      "race": "terran",
+      "name": "복합 대공 기갑",
+      "role": "ground_air_coverage",
+      "target_units": [
+        3,
+        4
+      ],
+      "legacy_donor_bits": [
+        10,
+        17,
+        25,
+        26,
+        104
+      ],
+      "legacy_donor_ids": [
+        "911cc0df-8191-49ff-a058-8390ce15e910",
+        "0f78b098-5745-47de-b9cb-c74e3beb411f",
+        "ff284e41-e8d7-53dd-946a-de2807c134dd",
+        "f4828e4e-8b66-5d82-96fe-02763018b98f",
+        "5e871f9a-f71b-475b-82a1-0879d54d9d30"
+      ],
+      "legacy_effects": [
+        {
+          "bit_index": 10,
+          "id": "911cc0df-8191-49ff-a058-8390ce15e910",
+          "name": "새로운 몸빵 유닛",
+          "description": "아군 골리앗 최대체력 +20",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [
+              {
+                "table": "units",
+                "ids": [
+                  3
+                ],
+                "field": "maxHp",
+                "op": "add",
+                "value": 5120
+              }
+            ]
+          }
+        },
+        {
+          "bit_index": 17,
+          "id": "0f78b098-5745-47de-b9cb-c74e3beb411f",
+          "name": "고관절 개선",
+          "description": "아군 골리앗 이동속도 20% 증가",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [],
+            "movement": [
+              {
+                "unit_id": 3,
+                "numerator": 120,
+                "denominator": 100
+              }
+            ]
+          }
+        },
+        {
+          "bit_index": 25,
+          "id": "ff284e41-e8d7-53dd-946a-de2807c134dd",
+          "name": "기관포 구경 확대",
+          "description": "아군 골리앗 지상 공격력 +3",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [
+              {
+                "table": "weapons",
+                "ids": [
+                  7
+                ],
+                "field": "damageAmount",
+                "op": "add",
+                "value": 3
+              }
+            ]
+          }
+        },
+        {
+          "bit_index": 26,
+          "id": "f4828e4e-8b66-5d82-96fe-02763018b98f",
+          "name": "보행 병기의 추가 장갑",
+          "description": "아군 골리앗 방어력 +1",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [
+              {
+                "table": "units",
+                "ids": [
+                  3
+                ],
+                "field": "armor",
+                "op": "add",
+                "value": 1
+              }
+            ]
+          }
+        },
+        {
+          "bit_index": 104,
+          "id": "5e871f9a-f71b-475b-82a1-0879d54d9d30",
+          "name": "동시공격",
+          "description": "아군 골리앗 지상 1기·공중 1기 동시 공격 (독립 주기)",
+          "effect": {
+            "type": "multi_target",
+            "unit_id": 3,
+            "mode": "independent_layers",
+            "max_targets": 2,
+            "full_weapon_damage": true,
+            "recursive_secondary_attacks": false
+          }
+        }
+      ],
+      "ranks": [
+        {
+          "rank": 1,
+          "reserved_bit_index": 124,
+          "proposed_id": "fad2b926-8286-5e72-8bef-359a2a41c621",
+          "implemented": true,
+          "effect": null
+        },
+        {
+          "rank": 2,
+          "reserved_bit_index": 125,
+          "proposed_id": "48227345-26b3-556e-ad60-d32158920db2",
+          "implemented": true,
+          "effect": null
+        },
+        {
+          "rank": 3,
+          "reserved_bit_index": 126,
+          "proposed_id": "e5495b31-4d32-57de-a848-597f71d0d20e",
+          "implemented": true,
+          "effect": null
+        }
+      ],
+      "design_requirement": "각 단계는2~3효효과를 묶은 추가강화. 다음 단계 하나만 후보에 표시. 기존 donor효과는 재부여하지 않고 기존 보유만 정확히 유지.",
+      "special_mechanic_legacy_bits": [
+        104
+      ]
+    },
+    {
+      "family_id": "terran:wraith_wing",
+      "race": "terran",
+      "name": "은폐 전투비행대",
+      "role": "multirole_air",
+      "target_units": [
+        8
+      ],
+      "legacy_donor_bits": [
+        11,
+        12,
+        18
+      ],
+      "legacy_donor_ids": [
+        "adcf3a4f-948d-4c2e-b184-e48544c7afcf",
+        "61c98944-9414-47f2-bcdf-6d4ff0ba5598",
+        "dc005b01-501a-4861-9d56-b971125e134a"
+      ],
+      "legacy_effects": [
+        {
+          "bit_index": 11,
+          "id": "adcf3a4f-948d-4c2e-b184-e48544c7afcf",
+          "name": "레이저포 개선",
+          "description": "아군 레이스 지상·공중 사거리 +2",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [
+              {
+                "table": "weapons",
+                "ids": [
+                  15,
+                  16
+                ],
+                "field": "maxRange",
+                "op": "add",
+                "value": 64
+              },
+              {
+                "table": "units",
+                "ids": [
+                  8
+                ],
+                "field": "seekRange",
+                "op": "add",
+                "value": 2
+              }
+            ]
+          }
+        },
+        {
+          "bit_index": 12,
+          "id": "61c98944-9414-47f2-bcdf-6d4ff0ba5598",
+          "name": "종이 비행기 개선 사업",
+          "description": "아군 레이스 최대체력 +30",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [
+              {
+                "table": "units",
+                "ids": [
+                  8
+                ],
+                "field": "maxHp",
+                "op": "add",
+                "value": 7680
+              }
+            ]
+          }
+        },
+        {
+          "bit_index": 18,
+          "id": "dc005b01-501a-4861-9d56-b971125e134a",
+          "name": "레이스 출격 준비 완료",
+          "description": "아군 레이스 이동속도 20% 증가",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [],
+            "movement": [
+              {
+                "unit_id": 8,
+                "numerator": 120,
+                "denominator": 100
+              }
+            ]
+          }
+        }
+      ],
+      "ranks": [
+        {
+          "rank": 1,
+          "reserved_bit_index": 127,
+          "proposed_id": "84b15f00-3e7e-5dde-93c1-fa178a776eca",
+          "implemented": true,
+          "effect": null
+        },
+        {
+          "rank": 2,
+          "reserved_bit_index": 128,
+          "proposed_id": "05a3797f-e130-5c5f-9ed8-544aed52889c",
+          "implemented": true,
+          "effect": null
+        },
+        {
+          "rank": 3,
+          "reserved_bit_index": 129,
+          "proposed_id": "d9843a57-f8cb-5e81-a402-c3b5ae49c167",
+          "implemented": true,
+          "effect": null
+        }
+      ],
+      "design_requirement": "각 단계는2~3효효과를 묶은 추가강화. 다음 단계 하나만 후보에 표시. 기존 donor효과는 재부여하지 않고 기존 보유만 정확히 유지.",
+      "special_mechanic_legacy_bits": []
+    },
+    {
+      "family_id": "terran:valkyrie_barrage",
+      "race": "terran",
+      "name": "대공 미사일 편대",
+      "role": "anti_air_splash",
+      "target_units": [
+        58
+      ],
+      "legacy_donor_bits": [
+        13,
+        28,
+        30,
+        32
+      ],
+      "legacy_donor_ids": [
+        "31e8e8c8-347d-456b-bd0d-cae47f591eb8",
+        "5494c103-af5a-59a2-bb3e-491784fa4a32",
+        "9316f1ce-9294-54ea-b4e4-812d1c75dfba",
+        "02639414-0de5-5a1d-afdc-04e3fe871032"
+      ],
+      "legacy_effects": [
+        {
+          "bit_index": 13,
+          "id": "31e8e8c8-347d-456b-bd0d-cae47f591eb8",
+          "name": "발키리 준비 완료",
+          "description": "아군 발키리 공격 주기 20% 감소",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [
+              {
+                "table": "weapons",
+                "ids": [
+                  103
+                ],
+                "field": "cooldown",
+                "op": "ratio",
+                "value": [
+                  4,
+                  5
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "bit_index": 28,
+          "id": "5494c103-af5a-59a2-bb3e-491784fa4a32",
+          "name": "미사일함 생존 설계",
+          "description": "아군 발키리 최대체력 +40",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [
+              {
+                "table": "units",
+                "ids": [
+                  58
+                ],
+                "field": "maxHp",
+                "op": "add",
+                "value": 10240
+              }
+            ]
+          }
+        },
+        {
+          "bit_index": 30,
+          "id": "9316f1ce-9294-54ea-b4e4-812d1c75dfba",
+          "name": "멀리 뻗는 미사일 레일",
+          "description": "아군 발키리 공중 사거리 +1",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [
+              {
+                "table": "weapons",
+                "ids": [
+                  103
+                ],
+                "field": "maxRange",
+                "op": "add",
+                "value": 32
+              },
+              {
+                "table": "units",
+                "ids": [
+                  58
+                ],
+                "field": "seekRange",
+                "op": "add",
+                "value": 1
+              }
+            ]
+          }
+        },
+        {
+          "bit_index": 32,
+          "id": "02639414-0de5-5a1d-afdc-04e3fe871032",
+          "name": "밀집 편대용 폭발탄",
+          "description": "아군 발키리 미사일 폭발 반경 20% 증가",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [
+              {
+                "table": "weapons",
+                "ids": [
+                  103
+                ],
+                "field": "innerSplash",
+                "op": "ratio",
+                "value": [
+                  6,
+                  5
+                ]
+              },
+              {
+                "table": "weapons",
+                "ids": [
+                  103
+                ],
+                "field": "middleSplash",
+                "op": "ratio",
+                "value": [
+                  6,
+                  5
+                ]
+              },
+              {
+                "table": "weapons",
+                "ids": [
+                  103
+                ],
+                "field": "outerSplash",
+                "op": "ratio",
+                "value": [
+                  6,
+                  5
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "ranks": [
+        {
+          "rank": 1,
+          "reserved_bit_index": 130,
+          "proposed_id": "5c2f7e22-20d2-509d-91f4-d9af92bc312e",
+          "implemented": true,
+          "effect": null
+        },
+        {
+          "rank": 2,
+          "reserved_bit_index": 131,
+          "proposed_id": "4b99ee36-6910-5bd9-8c8a-39c8c5acd8dd",
+          "implemented": true,
+          "effect": null
+        },
+        {
+          "rank": 3,
+          "reserved_bit_index": 132,
+          "proposed_id": "5d349c6d-8082-5978-b536-e3e8980e0320",
+          "implemented": true,
+          "effect": null
+        }
+      ],
+      "design_requirement": "각 단계는2~3효효과를 묶은 추가강화. 다음 단계 하나만 후보에 표시. 기존 donor효과는 재부여하지 않고 기존 보유만 정확히 유지.",
+      "special_mechanic_legacy_bits": []
+    },
+    {
+      "family_id": "terran:battlecruiser_flagship",
+      "race": "terran",
+      "name": "다중 포격 전함",
+      "role": "capital_air",
+      "target_units": [
+        12
+      ],
+      "legacy_donor_bits": [
+        14,
+        20,
+        105
+      ],
+      "legacy_donor_ids": [
+        "e4565c77-cc6f-43ea-91ee-1448e52cc757",
+        "af9ac5eb-ba74-4fe5-b3bf-b9e69a3a87f4",
+        "f08eec6e-b40c-4b25-8fb2-cd5710d54401"
+      ],
+      "legacy_effects": [
+        {
+          "bit_index": 14,
+          "id": "e4565c77-cc6f-43ea-91ee-1448e52cc757",
+          "name": "무기 개선작업",
+          "description": "아군 배틀크루저 지상·공중 사거리 +2",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [
+              {
+                "table": "weapons",
+                "ids": [
+                  19,
+                  20
+                ],
+                "field": "maxRange",
+                "op": "add",
+                "value": 64
+              },
+              {
+                "table": "units",
+                "ids": [
+                  12
+                ],
+                "field": "seekRange",
+                "op": "add",
+                "value": 2
+              }
+            ]
+          }
+        },
+        {
+          "bit_index": 20,
+          "id": "af9ac5eb-ba74-4fe5-b3bf-b9e69a3a87f4",
+          "name": "엔진 개선",
+          "description": "아군 배틀크루저 이동속도 50% 증가",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [],
+            "movement": [
+              {
+                "unit_id": 12,
+                "numerator": 150,
+                "denominator": 100
+              }
+            ]
+          }
+        },
+        {
+          "bit_index": 105,
+          "id": "f08eec6e-b40c-4b25-8fb2-cd5710d54401",
+          "name": "다중 무기 작업",
+          "description": "아군 배틀크루저 최대 3대상 동시 공격 (원래 피해)",
+          "effect": {
+            "type": "multi_target",
+            "unit_id": 12,
+            "mode": "shared_cycle",
+            "max_targets": 3,
+            "full_weapon_damage": true,
+            "recursive_secondary_attacks": false
+          }
+        }
+      ],
+      "ranks": [
+        {
+          "rank": 1,
+          "reserved_bit_index": 133,
+          "proposed_id": "018533d3-af59-589c-b86c-925c4dcd1f6c",
+          "implemented": true,
+          "effect": null
+        },
+        {
+          "rank": 2,
+          "reserved_bit_index": 134,
+          "proposed_id": "12eef682-16df-523f-8540-b04dbde025a9",
+          "implemented": true,
+          "effect": null
+        },
+        {
+          "rank": 3,
+          "reserved_bit_index": 135,
+          "proposed_id": "ed2f2775-7bcc-5584-9b94-67852cf7ca68",
+          "implemented": true,
+          "effect": null
+        }
+      ],
+      "design_requirement": "각 단계는2~3효효과를 묶은 추가강화. 다음 단계 하나만 후보에 표시. 기존 donor효과는 재부여하지 않고 기존 보유만 정확히 유지.",
+      "special_mechanic_legacy_bits": [
+        105
+      ]
+    },
+    {
+      "family_id": "terran:dropship_assault",
+      "race": "terran",
+      "name": "강습 수송대",
+      "role": "transport",
+      "target_units": [
+        11
+      ],
+      "legacy_donor_bits": [
+        19,
+        27,
+        31
+      ],
+      "legacy_donor_ids": [
+        "08dc86c3-0018-43d7-a1ca-092a863bf4dd",
+        "31325774-f8b6-5124-b076-05c2e94f0555",
+        "d6f25615-a491-5eee-87fd-73031e4a18b2"
+      ],
+      "legacy_effects": [
+        {
+          "bit_index": 19,
+          "id": "08dc86c3-0018-43d7-a1ca-092a863bf4dd",
+          "name": "신속 이동",
+          "description": "아군 드롭십 이동속도 100% 증가",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [],
+            "movement": [
+              {
+                "unit_id": 11,
+                "numerator": 200,
+                "denominator": 100
+              }
+            ]
+          }
+        },
+        {
+          "bit_index": 27,
+          "id": "31325774-f8b6-5124-b076-05c2e94f0555",
+          "name": "튼튼한 수송 동체",
+          "description": "아군 드롭십 최대체력 +40",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [
+              {
+                "table": "units",
+                "ids": [
+                  11
+                ],
+                "field": "maxHp",
+                "op": "add",
+                "value": 10240
+              }
+            ]
+          }
+        },
+        {
+          "bit_index": 31,
+          "id": "d6f25615-a491-5eee-87fd-73031e4a18b2",
+          "name": "접이식 수송 좌석",
+          "description": "아군 드롭십 수송 공간 +4칸",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [
+              {
+                "table": "units",
+                "ids": [
+                  11
+                ],
+                "field": "spaceProvided",
+                "op": "add",
+                "value": 4
+              }
+            ]
+          }
+        }
+      ],
+      "ranks": [
+        {
+          "rank": 1,
+          "reserved_bit_index": 136,
+          "proposed_id": "51adfd17-16d2-57e4-bf58-1fe330cdd14e",
+          "implemented": true,
+          "effect": null
+        },
+        {
+          "rank": 2,
+          "reserved_bit_index": 137,
+          "proposed_id": "f598c199-13a7-5cc4-8d45-0b19b8671501",
+          "implemented": true,
+          "effect": null
+        },
+        {
+          "rank": 3,
+          "reserved_bit_index": 138,
+          "proposed_id": "6a777b73-07eb-5cb1-9d53-090f36d79bc6",
+          "implemented": true,
+          "effect": null
+        }
+      ],
+      "design_requirement": "각 단계는2~3효효과를 묶은 추가강화. 다음 단계 하나만 후보에 표시. 기존 donor효과는 재부여하지 않고 기존 보유만 정확히 유지.",
+      "special_mechanic_legacy_bits": []
+    },
+    {
+      "family_id": "terran:science_support",
+      "race": "terran",
+      "name": "전장 과학지원",
+      "role": "caster_detector",
+      "target_units": [
+        9
+      ],
+      "legacy_donor_bits": [
+        29,
+        33
+      ],
+      "legacy_donor_ids": [
+        "220b33e4-9460-5610-b765-86c536482a8d",
+        "f6286deb-00ba-5ade-bade-5f51b4f22e7b"
+      ],
+      "legacy_effects": [
+        {
+          "bit_index": 29,
+          "id": "220b33e4-9460-5610-b765-86c536482a8d",
+          "name": "과학선 보호 격벽",
+          "description": "아군 사이언스 베슬 최대체력 +40",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [
+              {
+                "table": "units",
+                "ids": [
+                  9
+                ],
+                "field": "maxHp",
+                "op": "add",
+                "value": 10240
+              }
+            ]
+          }
+        },
+        {
+          "bit_index": 33,
+          "id": "f6286deb-00ba-5ade-bade-5f51b4f22e7b",
+          "name": "과학선 광역 감지기",
+          "description": "아군 사이언스 베슬 시야·탐지 범위 +2",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [
+              {
+                "table": "units",
+                "ids": [
+                  9
+                ],
+                "field": "sightRange",
+                "op": "add",
+                "value": 2
+              }
+            ]
+          }
+        }
+      ],
+      "ranks": [
+        {
+          "rank": 1,
+          "reserved_bit_index": 139,
+          "proposed_id": "dfe4a240-712f-54f3-8ab6-545fe315dd3d",
+          "implemented": true,
+          "effect": null
+        },
+        {
+          "rank": 2,
+          "reserved_bit_index": 140,
+          "proposed_id": "06fef31c-eb4e-5361-93f5-24df16e8613c",
+          "implemented": true,
+          "effect": null
+        },
+        {
+          "rank": 3,
+          "reserved_bit_index": 141,
+          "proposed_id": "5d7c6a8e-615a-5534-b8f7-2dd33fcbff16",
+          "implemented": true,
+          "effect": null
+        }
+      ],
+      "design_requirement": "각 단계는2~3효효과를 묶은 추가강화. 다음 단계 하나만 후보에 표시. 기존 donor효과는 재부여하지 않고 기존 보유만 정확히 유지.",
+      "special_mechanic_legacy_bits": []
+    },
+    {
+      "family_id": "terran:medic_support",
+      "race": "terran",
+      "name": "야전 구급대",
+      "role": "healer",
+      "target_units": [
+        34
+      ],
+      "legacy_donor_bits": [
+        23,
+        24
+      ],
+      "legacy_donor_ids": [
+        "6d59aecf-b1a8-50e1-b33f-8fba3bc851a0",
+        "4b4ddc45-9884-5bf3-8063-ad76c6d43495"
+      ],
+      "legacy_effects": [
+        {
+          "bit_index": 23,
+          "id": "6d59aecf-b1a8-50e1-b33f-8fba3bc851a0",
+          "name": "의무관 방호복",
+          "description": "아군 메딕 최대체력 +20",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [
+              {
+                "table": "units",
+                "ids": [
+                  34
+                ],
+                "field": "maxHp",
+                "op": "add",
+                "value": 5120
+              }
+            ]
+          }
+        },
+        {
+          "bit_index": 24,
+          "id": "4b4ddc45-9884-5bf3-8063-ad76c6d43495",
+          "name": "구급반의 빠른 발",
+          "description": "아군 메딕 이동속도 15% 증가",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [],
+            "movement": [
+              {
+                "unit_id": 34,
+                "numerator": 115,
+                "denominator": 100
+              }
+            ]
+          }
+        }
+      ],
+      "ranks": [
+        {
+          "rank": 1,
+          "reserved_bit_index": 142,
+          "proposed_id": "c7b9cfd1-8cf5-503b-bd02-213e284e87ae",
+          "implemented": true,
+          "effect": null
+        },
+        {
+          "rank": 2,
+          "reserved_bit_index": 143,
+          "proposed_id": "d4449a1e-aa7b-5e6a-a20d-76e4ac8f2308",
+          "implemented": true,
+          "effect": null
+        },
+        {
+          "rank": 3,
+          "reserved_bit_index": 144,
+          "proposed_id": "f1f42be0-6060-5b0d-b370-9a22ad89ac73",
+          "implemented": true,
+          "effect": null
+        }
+      ],
+      "design_requirement": "각 단계는2~3효효과를 묶은 추가강화. 다음 단계 하나만 후보에 표시. 기존 donor효과는 재부여하지 않고 기존 보유만 정확히 유지.",
+      "special_mechanic_legacy_bits": []
+    },
+    {
+      "family_id": "zerg:zergling_claws",
+      "race": "zerg",
+      "name": "저글링 돌격 발톱",
+      "role": "melee_core",
+      "target_units": [
+        37
+      ],
+      "legacy_donor_bits": [
+        35,
+        49
+      ],
+      "legacy_donor_ids": [
+        "ef8ab539-27b9-50d7-8334-ab5f9c8d9a5f",
+        "51941deb-1b6b-50b6-a8b8-b25bd1fb43c7"
+      ],
+      "legacy_effects": [
+        {
+          "bit_index": 35,
+          "id": "ef8ab539-27b9-50d7-8334-ab5f9c8d9a5f",
+          "name": "쉴 틈 없는 발톱",
+          "description": "아군 저글링 공격 주기 20% 감소",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [
+              {
+                "table": "weapons",
+                "ids": [
+                  35
+                ],
+                "field": "cooldown",
+                "op": "ratio",
+                "value": [
+                  4,
+                  5
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "bit_index": 49,
+          "id": "51941deb-1b6b-50b6-a8b8-b25bd1fb43c7",
+          "name": "작은 발톱도 날카롭게",
+          "description": "아군 저글링 공격력 +1",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [
+              {
+                "table": "weapons",
+                "ids": [
+                  35
+                ],
+                "field": "damageAmount",
+                "op": "add",
+                "value": 1
+              }
+            ]
+          }
+        }
+      ],
+      "ranks": [
+        {
+          "rank": 1,
+          "reserved_bit_index": 145,
+          "proposed_id": "a4d66f10-a245-59e3-b2eb-a3422d90e9e3",
+          "implemented": true,
+          "effect": null
+        },
+        {
+          "rank": 2,
+          "reserved_bit_index": 146,
+          "proposed_id": "20292e8a-625e-506f-84b4-2c24754757e9",
+          "implemented": true,
+          "effect": null
+        },
+        {
+          "rank": 3,
+          "reserved_bit_index": 147,
+          "proposed_id": "715e3e5e-d7d4-5eec-b504-aa8c0943bdfe",
+          "implemented": true,
+          "effect": null
+        }
+      ],
+      "design_requirement": "각 단계는2~3효효과를 묶은 추가강화. 다음 단계 하나만 후보에 표시. 기존 donor효과는 재부여하지 않고 기존 보유만 정확히 유지.",
+      "special_mechanic_legacy_bits": []
+    },
+    {
+      "family_id": "zerg:zergling_carapace",
+      "race": "zerg",
+      "name": "군체 전열 갑각",
+      "role": "frontline_survival",
+      "target_units": [
+        37,
+        38
+      ],
+      "legacy_donor_bits": [
+        34,
+        50
+      ],
+      "legacy_donor_ids": [
+        "a6948251-7b11-51ce-899d-0816edd0995a",
+        "08063950-39d5-5e62-8488-d5226f097db1"
+      ],
+      "legacy_effects": [
+        {
+          "bit_index": 34,
+          "id": "a6948251-7b11-51ce-899d-0816edd0995a",
+          "name": "작지만 단단하다",
+          "description": "아군 저글링 최대체력 +10",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [
+              {
+                "table": "units",
+                "ids": [
+                  37
+                ],
+                "field": "maxHp",
+                "op": "add",
+                "value": 2560
+              }
+            ]
+          }
+        },
+        {
+          "bit_index": 50,
+          "id": "08063950-39d5-5e62-8488-d5226f097db1",
+          "name": "배까지 감싼 갑각",
+          "description": "아군 저글링 방어력 +1",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [
+              {
+                "table": "units",
+                "ids": [
+                  37
+                ],
+                "field": "armor",
+                "op": "add",
+                "value": 1
+              }
+            ]
+          }
+        }
+      ],
+      "ranks": [
+        {
+          "rank": 1,
+          "reserved_bit_index": 148,
+          "proposed_id": "29173ce2-0a04-5ef7-9477-3556ebf5b734",
+          "implemented": true,
+          "effect": null
+        },
+        {
+          "rank": 2,
+          "reserved_bit_index": 149,
+          "proposed_id": "da1a880c-10d6-5d13-b9c3-09e406fb2aeb",
+          "implemented": true,
+          "effect": null
+        },
+        {
+          "rank": 3,
+          "reserved_bit_index": 150,
+          "proposed_id": "13a417cd-3443-5b12-a363-1003ec66c3ac",
+          "implemented": true,
+          "effect": null
+        }
+      ],
+      "design_requirement": "각 단계는2~3효효과를 묶은 추가강화. 다음 단계 하나만 후보에 표시. 기존 donor효과는 재부여하지 않고 기존 보유만 정확히 유지.",
+      "special_mechanic_legacy_bits": []
+    },
+    {
+      "family_id": "zerg:hydralisk_spines",
+      "race": "zerg",
+      "name": "히드라 가시 전열",
+      "role": "ranged_ground_air",
+      "target_units": [
+        38
+      ],
+      "legacy_donor_bits": [
+        36,
+        37,
+        51,
+        52
+      ],
+      "legacy_donor_ids": [
+        "50397b65-4a2d-537f-9f37-cc535b98cde4",
+        "10a554d6-3258-50f2-bcce-f0cc05a5a21c",
+        "7c993c03-1411-5c14-9661-51056fca369d",
+        "50938e75-f810-50e5-9755-2b624f55a663"
+      ],
+      "legacy_effects": [
+        {
+          "bit_index": 36,
+          "id": "50397b65-4a2d-537f-9f37-cc535b98cde4",
+          "name": "한 칸 더 뻗는 가시",
+          "description": "아군 히드라리스크 지상·공중 사거리 +1",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [
+              {
+                "table": "weapons",
+                "ids": [
+                  38
+                ],
+                "field": "maxRange",
+                "op": "add",
+                "value": 32
+              },
+              {
+                "table": "units",
+                "ids": [
+                  38
+                ],
+                "field": "seekRange",
+                "op": "add",
+                "value": 1
+              }
+            ]
+          }
+        },
+        {
+          "bit_index": 37,
+          "id": "10a554d6-3258-50f2-bcce-f0cc05a5a21c",
+          "name": "단단한 비늘",
+          "description": "아군 히드라리스크 최대체력 +20",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [
+              {
+                "table": "units",
+                "ids": [
+                  38
+                ],
+                "field": "maxHp",
+                "op": "add",
+                "value": 5120
+              }
+            ]
+          }
+        },
+        {
+          "bit_index": 51,
+          "id": "7c993c03-1411-5c14-9661-51056fca369d",
+          "name": "굵게 자란 가시",
+          "description": "아군 히드라리스크 지상·공중 공격력 +2",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [
+              {
+                "table": "weapons",
+                "ids": [
+                  38
+                ],
+                "field": "damageAmount",
+                "op": "add",
+                "value": 2
+              }
+            ]
+          }
+        },
+        {
+          "bit_index": 52,
+          "id": "50938e75-f810-50e5-9755-2b624f55a663",
+          "name": "미끄러지는 복부",
+          "description": "아군 히드라리스크 이동속도 15% 증가",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [],
+            "movement": [
+              {
+                "unit_id": 38,
+                "numerator": 115,
+                "denominator": 100
+              }
+            ]
+          }
+        }
+      ],
+      "ranks": [
+        {
+          "rank": 1,
+          "reserved_bit_index": 151,
+          "proposed_id": "fa94756d-4fae-5218-8834-2e919cbf4492",
+          "implemented": true,
+          "effect": null
+        },
+        {
+          "rank": 2,
+          "reserved_bit_index": 152,
+          "proposed_id": "d752b515-4249-5efc-952d-7af948864207",
+          "implemented": true,
+          "effect": null
+        },
+        {
+          "rank": 3,
+          "reserved_bit_index": 153,
+          "proposed_id": "de8fcbca-cdf6-5016-95a9-db3ba92e2ee3",
+          "implemented": true,
+          "effect": null
+        }
+      ],
+      "design_requirement": "각 단계는2~3효효과를 묶은 추가강화. 다음 단계 하나만 후보에 표시. 기존 donor효과는 재부여하지 않고 기존 보유만 정확히 유지.",
+      "special_mechanic_legacy_bits": []
+    },
+    {
+      "family_id": "zerg:lurker_ambush",
+      "race": "zerg",
+      "name": "지하 매복 가시",
+      "role": "line_splash",
+      "target_units": [
+        103
+      ],
+      "legacy_donor_bits": [
+        38,
+        53,
+        54
+      ],
+      "legacy_donor_ids": [
+        "19e4b7ea-bd4b-5e25-a362-6379770f253e",
+        "1ef2e74d-c3fb-5667-bf75-0695ec30f019",
+        "a78ec969-f1e0-5b81-be72-2c100c1cb6c8"
+      ],
+      "legacy_effects": [
+        {
+          "bit_index": 38,
+          "id": "19e4b7ea-bd4b-5e25-a362-6379770f253e",
+          "name": "깊숙이 뻗는 가시",
+          "description": "아군 러커 사거리·일직선 가시 도달 거리 +1",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [
+              {
+                "table": "weapons",
+                "ids": [
+                  109
+                ],
+                "field": "maxRange",
+                "op": "add",
+                "value": 32
+              },
+              {
+                "table": "units",
+                "ids": [
+                  103
+                ],
+                "field": "seekRange",
+                "op": "add",
+                "value": 1
+              }
+            ]
+          }
+        },
+        {
+          "bit_index": 53,
+          "id": "1ef2e74d-c3fb-5667-bf75-0695ec30f019",
+          "name": "땅속에서도 튼튼하게",
+          "description": "아군 러커 최대체력 +30",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [
+              {
+                "table": "units",
+                "ids": [
+                  103
+                ],
+                "field": "maxHp",
+                "op": "add",
+                "value": 7680
+              }
+            ]
+          }
+        },
+        {
+          "bit_index": 54,
+          "id": "a78ec969-f1e0-5b81-be72-2c100c1cb6c8",
+          "name": "더 굵은 지하 가시",
+          "description": "아군 러커 공격력 +4",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [
+              {
+                "table": "weapons",
+                "ids": [
+                  109
+                ],
+                "field": "damageAmount",
+                "op": "add",
+                "value": 4
+              }
+            ]
+          }
+        }
+      ],
+      "ranks": [
+        {
+          "rank": 1,
+          "reserved_bit_index": 154,
+          "proposed_id": "a9c11d99-d28d-56a1-9000-a0375f9c3fef",
+          "implemented": true,
+          "effect": null
+        },
+        {
+          "rank": 2,
+          "reserved_bit_index": 155,
+          "proposed_id": "7735a507-d6a2-5f24-80e1-2bb5780378c2",
+          "implemented": true,
+          "effect": null
+        },
+        {
+          "rank": 3,
+          "reserved_bit_index": 156,
+          "proposed_id": "bc6e059b-aa8c-5f36-ada7-e0df8f1775e7",
+          "implemented": true,
+          "effect": null
+        }
+      ],
+      "design_requirement": "각 단계는2~3효효과를 묶은 추가강화. 다음 단계 하나만 후보에 표시. 기존 donor효과는 재부여하지 않고 기존 보유만 정확히 유지.",
+      "special_mechanic_legacy_bits": []
+    },
+    {
+      "family_id": "zerg:ultralisk_behemoth",
+      "race": "zerg",
+      "name": "거수 돌파대",
+      "role": "heavy_melee",
+      "target_units": [
+        39
+      ],
+      "legacy_donor_bits": [
+        39,
+        40,
+        55,
+        56
+      ],
+      "legacy_donor_ids": [
+        "bcc8fdd9-aa12-55c0-a747-7bfb3ba0df69",
+        "62773fb3-a08d-5eea-a5f8-afc4fa240491",
+        "55cb0c50-2498-5194-ad1e-935baf84b110",
+        "807cc622-fda9-5ceb-a96a-3457b0074753"
+      ],
+      "legacy_effects": [
+        {
+          "bit_index": 39,
+          "id": "bcc8fdd9-aa12-55c0-a747-7bfb3ba0df69",
+          "name": "더 거대한 몸집",
+          "description": "아군 울트라리스크 최대체력 +100",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [
+              {
+                "table": "units",
+                "ids": [
+                  39
+                ],
+                "field": "maxHp",
+                "op": "add",
+                "value": 25600
+              }
+            ]
+          }
+        },
+        {
+          "bit_index": 40,
+          "id": "62773fb3-a08d-5eea-a5f8-afc4fa240491",
+          "name": "겹겹의 갑각",
+          "description": "아군 울트라리스크 방어력 +2",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [
+              {
+                "table": "units",
+                "ids": [
+                  39
+                ],
+                "field": "armor",
+                "op": "add",
+                "value": 2
+              }
+            ]
+          }
+        },
+        {
+          "bit_index": 55,
+          "id": "55cb0c50-2498-5194-ad1e-935baf84b110",
+          "name": "거구의 긴 보폭",
+          "description": "아군 울트라리스크 이동속도 15% 증가",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [],
+            "movement": [
+              {
+                "unit_id": 39,
+                "numerator": 115,
+                "denominator": 100
+              }
+            ]
+          }
+        },
+        {
+          "bit_index": 56,
+          "id": "807cc622-fda9-5ceb-a96a-3457b0074753",
+          "name": "거수의 빠른 부화",
+          "description": "아군 울트라리스크 알 부화 시간 20% 감소",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [
+              {
+                "table": "units",
+                "ids": [
+                  39
+                ],
+                "field": "timeCost",
+                "op": "ratio",
+                "value": [
+                  4,
+                  5
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "ranks": [
+        {
+          "rank": 1,
+          "reserved_bit_index": 157,
+          "proposed_id": "633f65f0-deec-598e-bd5c-07e527156562",
+          "implemented": true,
+          "effect": null
+        },
+        {
+          "rank": 2,
+          "reserved_bit_index": 158,
+          "proposed_id": "d7c1f1c4-37bd-5c04-9e03-d9a2646f7218",
+          "implemented": true,
+          "effect": null
+        },
+        {
+          "rank": 3,
+          "reserved_bit_index": 159,
+          "proposed_id": "29e7212f-5f59-5950-a075-72bb20703f82",
+          "implemented": true,
+          "effect": null
+        }
+      ],
+      "design_requirement": "각 단계는2~3효효과를 묶은 추가강화. 다음 단계 하나만 후보에 표시. 기존 donor효과는 재부여하지 않고 기존 보유만 정확히 유지.",
+      "special_mechanic_legacy_bits": []
+    },
+    {
+      "family_id": "zerg:mutalisk_wing",
+      "race": "zerg",
+      "name": "쐐기벌레 비행군",
+      "role": "bouncing_air",
+      "target_units": [
+        43
+      ],
+      "legacy_donor_bits": [
+        41,
+        57,
+        58
+      ],
+      "legacy_donor_ids": [
+        "474028ba-4784-5ea6-a4d6-5be6025d4289",
+        "fec86599-89dc-5015-afab-a207e9258707",
+        "2e8b32df-a697-5eaf-85b1-eb0999c0754e"
+      ],
+      "legacy_effects": [
+        {
+          "bit_index": 41,
+          "id": "474028ba-4784-5ea6-a4d6-5be6025d4289",
+          "name": "찢어지지 않는 날개",
+          "description": "아군 뮤탈리스크 최대체력 +20",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [
+              {
+                "table": "units",
+                "ids": [
+                  43
+                ],
+                "field": "maxHp",
+                "op": "add",
+                "value": 5120
+              }
+            ]
+          }
+        },
+        {
+          "bit_index": 57,
+          "id": "fec86599-89dc-5015-afab-a207e9258707",
+          "name": "유연한 날개 갑피",
+          "description": "아군 뮤탈리스크 방어력 +1",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [
+              {
+                "table": "units",
+                "ids": [
+                  43
+                ],
+                "field": "armor",
+                "op": "add",
+                "value": 1
+              }
+            ]
+          }
+        },
+        {
+          "bit_index": 58,
+          "id": "2e8b32df-a697-5eaf-85b1-eb0999c0754e",
+          "name": "단단해진 쐐기벌레",
+          "description": "아군 뮤탈리스크 첫 공격력 +2 (튕김 피해에도 반영)",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [
+              {
+                "table": "weapons",
+                "ids": [
+                  48
+                ],
+                "field": "damageAmount",
+                "op": "add",
+                "value": 2
+              }
+            ]
+          }
+        }
+      ],
+      "ranks": [
+        {
+          "rank": 1,
+          "reserved_bit_index": 160,
+          "proposed_id": "170487c4-c194-5e39-8f68-14c1139744d6",
+          "implemented": true,
+          "effect": null
+        },
+        {
+          "rank": 2,
+          "reserved_bit_index": 161,
+          "proposed_id": "3a4b8618-dd7b-5bf8-96ed-54098ec85fb4",
+          "implemented": true,
+          "effect": null
+        },
+        {
+          "rank": 3,
+          "reserved_bit_index": 162,
+          "proposed_id": "08c7fd66-3d71-5939-a731-38f7ed4fa355",
+          "implemented": true,
+          "effect": null
+        }
+      ],
+      "design_requirement": "각 단계는2~3효효과를 묶은 추가강화. 다음 단계 하나만 후보에 표시. 기존 donor효과는 재부여하지 않고 기존 보유만 정확히 유지.",
+      "special_mechanic_legacy_bits": []
+    },
+    {
+      "family_id": "zerg:guardian_siege",
+      "race": "zerg",
+      "name": "수호군주 포격군",
+      "role": "air_siege",
+      "target_units": [
+        44
+      ],
+      "legacy_donor_bits": [
+        42,
+        59,
+        60,
+        67
+      ],
+      "legacy_donor_ids": [
+        "937deca5-e0df-518a-9db5-738801a7d78a",
+        "bc1c87d6-a946-5e55-a727-db572294557c",
+        "7651ad59-5052-56c1-85fe-74133ad7660e",
+        "6e4f04ef-f498-5852-b175-cc46b156c4fc"
+      ],
+      "legacy_effects": [
+        {
+          "bit_index": 42,
+          "id": "937deca5-e0df-518a-9db5-738801a7d78a",
+          "name": "더 멀리 포격",
+          "description": "아군 가디언 지상 사거리 +1",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [
+              {
+                "table": "weapons",
+                "ids": [
+                  46
+                ],
+                "field": "maxRange",
+                "op": "add",
+                "value": 32
+              },
+              {
+                "table": "units",
+                "ids": [
+                  44
+                ],
+                "field": "seekRange",
+                "op": "add",
+                "value": 1
+              }
+            ]
+          }
+        },
+        {
+          "bit_index": 59,
+          "id": "bc1c87d6-a946-5e55-a727-db572294557c",
+          "name": "포격용 두꺼운 몸통",
+          "description": "아군 가디언 최대체력 +30",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [
+              {
+                "table": "units",
+                "ids": [
+                  44
+                ],
+                "field": "maxHp",
+                "op": "add",
+                "value": 7680
+              }
+            ]
+          }
+        },
+        {
+          "bit_index": 60,
+          "id": "7651ad59-5052-56c1-85fe-74133ad7660e",
+          "name": "포대도 움직여야 한다",
+          "description": "아군 가디언 이동속도 25% 증가",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [],
+            "movement": [
+              {
+                "unit_id": 44,
+                "numerator": 125,
+                "denominator": 100
+              }
+            ]
+          }
+        },
+        {
+          "bit_index": 67,
+          "id": "6e4f04ef-f498-5852-b175-cc46b156c4fc",
+          "name": "산성 포낭 재장전",
+          "description": "아군 가디언 공격 주기 20% 감소",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [
+              {
+                "table": "weapons",
+                "ids": [
+                  46
+                ],
+                "field": "cooldown",
+                "op": "ratio",
+                "value": [
+                  4,
+                  5
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "ranks": [
+        {
+          "rank": 1,
+          "reserved_bit_index": 163,
+          "proposed_id": "78bcac0e-85f3-556a-810c-2bbf84c95abb",
+          "implemented": true,
+          "effect": null
+        },
+        {
+          "rank": 2,
+          "reserved_bit_index": 164,
+          "proposed_id": "cc8272ca-8ac7-505f-9812-bce08bc9777a",
+          "implemented": true,
+          "effect": null
+        },
+        {
+          "rank": 3,
+          "reserved_bit_index": 165,
+          "proposed_id": "f73d8abc-dae9-52a8-b73b-e0eacf125621",
+          "implemented": true,
+          "effect": null
+        }
+      ],
+      "design_requirement": "각 단계는2~3효효과를 묶은 추가강화. 다음 단계 하나만 후보에 표시. 기존 donor효과는 재부여하지 않고 기존 보유만 정확히 유지.",
+      "special_mechanic_legacy_bits": []
+    },
+    {
+      "family_id": "zerg:devourer_acid",
+      "race": "zerg",
+      "name": "포식귀 산성군",
+      "role": "heavy_anti_air",
+      "target_units": [
+        62
+      ],
+      "legacy_donor_bits": [
+        43,
+        44,
+        61
+      ],
+      "legacy_donor_ids": [
+        "5323e004-5669-5f9b-b74f-eb4feb45c0bd",
+        "88179125-fb11-56f7-a6e5-fdbe01513202",
+        "93d79797-e57b-52c1-8a79-4f75774fb40d"
+      ],
+      "legacy_effects": [
+        {
+          "bit_index": 43,
+          "id": "5323e004-5669-5f9b-b74f-eb4feb45c0bd",
+          "name": "두꺼운 비행 갑각",
+          "description": "아군 디바우러 최대체력 +50",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [
+              {
+                "table": "units",
+                "ids": [
+                  62
+                ],
+                "field": "maxHp",
+                "op": "add",
+                "value": 12800
+              }
+            ]
+          }
+        },
+        {
+          "bit_index": 44,
+          "id": "88179125-fb11-56f7-a6e5-fdbe01513202",
+          "name": "산성 주머니 증설",
+          "description": "아군 디바우러 공격 주기 25% 감소",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [
+              {
+                "table": "weapons",
+                "ids": [
+                  104
+                ],
+                "field": "cooldown",
+                "op": "ratio",
+                "value": [
+                  3,
+                  4
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "bit_index": 61,
+          "id": "93d79797-e57b-52c1-8a79-4f75774fb40d",
+          "name": "산성에도 버티는 외피",
+          "description": "아군 디바우러 방어력 +1",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [
+              {
+                "table": "units",
+                "ids": [
+                  62
+                ],
+                "field": "armor",
+                "op": "add",
+                "value": 1
+              }
+            ]
+          }
+        }
+      ],
+      "ranks": [
+        {
+          "rank": 1,
+          "reserved_bit_index": 166,
+          "proposed_id": "e0d85be2-25f8-5bd4-82c6-e06ec8fa713a",
+          "implemented": true,
+          "effect": null
+        },
+        {
+          "rank": 2,
+          "reserved_bit_index": 167,
+          "proposed_id": "6b79b2be-a707-57ab-b140-966e67ee540f",
+          "implemented": true,
+          "effect": null
+        },
+        {
+          "rank": 3,
+          "reserved_bit_index": 168,
+          "proposed_id": "2be9b3fc-a5e2-53b7-b7b2-47b232b9d291",
+          "implemented": true,
+          "effect": null
+        }
+      ],
+      "design_requirement": "각 단계는2~3효효과를 묶은 추가강화. 다음 단계 하나만 후보에 표시. 기존 donor효과는 재부여하지 않고 기존 보유만 정확히 유지.",
+      "special_mechanic_legacy_bits": []
+    },
+    {
+      "family_id": "zerg:scourge_intercept",
+      "race": "zerg",
+      "name": "갈귀 요격군",
+      "role": "suicide_anti_air",
+      "target_units": [
+        47
+      ],
+      "legacy_donor_bits": [
+        45,
+        46,
+        62
+      ],
+      "legacy_donor_ids": [
+        "70868f85-8196-5c56-b775-4b247f32bf3a",
+        "8453bd7a-0f86-5415-b26b-e3dcafab73d8",
+        "8deedc39-6d94-5ecf-b7d2-1ef08292a610"
+      ],
+      "legacy_effects": [
+        {
+          "bit_index": 45,
+          "id": "70868f85-8196-5c56-b775-4b247f32bf3a",
+          "name": "더 빠른 돌진",
+          "description": "아군 스커지 이동속도 25% 증가",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [],
+            "movement": [
+              {
+                "unit_id": 47,
+                "numerator": 125,
+                "denominator": 100
+              }
+            ]
+          }
+        },
+        {
+          "bit_index": 46,
+          "id": "8453bd7a-0f86-5415-b26b-e3dcafab73d8",
+          "name": "알찬 폭약 주머니",
+          "description": "아군 스커지 자폭 공격력 25% 증가",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [
+              {
+                "table": "weapons",
+                "ids": [
+                  55
+                ],
+                "field": "damageAmount",
+                "op": "ratio",
+                "value": [
+                  5,
+                  4
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "bit_index": 62,
+          "id": "8deedc39-6d94-5ecf-b7d2-1ef08292a610",
+          "name": "끝까지 날아가는 몸",
+          "description": "아군 스커지 최대체력 +10",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [
+              {
+                "table": "units",
+                "ids": [
+                  47
+                ],
+                "field": "maxHp",
+                "op": "add",
+                "value": 2560
+              }
+            ]
+          }
+        }
+      ],
+      "ranks": [
+        {
+          "rank": 1,
+          "reserved_bit_index": 169,
+          "proposed_id": "c0f84a4c-a712-5ef0-86b4-4bc185551aa0",
+          "implemented": true,
+          "effect": null
+        },
+        {
+          "rank": 2,
+          "reserved_bit_index": 170,
+          "proposed_id": "ae4da647-6465-5534-b13a-6a0dbf6e3db6",
+          "implemented": true,
+          "effect": null
+        },
+        {
+          "rank": 3,
+          "reserved_bit_index": 171,
+          "proposed_id": "2a121c7a-ca43-5db8-968b-72ac63aaf863",
+          "implemented": true,
+          "effect": null
+        }
+      ],
+      "design_requirement": "각 단계는2~3효효과를 묶은 추가강화. 다음 단계 하나만 후보에 표시. 기존 donor효과는 재부여하지 않고 기존 보유만 정확히 유지.",
+      "special_mechanic_legacy_bits": []
+    },
+    {
+      "family_id": "zerg:overlord_network",
+      "race": "zerg",
+      "name": "대군주 보급망",
+      "role": "supply_transport_detector",
+      "target_units": [
+        42
+      ],
+      "legacy_donor_bits": [
+        47,
+        65
+      ],
+      "legacy_donor_ids": [
+        "a1fbb3c9-68f7-5b77-a131-9415ba633222",
+        "793931fa-f87a-5a0f-a575-bff6bcce6a5d"
+      ],
+      "legacy_effects": [
+        {
+          "bit_index": 47,
+          "id": "a1fbb3c9-68f7-5b77-a131-9415ba633222",
+          "name": "안심되는 보급선",
+          "description": "아군 오버로드 최대체력 +50",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [
+              {
+                "table": "units",
+                "ids": [
+                  42
+                ],
+                "field": "maxHp",
+                "op": "add",
+                "value": 12800
+              }
+            ]
+          }
+        },
+        {
+          "bit_index": 65,
+          "id": "793931fa-f87a-5a0f-a575-bff6bcce6a5d",
+          "name": "보급낭 빠른 부화",
+          "description": "아군 오버로드 알 부화 시간 25% 감소",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [
+              {
+                "table": "units",
+                "ids": [
+                  42
+                ],
+                "field": "timeCost",
+                "op": "ratio",
+                "value": [
+                  3,
+                  4
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "ranks": [
+        {
+          "rank": 1,
+          "reserved_bit_index": 172,
+          "proposed_id": "3e5ff4b4-23d5-53b2-8b98-77efb68bdbac",
+          "implemented": true,
+          "effect": null
+        },
+        {
+          "rank": 2,
+          "reserved_bit_index": 173,
+          "proposed_id": "1e7d95af-9739-5be4-a4e1-ce87b21b6464",
+          "implemented": true,
+          "effect": null
+        },
+        {
+          "rank": 3,
+          "reserved_bit_index": 174,
+          "proposed_id": "ddbac956-a2c0-5f01-9275-e0342b18d258",
+          "implemented": true,
+          "effect": null
+        }
+      ],
+      "design_requirement": "각 단계는2~3효효과를 묶은 추가강화. 다음 단계 하나만 후보에 표시. 기존 donor효과는 재부여하지 않고 기존 보유만 정확히 유지.",
+      "special_mechanic_legacy_bits": []
+    },
+    {
+      "family_id": "zerg:infested_demolition",
+      "race": "zerg",
+      "name": "감염체 폭파대",
+      "role": "suicide_ground_splash",
+      "target_units": [
+        50
+      ],
+      "legacy_donor_bits": [
+        48,
+        66,
+        68
+      ],
+      "legacy_donor_ids": [
+        "4c71f828-2be8-5786-8902-c45333a38e40",
+        "c1855946-9678-5a02-83a6-4c30e6011f17",
+        "58810cf9-1b79-5226-8734-f11735a024e0"
+      ],
+      "legacy_effects": [
+        {
+          "bit_index": 48,
+          "id": "4c71f828-2be8-5786-8902-c45333a38e40",
+          "name": "폭탄은 빨라야 한다",
+          "description": "아군 인페스티드 테란 이동속도 30% 증가",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [],
+            "movement": [
+              {
+                "unit_id": 50,
+                "numerator": 130,
+                "denominator": 100
+              }
+            ]
+          }
+        },
+        {
+          "bit_index": 66,
+          "id": "c1855946-9678-5a02-83a6-4c30e6011f17",
+          "name": "폭발물 운반용 조직",
+          "description": "아군 인페스티드 테란 최대체력 +30",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [
+              {
+                "table": "units",
+                "ids": [
+                  50
+                ],
+                "field": "maxHp",
+                "op": "add",
+                "value": 7680
+              }
+            ]
+          }
+        },
+        {
+          "bit_index": 68,
+          "id": "58810cf9-1b79-5226-8734-f11735a024e0",
+          "name": "빈틈없이 터지는 폭약",
+          "description": "아군 인페스티드 테란 자폭 반경 15% 증가",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [
+              {
+                "table": "weapons",
+                "ids": [
+                  54
+                ],
+                "field": "innerSplash",
+                "op": "ratio",
+                "value": [
+                  115,
+                  100
+                ]
+              },
+              {
+                "table": "weapons",
+                "ids": [
+                  54
+                ],
+                "field": "middleSplash",
+                "op": "ratio",
+                "value": [
+                  115,
+                  100
+                ]
+              },
+              {
+                "table": "weapons",
+                "ids": [
+                  54
+                ],
+                "field": "outerSplash",
+                "op": "ratio",
+                "value": [
+                  115,
+                  100
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "ranks": [
+        {
+          "rank": 1,
+          "reserved_bit_index": 175,
+          "proposed_id": "0cbd922d-732e-5ae4-8fa2-0743caca890c",
+          "implemented": true,
+          "effect": null
+        },
+        {
+          "rank": 2,
+          "reserved_bit_index": 176,
+          "proposed_id": "ad683fb4-95dc-55c2-9a7a-e72436ab56f0",
+          "implemented": true,
+          "effect": null
+        },
+        {
+          "rank": 3,
+          "reserved_bit_index": 177,
+          "proposed_id": "1a23fd35-0518-5fc7-9524-3b6fe0d72d5e",
+          "implemented": true,
+          "effect": null
+        }
+      ],
+      "design_requirement": "각 단계는2~3효효과를 묶은 추가강화. 다음 단계 하나만 후보에 표시. 기존 donor효과는 재부여하지 않고 기존 보유만 정확히 유지.",
+      "special_mechanic_legacy_bits": []
+    },
+    {
+      "family_id": "zerg:queen_brood",
+      "race": "zerg",
+      "name": "여왕 공중지원",
+      "role": "air_caster",
+      "target_units": [
+        45
+      ],
+      "legacy_donor_bits": [
+        63
+      ],
+      "legacy_donor_ids": [
+        "df095ca0-42a6-5230-b976-4a8f6588db92"
+      ],
+      "legacy_effects": [
+        {
+          "bit_index": 63,
+          "id": "df095ca0-42a6-5230-b976-4a8f6588db92",
+          "name": "여왕의 생존 갑피",
+          "description": "아군 여왕 최대체력 +30",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [
+              {
+                "table": "units",
+                "ids": [
+                  45
+                ],
+                "field": "maxHp",
+                "op": "add",
+                "value": 7680
+              }
+            ]
+          }
+        }
+      ],
+      "ranks": [
+        {
+          "rank": 1,
+          "reserved_bit_index": 178,
+          "proposed_id": "0295e234-3673-551a-bb0c-43f0a75983e0",
+          "implemented": true,
+          "effect": null
+        },
+        {
+          "rank": 2,
+          "reserved_bit_index": 179,
+          "proposed_id": "1bedd0fa-b4e1-51ef-ad37-7a4af7666c84",
+          "implemented": true,
+          "effect": null
+        },
+        {
+          "rank": 3,
+          "reserved_bit_index": 180,
+          "proposed_id": "8c645cdc-b308-574a-9d44-e3fdcf8178ff",
+          "implemented": true,
+          "effect": null
+        }
+      ],
+      "design_requirement": "각 단계는2~3효효과를 묶은 추가강화. 다음 단계 하나만 후보에 표시. 기존 donor효과는 재부여하지 않고 기존 보유만 정확히 유지.",
+      "special_mechanic_legacy_bits": []
+    },
+    {
+      "family_id": "zerg:defiler_support",
+      "race": "zerg",
+      "name": "파멸충 지상지원",
+      "role": "ground_caster",
+      "target_units": [
+        46
+      ],
+      "legacy_donor_bits": [
+        64
+      ],
+      "legacy_donor_ids": [
+        "25652a52-018d-5c53-9f56-9b0f2a8e1cef"
+      ],
+      "legacy_effects": [
+        {
+          "bit_index": 64,
+          "id": "25652a52-018d-5c53-9f56-9b0f2a8e1cef",
+          "name": "쉽게 꺾이지 않는 독낭",
+          "description": "아군 디파일러 최대체력 +25",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [
+              {
+                "table": "units",
+                "ids": [
+                  46
+                ],
+                "field": "maxHp",
+                "op": "add",
+                "value": 6400
+              }
+            ]
+          }
+        }
+      ],
+      "ranks": [
+        {
+          "rank": 1,
+          "reserved_bit_index": 181,
+          "proposed_id": "eb98a859-6b03-5c9c-b844-aaedca83944b",
+          "implemented": true,
+          "effect": null
+        },
+        {
+          "rank": 2,
+          "reserved_bit_index": 182,
+          "proposed_id": "9d3480dc-dc76-5434-81eb-7397d20f0c67",
+          "implemented": true,
+          "effect": null
+        },
+        {
+          "rank": 3,
+          "reserved_bit_index": 183,
+          "proposed_id": "6d00aa7a-a8ce-5a09-b7c4-3f95fbe4f958",
+          "implemented": true,
+          "effect": null
+        }
+      ],
+      "design_requirement": "각 단계는2~3효효과를 묶은 추가강화. 다음 단계 하나만 후보에 표시. 기존 donor효과는 재부여하지 않고 기존 보유만 정확히 유지.",
+      "special_mechanic_legacy_bits": []
+    },
+    {
+      "family_id": "protoss:zealot_frontline",
+      "race": "protoss",
+      "name": "광전사 전열",
+      "role": "melee_core",
+      "target_units": [
+        65
+      ],
+      "legacy_donor_bits": [
+        69,
+        70,
+        85,
+        86
+      ],
+      "legacy_donor_ids": [
+        "6133f55d-779f-567a-94ad-6f354e50cd41",
+        "d8b24b05-1222-5d5f-95ab-2888640519b4",
+        "692a2bd1-5537-568c-b6b5-75e1317b1a4d",
+        "0c4c4678-5be2-5f3b-8eb0-dddb701c121b"
+      ],
+      "legacy_effects": [
+        {
+          "bit_index": 69,
+          "id": "6133f55d-779f-567a-94ad-6f354e50cd41",
+          "name": "한 겹 더 두른 보호막",
+          "description": "아군 질럿 최대보호막 +20",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [
+              {
+                "table": "units",
+                "ids": [
+                  65
+                ],
+                "field": "maxShields",
+                "op": "add",
+                "value": 20
+              }
+            ]
+          }
+        },
+        {
+          "bit_index": 70,
+          "id": "d8b24b05-1222-5d5f-95ab-2888640519b4",
+          "name": "양손을 더 빠르게",
+          "description": "아군 질럿 공격 주기 20% 감소",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [
+              {
+                "table": "weapons",
+                "ids": [
+                  64
+                ],
+                "field": "cooldown",
+                "op": "ratio",
+                "value": [
+                  4,
+                  5
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "bit_index": 85,
+          "id": "692a2bd1-5537-568c-b6b5-75e1317b1a4d",
+          "name": "버티는 자의 육체",
+          "description": "아군 질럿 최대체력 +20",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [
+              {
+                "table": "units",
+                "ids": [
+                  65
+                ],
+                "field": "maxHp",
+                "op": "add",
+                "value": 5120
+              }
+            ]
+          }
+        },
+        {
+          "bit_index": 86,
+          "id": "0c4c4678-5be2-5f3b-8eb0-dddb701c121b",
+          "name": "전열 기사의 갑주",
+          "description": "아군 질럿 체력 방어력 +1",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [
+              {
+                "table": "units",
+                "ids": [
+                  65
+                ],
+                "field": "armor",
+                "op": "add",
+                "value": 1
+              }
+            ]
+          }
+        }
+      ],
+      "ranks": [
+        {
+          "rank": 1,
+          "reserved_bit_index": 184,
+          "proposed_id": "a8fbea9a-6bf2-581c-84e0-d372173e021f",
+          "implemented": true,
+          "effect": null
+        },
+        {
+          "rank": 2,
+          "reserved_bit_index": 185,
+          "proposed_id": "03b1a99f-7bcc-53f3-884e-f4475d39aa03",
+          "implemented": true,
+          "effect": null
+        },
+        {
+          "rank": 3,
+          "reserved_bit_index": 186,
+          "proposed_id": "f0bf9ad2-92bb-54dd-bfc5-eb626ab91e37",
+          "implemented": true,
+          "effect": null
+        }
+      ],
+      "design_requirement": "각 단계는2~3효효과를 묶은 추가강화. 다음 단계 하나만 후보에 표시. 기존 donor효과는 재부여하지 않고 기존 보유만 정확히 유지.",
+      "special_mechanic_legacy_bits": []
+    },
+    {
+      "family_id": "protoss:dragoon_phalanx",
+      "race": "protoss",
+      "name": "용기병 화력대",
+      "role": "ranged_ground_air",
+      "target_units": [
+        66
+      ],
+      "legacy_donor_bits": [
+        71,
+        72,
+        87,
+        88
+      ],
+      "legacy_donor_ids": [
+        "6be08978-7d28-5f6d-a9ee-621e4f6b236c",
+        "15752ea5-1048-5307-b4d6-89e1f92376c1",
+        "55808e0e-ea2d-57a3-a2c7-2554e8fa55be",
+        "935452ab-4e90-5aab-9c90-eb9cc55ed087"
+      ],
+      "legacy_effects": [
+        {
+          "bit_index": 71,
+          "id": "6be08978-7d28-5f6d-a9ee-621e4f6b236c",
+          "name": "흔들리지 않는 보행체",
+          "description": "아군 드라군 최대체력 +20",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [
+              {
+                "table": "units",
+                "ids": [
+                  66
+                ],
+                "field": "maxHp",
+                "op": "add",
+                "value": 5120
+              }
+            ]
+          }
+        },
+        {
+          "bit_index": 72,
+          "id": "15752ea5-1048-5307-b4d6-89e1f92376c1",
+          "name": "더 멀리 뻗는 위상포",
+          "description": "아군 드라군 지상·공중 사거리 +1",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [
+              {
+                "table": "weapons",
+                "ids": [
+                  66
+                ],
+                "field": "maxRange",
+                "op": "add",
+                "value": 32
+              },
+              {
+                "table": "units",
+                "ids": [
+                  66
+                ],
+                "field": "seekRange",
+                "op": "add",
+                "value": 1
+              }
+            ]
+          }
+        },
+        {
+          "bit_index": 87,
+          "id": "55808e0e-ea2d-57a3-a2c7-2554e8fa55be",
+          "name": "보행체 보호장 보강",
+          "description": "아군 드라군 최대보호막 +30",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [
+              {
+                "table": "units",
+                "ids": [
+                  66
+                ],
+                "field": "maxShields",
+                "op": "add",
+                "value": 30
+              }
+            ]
+          }
+        },
+        {
+          "bit_index": 88,
+          "id": "935452ab-4e90-5aab-9c90-eb9cc55ed087",
+          "name": "고밀도 분열탄",
+          "description": "아군 드라군 지상·공중 공격력 +3",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [
+              {
+                "table": "weapons",
+                "ids": [
+                  66
+                ],
+                "field": "damageAmount",
+                "op": "add",
+                "value": 3
+              }
+            ]
+          }
+        }
+      ],
+      "ranks": [
+        {
+          "rank": 1,
+          "reserved_bit_index": 187,
+          "proposed_id": "58b8a01e-5408-5e9d-b60e-ddbb01808dc6",
+          "implemented": true,
+          "effect": null
+        },
+        {
+          "rank": 2,
+          "reserved_bit_index": 188,
+          "proposed_id": "75f28263-0757-5c2f-9896-a346fe867db1",
+          "implemented": true,
+          "effect": null
+        },
+        {
+          "rank": 3,
+          "reserved_bit_index": 189,
+          "proposed_id": "065722f6-9f64-5447-a6a8-c81d0212a3ee",
+          "implemented": true,
+          "effect": null
+        }
+      ],
+      "design_requirement": "각 단계는2~3효효과를 묶은 추가강화. 다음 단계 하나만 후보에 표시. 기존 donor효과는 재부여하지 않고 기존 보유만 정확히 유지.",
+      "special_mechanic_legacy_bits": []
+    },
+    {
+      "family_id": "protoss:dark_templar_shadow",
+      "race": "protoss",
+      "name": "암흑 기사단",
+      "role": "stealth_melee",
+      "target_units": [
+        61
+      ],
+      "legacy_donor_bits": [
+        73,
+        91,
+        92
+      ],
+      "legacy_donor_ids": [
+        "8a5dc9f5-bb51-5c09-8f7f-12890b39a04f",
+        "06f4d7f5-202f-51cb-a81d-1ef2aa8bc78e",
+        "82e789b7-6fa9-5ced-af07-d966b5749d39"
+      ],
+      "legacy_effects": [
+        {
+          "bit_index": 73,
+          "id": "8a5dc9f5-bb51-5c09-8f7f-12890b39a04f",
+          "name": "그림자 걸음",
+          "description": "아군 다크 템플러 이동속도 20% 증가",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [],
+            "movement": [
+              {
+                "unit_id": 61,
+                "numerator": 120,
+                "denominator": 100
+              }
+            ]
+          }
+        },
+        {
+          "bit_index": 91,
+          "id": "06f4d7f5-202f-51cb-a81d-1ef2aa8bc78e",
+          "name": "그림자 속의 생명력",
+          "description": "아군 다크 템플러 최대체력 +20",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [
+              {
+                "table": "units",
+                "ids": [
+                  61
+                ],
+                "field": "maxHp",
+                "op": "add",
+                "value": 5120
+              }
+            ]
+          }
+        },
+        {
+          "bit_index": 92,
+          "id": "82e789b7-6fa9-5ced-af07-d966b5749d39",
+          "name": "어둠을 두른 보호장",
+          "description": "아군 다크 템플러 최대보호막 +30",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [
+              {
+                "table": "units",
+                "ids": [
+                  61
+                ],
+                "field": "maxShields",
+                "op": "add",
+                "value": 30
+              }
+            ]
+          }
+        }
+      ],
+      "ranks": [
+        {
+          "rank": 1,
+          "reserved_bit_index": 190,
+          "proposed_id": "24bd24bd-b962-5313-b295-b07a04ce3e79",
+          "implemented": true,
+          "effect": null
+        },
+        {
+          "rank": 2,
+          "reserved_bit_index": 191,
+          "proposed_id": "60ae5861-37d3-5ffd-ac52-35354bcc4d86",
+          "implemented": true,
+          "effect": null
+        },
+        {
+          "rank": 3,
+          "reserved_bit_index": 192,
+          "proposed_id": "68156062-d765-5033-8f48-c0c487d28aee",
+          "implemented": true,
+          "effect": null
+        }
+      ],
+      "design_requirement": "각 단계는2~3효효과를 묶은 추가강화. 다음 단계 하나만 후보에 표시. 기존 donor효과는 재부여하지 않고 기존 보유만 정확히 유지.",
+      "special_mechanic_legacy_bits": []
+    },
+    {
+      "family_id": "protoss:archon_storm",
+      "race": "protoss",
+      "name": "집정관 폭풍대",
+      "role": "short_range_splash",
+      "target_units": [
+        68
+      ],
+      "legacy_donor_bits": [
+        74,
+        75
+      ],
+      "legacy_donor_ids": [
+        "bc13f025-ec31-53d6-bb9b-3b378f8b7d9e",
+        "a45b1173-35e7-5c3d-957a-7d1483a281fa"
+      ],
+      "legacy_effects": [
+        {
+          "bit_index": 74,
+          "id": "bc13f025-ec31-53d6-bb9b-3b378f8b7d9e",
+          "name": "더 짙은 사이오닉 껍질",
+          "description": "아군 아콘 최대보호막 +100",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [
+              {
+                "table": "units",
+                "ids": [
+                  68
+                ],
+                "field": "maxShields",
+                "op": "add",
+                "value": 100
+              }
+            ]
+          }
+        },
+        {
+          "bit_index": 75,
+          "id": "a45b1173-35e7-5c3d-957a-7d1483a281fa",
+          "name": "손끝을 넘는 번개",
+          "description": "아군 아콘 지상·공중 사거리 +1",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [
+              {
+                "table": "weapons",
+                "ids": [
+                  70
+                ],
+                "field": "maxRange",
+                "op": "add",
+                "value": 32
+              },
+              {
+                "table": "units",
+                "ids": [
+                  68
+                ],
+                "field": "seekRange",
+                "op": "add",
+                "value": 1
+              }
+            ]
+          }
+        }
+      ],
+      "ranks": [
+        {
+          "rank": 1,
+          "reserved_bit_index": 193,
+          "proposed_id": "b5d5416c-0c1b-5542-b0ad-43d8b56b0988",
+          "implemented": true,
+          "effect": null
+        },
+        {
+          "rank": 2,
+          "reserved_bit_index": 194,
+          "proposed_id": "0d247a73-0548-5867-a3a2-bcb70fd87e19",
+          "implemented": true,
+          "effect": null
+        },
+        {
+          "rank": 3,
+          "reserved_bit_index": 195,
+          "proposed_id": "8701cee2-33b6-5703-ba49-02b4d43e7509",
+          "implemented": true,
+          "effect": null
+        }
+      ],
+      "design_requirement": "각 단계는2~3효효과를 묶은 추가강화. 다음 단계 하나만 후보에 표시. 기존 donor효과는 재부여하지 않고 기존 보유만 정확히 유지.",
+      "special_mechanic_legacy_bits": []
+    },
+    {
+      "family_id": "protoss:shuttle_assault",
+      "race": "protoss",
+      "name": "왕복선 강습대",
+      "role": "transport",
+      "target_units": [
+        69
+      ],
+      "legacy_donor_bits": [
+        76,
+        77,
+        94
+      ],
+      "legacy_donor_ids": [
+        "25930078-74c8-5c75-8ad2-44ebefb8db05",
+        "26ef37d2-4048-5abd-aba5-7c9e510361cc",
+        "fe5b3fad-5ebc-5573-8296-a9d91b138c22"
+      ],
+      "legacy_effects": [
+        {
+          "bit_index": 76,
+          "id": "25930078-74c8-5c75-8ad2-44ebefb8db05",
+          "name": "빠른 왕복 수송",
+          "description": "아군 셔틀 이동속도 40% 증가",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [],
+            "movement": [
+              {
+                "unit_id": 69,
+                "numerator": 140,
+                "denominator": 100
+              }
+            ]
+          }
+        },
+        {
+          "bit_index": 77,
+          "id": "26ef37d2-4048-5abd-aba5-7c9e510361cc",
+          "name": "조금 더 넓은 내부",
+          "description": "아군 셔틀 수송 공간 +4칸",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [
+              {
+                "table": "units",
+                "ids": [
+                  69
+                ],
+                "field": "spaceProvided",
+                "op": "add",
+                "value": 4
+              }
+            ]
+          }
+        },
+        {
+          "bit_index": 94,
+          "id": "fe5b3fad-5ebc-5573-8296-a9d91b138c22",
+          "name": "충격을 버티는 수송선",
+          "description": "아군 셔틀 최대체력 +40",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [
+              {
+                "table": "units",
+                "ids": [
+                  69
+                ],
+                "field": "maxHp",
+                "op": "add",
+                "value": 10240
+              }
+            ]
+          }
+        }
+      ],
+      "ranks": [
+        {
+          "rank": 1,
+          "reserved_bit_index": 196,
+          "proposed_id": "e243edc2-2b16-5a7a-ac2b-7af988cd5445",
+          "implemented": true,
+          "effect": null
+        },
+        {
+          "rank": 2,
+          "reserved_bit_index": 197,
+          "proposed_id": "494541eb-48ce-5260-9244-2ca6ddd0bdba",
+          "implemented": true,
+          "effect": null
+        },
+        {
+          "rank": 3,
+          "reserved_bit_index": 198,
+          "proposed_id": "62141e7d-ccc0-5480-a21e-ea3c7da72f2d",
+          "implemented": true,
+          "effect": null
+        }
+      ],
+      "design_requirement": "각 단계는2~3효효과를 묶은 추가강화. 다음 단계 하나만 후보에 표시. 기존 donor효과는 재부여하지 않고 기존 보유만 정확히 유지.",
+      "special_mechanic_legacy_bits": []
+    },
+    {
+      "family_id": "protoss:reaver_siege",
+      "race": "protoss",
+      "name": "갑충 공성대",
+      "role": "siege_ammunition",
+      "target_units": [
+        83,
+        85
+      ],
+      "legacy_donor_bits": [
+        78,
+        79,
+        95
+      ],
+      "legacy_donor_ids": [
+        "60f86c7c-f4f0-5a0a-8b81-94dee26bc64b",
+        "91425e65-1f04-5ea4-a848-59e2c2c7f39b",
+        "4fedad7f-2fb9-504e-9454-c768e09d905c"
+      ],
+      "legacy_effects": [
+        {
+          "bit_index": 78,
+          "id": "60f86c7c-f4f0-5a0a-8b81-94dee26bc64b",
+          "name": "오래 버티는 공성체",
+          "description": "아군 리버 최대체력 +40",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [
+              {
+                "table": "units",
+                "ids": [
+                  83
+                ],
+                "field": "maxHp",
+                "op": "add",
+                "value": 10240
+              }
+            ]
+          }
+        },
+        {
+          "bit_index": 79,
+          "id": "91425e65-1f04-5ea4-a848-59e2c2c7f39b",
+          "name": "스캐럽 조립 가속",
+          "description": "아군 스캐럽 생산 시간 30% 감소",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [
+              {
+                "table": "units",
+                "ids": [
+                  85
+                ],
+                "field": "timeCost",
+                "op": "ratio",
+                "value": [
+                  7,
+                  10
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "bit_index": 95,
+          "id": "4fedad7f-2fb9-504e-9454-c768e09d905c",
+          "name": "두꺼운 공성 장갑",
+          "description": "아군 리버 체력 방어력 +1",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [
+              {
+                "table": "units",
+                "ids": [
+                  83
+                ],
+                "field": "armor",
+                "op": "add",
+                "value": 1
+              }
+            ]
+          }
+        }
+      ],
+      "ranks": [
+        {
+          "rank": 1,
+          "reserved_bit_index": 199,
+          "proposed_id": "d7d9930e-1cb3-505e-9fbd-37d1c6c3d702",
+          "implemented": true,
+          "effect": null
+        },
+        {
+          "rank": 2,
+          "reserved_bit_index": 200,
+          "proposed_id": "5ad2680e-ae6d-5f7d-a788-85229f11ec8f",
+          "implemented": true,
+          "effect": null
+        },
+        {
+          "rank": 3,
+          "reserved_bit_index": 201,
+          "proposed_id": "13f51315-5ef7-572e-ab47-4d951e3cc6c2",
+          "implemented": true,
+          "effect": null
+        }
+      ],
+      "design_requirement": "각 단계는2~3효효과를 묶은 추가강화. 다음 단계 하나만 후보에 표시. 기존 donor효과는 재부여하지 않고 기존 보유만 정확히 유지.",
+      "special_mechanic_legacy_bits": []
+    },
+    {
+      "family_id": "protoss:observer_network",
+      "race": "protoss",
+      "name": "관측 지원망",
+      "role": "detector",
+      "target_units": [
+        84
+      ],
+      "legacy_donor_bits": [
+        80,
+        81,
+        96
+      ],
+      "legacy_donor_ids": [
+        "5792be66-e81b-5b2d-b908-a7819f4fcf33",
+        "e12772d8-620e-5550-b33f-000515770bec",
+        "2c49c57a-0bb8-5bc4-a725-e61e966fc586"
+      ],
+      "legacy_effects": [
+        {
+          "bit_index": 80,
+          "id": "5792be66-e81b-5b2d-b908-a7819f4fcf33",
+          "name": "먼저 가서 볼게",
+          "description": "아군 옵저버 이동속도 30% 증가",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [],
+            "movement": [
+              {
+                "unit_id": 84,
+                "numerator": 130,
+                "denominator": 100
+              }
+            ]
+          }
+        },
+        {
+          "bit_index": 81,
+          "id": "e12772d8-620e-5550-b33f-000515770bec",
+          "name": "더 멀리 보는 관측",
+          "description": "아군 옵저버 시야·탐지 범위 +2",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [
+              {
+                "table": "units",
+                "ids": [
+                  84
+                ],
+                "field": "sightRange",
+                "op": "add",
+                "value": 2
+              }
+            ]
+          }
+        },
+        {
+          "bit_index": 96,
+          "id": "2c49c57a-0bb8-5bc4-a725-e61e966fc586",
+          "name": "들켜도 한 번은 버틴다",
+          "description": "아군 옵저버 최대보호막 +20",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [
+              {
+                "table": "units",
+                "ids": [
+                  84
+                ],
+                "field": "maxShields",
+                "op": "add",
+                "value": 20
+              }
+            ]
+          }
+        }
+      ],
+      "ranks": [
+        {
+          "rank": 1,
+          "reserved_bit_index": 202,
+          "proposed_id": "c9c1f750-487d-5e1c-9e1d-1405e07f9838",
+          "implemented": true,
+          "effect": null
+        },
+        {
+          "rank": 2,
+          "reserved_bit_index": 203,
+          "proposed_id": "f0342883-836c-5d55-b079-9c1726d0f1a5",
+          "implemented": true,
+          "effect": null
+        },
+        {
+          "rank": 3,
+          "reserved_bit_index": 204,
+          "proposed_id": "e4a7cfc5-fe88-53f3-8d15-1da7b57bcd16",
+          "implemented": true,
+          "effect": null
+        }
+      ],
+      "design_requirement": "각 단계는2~3효효과를 묶은 추가강화. 다음 단계 하나만 후보에 표시. 기존 donor효과는 재부여하지 않고 기존 보유만 정확히 유지.",
+      "special_mechanic_legacy_bits": []
+    },
+    {
+      "family_id": "protoss:scout_wing",
+      "race": "protoss",
+      "name": "정찰기 전투비행대",
+      "role": "multirole_air",
+      "target_units": [
+        70
+      ],
+      "legacy_donor_bits": [
+        82,
+        83,
+        97,
+        101
+      ],
+      "legacy_donor_ids": [
+        "35005b20-4108-57d7-ac38-5c468f0482e5",
+        "dc0cd4aa-13b0-5fa9-aa16-e049aa803700",
+        "02b80d02-b3d1-59a1-bd16-f8a31dc292ea",
+        "40e316b0-df99-5b23-b712-60b863f6fd19"
+      ],
+      "legacy_effects": [
+        {
+          "bit_index": 82,
+          "id": "35005b20-4108-57d7-ac38-5c468f0482e5",
+          "name": "지상전도 준비 완료",
+          "description": "아군 스카우트 지상 공격력 +8",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [
+              {
+                "table": "weapons",
+                "ids": [
+                  73
+                ],
+                "field": "damageAmount",
+                "op": "add",
+                "value": 8
+              }
+            ]
+          }
+        },
+        {
+          "bit_index": 83,
+          "id": "dc0cd4aa-13b0-5fa9-aa16-e049aa803700",
+          "name": "추격용 엔진",
+          "description": "아군 스카우트 이동속도 25% 증가",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [],
+            "movement": [
+              {
+                "unit_id": 70,
+                "numerator": 125,
+                "denominator": 100
+              }
+            ]
+          }
+        },
+        {
+          "bit_index": 97,
+          "id": "02b80d02-b3d1-59a1-bd16-f8a31dc292ea",
+          "name": "정찰 편대의 방호장",
+          "description": "아군 스카우트 최대보호막 +40",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [
+              {
+                "table": "units",
+                "ids": [
+                  70
+                ],
+                "field": "maxShields",
+                "op": "add",
+                "value": 40
+              }
+            ]
+          }
+        },
+        {
+          "bit_index": 101,
+          "id": "40e316b0-df99-5b23-b712-60b863f6fd19",
+          "name": "긴 사거리 요격 장비",
+          "description": "아군 스카우트 지상·공중 사거리 +1",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [
+              {
+                "table": "weapons",
+                "ids": [
+                  73,
+                  74
+                ],
+                "field": "maxRange",
+                "op": "add",
+                "value": 32
+              },
+              {
+                "table": "units",
+                "ids": [
+                  70
+                ],
+                "field": "seekRange",
+                "op": "add",
+                "value": 1
+              }
+            ]
+          }
+        }
+      ],
+      "ranks": [
+        {
+          "rank": 1,
+          "reserved_bit_index": 205,
+          "proposed_id": "45f83c76-4d58-5a7b-be0d-e7d36969952b",
+          "implemented": true,
+          "effect": null
+        },
+        {
+          "rank": 2,
+          "reserved_bit_index": 206,
+          "proposed_id": "77ed98a0-515f-5660-9637-59360c2cdc7c",
+          "implemented": true,
+          "effect": null
+        },
+        {
+          "rank": 3,
+          "reserved_bit_index": 207,
+          "proposed_id": "8254fc78-84e5-5da8-bfda-a7f8bb158f84",
+          "implemented": true,
+          "effect": null
+        }
+      ],
+      "design_requirement": "각 단계는2~3효효과를 묶은 추가강화. 다음 단계 하나만 후보에 표시. 기존 donor효과는 재부여하지 않고 기존 보유만 정확히 유지.",
+      "special_mechanic_legacy_bits": []
+    },
+    {
+      "family_id": "protoss:carrier_fleet",
+      "race": "protoss",
+      "name": "우주모함 함대",
+      "role": "capital_air_ammunition",
+      "target_units": [
+        72,
+        73
+      ],
+      "legacy_donor_bits": [
+        84,
+        99,
+        103
+      ],
+      "legacy_donor_ids": [
+        "b183e8bf-f97d-57e9-b3bd-e2baaebeb92f",
+        "a81b8e17-c7f6-507f-8474-5c35a2d9116d",
+        "57102deb-c97b-57d0-ba5c-43cce2d4305d"
+      ],
+      "legacy_effects": [
+        {
+          "bit_index": 84,
+          "id": "b183e8bf-f97d-57e9-b3bd-e2baaebeb92f",
+          "name": "격납고의 빠른 손",
+          "description": "아군 인터셉터 생산 시간 30% 감소",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [
+              {
+                "table": "units",
+                "ids": [
+                  73
+                ],
+                "field": "timeCost",
+                "op": "ratio",
+                "value": [
+                  7,
+                  10
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "bit_index": 99,
+          "id": "a81b8e17-c7f6-507f-8474-5c35a2d9116d",
+          "name": "튼튼한 모함 골격",
+          "description": "아군 캐리어 최대체력 +60",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [
+              {
+                "table": "units",
+                "ids": [
+                  72
+                ],
+                "field": "maxHp",
+                "op": "add",
+                "value": 15360
+              }
+            ]
+          }
+        },
+        {
+          "bit_index": 103,
+          "id": "57102deb-c97b-57d0-ba5c-43cce2d4305d",
+          "name": "돌아올 수 있는 요격기",
+          "description": "아군 인터셉터 최대체력·최대보호막 각각 +20",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [
+              {
+                "table": "units",
+                "ids": [
+                  73
+                ],
+                "field": "maxHp",
+                "op": "add",
+                "value": 5120
+              },
+              {
+                "table": "units",
+                "ids": [
+                  73
+                ],
+                "field": "maxShields",
+                "op": "add",
+                "value": 20
+              }
+            ]
+          }
+        }
+      ],
+      "ranks": [
+        {
+          "rank": 1,
+          "reserved_bit_index": 208,
+          "proposed_id": "bff45711-d501-5997-afc2-23e1d3748fbd",
+          "implemented": true,
+          "effect": null
+        },
+        {
+          "rank": 2,
+          "reserved_bit_index": 209,
+          "proposed_id": "0ab58082-a23e-5559-a64a-de7136eb38cd",
+          "implemented": true,
+          "effect": null
+        },
+        {
+          "rank": 3,
+          "reserved_bit_index": 210,
+          "proposed_id": "a8c08893-4d8a-52c8-8843-302c1293f35d",
+          "implemented": true,
+          "effect": null
+        }
+      ],
+      "design_requirement": "각 단계는2~3효효과를 묶은 추가강화. 다음 단계 하나만 후보에 표시. 기존 donor효과는 재부여하지 않고 기존 보유만 정확히 유지.",
+      "special_mechanic_legacy_bits": []
+    },
+    {
+      "family_id": "protoss:corsair_disruption",
+      "race": "protoss",
+      "name": "해적선 분열대",
+      "role": "anti_air_splash",
+      "target_units": [
+        60
+      ],
+      "legacy_donor_bits": [
+        98,
+        102
+      ],
+      "legacy_donor_ids": [
+        "8ca6d74c-c10f-537b-98e3-8d2a6583f046",
+        "461b08f1-9cc2-5373-a555-65779ae7e14c"
+      ],
+      "legacy_effects": [
+        {
+          "bit_index": 98,
+          "id": "8ca6d74c-c10f-537b-98e3-8d2a6583f046",
+          "name": "분열함의 외장 보강",
+          "description": "아군 커세어 체력 방어력 +1",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [
+              {
+                "table": "units",
+                "ids": [
+                  60
+                ],
+                "field": "armor",
+                "op": "add",
+                "value": 1
+              }
+            ]
+          }
+        },
+        {
+          "bit_index": 102,
+          "id": "461b08f1-9cc2-5373-a555-65779ae7e14c",
+          "name": "멀리 퍼지는 분열장",
+          "description": "아군 커세어 공중 사거리 +1",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [
+              {
+                "table": "weapons",
+                "ids": [
+                  100
+                ],
+                "field": "maxRange",
+                "op": "add",
+                "value": 32
+              },
+              {
+                "table": "units",
+                "ids": [
+                  60
+                ],
+                "field": "seekRange",
+                "op": "add",
+                "value": 1
+              }
+            ]
+          }
+        }
+      ],
+      "ranks": [
+        {
+          "rank": 1,
+          "reserved_bit_index": 211,
+          "proposed_id": "39538e74-2b9d-5e9d-a6e1-bde6bddbe463",
+          "implemented": true,
+          "effect": null
+        },
+        {
+          "rank": 2,
+          "reserved_bit_index": 212,
+          "proposed_id": "61867f0a-65b8-5c87-8827-25741e08406e",
+          "implemented": true,
+          "effect": null
+        },
+        {
+          "rank": 3,
+          "reserved_bit_index": 213,
+          "proposed_id": "20540292-3c3a-5f0b-b077-a56e40e57675",
+          "implemented": true,
+          "effect": null
+        }
+      ],
+      "design_requirement": "각 단계는2~3효효과를 묶은 추가강화. 다음 단계 하나만 후보에 표시. 기존 donor효과는 재부여하지 않고 기존 보유만 정확히 유지.",
+      "special_mechanic_legacy_bits": []
+    },
+    {
+      "family_id": "protoss:high_templar_support",
+      "race": "protoss",
+      "name": "고위 기사 지원대",
+      "role": "storm_caster",
+      "target_units": [
+        67
+      ],
+      "legacy_donor_bits": [
+        89,
+        90
+      ],
+      "legacy_donor_ids": [
+        "d763e2fb-431a-50ba-bfc7-de9279922b42",
+        "daa8e37c-7b5a-576c-9ba9-ce97b724dedf"
+      ],
+      "legacy_effects": [
+        {
+          "bit_index": 89,
+          "id": "d763e2fb-431a-50ba-bfc7-de9279922b42",
+          "name": "명상을 지키는 체력",
+          "description": "아군 하이 템플러 최대체력 +20",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [
+              {
+                "table": "units",
+                "ids": [
+                  67
+                ],
+                "field": "maxHp",
+                "op": "add",
+                "value": 5120
+              }
+            ]
+          }
+        },
+        {
+          "bit_index": 90,
+          "id": "daa8e37c-7b5a-576c-9ba9-ce97b724dedf",
+          "name": "뒤처지지 않는 현자",
+          "description": "아군 하이 템플러 이동속도 20% 증가",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [],
+            "movement": [
+              {
+                "unit_id": 67,
+                "numerator": 120,
+                "denominator": 100
+              }
+            ]
+          }
+        }
+      ],
+      "ranks": [
+        {
+          "rank": 1,
+          "reserved_bit_index": 214,
+          "proposed_id": "ccf25c3d-b04d-5298-b131-fddb4fa2612a",
+          "implemented": true,
+          "effect": null
+        },
+        {
+          "rank": 2,
+          "reserved_bit_index": 215,
+          "proposed_id": "b3eacd00-06f4-59e0-80f9-dc268a55c855",
+          "implemented": true,
+          "effect": null
+        },
+        {
+          "rank": 3,
+          "reserved_bit_index": 216,
+          "proposed_id": "80af96ff-109f-540e-bdfd-12e430a9c269",
+          "implemented": true,
+          "effect": null
+        }
+      ],
+      "design_requirement": "각 단계는2~3효효과를 묶은 추가강화. 다음 단계 하나만 후보에 표시. 기존 donor효과는 재부여하지 않고 기존 보유만 정확히 유지.",
+      "special_mechanic_legacy_bits": []
+    },
+    {
+      "family_id": "protoss:dark_archon_support",
+      "race": "protoss",
+      "name": "암흑 집정관 지원대",
+      "role": "control_caster",
+      "target_units": [
+        63
+      ],
+      "legacy_donor_bits": [
+        93
+      ],
+      "legacy_donor_ids": [
+        "e34227bb-1234-5802-899f-a7ff46a4f649"
+      ],
+      "legacy_effects": [
+        {
+          "bit_index": 93,
+          "id": "e34227bb-1234-5802-899f-a7ff46a4f649",
+          "name": "혼돈을 담는 외벽",
+          "description": "아군 다크 아콘 최대보호막 +50",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [
+              {
+                "table": "units",
+                "ids": [
+                  63
+                ],
+                "field": "maxShields",
+                "op": "add",
+                "value": 50
+              }
+            ]
+          }
+        }
+      ],
+      "ranks": [
+        {
+          "rank": 1,
+          "reserved_bit_index": 217,
+          "proposed_id": "adc9b848-fab7-51aa-b787-fd5eb12da1b8",
+          "implemented": true,
+          "effect": null
+        },
+        {
+          "rank": 2,
+          "reserved_bit_index": 218,
+          "proposed_id": "1f9c9395-262b-519e-a3bc-979dfef77370",
+          "implemented": true,
+          "effect": null
+        },
+        {
+          "rank": 3,
+          "reserved_bit_index": 219,
+          "proposed_id": "d059379b-70ff-547f-99bc-7191280ec8b7",
+          "implemented": true,
+          "effect": null
+        }
+      ],
+      "design_requirement": "각 단계는2~3효효과를 묶은 추가강화. 다음 단계 하나만 후보에 표시. 기존 donor효과는 재부여하지 않고 기존 보유만 정확히 유지.",
+      "special_mechanic_legacy_bits": []
+    },
+    {
+      "family_id": "protoss:arbiter_support",
+      "race": "protoss",
+      "name": "중재자 지원대",
+      "role": "capital_support_caster",
+      "target_units": [
+        71
+      ],
+      "legacy_donor_bits": [
+        100
+      ],
+      "legacy_donor_ids": [
+        "dbf5c3bc-dcba-5215-b5dd-e713baa4fe73"
+      ],
+      "legacy_effects": [
+        {
+          "bit_index": 100,
+          "id": "dbf5c3bc-dcba-5215-b5dd-e713baa4fe73",
+          "name": "중재함 생존 설계",
+          "description": "아군 아비터 최대체력 +40",
+          "effect": {
+            "type": "stat_patches",
+            "patches": [
+              {
+                "table": "units",
+                "ids": [
+                  71
+                ],
+                "field": "maxHp",
+                "op": "add",
+                "value": 10240
+              }
+            ]
+          }
+        }
+      ],
+      "ranks": [
+        {
+          "rank": 1,
+          "reserved_bit_index": 220,
+          "proposed_id": "73d7a002-89e5-53a7-bb9d-e881006f5eca",
+          "implemented": true,
+          "effect": null
+        },
+        {
+          "rank": 2,
+          "reserved_bit_index": 221,
+          "proposed_id": "45fb8235-e450-53e1-9288-a1bee5cd59bc",
+          "implemented": true,
+          "effect": null
+        },
+        {
+          "rank": 3,
+          "reserved_bit_index": 222,
+          "proposed_id": "3d317e04-cac1-5b17-a2e7-f038a4f4f6a9",
+          "implemented": true,
+          "effect": null
+        }
+      ],
+      "design_requirement": "각 단계는2~3효효과를 묶은 추가강화. 다음 단계 하나만 후보에 표시. 기존 donor효과는 재부여하지 않고 기존 보유만 정확히 유지.",
+      "special_mechanic_legacy_bits": []
+    },
+    {
+      "family_id": "shared:squad_vitality",
+      "race": "shared",
+      "name": "분대 생존력",
+      "role": "squad_fallback",
+      "target_units": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        8,
+        9,
+        11,
+        12,
+        19,
+        20,
+        30,
+        31,
+        32,
+        34,
+        37,
+        38,
+        39,
+        40,
+        43,
+        44,
+        45,
+        46,
+        47,
+        50,
+        51,
+        53,
+        58,
+        60,
+        61,
+        62,
+        63,
+        65,
+        66,
+        67,
+        68,
+        69,
+        70,
+        71,
+        72,
+        73,
+        75,
+        78,
+        79,
+        83,
+        84,
+        85,
+        88,
+        99,
+        103
+      ],
+      "target_scope": "army_and_heroes",
+      "requirements": {
+        "squad_only": true
+      },
+      "legacy_donor_bits": [],
+      "legacy_donor_ids": [],
+      "legacy_effects": [],
+      "ranks": [
+        {
+          "rank": 1,
+          "reserved_bit_index": 223,
+          "proposed_id": "fa3f8341-9cb8-5da5-804c-18a3051213de",
+          "implemented": true
+        },
+        {
+          "rank": 2,
+          "reserved_bit_index": 224,
+          "proposed_id": "e817dccb-905f-5f88-9ac0-b923249682bd",
+          "implemented": true
+        },
+        {
+          "rank": 3,
+          "reserved_bit_index": 225,
+          "proposed_id": "7d72b037-d484-5c13-98e2-5c9a48869945",
+          "implemented": true
+        }
+      ],
+      "design_requirement": "분대 임무에만 제공하는 본 단계 추가 강화. 시야 상한 문제를 피하기 위해 방호를 사용."
+    },
+    {
+      "family_id": "shared:squad_weapons",
+      "race": "shared",
+      "name": "분대 무기",
+      "role": "squad_fallback",
+      "target_units": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        8,
+        9,
+        11,
+        12,
+        19,
+        20,
+        30,
+        31,
+        32,
+        34,
+        37,
+        38,
+        39,
+        40,
+        43,
+        44,
+        45,
+        46,
+        47,
+        50,
+        51,
+        53,
+        58,
+        60,
+        61,
+        62,
+        63,
+        65,
+        66,
+        67,
+        68,
+        69,
+        70,
+        71,
+        72,
+        73,
+        75,
+        78,
+        79,
+        83,
+        84,
+        85,
+        88,
+        99,
+        103
+      ],
+      "target_scope": "army_and_heroes",
+      "requirements": {
+        "squad_only": true
+      },
+      "legacy_donor_bits": [],
+      "legacy_donor_ids": [],
+      "legacy_effects": [],
+      "ranks": [
+        {
+          "rank": 1,
+          "reserved_bit_index": 226,
+          "proposed_id": "a0717f91-914e-551b-820c-128adee37781",
+          "implemented": true
+        },
+        {
+          "rank": 2,
+          "reserved_bit_index": 227,
+          "proposed_id": "46a63d52-5760-5af6-91e5-8231ef334ae0",
+          "implemented": true
+        },
+        {
+          "rank": 3,
+          "reserved_bit_index": 228,
+          "proposed_id": "70a854c1-55d4-5489-8565-24ed7b8c15be",
+          "implemented": true
+        }
+      ],
+      "design_requirement": "분대 임무에만 제공하는 본 단계 추가 강화. 시야 상한 문제를 피하기 위해 방호를 사용."
+    },
+    {
+      "family_id": "shared:squad_mobility",
+      "race": "shared",
+      "name": "분대 기동",
+      "role": "squad_fallback",
+      "target_units": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        8,
+        9,
+        11,
+        12,
+        19,
+        20,
+        30,
+        31,
+        32,
+        34,
+        37,
+        38,
+        39,
+        40,
+        43,
+        44,
+        45,
+        46,
+        47,
+        50,
+        51,
+        53,
+        58,
+        60,
+        61,
+        62,
+        63,
+        65,
+        66,
+        67,
+        68,
+        69,
+        70,
+        71,
+        72,
+        73,
+        75,
+        78,
+        79,
+        83,
+        84,
+        85,
+        88,
+        99,
+        103
+      ],
+      "target_scope": "army_and_heroes",
+      "requirements": {
+        "squad_only": true
+      },
+      "legacy_donor_bits": [],
+      "legacy_donor_ids": [],
+      "legacy_effects": [],
+      "ranks": [
+        {
+          "rank": 1,
+          "reserved_bit_index": 229,
+          "proposed_id": "e1250b46-1666-52de-b807-2ecdd5638c52",
+          "implemented": true
+        },
+        {
+          "rank": 2,
+          "reserved_bit_index": 230,
+          "proposed_id": "afc33513-8fc7-5761-89a3-58e206356fd8",
+          "implemented": true
+        },
+        {
+          "rank": 3,
+          "reserved_bit_index": 231,
+          "proposed_id": "c6d3d41a-42af-5989-883a-5baa4f1b2214",
+          "implemented": true
+        }
+      ],
+      "design_requirement": "분대 임무에만 제공하는 본 단계 추가 강화. 시야 상한 문제를 피하기 위해 방호를 사용."
+    },
+    {
+      "family_id": "shared:squad_armor",
+      "race": "shared",
+      "name": "분대 방호",
+      "role": "squad_fallback",
+      "target_units": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        8,
+        9,
+        11,
+        12,
+        19,
+        20,
+        30,
+        31,
+        32,
+        34,
+        37,
+        38,
+        39,
+        40,
+        43,
+        44,
+        45,
+        46,
+        47,
+        50,
+        51,
+        53,
+        58,
+        60,
+        61,
+        62,
+        63,
+        65,
+        66,
+        67,
+        68,
+        69,
+        70,
+        71,
+        72,
+        73,
+        75,
+        78,
+        79,
+        83,
+        84,
+        85,
+        88,
+        99,
+        103
+      ],
+      "target_scope": "army_and_heroes",
+      "requirements": {
+        "squad_only": true
+      },
+      "legacy_donor_bits": [],
+      "legacy_donor_ids": [],
+      "legacy_effects": [],
+      "ranks": [
+        {
+          "rank": 1,
+          "reserved_bit_index": 232,
+          "proposed_id": "d3b4d353-e7bd-56b0-897b-3353757d89ae",
+          "implemented": true
+        },
+        {
+          "rank": 2,
+          "reserved_bit_index": 233,
+          "proposed_id": "4c7f12e2-8807-5b9f-929d-78e3783a797a",
+          "implemented": true
+        },
+        {
+          "rank": 3,
+          "reserved_bit_index": 234,
+          "proposed_id": "443f71b0-61d2-5777-8440-04134912a870",
+          "implemented": true
+        }
+      ],
+      "design_requirement": "분대 임무에만 제공하는 본 단계 추가 강화. 시야 상한 문제를 피하기 위해 방호를 사용."
+    },
+    {
+      "family_id": "shared:squad_firing",
+      "race": "shared",
+      "name": "분대 사격훈련",
+      "role": "squad_fallback",
+      "target_units": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        8,
+        9,
+        11,
+        12,
+        19,
+        20,
+        30,
+        31,
+        32,
+        34,
+        37,
+        38,
+        39,
+        40,
+        43,
+        44,
+        45,
+        46,
+        47,
+        50,
+        51,
+        53,
+        58,
+        60,
+        61,
+        62,
+        63,
+        65,
+        66,
+        67,
+        68,
+        69,
+        70,
+        71,
+        72,
+        73,
+        75,
+        78,
+        79,
+        83,
+        84,
+        85,
+        88,
+        99,
+        103
+      ],
+      "target_scope": "army_and_heroes",
+      "requirements": {
+        "squad_only": true
+      },
+      "legacy_donor_bits": [],
+      "legacy_donor_ids": [],
+      "legacy_effects": [],
+      "ranks": [
+        {
+          "rank": 1,
+          "reserved_bit_index": 235,
+          "proposed_id": "4e01d933-433b-5da4-b15c-440a5ed41ef5",
+          "implemented": true
+        },
+        {
+          "rank": 2,
+          "reserved_bit_index": 236,
+          "proposed_id": "7cc45806-7c68-55ab-931e-9ba7188a016e",
+          "implemented": true
+        },
+        {
+          "rank": 3,
+          "reserved_bit_index": 237,
+          "proposed_id": "c05ca5ac-db9a-5d17-b5c4-da228b269cb4",
+          "implemented": true
+        }
+      ],
+      "design_requirement": "분대 임무에만 제공하는 본 단계 추가 강화. 시야 상한 문제를 피하기 위해 방호를 사용."
+    }
+  ],
+  "compact_existing_bundle_alternative": {
+    "status": "not_selected_would_exhaust_at_current_pick_count",
+    "races": {
+      "terran": [
+        {
+          "anchor_bit": 0,
+          "anchor_id": "b0b87a48-4e2f-4d83-b1e9-d31ab203442a",
+          "grant_bits": [
+            0
+          ],
+          "grant_ids": [
+            "b0b87a48-4e2f-4d83-b1e9-d31ab203442a"
+          ]
+        },
+        {
+          "anchor_bit": 1,
+          "anchor_id": "9da04c9f-9ddd-4e51-8333-e40eb7fafd1a",
+          "grant_bits": [
+            1,
+            23,
+            24
+          ],
+          "grant_ids": [
+            "9da04c9f-9ddd-4e51-8333-e40eb7fafd1a",
+            "6d59aecf-b1a8-50e1-b33f-8fba3bc851a0",
+            "4b4ddc45-9884-5bf3-8063-ad76c6d43495"
+          ]
+        },
+        {
+          "anchor_bit": 2,
+          "anchor_id": "11add15f-8880-4db0-9697-91723ffdfd57",
+          "grant_bits": [
+            2
+          ],
+          "grant_ids": [
+            "11add15f-8880-4db0-9697-91723ffdfd57"
+          ]
+        },
+        {
+          "anchor_bit": 3,
+          "anchor_id": "b4a56885-dcef-4fd7-9b1d-1d07fa0cbd5c",
+          "grant_bits": [
+            3,
+            21,
+            22
+          ],
+          "grant_ids": [
+            "b4a56885-dcef-4fd7-9b1d-1d07fa0cbd5c",
+            "4e6aec23-a4ae-587b-b726-a1bc3b99de85",
+            "d417aff9-333a-5843-895f-3d38c611f470"
+          ]
+        },
+        {
+          "anchor_bit": 5,
+          "anchor_id": "61ca33c4-6b46-45fd-bf48-36e92fc30067",
+          "grant_bits": [
+            4,
+            5
+          ],
+          "grant_ids": [
+            "3de768b5-3b1c-4aa2-a80f-fa72d5e37a73",
+            "61ca33c4-6b46-45fd-bf48-36e92fc30067"
+          ]
+        },
+        {
+          "anchor_bit": 6,
+          "anchor_id": "bec5aa24-1479-4c55-9de9-ddb843ddc039",
+          "grant_bits": [
+            6
+          ],
+          "grant_ids": [
+            "bec5aa24-1479-4c55-9de9-ddb843ddc039"
+          ]
+        },
+        {
+          "anchor_bit": 9,
+          "anchor_id": "fde47c79-594b-4731-9669-0df4044da1f4",
+          "grant_bits": [
+            8,
+            9
+          ],
+          "grant_ids": [
+            "8b6431dd-5553-4743-a43f-ef61172b46f6",
+            "fde47c79-594b-4731-9669-0df4044da1f4"
+          ]
+        },
+        {
+          "anchor_bit": 10,
+          "anchor_id": "911cc0df-8191-49ff-a058-8390ce15e910",
+          "grant_bits": [
+            10,
+            17,
+            25,
+            26
+          ],
+          "grant_ids": [
+            "911cc0df-8191-49ff-a058-8390ce15e910",
+            "0f78b098-5745-47de-b9cb-c74e3beb411f",
+            "ff284e41-e8d7-53dd-946a-de2807c134dd",
+            "f4828e4e-8b66-5d82-96fe-02763018b98f"
+          ]
+        },
+        {
+          "anchor_bit": 11,
+          "anchor_id": "adcf3a4f-948d-4c2e-b184-e48544c7afcf",
+          "grant_bits": [
+            11,
+            12,
+            18
+          ],
+          "grant_ids": [
+            "adcf3a4f-948d-4c2e-b184-e48544c7afcf",
+            "61c98944-9414-47f2-bcdf-6d4ff0ba5598",
+            "dc005b01-501a-4861-9d56-b971125e134a"
+          ]
+        },
+        {
+          "anchor_bit": 13,
+          "anchor_id": "31e8e8c8-347d-456b-bd0d-cae47f591eb8",
+          "grant_bits": [
+            13,
+            28,
+            30
+          ],
+          "grant_ids": [
+            "31e8e8c8-347d-456b-bd0d-cae47f591eb8",
+            "5494c103-af5a-59a2-bb3e-491784fa4a32",
+            "9316f1ce-9294-54ea-b4e4-812d1c75dfba"
+          ]
+        },
+        {
+          "anchor_bit": 14,
+          "anchor_id": "e4565c77-cc6f-43ea-91ee-1448e52cc757",
+          "grant_bits": [
+            14,
+            20
+          ],
+          "grant_ids": [
+            "e4565c77-cc6f-43ea-91ee-1448e52cc757",
+            "af9ac5eb-ba74-4fe5-b3bf-b9e69a3a87f4"
+          ]
+        },
+        {
+          "anchor_bit": 19,
+          "anchor_id": "08dc86c3-0018-43d7-a1ca-092a863bf4dd",
+          "grant_bits": [
+            19,
+            27,
+            31
+          ],
+          "grant_ids": [
+            "08dc86c3-0018-43d7-a1ca-092a863bf4dd",
+            "31325774-f8b6-5124-b076-05c2e94f0555",
+            "d6f25615-a491-5eee-87fd-73031e4a18b2"
+          ]
+        },
+        {
+          "anchor_bit": 29,
+          "anchor_id": "220b33e4-9460-5610-b765-86c536482a8d",
+          "grant_bits": [
+            29,
+            33
+          ],
+          "grant_ids": [
+            "220b33e4-9460-5610-b765-86c536482a8d",
+            "f6286deb-00ba-5ade-bade-5f51b4f22e7b"
+          ]
+        },
+        {
+          "anchor_bit": 32,
+          "anchor_id": "02639414-0de5-5a1d-afdc-04e3fe871032",
+          "grant_bits": [
+            32
+          ],
+          "grant_ids": [
+            "02639414-0de5-5a1d-afdc-04e3fe871032"
+          ]
+        },
+        {
+          "anchor_bit": 104,
+          "anchor_id": "5e871f9a-f71b-475b-82a1-0879d54d9d30",
+          "grant_bits": [
+            104
+          ],
+          "grant_ids": [
+            "5e871f9a-f71b-475b-82a1-0879d54d9d30"
+          ]
+        },
+        {
+          "anchor_bit": 105,
+          "anchor_id": "f08eec6e-b40c-4b25-8fb2-cd5710d54401",
+          "grant_bits": [
+            105
+          ],
+          "grant_ids": [
+            "f08eec6e-b40c-4b25-8fb2-cd5710d54401"
+          ]
+        }
+      ],
+      "zerg": [
+        {
+          "anchor_bit": 34,
+          "anchor_id": "a6948251-7b11-51ce-899d-0816edd0995a",
+          "grant_bits": [
+            34,
+            50
+          ],
+          "grant_ids": [
+            "a6948251-7b11-51ce-899d-0816edd0995a",
+            "08063950-39d5-5e62-8488-d5226f097db1"
+          ]
+        },
+        {
+          "anchor_bit": 35,
+          "anchor_id": "ef8ab539-27b9-50d7-8334-ab5f9c8d9a5f",
+          "grant_bits": [
+            35,
+            49
+          ],
+          "grant_ids": [
+            "ef8ab539-27b9-50d7-8334-ab5f9c8d9a5f",
+            "51941deb-1b6b-50b6-a8b8-b25bd1fb43c7"
+          ]
+        },
+        {
+          "anchor_bit": 36,
+          "anchor_id": "50397b65-4a2d-537f-9f37-cc535b98cde4",
+          "grant_bits": [
+            36
+          ],
+          "grant_ids": [
+            "50397b65-4a2d-537f-9f37-cc535b98cde4"
+          ]
+        },
+        {
+          "anchor_bit": 37,
+          "anchor_id": "10a554d6-3258-50f2-bcce-f0cc05a5a21c",
+          "grant_bits": [
+            37,
+            52
+          ],
+          "grant_ids": [
+            "10a554d6-3258-50f2-bcce-f0cc05a5a21c",
+            "50938e75-f810-50e5-9755-2b624f55a663"
+          ]
+        },
+        {
+          "anchor_bit": 38,
+          "anchor_id": "19e4b7ea-bd4b-5e25-a362-6379770f253e",
+          "grant_bits": [
+            38
+          ],
+          "grant_ids": [
+            "19e4b7ea-bd4b-5e25-a362-6379770f253e"
+          ]
+        },
+        {
+          "anchor_bit": 39,
+          "anchor_id": "bcc8fdd9-aa12-55c0-a747-7bfb3ba0df69",
+          "grant_bits": [
+            39,
+            40
+          ],
+          "grant_ids": [
+            "bcc8fdd9-aa12-55c0-a747-7bfb3ba0df69",
+            "62773fb3-a08d-5eea-a5f8-afc4fa240491"
+          ]
+        },
+        {
+          "anchor_bit": 41,
+          "anchor_id": "474028ba-4784-5ea6-a4d6-5be6025d4289",
+          "grant_bits": [
+            41,
+            57
+          ],
+          "grant_ids": [
+            "474028ba-4784-5ea6-a4d6-5be6025d4289",
+            "fec86599-89dc-5015-afab-a207e9258707"
+          ]
+        },
+        {
+          "anchor_bit": 42,
+          "anchor_id": "937deca5-e0df-518a-9db5-738801a7d78a",
+          "grant_bits": [
+            42,
+            60
+          ],
+          "grant_ids": [
+            "937deca5-e0df-518a-9db5-738801a7d78a",
+            "7651ad59-5052-56c1-85fe-74133ad7660e"
+          ]
+        },
+        {
+          "anchor_bit": 44,
+          "anchor_id": "88179125-fb11-56f7-a6e5-fdbe01513202",
+          "grant_bits": [
+            43,
+            44,
+            61
+          ],
+          "grant_ids": [
+            "5323e004-5669-5f9b-b74f-eb4feb45c0bd",
+            "88179125-fb11-56f7-a6e5-fdbe01513202",
+            "93d79797-e57b-52c1-8a79-4f75774fb40d"
+          ]
+        },
+        {
+          "anchor_bit": 46,
+          "anchor_id": "8453bd7a-0f86-5415-b26b-e3dcafab73d8",
+          "grant_bits": [
+            45,
+            46,
+            62
+          ],
+          "grant_ids": [
+            "70868f85-8196-5c56-b775-4b247f32bf3a",
+            "8453bd7a-0f86-5415-b26b-e3dcafab73d8",
+            "8deedc39-6d94-5ecf-b7d2-1ef08292a610"
+          ]
+        },
+        {
+          "anchor_bit": 47,
+          "anchor_id": "a1fbb3c9-68f7-5b77-a131-9415ba633222",
+          "grant_bits": [
+            47,
+            65
+          ],
+          "grant_ids": [
+            "a1fbb3c9-68f7-5b77-a131-9415ba633222",
+            "793931fa-f87a-5a0f-a575-bff6bcce6a5d"
+          ]
+        },
+        {
+          "anchor_bit": 51,
+          "anchor_id": "7c993c03-1411-5c14-9661-51056fca369d",
+          "grant_bits": [
+            51
+          ],
+          "grant_ids": [
+            "7c993c03-1411-5c14-9661-51056fca369d"
+          ]
+        },
+        {
+          "anchor_bit": 54,
+          "anchor_id": "a78ec969-f1e0-5b81-be72-2c100c1cb6c8",
+          "grant_bits": [
+            53,
+            54
+          ],
+          "grant_ids": [
+            "1ef2e74d-c3fb-5667-bf75-0695ec30f019",
+            "a78ec969-f1e0-5b81-be72-2c100c1cb6c8"
+          ]
+        },
+        {
+          "anchor_bit": 55,
+          "anchor_id": "55cb0c50-2498-5194-ad1e-935baf84b110",
+          "grant_bits": [
+            55,
+            56
+          ],
+          "grant_ids": [
+            "55cb0c50-2498-5194-ad1e-935baf84b110",
+            "807cc622-fda9-5ceb-a96a-3457b0074753"
+          ]
+        },
+        {
+          "anchor_bit": 58,
+          "anchor_id": "2e8b32df-a697-5eaf-85b1-eb0999c0754e",
+          "grant_bits": [
+            58
+          ],
+          "grant_ids": [
+            "2e8b32df-a697-5eaf-85b1-eb0999c0754e"
+          ]
+        },
+        {
+          "anchor_bit": 63,
+          "anchor_id": "df095ca0-42a6-5230-b976-4a8f6588db92",
+          "grant_bits": [
+            63,
+            64
+          ],
+          "grant_ids": [
+            "df095ca0-42a6-5230-b976-4a8f6588db92",
+            "25652a52-018d-5c53-9f56-9b0f2a8e1cef"
+          ]
+        },
+        {
+          "anchor_bit": 67,
+          "anchor_id": "6e4f04ef-f498-5852-b175-cc46b156c4fc",
+          "grant_bits": [
+            59,
+            67
+          ],
+          "grant_ids": [
+            "bc1c87d6-a946-5e55-a727-db572294557c",
+            "6e4f04ef-f498-5852-b175-cc46b156c4fc"
+          ]
+        },
+        {
+          "anchor_bit": 68,
+          "anchor_id": "58810cf9-1b79-5226-8734-f11735a024e0",
+          "grant_bits": [
+            48,
+            66,
+            68
+          ],
+          "grant_ids": [
+            "4c71f828-2be8-5786-8902-c45333a38e40",
+            "c1855946-9678-5a02-83a6-4c30e6011f17",
+            "58810cf9-1b79-5226-8734-f11735a024e0"
+          ]
+        }
+      ],
+      "protoss": [
+        {
+          "anchor_bit": 69,
+          "anchor_id": "6133f55d-779f-567a-94ad-6f354e50cd41",
+          "grant_bits": [
+            69,
+            85,
+            86
+          ],
+          "grant_ids": [
+            "6133f55d-779f-567a-94ad-6f354e50cd41",
+            "692a2bd1-5537-568c-b6b5-75e1317b1a4d",
+            "0c4c4678-5be2-5f3b-8eb0-dddb701c121b"
+          ]
+        },
+        {
+          "anchor_bit": 70,
+          "anchor_id": "d8b24b05-1222-5d5f-95ab-2888640519b4",
+          "grant_bits": [
+            70
+          ],
+          "grant_ids": [
+            "d8b24b05-1222-5d5f-95ab-2888640519b4"
+          ]
+        },
+        {
+          "anchor_bit": 71,
+          "anchor_id": "6be08978-7d28-5f6d-a9ee-621e4f6b236c",
+          "grant_bits": [
+            71,
+            87
+          ],
+          "grant_ids": [
+            "6be08978-7d28-5f6d-a9ee-621e4f6b236c",
+            "55808e0e-ea2d-57a3-a2c7-2554e8fa55be"
+          ]
+        },
+        {
+          "anchor_bit": 72,
+          "anchor_id": "15752ea5-1048-5307-b4d6-89e1f92376c1",
+          "grant_bits": [
+            72
+          ],
+          "grant_ids": [
+            "15752ea5-1048-5307-b4d6-89e1f92376c1"
+          ]
+        },
+        {
+          "anchor_bit": 73,
+          "anchor_id": "8a5dc9f5-bb51-5c09-8f7f-12890b39a04f",
+          "grant_bits": [
+            73,
+            91,
+            92
+          ],
+          "grant_ids": [
+            "8a5dc9f5-bb51-5c09-8f7f-12890b39a04f",
+            "06f4d7f5-202f-51cb-a81d-1ef2aa8bc78e",
+            "82e789b7-6fa9-5ced-af07-d966b5749d39"
+          ]
+        },
+        {
+          "anchor_bit": 74,
+          "anchor_id": "bc13f025-ec31-53d6-bb9b-3b378f8b7d9e",
+          "grant_bits": [
+            74
+          ],
+          "grant_ids": [
+            "bc13f025-ec31-53d6-bb9b-3b378f8b7d9e"
+          ]
+        },
+        {
+          "anchor_bit": 75,
+          "anchor_id": "a45b1173-35e7-5c3d-957a-7d1483a281fa",
+          "grant_bits": [
+            75
+          ],
+          "grant_ids": [
+            "a45b1173-35e7-5c3d-957a-7d1483a281fa"
+          ]
+        },
+        {
+          "anchor_bit": 76,
+          "anchor_id": "25930078-74c8-5c75-8ad2-44ebefb8db05",
+          "grant_bits": [
+            76,
+            77,
+            94
+          ],
+          "grant_ids": [
+            "25930078-74c8-5c75-8ad2-44ebefb8db05",
+            "26ef37d2-4048-5abd-aba5-7c9e510361cc",
+            "fe5b3fad-5ebc-5573-8296-a9d91b138c22"
+          ]
+        },
+        {
+          "anchor_bit": 78,
+          "anchor_id": "60f86c7c-f4f0-5a0a-8b81-94dee26bc64b",
+          "grant_bits": [
+            78,
+            95
+          ],
+          "grant_ids": [
+            "60f86c7c-f4f0-5a0a-8b81-94dee26bc64b",
+            "4fedad7f-2fb9-504e-9454-c768e09d905c"
+          ]
+        },
+        {
+          "anchor_bit": 79,
+          "anchor_id": "91425e65-1f04-5ea4-a848-59e2c2c7f39b",
+          "grant_bits": [
+            79
+          ],
+          "grant_ids": [
+            "91425e65-1f04-5ea4-a848-59e2c2c7f39b"
+          ]
+        },
+        {
+          "anchor_bit": 81,
+          "anchor_id": "e12772d8-620e-5550-b33f-000515770bec",
+          "grant_bits": [
+            80,
+            81,
+            96
+          ],
+          "grant_ids": [
+            "5792be66-e81b-5b2d-b908-a7819f4fcf33",
+            "e12772d8-620e-5550-b33f-000515770bec",
+            "2c49c57a-0bb8-5bc4-a725-e61e966fc586"
+          ]
+        },
+        {
+          "anchor_bit": 82,
+          "anchor_id": "35005b20-4108-57d7-ac38-5c468f0482e5",
+          "grant_bits": [
+            82,
+            97
+          ],
+          "grant_ids": [
+            "35005b20-4108-57d7-ac38-5c468f0482e5",
+            "02b80d02-b3d1-59a1-bd16-f8a31dc292ea"
+          ]
+        },
+        {
+          "anchor_bit": 88,
+          "anchor_id": "935452ab-4e90-5aab-9c90-eb9cc55ed087",
+          "grant_bits": [
+            88
+          ],
+          "grant_ids": [
+            "935452ab-4e90-5aab-9c90-eb9cc55ed087"
+          ]
+        },
+        {
+          "anchor_bit": 89,
+          "anchor_id": "d763e2fb-431a-50ba-bfc7-de9279922b42",
+          "grant_bits": [
+            89,
+            90
+          ],
+          "grant_ids": [
+            "d763e2fb-431a-50ba-bfc7-de9279922b42",
+            "daa8e37c-7b5a-576c-9ba9-ce97b724dedf"
+          ]
+        },
+        {
+          "anchor_bit": 93,
+          "anchor_id": "e34227bb-1234-5802-899f-a7ff46a4f649",
+          "grant_bits": [
+            93,
+            100
+          ],
+          "grant_ids": [
+            "e34227bb-1234-5802-899f-a7ff46a4f649",
+            "dbf5c3bc-dcba-5215-b5dd-e713baa4fe73"
+          ]
+        },
+        {
+          "anchor_bit": 101,
+          "anchor_id": "40e316b0-df99-5b23-b712-60b863f6fd19",
+          "grant_bits": [
+            83,
+            101
+          ],
+          "grant_ids": [
+            "dc0cd4aa-13b0-5fa9-aa16-e049aa803700",
+            "40e316b0-df99-5b23-b712-60b863f6fd19"
+          ]
+        },
+        {
+          "anchor_bit": 102,
+          "anchor_id": "461b08f1-9cc2-5373-a555-65779ae7e14c",
+          "grant_bits": [
+            98,
+            102
+          ],
+          "grant_ids": [
+            "8ca6d74c-c10f-537b-98e3-8d2a6583f046",
+            "461b08f1-9cc2-5373-a555-65779ae7e14c"
+          ]
+        },
+        {
+          "anchor_bit": 103,
+          "anchor_id": "57102deb-c97b-57d0-ba5c-43cce2d4305d",
+          "grant_bits": [
+            84,
+            99,
+            103
+          ],
+          "grant_ids": [
+            "b183e8bf-f97d-57e9-b3bd-e2baaebeb92f",
+            "a81b8e17-c7f6-507f-8474-5c35a2d9116d",
+            "57102deb-c97b-57d0-ba5c-43cce2d4305d"
+          ]
+        }
+      ]
+    }
+  },
+  "rank_catalog": "sc1/campaign/talent_rank_catalog.json"
+}

@@ -1,0 +1,63 @@
+{
+  "release": "v2026.10.16-qa1",
+  "scope": "Offline production-host and built-map verification. No game launch, installation or player record access.",
+  "native_host": {
+    "passed": true,
+    "groups": 222,
+    "checks": 798939,
+    "production_translation_units_used": true
+  },
+  "native_dialog": {
+    "passed": true,
+    "groups": 19,
+    "assertions": 101071
+  },
+  "protocol_interoperability": {
+    "legacy": true,
+    "phases": true,
+    "rework_v2_python_native": true
+  },
+  "python_regressions": {
+    "final_reward_and_offer_policy": 42,
+    "resource_layout": 50,
+    "passed": true
+  },
+  "resource_layout": {
+    "maps": 63,
+    "curve_bases": 174,
+    "retained_bases": 171,
+    "mineral_count": 3361,
+    "gas_count": 156
+  },
+  "resources_identity_count_amount_preserved": true,
+  "wave_occupancy": {
+    "maps": 63,
+    "enabled": 55,
+    "disabled": 8,
+    "air_only_enabled": 5,
+    "placed_units": 22869,
+    "scripted_economies_normalized": 16,
+    "first_and_repeat_departures_passed": true,
+    "synthetic_engine_callbacks": true
+  },
+  "source_pins": {
+    "sc1/native_campaign/plugin/native_plugin.cpp": "d27b3b8acff06706cdbd9c91b9e6fe79252d258a813d1fb0f20cf88309a7b4c1",
+    "sc1/native_campaign/ladder_resource_layout.py": "6efa06ad9a63f0788766a5dc734a04a1a7dc06a8352859e8ff0ce1eb738d95c0",
+    "sc1/native_campaign/resource_layout.py": "1176354248280bba3b8603e3bd9b7ec9750e23d333f7306ca55a1ccc12662767",
+    "sc1/campaign/phased_growth.py": "b3a2cac13d374012e093898ab1aa8139defb63f75c15b5d6f21c1c1351794b4d",
+    "sc1/campaign/rework_growth.py": "00f53900059b3326e4e2803872c03862eeeea5e9d3e887db2f2bed7a76d2f871",
+    "sc1/campaign/talent_campaign_policy.py": "9c3101f8e7cab558e4e8728d6ff215702373fc2630609a72644732c6f4d0f855"
+  },
+  "dll_sha256": "f33f6faebbf3ed74344d906ea28e3b9e456b168aa8eab043274a05bf6f889587",
+  "limits": [
+    "All missions have not been played to completion.",
+    "Combat balance, native CreateUnit/pathfinder behavior and screen appearance require user playtests.",
+    "The congratulations text and new resource layout were not visually verified in the running game.",
+    "Integer armor UI omits the fractional half; ordinary armor damage calculation and card text retain +0.5.",
+    "In-mission save/load is unsupported; campaign growth and completion records persist."
+  ],
+  "live_gameplay_verified": false,
+  "game_launched": false,
+  "installed_game_changed": false,
+  "user_database_modified": false
+}

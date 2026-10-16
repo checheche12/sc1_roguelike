@@ -1,0 +1,96 @@
+﻿{
+  "type": "DIALOG",
+  "name": "GameMenu",
+  "rect": [184,16,264,332],
+  "style": ["DS_MODALFRAME","WS_POPUP","WS_SYSMENU"],
+  "children": [
+    {
+      "type": "DEFPUSHBUTTON",
+      "content": "gamemenu-1",
+      "id": -3,
+      "rect": [20,286,224,28],
+      "flags": ["WS_VISIBLE","WS_TABSTOP","WS_HOTKEY","RC_BIGTEXT"],
+      "children": null
+    },
+    {
+      "type": "PUSHBUTTON",
+      "content": "gamemenu-2",
+      "id": 1,
+      "rect": [20,36,224,28],
+      "flags": ["WS_VISIBLE","WS_TABSTOP","WS_HOTKEY","RC_BIGTEXT"],
+      "children": null
+    },
+    {
+      "type": "PUSHBUTTON",
+      "content": "gamemenu-3",
+      "id": 2,
+      "rect": [20,70,224,28],
+      "flags": ["WS_VISIBLE","WS_TABSTOP","WS_HOTKEY","RC_BIGTEXT"],
+      "children": null
+    },
+    {
+      "type": "PUSHBUTTON",
+      "content": "gamemenu-4",
+      "id": 8,
+      "rect": [20,70,224,28],
+      "flags": ["WS_TABSTOP","WS_HOTKEY","RC_BIGTEXT"],
+      "children": null
+    },
+    {
+      "type": "PUSHBUTTON",
+      "content": "gamemenu-5",
+      "id": 9,
+      "rect": [20,70,224,28],
+      "flags": ["WS_TABSTOP","WS_HOTKEY","RC_BIGTEXT"],
+      "children": null
+    },
+    {
+      "type": "PUSHBUTTON",
+      "content": "gamemenu-6",
+      "id": 3,
+      "rect": [20,104,224,28],
+      "flags": ["WS_VISIBLE","WS_TABSTOP","WS_HOTKEY","RC_BIGTEXT"],
+      "children": null
+    },
+    {
+      "type": "PUSHBUTTON",
+      "content": "gamemenu-social",
+      "id": 4,
+      "rect": [20,138,224,28],
+      "flags": ["WS_VISIBLE","WS_TABSTOP","WS_HOTKEY","RC_BIGTEXT"],
+      "children": null
+    },
+    {
+      "type": "PUSHBUTTON",
+      "content": "gamemenu-7",
+      "id": 5,
+      "rect": [20,172,224,28],
+      "flags": ["WS_VISIBLE","WS_TABSTOP","WS_HOTKEY","RC_BIGTEXT"],
+      "children": null
+    },
+    {
+      "type": "PUSHBUTTON",
+      "content": "gamemenu-8",
+      "id": 6,
+      "rect": [20,206,224,28],
+      "flags": ["WS_VISIBLE","WS_TABSTOP","WS_HOTKEY","RC_BIGTEXT"],
+      "children": null
+    },
+    {
+      "type": "PUSHBUTTON",
+      "content": "gamemenu-9",
+      "id": 7,
+      "rect": [20,240,224,28],
+      "flags": ["WS_VISIBLE","WS_TABSTOP","WS_HOTKEY","RC_BIGTEXT"],
+      "children": null
+    },
+    {
+      "type": "CTEXT",
+      "content": "gamemenu-10",
+      "id": -1,
+      "rect": [0,8,286,24],
+      "flags": ["WS_VISIBLE","RC_BIGTEXT"],
+      "children": null
+    }
+  ]
+}

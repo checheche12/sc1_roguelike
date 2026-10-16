@@ -1,0 +1,157 @@
+{
+  "schema_version": 1,
+  "status": "implementation_contract_live_unverified",
+  "frames_per_second": 24,
+  "curses": [
+    {
+      "byte_index": 3,
+      "name": "시간 가속",
+      "source": {
+        "id": "163a6ce5-eefc-59eb-9e79-840ff9a96dab",
+        "name": "시간 가속",
+        "target": "적 전투 유닛",
+        "description": "적의 공격 속도와 이동 속도가 7.5% 증가합니다.",
+        "trigger": "해당 효과 설명의 조건을 충족할 때",
+        "numbers": "반복 n중첩: 공격·이동 속도 × (1+0.075n). 이벤트 타이머·수송 연출은 제외.",
+        "notes": "사용자 요청에 따른 AI 초안 · 게임 효과 미구현. 수치와 EUD 구현 가능성은 검증 전입니다. 반복 획득 가능. 증가분은 기본값을 기준으로 합산합니다. 참고: SC2 Chrono Dilation",
+        "updatedAt": "2026-10-14T06:10:00.000Z",
+        "race": "shared",
+        "status": "draft",
+        "rarity": "uncommon",
+        "kind": "curse"
+      },
+      "effect": {
+        "type": "enemy_speed",
+        "basis_points_per_stack": 750
+      }
+    },
+    {
+      "byte_index": 4,
+      "name": "앞당겨진 출격",
+      "source": {
+        "id": "fada488d-f5bb-56ab-8744-96fc84f761f9",
+        "name": "앞당겨진 출격",
+        "target": "적 추가 공세",
+        "description": "추가 공세의 반복 간격이 10% 줄어듭니다. 첫 공세의 준비 시간은 줄이지 않습니다.",
+        "trigger": "해당 효과 설명의 조건을 충족할 때",
+        "numbers": "반복 n중첩: 기준 간격 ÷ (1+0.10n). 최소45초. 안전 조건 때문에 건너뛴 공세는 몰아서 나오지 않음.",
+        "notes": "사용자 요청에 따른 AI 초안 · 게임 효과 미구현. 수치와 EUD 구현 가능성은 검증 전입니다. 반복 획득 가능. 증가분은 기본값을 기준으로 합산합니다. 참고: SC2 TriggerTimerBad 및 공세 주기 강화 계열",
+        "updatedAt": "2026-10-14T06:10:00.000Z",
+        "race": "shared",
+        "status": "draft",
+        "rarity": "uncommon",
+        "kind": "curse"
+      },
+      "effect": {
+        "type": "wave_interval",
+        "basis_points_per_stack": 1000,
+        "formula": "base / (1 + 0.10 * stacks)",
+        "minimum_interval_frames": 1080,
+        "first_wave_unchanged": true
+      }
+    },
+    {
+      "byte_index": 5,
+      "name": "지속적인 추격",
+      "source": {
+        "id": "d7c5e877-1599-5720-9279-641bb9665846",
+        "name": "지속적인 추격",
+        "target": "적 추가 공세",
+        "description": "공세 병력이 6초 동안 피해를 받지 않으면 매초 최대 체력의 1%를 회복합니다.",
+        "trigger": "해당 효과 설명의 조건을 충족할 때",
+        "numbers": "반복마다 초당 회복 +1%p. 교전 중 회복 중단.",
+        "notes": "사용자 요청에 따른 AI 초안 · 게임 효과 미구현. 수치와 EUD 구현 가능성은 검증 전입니다. 반복 획득 가능. 증가분은 기본값을 기준으로 합산합니다. 참고: SC2 Fiendish Fortitude의 지속 전투력 변형",
+        "updatedAt": "2026-10-14T06:10:00.000Z",
+        "race": "shared",
+        "status": "draft",
+        "rarity": "uncommon",
+        "kind": "curse"
+      },
+      "effect": {
+        "type": "enemy_regeneration",
+        "unharmed_frames": 144,
+        "max_hp_basis_points_per_second_per_stack": 100,
+        "only_added_wave": true
+      }
+    },
+    {
+      "byte_index": 6,
+      "name": "망자의 지원군",
+      "source": {
+        "id": "ed0bf3fc-1207-5661-b747-ad4b93d00801",
+        "name": "망자의 지원군",
+        "target": "적 추가 증원",
+        "description": "적 전투 유닛을 20기 처치할 때마다 적 기지에서 8인구의 지원군이 출발합니다. 죽은 자리에서는 생성되지 않습니다.",
+        "trigger": "해당 효과 설명의 조건을 충족할 때",
+        "numbers": "공유 대기60초. 임계 도달 시 10초 경고. 추가 소환물은 처치 수 제외. 반복당 편성 +4인구. 지도별 예산·안전 생성 적용.",
+        "notes": "사용자 요청에 따른 AI 초안 · 게임 효과 미구현. 수치와 EUD 구현 가능성은 검증 전입니다. 반복 획득 가능. 증가분은 기본값을 기준으로 합산합니다. 참고: SC2 Carrion Swarm / SC2 0.3.2 적 진영 생성 규칙",
+        "updatedAt": "2026-10-14T06:10:00.000Z",
+        "race": "shared",
+        "status": "draft",
+        "rarity": "rare",
+        "kind": "curse"
+      },
+      "effect": {
+        "type": "death_reinforcements",
+        "kills_per_trigger": 20,
+        "supply_base": 8,
+        "supply_per_extra_stack": 4,
+        "cooldown_frames": 1440,
+        "warning_frames": 240,
+        "exclude_added_units": true,
+        "no_queue_when_unsafe": true
+      }
+    },
+    {
+      "byte_index": 7,
+      "name": "정예 선봉",
+      "source": {
+        "id": "edcac92f-f130-5127-823a-444835d88df4",
+        "name": "정예 선봉",
+        "target": "적 추가 공세",
+        "description": "공세마다 일부 유닛이 정예가 되어 최대 체력과 공격 피해가 증가합니다. 정예는 외관 표시를 붙입니다.",
+        "trigger": "해당 효과 설명의 조건을 충족할 때",
+        "numbers": "공세당 1중첩당1기. 정예 HP+50%, 일반 공격+20%. 같은 유닛의 정예화 중복 금지.",
+        "notes": "사용자 요청에 따른 AI 초안 · 게임 효과 미구현. 수치와 EUD 구현 가능성은 검증 전입니다. 반복 획득 가능. 증가분은 기본값을 기준으로 합산합니다. 참고: SC2 Curse Random Modifier를 예측 가능한 고정 정예 효과로 변형",
+        "updatedAt": "2026-10-14T06:10:00.000Z",
+        "race": "shared",
+        "status": "draft",
+        "rarity": "rare",
+        "kind": "curse"
+      },
+      "effect": {
+        "type": "elite_vanguard",
+        "units_per_wave_per_stack": 1,
+        "hp_basis_points": 5000,
+        "damage_basis_points": 2000,
+        "visual_marker_required": true
+      }
+    },
+    {
+      "byte_index": 8,
+      "name": "긴급 방어막",
+      "source": {
+        "id": "4d0ba81b-2aa6-5c27-afe1-b5cf18f32635",
+        "name": "긴급 방어막",
+        "target": "적 추가 공세",
+        "description": "공세의 선두 4기가 출발 직후 짧은 방어막을 받아 일반 공격 피해를 덜 받습니다.",
+        "trigger": "해당 효과 설명의 조건을 충족할 때",
+        "numbers": "출발 후20초 / 일반 공격 피해25%감소. 반복당 보호 대상 +2기. 피해감소 강도는 중첩하지 않음.",
+        "notes": "사용자 요청에 따른 AI 초안 · 게임 효과 미구현. 수치와 EUD 구현 가능성은 검증 전입니다. 반복 획득 가능. 증가분은 기본값을 기준으로 합산합니다. 참고: SC2 Stolen Overcharge를 SC1 피해 감소막으로 변형",
+        "updatedAt": "2026-10-14T06:10:00.000Z",
+        "race": "shared",
+        "status": "draft",
+        "rarity": "rare",
+        "kind": "curse"
+      },
+      "effect": {
+        "type": "wave_barrier",
+        "leading_units_base": 4,
+        "leading_units_per_extra_stack": 2,
+        "duration_frames": 480,
+        "damage_reduction_basis_points": 2500,
+        "normal_attack_only": true
+      }
+    }
+  ]
+}

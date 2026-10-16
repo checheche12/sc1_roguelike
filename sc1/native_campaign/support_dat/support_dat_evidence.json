@@ -1,0 +1,534 @@
+{
+  "schema_version": 2,
+  "status": "complete_stock_defaults_offline_built_live_unverified",
+  "support_dat_assets": [
+    {
+      "name": "arr/buttons.dat",
+      "path": "sc1/native_campaign/support_dat/arr/buttons.dat",
+      "sha256": "c1ef3f8043521fb85ecc591c58c7767b92c0d77a438496c3f677ba3e388f7384",
+      "bytes": 8941,
+      "entry_count": 99,
+      "field_count": 10
+    },
+    {
+      "name": "arr/flingy.dat",
+      "path": "sc1/native_campaign/support_dat/arr/flingy.dat",
+      "sha256": "26754ecd69318ab43f04e2dcd62e339e8b6008e7c2640cc958e9950852bc04d2",
+      "bytes": 3235,
+      "entry_count": 209,
+      "field_count": 7
+    },
+    {
+      "name": "arr/images.dat",
+      "path": "sc1/native_campaign/support_dat/arr/images.dat",
+      "sha256": "aa7d6938e27967a86e2cf60863d7ab522d080a67fb52452996c3fd94b0d13f35",
+      "bytes": 38146,
+      "entry_count": 999,
+      "field_count": 14
+    },
+    {
+      "name": "arr/mapdata.dat",
+      "path": "sc1/native_campaign/support_dat/arr/mapdata.dat",
+      "sha256": "1303b61288a052c9f692bbca198656c6dcfb675c3427e967bb137546dd724359",
+      "bytes": 288,
+      "entry_count": 65,
+      "field_count": 1
+    },
+    {
+      "name": "arr/orders.dat",
+      "path": "sc1/native_campaign/support_dat/arr/orders.dat",
+      "sha256": "38ddbed0c9f30dd77052b7f4456a7e7708951bf6bc8f7e0df8f09e7118d7beeb",
+      "bytes": 6868,
+      "entry_count": 189,
+      "field_count": 20
+    },
+    {
+      "name": "arr/portdata.dat",
+      "path": "sc1/native_campaign/support_dat/arr/portdata.dat",
+      "sha256": "bb0779323bf41dab7124d9953e6b17ab80a928604c1b4cb963be0ca37df092f9",
+      "bytes": 1408,
+      "entry_count": 110,
+      "field_count": 6
+    },
+    {
+      "name": "arr/sprites.dat",
+      "path": "sc1/native_campaign/support_dat/arr/sprites.dat",
+      "sha256": "4c2791b07f6993985c9c2f4fe3f2018aa05cabf6bee3da62b1bc69bddf60639d",
+      "bytes": 3707,
+      "entry_count": 517,
+      "field_count": 6
+    },
+    {
+      "name": "arr/techdata.dat",
+      "path": "sc1/native_campaign/support_dat/arr/techdata.dat",
+      "sha256": "f85e71d8dae02eb21165385071a4d04249fe6d40d2f5b525dabbc31f7c9eaacb",
+      "bytes": 2372,
+      "entry_count": 45,
+      "field_count": 16
+    },
+    {
+      "name": "arr/upgrades.dat",
+      "path": "sc1/native_campaign/support_dat/arr/upgrades.dat",
+      "sha256": "e43f2bbcd6fb7c95f05b1d1ca1b32274c51d5611af9dc9dc2f461003e0e5e2fe",
+      "bytes": 3574,
+      "entry_count": 62,
+      "field_count": 24
+    }
+  ],
+  "derived_managed_assets": [
+    {
+      "name": "arr/units.dat",
+      "path": "sc1/native_campaign/support_dat/derived/units.dat",
+      "sha256": "f724ce3c3cede8d5aed757a83aa414a3363217fcc9eba47250c6ed6a1ca39d5e",
+      "bytes": 40670,
+      "entry_count": 261,
+      "field_count": 76,
+      "base_sha256": "7ff5f9c3c34724d344a669d38875dcbf6cd1a4b1354e7b3b1df0589a7d99b227"
+    },
+    {
+      "name": "arr/weapons.dat",
+      "path": "sc1/native_campaign/support_dat/derived/weapons.dat",
+      "sha256": "d95108ece3405cc6c9c754a100ae3f8cd67f5049963cadfe9646f241161775a3",
+      "bytes": 6199,
+      "entry_count": 131,
+      "field_count": 24,
+      "base_sha256": "fffddfa0c67adccb817ade9f3f430479b371075345b3312108ceced4e9e2a045"
+    }
+  ],
+  "derived_units_asset": {
+    "name": "arr/units.dat",
+    "path": "sc1/native_campaign/support_dat/derived/units.dat",
+    "sha256": "f724ce3c3cede8d5aed757a83aa414a3363217fcc9eba47250c6ed6a1ca39d5e",
+    "bytes": 40670,
+    "entry_count": 261,
+    "field_count": 76,
+    "base_sha256": "7ff5f9c3c34724d344a669d38875dcbf6cd1a4b1354e7b3b1df0589a7d99b227"
+  },
+  "stock_values_preserved": true,
+  "original_unit_values_preserved": true,
+  "requirements_preserved": true,
+  "buttons_preserved": true,
+  "stock_values_scope": "All original gameplay scalar values preserved numerically, including canonical u32 widening. Unmodified pinned GameData/DatTable directly generate all extended defaults and reserved/None rows.",
+  "requirements_scope": "Units original managed requirement buffer retained exactly; UpgR/TecR/TecU full buffers match stock EXE. Official Orders migrations are retained: order0x24 Has no Addon0xff0c; order0x66 Is Landed Building0xff13. All other original requirements are unchanged semantically.",
+  "buttons_scope": "All99 sets/554 records/eight columns and all250 official unit/group-to-buttonset and linked-unit mappings preserved. Units0x44/45 are now explicitly supplied; no missing-field fallback assumed.",
+  "buttons_preserved_basis": "Pinned stock resource + unmodified official LoadButtons writer + independent mapping and column tests.",
+  "unit_button_mapping_fallback_required": false,
+  "unit_button_mapping_values_verified": true,
+  "entry_counts": {
+    "arr/buttons.dat": 99,
+    "arr/flingy.dat": 209,
+    "arr/images.dat": 999,
+    "arr/mapdata.dat": 65,
+    "arr/orders.dat": 189,
+    "arr/portdata.dat": 110,
+    "arr/sprites.dat": 517,
+    "arr/techdata.dat": 45,
+    "arr/upgrades.dat": 62,
+    "arr/units.dat": 261,
+    "arr/weapons.dat": 131
+  },
+  "required_loader_dat_names": [
+    "arr/units.dat",
+    "arr/weapons.dat",
+    "arr/flingy.dat",
+    "arr/sprites.dat",
+    "arr/images.dat",
+    "arr/upgrades.dat",
+    "arr/techdata.dat",
+    "arr/portdata.dat",
+    "arr/mapdata.dat",
+    "arr/orders.dat",
+    "arr/buttons.dat"
+  ],
+  "required_unit_extended_fields": [
+    64,
+    65,
+    66,
+    67,
+    68,
+    69,
+    70,
+    71,
+    72,
+    73,
+    74,
+    75,
+    76,
+    77,
+    78,
+    79,
+    80,
+    81,
+    82,
+    83,
+    84,
+    85
+  ],
+  "required_extended_fields": {
+    "units": [
+      64,
+      65,
+      66,
+      67,
+      68,
+      69,
+      70,
+      71,
+      72,
+      73,
+      74,
+      75,
+      76,
+      77,
+      78,
+      79,
+      80,
+      81,
+      82,
+      83,
+      84,
+      85
+    ],
+    "upgrades": [
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27
+    ],
+    "techdata": [
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "orders": [
+      32
+    ]
+  },
+  "loader_contract": "sc1/native_campaign/support_dat_sources/loader_contract.json",
+  "loader_contract_sha256": "74a76a73b9e2a642c9dda76b09a49a50eb8444dcce3c1b15ae8f112935ba944f",
+  "canonical_reference_evidence": "sc1/native_campaign/support_dat_sources/headless/reference_evidence.json",
+  "all_eleven_outputs_exact_canonical": true,
+  "loader_field_schema": "sc1/native_campaign/support_dat_sources/loader_field_schema.json",
+  "loader_field_schema_sha256": "3328783ad553530f2ab782b74648385141f21371bd97e1ce3963fe82f874bd3a",
+  "loader_declared_field_closure_verified": true,
+  "canonical_order_migrations": [
+    {
+      "order": 36,
+      "original_enabled_empty": true,
+      "condition": 65292,
+      "meaning": "Has no Addon",
+      "source": "datspec V3 / GameData.cs"
+    },
+    {
+      "order": 102,
+      "original_enabled_empty": true,
+      "condition": 65299,
+      "meaning": "Is Landed Building",
+      "source": "datspec V2 / GameData.cs"
+    }
+  ],
+  "canonical_reference_evidence_sha256": "0acd1d11e94b98e8e782c28ed0f080f6fc8dbd490926d382f37a18179434eaa4",
+  "reserved_editor_entries_added": true,
+  "reserved_entries": {
+    "units": [
+      228,
+      260
+    ],
+    "weapons": [
+      130,
+      130
+    ],
+    "upgrades": [
+      61,
+      61
+    ],
+    "techdata": [
+      44,
+      44
+    ]
+  },
+  "reserved_entries_basis": "Pinned LegacyDatDecl declares InvalidIndexStart/Count; GameData sets canonical safe reserved unit defaults and uses250 stock button/group mappings.",
+  "canonical_widenings": {
+    "units": [
+      0,
+      17,
+      19,
+      25
+    ],
+    "weapons": [
+      6
+    ],
+    "orders": [
+      13,
+      14
+    ]
+  },
+  "requirement_representation_exceptions": [
+    {
+      "table": "upgrades",
+      "offset_field": 6,
+      "buffer_field": 16,
+      "stock_fgp_section": "UpgR"
+    },
+    {
+      "table": "techdata",
+      "offset_field": 4,
+      "buffer_field": 16,
+      "stock_fgp_section": "TecR"
+    },
+    {
+      "table": "techdata",
+      "offset_field": 5,
+      "buffer_field": 17,
+      "stock_fgp_section": "TecU"
+    },
+    {
+      "table": "orders",
+      "offset_field": 17,
+      "buffer_field": 32,
+      "stock_fgp_section": "OrdR"
+    }
+  ],
+  "source_repository": "neivv/tatti3",
+  "source_commit": "eb940dab410e9e197db9634322e91fb67a0b7f0f",
+  "sources": [
+    {
+      "path": "sc1/campaign_sources/raw/arr/flingy.dat",
+      "sha256": "89013fa6d81edad96b68efcfc0bb5342f1c7fa2ef7a0880a71b0169eab13d1ad"
+    },
+    {
+      "path": "sc1/campaign_sources/raw/arr/images.dat",
+      "sha256": "6b6123e2cc6771d96f914fc9bb92d34da17cc3319dc02e2db0cd10b4f3d2efdc"
+    },
+    {
+      "path": "sc1/campaign_sources/raw/arr/mapdata.dat",
+      "sha256": "06ce3127b9c77739f32ad606637943f022e5d0344afcf1e978494449ace37967"
+    },
+    {
+      "path": "sc1/campaign_sources/raw/arr/orders.dat",
+      "sha256": "0b79cc64f1cd8b23c77419bdf1fb39fb91cde1359c1ad9cb73884d5cceb8f7c9"
+    },
+    {
+      "path": "sc1/campaign_sources/raw/arr/portdata.dat",
+      "sha256": "ca864e3153336d072fd3467345c4661aaf7f9362bec7d033e674450c531a0e5e"
+    },
+    {
+      "path": "sc1/campaign_sources/raw/arr/sprites.dat",
+      "sha256": "3e5ea29bf9937558d0a3a302cd85852c220cd126ec049c0da176c77739bb4a71"
+    },
+    {
+      "path": "sc1/campaign_sources/raw/arr/techdata.dat",
+      "sha256": "98f9805ebc8efc707492b7406871298d39d6e94931458aca1f82feaf18a271af"
+    },
+    {
+      "path": "sc1/campaign_sources/raw/arr/units.dat",
+      "sha256": "da2ee6f116b77329048ec6be9e02721a527fde23d4b05b1b1336e634490abcba"
+    },
+    {
+      "path": "sc1/campaign_sources/raw/arr/upgrades.dat",
+      "sha256": "787ff7dff69c0a0bb417ce1aabdcc11fa8b0959f77372b635c4882bdc3adb59b"
+    },
+    {
+      "path": "sc1/campaign_sources/raw/arr/weapons.dat",
+      "sha256": "80de165015519f9bed46ea8858195c2d2d0120b65b9e55e1c0a50b19135f4b62"
+    },
+    {
+      "path": "sc1/campaign_sources/support_dat_extraction_receipt.json",
+      "sha256": "c38b21f0e214933a195d9c18f13bff88eeef5086fb8e28047df87e4076edee49"
+    },
+    {
+      "path": "sc1/native_campaign/build_support_dat.py",
+      "sha256": "06da5c956f1a92b858a8ad2e849fbb2947e97b4a15972f4314023ccef18017ae"
+    },
+    {
+      "path": "sc1/native_campaign/dat_sources/tatti3/datspec.md",
+      "sha256": "d7759052a1449ecde81bb9dfad418c405d9eeefe113c72df45290905bf9f63b4"
+    },
+    {
+      "path": "sc1/native_campaign/dat_sources/tatti3/GameData/DatTable.cs",
+      "sha256": "1c411b14deb76d36fe0b0d40b9f1de2529c37439f3beb7728b42170aa3d5f2bc"
+    },
+    {
+      "path": "sc1/native_campaign/dat_sources/tatti3/GameData/Firegraft.cs",
+      "sha256": "ff5cb196d50e2111ccbc016a912fcae456d106807b79d511625e45d4e0c15315"
+    },
+    {
+      "path": "sc1/native_campaign/dat_sources/tatti3/GameData/GameData.cs",
+      "sha256": "4b2dfb0618ed32c26d2e4e7682fd8204fb7bdcde347a343f965a680edbe9c5b4"
+    },
+    {
+      "path": "sc1/native_campaign/dat_sources/tatti3/GameData/LegacyDatDecl.cs",
+      "sha256": "d0e86ec141c8d39076998ba23b2f5ae891d19641ef13a4e7a695257fcf3de616"
+    },
+    {
+      "path": "sc1/native_campaign/dat_sources/tatti3/Resources/firegraft.fgp",
+      "sha256": "1a64ce14dbb7e947ac3c4ff3e929f7b02bca6f1da2746ec7728d449180177c68"
+    },
+    {
+      "path": "sc1/native_campaign/dat_sources/tatti3/source_pin.json",
+      "sha256": "d45a79d50cdbc8d1dd51ce2fba43fc437e2fb6a1cecc1a66e0b6d37e9d99fa0f"
+    },
+    {
+      "path": "sc1/native_campaign/managed_dat/arr/units.dat",
+      "sha256": "7ff5f9c3c34724d344a669d38875dcbf6cd1a4b1354e7b3b1df0589a7d99b227"
+    },
+    {
+      "path": "sc1/native_campaign/managed_dat/arr/weapons.dat",
+      "sha256": "fffddfa0c67adccb817ade9f3f430479b371075345b3312108ceced4e9e2a045"
+    },
+    {
+      "path": "sc1/native_campaign/support_dat_sources/buttons.bin",
+      "sha256": "2edd96868b9164743c357ed3c50d649ef44c0dc8cc5f3a948f481ffd676b274b"
+    },
+    {
+      "path": "sc1/native_campaign/support_dat_sources/buttons_source_pin.json",
+      "sha256": "51ae8a9aa56294423d003b4756a12470a0ee30bcff6d2fe2cee99282d80ce50d"
+    },
+    {
+      "path": "sc1/native_campaign/support_dat_sources/headless/Headless.cs",
+      "sha256": "5a6c0701945ff084a083b8cb3357dfa05ae0f68b3e10a1250fb1ddbf16c16b5f"
+    },
+    {
+      "path": "sc1/native_campaign/support_dat_sources/headless/reference/arr/buttons.dat",
+      "sha256": "c1ef3f8043521fb85ecc591c58c7767b92c0d77a438496c3f677ba3e388f7384"
+    },
+    {
+      "path": "sc1/native_campaign/support_dat_sources/headless/reference/arr/flingy.dat",
+      "sha256": "26754ecd69318ab43f04e2dcd62e339e8b6008e7c2640cc958e9950852bc04d2"
+    },
+    {
+      "path": "sc1/native_campaign/support_dat_sources/headless/reference/arr/images.dat",
+      "sha256": "aa7d6938e27967a86e2cf60863d7ab522d080a67fb52452996c3fd94b0d13f35"
+    },
+    {
+      "path": "sc1/native_campaign/support_dat_sources/headless/reference/arr/mapdata.dat",
+      "sha256": "1303b61288a052c9f692bbca198656c6dcfb675c3427e967bb137546dd724359"
+    },
+    {
+      "path": "sc1/native_campaign/support_dat_sources/headless/reference/arr/orders.dat",
+      "sha256": "38ddbed0c9f30dd77052b7f4456a7e7708951bf6bc8f7e0df8f09e7118d7beeb"
+    },
+    {
+      "path": "sc1/native_campaign/support_dat_sources/headless/reference/arr/portdata.dat",
+      "sha256": "bb0779323bf41dab7124d9953e6b17ab80a928604c1b4cb963be0ca37df092f9"
+    },
+    {
+      "path": "sc1/native_campaign/support_dat_sources/headless/reference/arr/sprites.dat",
+      "sha256": "4c2791b07f6993985c9c2f4fe3f2018aa05cabf6bee3da62b1bc69bddf60639d"
+    },
+    {
+      "path": "sc1/native_campaign/support_dat_sources/headless/reference/arr/techdata.dat",
+      "sha256": "f85e71d8dae02eb21165385071a4d04249fe6d40d2f5b525dabbc31f7c9eaacb"
+    },
+    {
+      "path": "sc1/native_campaign/support_dat_sources/headless/reference/arr/units.dat",
+      "sha256": "f724ce3c3cede8d5aed757a83aa414a3363217fcc9eba47250c6ed6a1ca39d5e"
+    },
+    {
+      "path": "sc1/native_campaign/support_dat_sources/headless/reference/arr/upgrades.dat",
+      "sha256": "e43f2bbcd6fb7c95f05b1d1ca1b32274c51d5611af9dc9dc2f461003e0e5e2fe"
+    },
+    {
+      "path": "sc1/native_campaign/support_dat_sources/headless/reference/arr/weapons.dat",
+      "sha256": "d95108ece3405cc6c9c754a100ae3f8cd67f5049963cadfe9646f241161775a3"
+    },
+    {
+      "path": "sc1/native_campaign/support_dat_sources/headless/reference_evidence.json",
+      "sha256": "0acd1d11e94b98e8e782c28ed0f080f6fc8dbd490926d382f37a18179434eaa4"
+    },
+    {
+      "path": "sc1/native_campaign/support_dat_sources/headless/run_reference.py",
+      "sha256": "ba435b53f1c067e2c4025a04b712a87e1d59fe82914ee4628854fdc7c94d09c8"
+    },
+    {
+      "path": "sc1/native_campaign/support_dat_sources/headless/upstream/ArrayFileType.cs",
+      "sha256": "f580424dfc879b543e14c97bc905cb386ac9d867407e76925f29c74622b42360"
+    },
+    {
+      "path": "sc1/native_campaign/support_dat_sources/headless/upstream/Filesystem.cs",
+      "sha256": "e95b3c2bf310939c68c30d344a2f24cae3129376b293fe89239940b62fb3848b"
+    },
+    {
+      "path": "sc1/native_campaign/support_dat_sources/headless/upstream/Requirement.cs",
+      "sha256": "f59ff7d8fe74a3b3637e8a832b95a58688a66961de9fd5b5c847a757dee1452d"
+    },
+    {
+      "path": "sc1/native_campaign/support_dat_sources/headless/upstream/WriteTempFiles.cs",
+      "sha256": "4cf636d25d41a79a755cf0f46aeed0592a5d222d3b7ace53fe88ed8dae8493b5"
+    },
+    {
+      "path": "sc1/native_campaign/support_dat_sources/headless/upstream_pin.json",
+      "sha256": "7eec07c8368c4cb59a3fd8824f4e3824e7174ea04e88abbeeb1b55975ab94320"
+    },
+    {
+      "path": "sc1/native_campaign/support_dat_sources/headless/writer.runtimeconfig.json",
+      "sha256": "803e0ba6b40ce882bd07932022dd5f0c78e190ce50e6c93951d85cd2b5490c13"
+    },
+    {
+      "path": "sc1/native_campaign/support_dat_sources/loader_contract.json",
+      "sha256": "74a76a73b9e2a642c9dda76b09a49a50eb8444dcce3c1b15ae8f112935ba944f"
+    },
+    {
+      "path": "sc1/native_campaign/support_dat_sources/loader_field_calls.txt",
+      "sha256": "22f7bde7882eddf09376cf5faa97693d4ee06ae84280cde7780a5ad20332a90d"
+    },
+    {
+      "path": "sc1/native_campaign/support_dat_sources/loader_field_schema.json",
+      "sha256": "3328783ad553530f2ab782b74648385141f21371bd97e1ce3963fe82f874bd3a"
+    },
+    {
+      "path": "sc1/native_campaign/support_dat_sources/read_loader_field_schema.py",
+      "sha256": "7910976f6233f3f74fcd3792e38dd575f63bebb0b3dbdd08371a7562f18289b7"
+    },
+    {
+      "path": "sc1/native_campaign/support_dat_sources/stock_requirements_oracle.json",
+      "sha256": "6589871fd121055a7ad3ca76446a4016e75d96a9bbf79cf380f6afdb9107ec2e"
+    },
+    {
+      "path": "sc1/tests/test_support_dat.py",
+      "sha256": "875ade0933b0f6e46b5faace1655114f8affe3a0d5ba65745e9ae3f71eccbcf8"
+    }
+  ],
+  "native_play_verified": false,
+  "existing_managed_units_weapons_changed": false,
+  "dll_changed": false,
+  "derived_units_changes": {
+    "added_fields": [
+      65,
+      66,
+      67,
+      68,
+      69,
+      70,
+      71,
+      72,
+      73,
+      74,
+      75,
+      76,
+      77,
+      78,
+      79,
+      80,
+      81,
+      82,
+      83,
+      84,
+      85
+    ],
+    "original_numeric_fields_changed": [],
+    "original_base_file_changed": false,
+    "reserved_entries_added": true,
+    "unit_button_mapping_fields_added": true
+  }
+}

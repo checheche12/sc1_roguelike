@@ -1,0 +1,81 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "Dialog",
+    "description": "A dialog file, converted from RC3, for use in SCR",
+    "type": "object",
+
+    "properties": {
+
+        "type": {
+            "description": "The type for the parent object. Should always be DIALOG, currently",
+            "type": "string"
+        },
+
+        "name": {
+            "description": "Name of the dialog (should match its filename prefix)",
+            "type": "string"
+        },
+
+        "rect": {
+            "description": "Specification of the dialog's size. Of the form [xMin,yMin,width,height]",
+            "type": "array",
+            "minItems": 4,
+            "maxItems": 4,
+            "items": {
+                "type": "number"
+            }
+        },
+
+        "style": {
+            "description": "Flags for the dialog's style during in-game display",
+            "type": "array",
+            "items": {
+                "type": "string",
+                "enum": ["DS_MODALFRAME","WS_POPUP","WS_SYSMENU","WS_BORDER"]
+            }
+        },
+
+        "children": {
+            "description": "A list of child dlg objects",
+            "type": [ "array", "null" ],
+            "items": {
+                "type": "object",
+                "properties" : {
+                    "type": {
+                        "description": "The type of dialog object",
+                        "type": "string",
+                        "enum": ["DEFPUSHBUTTON", "PUSHBUTTON", "RADIOBUTTON", "CHECKBOX", "LTEXT", "CTEXT", "RTEXT", "LISTBOX", "COMBOBOX", "SCROLLBAR", "EDITTEXT", "RECT", "FLCBTN", "WEBBROWSER", "TEXTBOX", "HOTBOX", "FLC"]
+                    },
+                    "content": {
+                        "description": "A string with anything to be displayed, in-game called pszText",
+                        "type": "string"
+                    },
+                    "id": {
+                        "description": "An identifier, hopefully unique, for this dlg object",
+                        "type": "number"
+                    },
+                    "rect": {
+                        "description": "Specification of the dialog's size. Of the form [xMin,yMin,width,height]",
+                        "type": "array",
+                        "minItems": 4,
+                        "maxItems": 4,
+                        "items": {
+                            "type": "number"
+                        }
+                    },
+                    "flags": {
+                        "description": "Flags for this dialog in-game",
+                        "type": ["array", "null"],
+                        "items": {
+                            "type": "string",
+                            "enum": ["RC_SMALLTEXT", "RC_BIGTEXT", "RC_BIGGERTEXT", "RC_TEXTKERN", "RC_NO_TEXTKERN", "RC_ANCHOR_TOPRIGHT", "RC_ANCHOR_CENTER", "RC_POPUP_BACKGROUND", "WS_TABSTOP", "WS_VISIBLE", "WS_HOTKEY", "WS_HOTVKEY", "SBS_VERT", "SBS_HORZ", "WS_EX_TRANSPARENT", "DS_ABSALIGN", "DS_SYSMODAL", "DS_LOCALEDIT", "DS_SETFONT", "DS_MODALFRAME", "DS_NOIDLEMSG", "DS_SETFOREGROUND", "WS_OVERLAPPED", "WS_POPUP", "WS_CHILD", "WS_MINIMIZE", "WS_DISABLED", "WS_CLIPSIBLINGS", "WS_CLIPCHILDREN", "WS_MAXIMIZE", "WS_CAPTION", "WS_BORDER", "WS_DLGFRAME", "WS_VSCROLL", "WS_HSCROLL", "WS_SYSMENU", "WS_THICKFRAME", "WS_GROUP", "WS_MINIMIZEBOX", "WS_MAXIMIZEBOX", "WS_TILED", "WS_ICONIC", "WS_SIZEBOX", "BS_PUSHBUTTON", "BS_DEFPUSHBUTTON", "BS_CHECKBOX", "BS_AUTOCHECKBOX", "BS_RADIOBUTTON", "BS_3STATE", "BS_AUTO3STATE", "BS_GROUPBOX", "BS_USERBUTTON", "BS_AUTORADIOBUTTON", "BS_OWNERDRAW", "BS_LEFTTEXT", "ES_LEFT", "ES_CENTER", "ES_RIGHT", "ES_MULTILINE", "ES_UPPERCASE", "ES_LOWERCASE", "ES_PASSWORD", "ES_AUTOVSCROLL", "ES_AUTOHSCROLL", "ES_NOHIDESEL", "ES_OEMCONVERT", "ES_READONLY", "ES_WANTRETURN", "SS_RIGHT", "SS_BLACKFRAME", "FLC_LOOP", "FLC_FADEIN", "FLC_FADED", "FLC_MOUSEOVER", "FB_EXCLUSIVE", "FB_PRESSED", "FB_HTEXTLEFT", "FB_HTEXTCENTER", "FB_HTEXTRIGHT", "FB_VTEXTTOP", "FB_VTEXTCENTER", "FB_VTEXTBOTTOM", "CTRL_TRANSLUCENT", "CTRL_ENTER", "CTRL_ESCAPE", "CTRL_BTN_RJUST" ]
+                        }
+                    },
+                    "children": {"$ref": "#/properties/children"}
+                }
+            }
+        }
+
+      }
+
+}

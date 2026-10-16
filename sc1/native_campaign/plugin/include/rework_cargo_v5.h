@@ -1,0 +1,76 @@
+#pragma once
+#include "rework_upgrade_storage.h"
+// Include sight_cargo_runtime.h globally; this native adapter belongs inside
+// native_plugin.cpp after owner_stat/OwnerDatScope and before order hooks.
+namespace rework_cargo_v5 {
+using Adapter=::sc1::sight_cargo::CargoAdapter;
+using Selection=void* (__cdecl*)();
+inline Adapter cargo;
+inline bw::Unit* bound_units=nullptr;inline std::size_t bound_count=0;
+inline Selection selection_source=nullptr;
+inline U32 lifecycle_depth=0;
+inline unsigned space(const bw::Unit* u) {return valid_unit(u) && u->unit_id<228?std::min(8u,original_stat({0,47,u->unit_id})):0u;}
+inline unsigned capacity(const bw::Unit* u) {
+ if(!valid_unit(u) || u->unit_id>=228 || (u->flags&0x40000000u))return 8;
+ U32 value=std::max(8u,std::min(12u,owner_stat(u->player,{0,48,u->unit_id})));
+ if(!g.active || !g.applied || u->player!=player_owner())return value;
+ if(u->unit_id==11 && rework_catalog::rank(g.growth,33))return 16;
+ if((u->unit_id==42 || u->unit_id==57) && rework_catalog::rank(g.growth,74)){
+  // The talent adds room, never the original transport research. The original
+  // native boarding path retains its own race/tech/order checks as well.
+  return rework_upgrade_storage::level(u->player,24)?12u:8u;
+ }
+ if(u->unit_id==69 && rework_catalog::rank(g.growth,115))return 12;
+ return value;
+}
+inline bool bind() noexcept {
+ if(!g.units || !g.units_count)refresh_units();
+ if(!g.units || !g.units_count || g.units_count>8191)return false;
+ if(bound_units==g.units && bound_count==g.units_count)return true;
+ if(!cargo.bind(g.units,g.units_count,capacity,space))return false;
+ bound_units=g.units;bound_count=g.units_count;return true;
+}
+inline void reset() noexcept {cargo.reset();bound_units=nullptr;bound_count=0;lifecycle_depth=0;}
+struct OrderScope {
+ Adapter::Token token{};
+ explicit OrderScope(bw::Unit* u) noexcept {if(g.active && bind())token=cargo.before_order(u);}
+ bool allow_original() const noexcept {return !token.boarding_denied;}
+ ~OrderScope(){cargo.after_order(token);}
+};
+struct CommandScope {
+ bool active=false;
+ CommandScope(const void* data,U32 length) noexcept {
+  if(!g.active || !bind())return;active=true;cargo.before_commands();
+  if(!data || (length!=3 && length!=5))return;
+  const auto bytes=static_cast<const U8*>(data);if(bytes[0]!=0x29)return;
+  // Native UnloadUnit contains a generation-tagged lookup handle. Support the
+  // documented legacy16-bit and SCR extended32-bit command representations.
+  U32 handle=0;std::memcpy(&handle,bytes+1,length-1);if(handle && handle<=0x3ffffu)cargo.present_passenger(handle);
+ }
+ ~CommandScope(){if(active)cargo.after_commands();}
+};
+template<class Callback> inline void before_death(bw::Unit* carrier,Callback callback) {
+ if(!g.active || !bind() || lifecycle_depth || !cargo.count(carrier))return;
+ ++lifecycle_depth;cargo.for_each_passenger(carrier,[&](bw::Unit* p){callback(p);});cargo.hide_window(carrier);--lifecycle_depth;
+}
+template<class Callback> inline void before_give(bw::Unit* carrier,U32 next_owner,Callback callback) {
+ if(!g.active || !valid_unit(carrier) || next_owner==carrier->player || !bind() || lifecycle_depth || !cargo.count(carrier))return;
+ ++lifecycle_depth;cargo.for_each_passenger(carrier,[&](bw::Unit* p){callback(p,next_owner);});cargo.hide_window(carrier);--lifecycle_depth;
+}
+inline void step() noexcept {if(g.active && bind())cargo.refresh();}
+inline bw::Unit* selected() noexcept {
+ if(!g.active || !selection_source || !bind() || GetCurrentThreadId()!=g.game_thread.load())return nullptr;
+ auto source=selection_source();if(!source)return nullptr;
+ std::array<bw::Unit*,12> list{};SIZE_T got=0;if(!ReadProcessMemory(GetCurrentProcess(),source,list.data(),sizeof(list),&got) || got!=sizeof(list))return nullptr;
+ bw::Unit* result=nullptr;for(auto u:list){if(!u)continue;if(!valid_unit(u) || u->player!=player_owner() || !u->order || u->flingy.hitpoints<=0 || (u->flags&0x40000000u) || result)return nullptr;result=u;}
+ return result;
+}
+inline bool status(void*,std::uint64_t* token,U32* page,U32* pages,U32* passengers) noexcept {
+ if(!token || !page || !pages || !passengers)return false;*token=0;*page=0;*pages=1;*passengers=0;
+ auto carrier=selected();if(!carrier)return false;const auto info=cargo.page_info(carrier);if(info.pages<2)return false;
+ *token=(std::uint64_t(carrier->player)<<32)|cargo.identity(carrier);*page=info.page;*pages=info.pages;*passengers=info.passengers;return true;
+}
+inline bool toggle(void*,std::uint64_t token) noexcept {
+ auto carrier=selected();if(!carrier || token!=((std::uint64_t(carrier->player)<<32)|cargo.identity(carrier)))return false;return cargo.toggle_page(carrier);
+}
+}

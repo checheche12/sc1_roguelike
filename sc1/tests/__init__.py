@@ -1,0 +1,1 @@
+"""Automated non-game checks."""

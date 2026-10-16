@@ -1,0 +1,22 @@
+[
+  {
+    "name": "arr\\units.dat",
+    "bytes": 19876,
+    "available": true,
+    "locale": 4294967295,
+    "ckey": "e8d54a9ffe73a0db123907b7a7b2140a",
+    "ekey": "2f34ea7514af5f25fc626a500b7c7e84",
+    "path": "sc1\\campaign_sources\\raw\\arr\\units.dat",
+    "sha256": "da2ee6f116b77329048ec6be9e02721a527fde23d4b05b1b1336e634490abcba"
+  },
+  {
+    "name": "arr\\weapons.dat",
+    "bytes": 5460,
+    "available": true,
+    "locale": 4294967295,
+    "ckey": "e11807cf99262fd850b47c26111ce71f",
+    "ekey": "ad216b8eb2a1537e5df19e39d2db941e",
+    "path": "sc1\\campaign_sources\\raw\\arr\\weapons.dat",
+    "sha256": "80de165015519f9bed46ea8858195c2d2d0120b65b9e55e1c0a50b19135f4b62"
+  }
+]

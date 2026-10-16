@@ -1,0 +1,99 @@
+{
+  "schema_version": 1,
+  "status": "offline_built_live_unverified",
+  "managed_dat_assets": [
+    {
+      "name": "arr/units.dat",
+      "path": "sc1/native_campaign/managed_dat/arr/units.dat",
+      "sha256": "7ff5f9c3c34724d344a669d38875dcbf6cd1a4b1354e7b3b1df0589a7d99b227",
+      "bytes": 23654,
+      "entry_count": 228,
+      "field_count": 55,
+      "source_sha256": "da2ee6f116b77329048ec6be9e02721a527fde23d4b05b1b1336e634490abcba"
+    },
+    {
+      "name": "arr/weapons.dat",
+      "path": "sc1/native_campaign/managed_dat/arr/weapons.dat",
+      "sha256": "fffddfa0c67adccb817ade9f3f430479b371075345b3312108ceced4e9e2a045",
+      "bytes": 5764,
+      "entry_count": 130,
+      "field_count": 24,
+      "source_sha256": "80de165015519f9bed46ea8858195c2d2d0120b65b9e55e1c0a50b19135f4b62"
+    }
+  ],
+  "stock_values_preserved": true,
+  "stock_values_scope": "All 77 gameplay fields retain every legacy entry/component byte. Units 0x2b unused ffff placeholders are semantically reencoded; subset padding uses the pinned official defaults.",
+  "requirements_preserved": true,
+  "requirements_scope": "Units 0x2b/0x40 reproduce the exact 1090-byte stock EXE buffer: 91 enabled units, 137 disabled. No other DAT/tech/upgrade/order requirements are overridden.",
+  "requirements_sha256": "18912c586b0a5838fc67dc0f2f0e4ac3b5baa56bde13615878e4b28d7152b92e",
+  "requirements_enabled": 91,
+  "requirements_disabled": 137,
+  "representation_exceptions": [
+    {
+      "table": "units",
+      "field": 43,
+      "before": "228 unused 0xffff words",
+      "after": "u16 indices into added field 0x40",
+      "reason": "SAMASE Dat+ requires an explicit unit requirements buffer; do not retain legacy placeholders as offsets."
+    }
+  ],
+  "unchanged_gameplay_field_count": 77,
+  "entry_counts": {
+    "units": 228,
+    "weapons": 130
+  },
+  "extra_fields": {
+    "units": [
+      64
+    ],
+    "weapons": []
+  },
+  "reserved_editor_entries_added": false,
+  "source_repository": "neivv/tatti3",
+  "source_commit": "eb940dab410e9e197db9634322e91fb67a0b7f0f",
+  "path_evidence": "https://github.com/neivv/tatti3/blob/eb940dab410e9e197db9634322e91fb67a0b7f0f/GameData/GameData.cs#L533-L542",
+  "format_evidence": "https://github.com/neivv/tatti3/blob/eb940dab410e9e197db9634322e91fb67a0b7f0f/datspec.md",
+  "sources": [
+    {
+      "path": "sc1/native_campaign/build_managed_dat.py",
+      "sha256": "a529717255e2030c1730351f98c80bd3797579e7ff075ee59a823d68d274fe2e"
+    },
+    {
+      "path": "sc1/tests/test_managed_dat.py",
+      "sha256": "4445f2b17ff5ce17186c554b7f113d68eec0efbee3a4064e81b12ea7b46d2cbd"
+    },
+    {
+      "path": "sc1/native_campaign/dat_sources/tatti3/source_pin.json",
+      "sha256": "d45a79d50cdbc8d1dd51ce2fba43fc437e2fb6a1cecc1a66e0b6d37e9d99fa0f"
+    },
+    {
+      "path": "sc1/native_campaign/dat_sources/tatti3/GameData/DatTable.cs",
+      "sha256": "1c411b14deb76d36fe0b0d40b9f1de2529c37439f3beb7728b42170aa3d5f2bc"
+    },
+    {
+      "path": "sc1/native_campaign/dat_sources/tatti3/GameData/Firegraft.cs",
+      "sha256": "ff5cb196d50e2111ccbc016a912fcae456d106807b79d511625e45d4e0c15315"
+    },
+    {
+      "path": "sc1/native_campaign/dat_sources/tatti3/GameData/GameData.cs",
+      "sha256": "4b2dfb0618ed32c26d2e4e7682fd8204fb7bdcde347a343f965a680edbe9c5b4"
+    },
+    {
+      "path": "sc1/native_campaign/dat_sources/tatti3/GameData/LegacyDatDecl.cs",
+      "sha256": "d0e86ec141c8d39076998ba23b2f5ae891d19641ef13a4e7a695257fcf3de616"
+    },
+    {
+      "path": "sc1/native_campaign/dat_sources/tatti3/datspec.md",
+      "sha256": "d7759052a1449ecde81bb9dfad418c405d9eeefe113c72df45290905bf9f63b4"
+    },
+    {
+      "path": "sc1/native_campaign/dat_sources/tatti3/Resources/firegraft.fgp",
+      "sha256": "1a64ce14dbb7e947ac3c4ff3e929f7b02bca6f1da2746ec7728d449180177c68"
+    },
+    {
+      "path": "sc1/native_campaign/dat_sources/stock_requirements_oracle.json",
+      "sha256": "8461e19a582233fe60447f83f46fd3eedc4a25560aeb0fde2e7ba1f2d8182601"
+    }
+  ],
+  "native_play_verified": false
+}

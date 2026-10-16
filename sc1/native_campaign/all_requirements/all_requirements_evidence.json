@@ -1,0 +1,610 @@
+{
+  "schema": "sc1_all_campaign_requirements_v1",
+  "scope": "All-campaign package overlay only; historical T01 inputs unchanged",
+  "tatti_commit": "eb940dab410e9e197db9634322e91fb67a0b7f0f",
+  "canonical_reference_evidence_sha256": "0acd1d11e94b98e8e782c28ed0f080f6fc8dbd490926d382f37a18179434eaa4",
+  "builder_sha256": "bc6d875e84d172c57e63344b765d7b7244688a1c018743ee674ad303c1ce9481",
+  "source_assets": [
+    {
+      "name": "arr/buttons.dat",
+      "sha256": "c1ef3f8043521fb85ecc591c58c7767b92c0d77a438496c3f677ba3e388f7384"
+    },
+    {
+      "name": "arr/flingy.dat",
+      "sha256": "26754ecd69318ab43f04e2dcd62e339e8b6008e7c2640cc958e9950852bc04d2"
+    },
+    {
+      "name": "arr/images.dat",
+      "sha256": "aa7d6938e27967a86e2cf60863d7ab522d080a67fb52452996c3fd94b0d13f35"
+    },
+    {
+      "name": "arr/mapdata.dat",
+      "sha256": "1303b61288a052c9f692bbca198656c6dcfb675c3427e967bb137546dd724359"
+    },
+    {
+      "name": "arr/orders.dat",
+      "sha256": "38ddbed0c9f30dd77052b7f4456a7e7708951bf6bc8f7e0df8f09e7118d7beeb"
+    },
+    {
+      "name": "arr/portdata.dat",
+      "sha256": "bb0779323bf41dab7124d9953e6b17ab80a928604c1b4cb963be0ca37df092f9"
+    },
+    {
+      "name": "arr/sprites.dat",
+      "sha256": "4c2791b07f6993985c9c2f4fe3f2018aa05cabf6bee3da62b1bc69bddf60639d"
+    },
+    {
+      "name": "arr/techdata.dat",
+      "sha256": "f85e71d8dae02eb21165385071a4d04249fe6d40d2f5b525dabbc31f7c9eaacb"
+    },
+    {
+      "name": "arr/units.dat",
+      "sha256": "f724ce3c3cede8d5aed757a83aa414a3363217fcc9eba47250c6ed6a1ca39d5e"
+    },
+    {
+      "name": "arr/upgrades.dat",
+      "sha256": "e43f2bbcd6fb7c95f05b1d1ca1b32274c51d5611af9dc9dc2f461003e0e5e2fe"
+    },
+    {
+      "name": "arr/weapons.dat",
+      "sha256": "d95108ece3405cc6c9c754a100ae3f8cd67f5049963cadfe9646f241161775a3"
+    }
+  ],
+  "assets": [
+    {
+      "name": "arr/techdata.dat",
+      "path": "sc1/native_campaign/all_requirements/techdata.dat",
+      "size": 2354,
+      "sha256": "6e21691cb8b9f58f9c563a3962693256706548d5d443f145620c9f03f5a79f07",
+      "source_sha256": "f85e71d8dae02eb21165385071a4d04249fe6d40d2f5b525dabbc31f7c9eaacb"
+    },
+    {
+      "name": "arr/units.dat",
+      "path": "sc1/native_campaign/all_requirements/units.dat",
+      "size": 40658,
+      "sha256": "e42af2afeace7bbaa192f8f797c9adef4deabfe6733a8808ce59f64860aa38a0",
+      "source_sha256": "f724ce3c3cede8d5aed757a83aa414a3363217fcc9eba47250c6ed6a1ca39d5e"
+    },
+    {
+      "name": "arr/upgrades.dat",
+      "path": "sc1/native_campaign/all_requirements/upgrades.dat",
+      "size": 3562,
+      "sha256": "e9637696596342826aa20b19c0e7b93d718baf3162b06c1e487a3831f1fce6fc",
+      "source_sha256": "e43f2bbcd6fb7c95f05b1d1ca1b32274c51d5611af9dc9dc2f461003e0e5e2fe"
+    }
+  ],
+  "requirements": [
+    {
+      "tag": "UntR",
+      "table": "units",
+      "removed_opcode": "0xff24",
+      "removed_count": 6,
+      "removed_word_positions": [
+        88,
+        96,
+        165,
+        171,
+        241,
+        246
+      ],
+      "old_buffer_size": 1090,
+      "new_buffer_size": 1078,
+      "old_buffer_sha256": "18912c586b0a5838fc67dc0f2f0e4ac3b5baa56bde13615878e4b28d7152b92e",
+      "new_buffer_sha256": "c05967078aedfe8bcd2133fadc14cffe13eaa91fa58e4a044c0e7dc619672c80",
+      "old_offsets_sha256": "b4afdfa295371cd1cae24e278025944d085f6a382b3f9246868e3beb8d1049e4",
+      "new_offsets_sha256": "a9fca7f56721e46b067ee4456c06b4e9a405079ca0c2a78b6624bc46378e8866",
+      "recipes": [
+        {
+          "entry_id": 34,
+          "old_offset_words": 88,
+          "new_offset_words": 88,
+          "before": [
+            "0xff24",
+            "0xff02",
+            "0x006f",
+            "0xff08",
+            "0xff05",
+            "0x0070",
+            "0xffff"
+          ],
+          "after": [
+            "0xff02",
+            "0x006f",
+            "0xff08",
+            "0xff05",
+            "0x0070",
+            "0xffff"
+          ]
+        },
+        {
+          "entry_id": 58,
+          "old_offset_words": 96,
+          "new_offset_words": 95,
+          "before": [
+            "0xff24",
+            "0xff02",
+            "0x0072",
+            "0xff08",
+            "0xff05",
+            "0xff04",
+            "0x0073",
+            "0x007b",
+            "0xffff"
+          ],
+          "after": [
+            "0xff02",
+            "0x0072",
+            "0xff08",
+            "0xff05",
+            "0xff04",
+            "0x0073",
+            "0x007b",
+            "0xffff"
+          ]
+        },
+        {
+          "entry_id": 60,
+          "old_offset_words": 241,
+          "new_offset_words": 237,
+          "before": [
+            "0xff24",
+            "0xff02",
+            "0x00a7",
+            "0xffff"
+          ],
+          "after": [
+            "0xff02",
+            "0x00a7",
+            "0xffff"
+          ]
+        },
+        {
+          "entry_id": 61,
+          "old_offset_words": 246,
+          "new_offset_words": 241,
+          "before": [
+            "0xff24",
+            "0xff02",
+            "0x00a0",
+            "0x00a5",
+            "0xffff"
+          ],
+          "after": [
+            "0xff02",
+            "0x00a0",
+            "0x00a5",
+            "0xffff"
+          ]
+        },
+        {
+          "entry_id": 62,
+          "old_offset_words": 165,
+          "new_offset_words": 163,
+          "before": [
+            "0xff24",
+            "0xff02",
+            "0x002b",
+            "0x0089",
+            "0xffff"
+          ],
+          "after": [
+            "0xff02",
+            "0x002b",
+            "0x0089",
+            "0xffff"
+          ]
+        },
+        {
+          "entry_id": 103,
+          "old_offset_words": 171,
+          "new_offset_words": 168,
+          "before": [
+            "0xff24",
+            "0xff02",
+            "0x0026",
+            "0xff25",
+            "0x0020",
+            "0xffff"
+          ],
+          "after": [
+            "0xff02",
+            "0x0026",
+            "0xff25",
+            "0x0020",
+            "0xffff"
+          ]
+        }
+      ]
+    },
+    {
+      "tag": "UpgR",
+      "table": "upgrades",
+      "removed_opcode": "0xff24",
+      "removed_count": 6,
+      "removed_word_positions": [
+        378,
+        384,
+        391,
+        397,
+        403,
+        409
+      ],
+      "old_buffer_size": 838,
+      "new_buffer_size": 826,
+      "old_buffer_sha256": "0ec988d5d42bb46893295c6b4ed9d0451a3286bc0c270d92be6cb818af8466fc",
+      "new_buffer_sha256": "d5e9c3e879a2f6e435c3e7fc5507787117a5a2dbd8ef1c7e08c0ca0caf548496",
+      "old_offsets_sha256": "c3354fc665614ed54f4e50477b20819e9707f6767a2412de1f5308133b0a24cb",
+      "new_offsets_sha256": "a3c25747edcd0fe210af44a0b634e8c92c8037c7d66d1fbfda413ae3cb6ff454",
+      "recipes": [
+        {
+          "entry_id": 47,
+          "old_offset_words": 378,
+          "new_offset_words": 378,
+          "before": [
+            "0xff24",
+            "0xff02",
+            "0x00a9",
+            "0xff07",
+            "0xffff"
+          ],
+          "after": [
+            "0xff02",
+            "0x00a9",
+            "0xff07",
+            "0xffff"
+          ]
+        },
+        {
+          "entry_id": 49,
+          "old_offset_words": 391,
+          "new_offset_words": 389,
+          "before": [
+            "0xff24",
+            "0xff02",
+            "0x00a5",
+            "0xff07",
+            "0xffff"
+          ],
+          "after": [
+            "0xff02",
+            "0x00a5",
+            "0xff07",
+            "0xffff"
+          ]
+        },
+        {
+          "entry_id": 51,
+          "old_offset_words": 384,
+          "new_offset_words": 383,
+          "before": [
+            "0xff24",
+            "0xff02",
+            "0x0070",
+            "0xff05",
+            "0xff07",
+            "0xffff"
+          ],
+          "after": [
+            "0xff02",
+            "0x0070",
+            "0xff05",
+            "0xff07",
+            "0xffff"
+          ]
+        },
+        {
+          "entry_id": 52,
+          "old_offset_words": 397,
+          "new_offset_words": 394,
+          "before": [
+            "0xff24",
+            "0xff02",
+            "0x008c",
+            "0xff07",
+            "0xffff"
+          ],
+          "after": [
+            "0xff02",
+            "0x008c",
+            "0xff07",
+            "0xffff"
+          ]
+        },
+        {
+          "entry_id": 53,
+          "old_offset_words": 403,
+          "new_offset_words": 399,
+          "before": [
+            "0xff24",
+            "0xff02",
+            "0x008c",
+            "0xff07",
+            "0xffff"
+          ],
+          "after": [
+            "0xff02",
+            "0x008c",
+            "0xff07",
+            "0xffff"
+          ]
+        },
+        {
+          "entry_id": 54,
+          "old_offset_words": 409,
+          "new_offset_words": 404,
+          "before": [
+            "0xff24",
+            "0xff02",
+            "0x0078",
+            "0xff07",
+            "0x007b",
+            "0xffff"
+          ],
+          "after": [
+            "0xff02",
+            "0x0078",
+            "0xff07",
+            "0x007b",
+            "0xffff"
+          ]
+        }
+      ]
+    },
+    {
+      "tag": "TecR",
+      "table": "techdata",
+      "removed_opcode": "0xff24",
+      "removed_count": 7,
+      "removed_word_positions": [
+        56,
+        63,
+        106,
+        135,
+        141,
+        147,
+        153
+      ],
+      "old_buffer_size": 318,
+      "new_buffer_size": 304,
+      "old_buffer_sha256": "cde82c22479bcb07bf86844d6c08e74f0232aecd18241f50ed5673617a543d17",
+      "new_buffer_sha256": "af2f7ed4e6e0eed77aa1930d6d36722c088f092ddcb6ab551b2264cc1b108216",
+      "old_offsets_sha256": "c9b1fe4c82bf46e5a16f0979f0dc33fbd4f4eac06f1d26a433486492f48dad88",
+      "new_offsets_sha256": "69613e2aa09e8ffb77fed67682149e8d0a53cac7c01bd80c6ab536b15e607227",
+      "recipes": [
+        {
+          "entry_id": 24,
+          "old_offset_words": 56,
+          "new_offset_words": 56,
+          "before": [
+            "0xff24",
+            "0xff02",
+            "0x0070",
+            "0xff07",
+            "0xff05",
+            "0xffff"
+          ],
+          "after": [
+            "0xff02",
+            "0x0070",
+            "0xff07",
+            "0xff05",
+            "0xffff"
+          ]
+        },
+        {
+          "entry_id": 25,
+          "old_offset_words": 135,
+          "new_offset_words": 132,
+          "before": [
+            "0xff24",
+            "0xff02",
+            "0x00a9",
+            "0xff07",
+            "0xffff"
+          ],
+          "after": [
+            "0xff02",
+            "0x00a9",
+            "0xff07",
+            "0xffff"
+          ]
+        },
+        {
+          "entry_id": 27,
+          "old_offset_words": 141,
+          "new_offset_words": 137,
+          "before": [
+            "0xff24",
+            "0xff02",
+            "0x00a5",
+            "0xff07",
+            "0xffff"
+          ],
+          "after": [
+            "0xff02",
+            "0x00a5",
+            "0xff07",
+            "0xffff"
+          ]
+        },
+        {
+          "entry_id": 29,
+          "old_offset_words": 147,
+          "new_offset_words": 142,
+          "before": [
+            "0xff24",
+            "0xff02",
+            "0x00a5",
+            "0xff07",
+            "0xffff"
+          ],
+          "after": [
+            "0xff02",
+            "0x00a5",
+            "0xff07",
+            "0xffff"
+          ]
+        },
+        {
+          "entry_id": 30,
+          "old_offset_words": 63,
+          "new_offset_words": 62,
+          "before": [
+            "0xff24",
+            "0xff02",
+            "0x0070",
+            "0xff07",
+            "0xff05",
+            "0xffff"
+          ],
+          "after": [
+            "0xff02",
+            "0x0070",
+            "0xff07",
+            "0xff05",
+            "0xffff"
+          ]
+        },
+        {
+          "entry_id": 31,
+          "old_offset_words": 153,
+          "new_offset_words": 147,
+          "before": [
+            "0xff24",
+            "0xff02",
+            "0x00a5",
+            "0xff07",
+            "0xffff"
+          ],
+          "after": [
+            "0xff02",
+            "0x00a5",
+            "0xff07",
+            "0xffff"
+          ]
+        },
+        {
+          "entry_id": 32,
+          "old_offset_words": 106,
+          "new_offset_words": 104,
+          "before": [
+            "0xff24",
+            "0xff02",
+            "0x0087",
+            "0x0084",
+            "0xff01",
+            "0x0085",
+            "0xff07",
+            "0xffff"
+          ],
+          "after": [
+            "0xff02",
+            "0x0087",
+            "0x0084",
+            "0xff01",
+            "0x0085",
+            "0xff07",
+            "0xffff"
+          ]
+        }
+      ]
+    },
+    {
+      "tag": "TecU",
+      "table": "techdata",
+      "removed_opcode": "0xff24",
+      "removed_count": 2,
+      "removed_word_positions": [
+        314,
+        338
+      ],
+      "old_buffer_size": 688,
+      "new_buffer_size": 684,
+      "old_buffer_sha256": "564b04e033054dae6ef21c46f3aa858f7f8e6af158ccdd7861e7118b624f1498",
+      "new_buffer_sha256": "3bf961fe6a12b849f84b430dc3f09a3cf46cce0ba7624ddf482ee182d6fd2cb6",
+      "old_offsets_sha256": "579482f2191d9cbb6dd7cc073afde8ebac6d1ff520c31ee1081f1ac2d8730eab",
+      "new_offsets_sha256": "10300fd2c2715c2003a5756a2561fde828249b47f5638a9d7dccdad3726cdff1",
+      "recipes": [
+        {
+          "entry_id": 28,
+          "old_offset_words": 314,
+          "new_offset_words": 314,
+          "before": [
+            "0xff24",
+            "0xff02",
+            "0x003d",
+            "0xffff"
+          ],
+          "after": [
+            "0xff02",
+            "0x003d",
+            "0xffff"
+          ]
+        },
+        {
+          "entry_id": 32,
+          "old_offset_words": 338,
+          "new_offset_words": 337,
+          "before": [
+            "0xff24",
+            "0xff0f",
+            "0xff02",
+            "0x0026",
+            "0xffff"
+          ],
+          "after": [
+            "0xff0f",
+            "0xff02",
+            "0x0026",
+            "0xffff"
+          ]
+        }
+      ]
+    }
+  ],
+  "total_removed_bw_only": 21,
+  "changed_fields": {
+    "units": [
+      43,
+      64
+    ],
+    "upgrades": [
+      6,
+      16
+    ],
+    "techdata": [
+      4,
+      5,
+      16,
+      17
+    ]
+  },
+  "preserved": {
+    "all_other_dat_fields": true,
+    "buttons_byte_identical": true,
+    "orders_byte_identical": true,
+    "costs_and_stats": true,
+    "buildings_addons_research_state_conditions": true,
+    "disabled_and_enabled_empty_requirements": true,
+    "upgrade_level_branches_and_terminators": true,
+    "techdata_broodwar_flag_field_10": true,
+    "upgrades_broodwar_flag_field_11": true,
+    "campaign_index_and_game_is_bw": "Not modified by this builder"
+  },
+  "evidence_scope": {
+    "canonical_bytes_and_exact_condition_preservation_verified": true,
+    "in_game_button_visibility_verified": false,
+    "in_game_training_morph_research_verified": false,
+    "separate_tech_upgrade_BW_flags_and_engine_guards": "Unchanged; live verification still required"
+  },
+  "primary_references": [
+    {
+      "url": "https://github.com/neivv/tatti3/blob/eb940dab410e9e197db9634322e91fb67a0b7f0f/datspec.md",
+      "use": "Dat+ requirement offset and raw buffer field format"
+    },
+    {
+      "url": "https://github.com/neivv/aise/blob/master/src/datreq.rs",
+      "use": "Opcode 0xff24 is no-argument BwOnly; not an original-engine execution proof"
+    }
+  ]
+}

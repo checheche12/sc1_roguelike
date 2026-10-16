@@ -1,0 +1,49 @@
+17f95e: mov byte ptr [rsp + 0x98], bpl
+17f966: shr ebp, 0x10
+17f969: xor r13d, r13d
+17f96c: bt esi, r13d
+17f970: jae 0x17fa5a
+17f976: mov rcx, qword ptr [rsp + 0x28]
+17f97b: mov edx, r13d
+17f97e: mov r8d, r12d
+17f981: call 0x157cad
+
+1a43ea: mov ecx, 0x1000
+1a43ef: call 0x17e9ce
+1a43f4: test al, al
+1a43f6: je 0x1a4450
+1a43f8: movzx r9d, bx
+1a43fc: mov rcx, r14
+1a43ff: mov dl, 4
+1a4401: mov r8w, 5
+1a4406: call 0x157d77
+
+1a552f: cmp word ptr [rsi + rax*2 + 0xdc], 0xe4
+1a5539: jne 0x1a55f4
+1a553f: mov r8d, 0x14
+1a5545: test byte ptr [rsi + 0x140], 1
+1a554c: je 0x1a55f4
+1a5552: mov rcx, rbx
+1a5555: xor edx, edx
+1a5557: mov r8w, 0x2b
+1a555c: call 0x157d77
+
+1a56d7: cmp eax, 0x6a
+1a56da: je 0x1a573d
+1a56dc: cmp eax, 0x81
+1a56e1: je 0x1a573d
+1a56e3: movzx r9d, byte ptr [rsp + 0x80]
+1a56ec: mov rcx, r14
+1a56ef: mov dl, 7
+1a56f1: mov r8w, 0x11
+1a56f6: call 0x157d77
+
+1b2801: je 0x1b28cc
+1b2807: cmp dl, 0xb
+1b280a: ja 0x1b28cf
+1b2810: mov r12d, dword ptr [r15 + 4]
+1b2814: cmp r12d, 0x3d0900
+1b281b: jae 0x1b28cf
+1b2821: movzx r8d, word ptr [r15 + 2]
+1b2826: mov rcx, qword ptr [rsp + 0x50]
+1b282b: call 0x157cad
