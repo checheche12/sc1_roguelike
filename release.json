@@ -1,0 +1,20 @@
+{
+  "version": "v2026.10.16-qa4",
+  "file": "SC1_Roguelike_20261016_QA4.zip",
+  "sha256": "dcd9e10d171b7785159518ec36cd30047161d203755cbb86d8ac79a318a35192",
+  "bytes": 24520026,
+  "runtime_source_commit": "2042b076e6c37826eba47cc4ac7b4082722739ce",
+  "native_dll_sha256": "840ebfa34bdb94517bf2183a67d7106f60fc1afdebb17f6cc43457c8067f76ab",
+  "native_dll_compiled_from_source": true,
+  "launcher_compiled_from_source": true,
+  "native_host_groups": 240,
+  "native_host_checks": 802627,
+  "python_tests": 39,
+  "map_count": 63,
+  "eligible_maps": 29,
+  "added_geysers": 31,
+  "exact_resource_and_gas_replays": 63,
+  "live_mining_verified": false,
+  "game_started": false,
+  "created_at_utc": "2026-10-16T09:42:51.044324+00:00"
+}
