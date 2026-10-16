@@ -1,0 +1,27 @@
+{
+  "version": "v2026.10.16-qa6",
+  "file": "SC1_Roguelike_20261016_QA6.zip",
+  "sha256": "024d81684f9ce03a1ef98c1a783f5605041593199909afdfb8bcc805fdc8d52d",
+  "bytes": 24531635,
+  "runtime_source_commit": "c9e2c2fb1633662d5eac179ca1193fcf631dfe4b",
+  "native_dll_sha256": "e84d13bef0d5c3cd0c743eea128783ca1d78d0cc19273ab293114af081b11de3",
+  "native_dll_compiled_from_source": true,
+  "launcher_compiled_from_source": true,
+  "native_host_groups": 249,
+  "native_host_checks": 812498,
+  "python_regressions": 56,
+  "map_count": 63,
+  "mineral_fields": 3361,
+  "mineral_bonus_each": 500,
+  "talent_multipliers": {
+    "common": 1.5,
+    "uncommon": 2,
+    "rare": 2.5,
+    "epic": 3,
+    "legendary": 4
+  },
+  "qualitative_effect_bonuses": true,
+  "game_started": false,
+  "live_combat_balance_verified": false,
+  "created_at_utc": "2026-10-16T11:50:33.441024+00:00"
+}
