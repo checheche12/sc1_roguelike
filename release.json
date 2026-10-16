@@ -1,0 +1,16 @@
+{
+  "version": "v2026.10.16-qa2",
+  "file": "SC1_Roguelike_20261016_QA2.zip",
+  "sha256": "c2b0ab580c925b580030a8208bf9f34e4272f73f957f8f6f7664d172b9dacae5",
+  "bytes": 24507324,
+  "runtime_source_commit": "3239638",
+  "native_dll_sha256": "785a52108df5f2b88fec4408a970e26253887729dbb6aaa6a7558612798548f9",
+  "native_dll_compiled_from_source": true,
+  "launcher_compiled_from_source": true,
+  "native_host_groups": 227,
+  "native_host_checks": 800344,
+  "resource_tests": 32,
+  "map_count": 63,
+  "actual_campaign_completion_verified": false,
+  "created_at_utc": "2026-10-16T07:46:55.325387+00:00"
+}
