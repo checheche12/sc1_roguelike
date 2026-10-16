@@ -36,7 +36,7 @@ class MainBaseGasTests(unittest.TestCase):
         self.assertEqual(struct.unpack_from('<I', raw, 20)[0], 8766)
         self.assertEqual(report['resource_amount_reference']['unit_index'], 28)
         self.assertEqual(entry['resources'], report['resource_amount_reference']['resources'])
-        builder.assert_original_units_preserved(CHK(self.source).getsection('UNIT'), CHK(self.output).getsection('UNIT'))
+        builder.assert_original_units_preserved(CHK(self.source).getsection('UNIT'), CHK(self.output).getsection('UNIT'), mineral_bonus=500)
 
     def test_second_application_never_duplicates_gas(self):
         chk = CHK(self.output);before = chk.getsection('UNIT')

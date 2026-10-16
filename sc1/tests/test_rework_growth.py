@@ -50,7 +50,8 @@ class ReworkGrowthTests(unittest.TestCase):
 
     def test_append_mapping_and_user_deletion(self):
         old=load_catalog()
-        self.assertEqual(self.catalog['talents'][:238],old['talents'])
+        from sc1.campaign.talent_balance import historical
+        self.assertEqual([historical(x) for x in self.catalog['talents'][:238]],old['talents'])
         self.assertEqual(self.catalog['curses'][:15],old['curses'])
         self.assertEqual([x['bit_index'] for x in self.catalog['talents'][238:]],list(range(238,400)))
         self.assertEqual([x['byte_index'] for x in self.catalog['curses'][15:]],list(range(15,50)))
@@ -76,7 +77,7 @@ class ReworkGrowthTests(unittest.TestCase):
                 if item['id'] in patched:
                     self.assertEqual(item['description'],expected[item['id']]['description'])
                     self.assertEqual(item['effect'],expected[item['id']]['effect'])
-                    self.assertEqual(item['source_description'],expected[item['id']]['source_description'])
+                    self.assertEqual(item.get('source_description'),expected[item['id']].get('source_description'))
 
     def test_four_midpoint_legends_survive_greedy_earlier_legend_rolls(self):
         class LastRoll:

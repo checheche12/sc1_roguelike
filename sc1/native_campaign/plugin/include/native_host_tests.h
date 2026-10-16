@@ -684,6 +684,7 @@ void real_managed_dat_assets() {
 #include "rework_shield_ui_v5_host_tests.h"
 #include "wave_progression_host_tests.h"
 #include "talent_rank_host_tests.h"
+#include "talent_power_host_tests.h"
 int main() {
     using namespace host_test;
     try {
@@ -713,8 +714,9 @@ int main() {
         run_rework_shield_ui_v5_groups();
         run_wave_progression_groups();
         run_talent_rank_groups();
+        run_talent_power_groups();
         abandon_session();g.baseline.clear();g.game=nullptr;
         CHECK(late_init_calls==0);
-        std::printf("PASS native host integration: %zu groups, %d checks; game process never accessed.\n",87u+std::size(combat_audit::cases)+max_hp_engine_group_count+samase_status_ui_group_count+samase_weapon_ui_group_count+samase_armor_ui_group_count+trampoline_unwind_group_count+wave_targeting_group_count+wave_progression_group_count+talent_rank_group_count+rework_wave_group_count+enemy_progression_group_count+enemy_performance_group_count+targeting_bridge_group_count+rework_cargo_group_count+rework_carrier_group_count+rework_economy_group_count+rework_binding_group_count+rework_lighting_v5_group_count+rework_combat_v5_group_count+rework_economy_ui_group_count+rework_shield_ui_v5_group_count,checks);return 0;
+        std::printf("PASS native host integration: %zu groups, %d checks; game process never accessed.\n",87u+talent_power_group_count+std::size(combat_audit::cases)+max_hp_engine_group_count+samase_status_ui_group_count+samase_weapon_ui_group_count+samase_armor_ui_group_count+trampoline_unwind_group_count+wave_targeting_group_count+wave_progression_group_count+talent_rank_group_count+rework_wave_group_count+enemy_progression_group_count+enemy_performance_group_count+targeting_bridge_group_count+rework_cargo_group_count+rework_carrier_group_count+rework_economy_group_count+rework_binding_group_count+rework_lighting_v5_group_count+rework_combat_v5_group_count+rework_economy_ui_group_count+rework_shield_ui_v5_group_count,checks);return 0;
     } catch(const std::exception& e){std::fprintf(stderr,"FAIL %s reason=%s\n",e.what(),g.apply_failure ? g.apply_failure : "none");return 1;}
 }

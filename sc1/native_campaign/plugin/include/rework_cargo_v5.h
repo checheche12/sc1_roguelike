@@ -12,15 +12,15 @@ inline U32 lifecycle_depth=0;
 inline unsigned space(const bw::Unit* u) {return valid_unit(u) && u->unit_id<228?std::min(8u,original_stat({0,47,u->unit_id})):0u;}
 inline unsigned capacity(const bw::Unit* u) {
  if(!valid_unit(u) || u->unit_id>=228 || (u->flags&0x40000000u))return 8;
- U32 value=std::max(8u,std::min(12u,owner_stat(u->player,{0,48,u->unit_id})));
+ U32 value=std::max(8u,std::min(talent_power::enabled?16u:12u,owner_stat(u->player,{0,48,u->unit_id})));
  if(!g.active || !g.applied || u->player!=player_owner())return value;
  if(u->unit_id==11 && rework_catalog::rank(g.growth,33))return 16;
  if((u->unit_id==42 || u->unit_id==57) && rework_catalog::rank(g.growth,74)){
   // The talent adds room, never the original transport research. The original
   // native boarding path retains its own race/tech/order checks as well.
-  return rework_upgrade_storage::level(u->player,24)?12u:8u;
+  return rework_upgrade_storage::level(u->player,24)?(talent_power::enabled?16u:12u):8u;
  }
- if(u->unit_id==69 && rework_catalog::rank(g.growth,115))return 12;
+ if(u->unit_id==69 && rework_catalog::rank(g.growth,115))return talent_power::enabled?16u:12u;
  return value;
 }
 inline bool bind() noexcept {

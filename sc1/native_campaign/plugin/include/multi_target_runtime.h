@@ -177,7 +177,7 @@ inline U32 period(bw::Unit* spawner,U32 weapon) noexcept {
     value=std::max(5u,std::min(250u,value));
     std::uint64_t num=1,den=1;
     for(const auto& p:frozen::patches)if(p.table==1 && p.field==16 && p.id==weapon &&
-        (g.growth.talent_bits[p.bit/32]&(1u<<(p.bit%32)))){num*=p.numerator;den*=p.denominator;}
+        (g.growth.talent_bits[p.bit/32]&(1u<<(p.bit%32)))){talent_power::multiply(num,den,p.bit,p.numerator,p.denominator);}
     return static_cast<U32>(std::max<std::uint64_t>(1,std::min<std::uint64_t>(255,(value*num+den/2)/den)));
 }
 inline bool ready(const Clock& c,U32 frame) noexcept {return !c.used || static_cast<std::int32_t>(frame-c.due)>=0;}

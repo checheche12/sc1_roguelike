@@ -577,6 +577,7 @@ bool ordinary_weapon(U32 weapon) noexcept {
     return false;
 }
 U32 original_stat(Key key) noexcept;
+#include "include/talent_power.h"
 bool apply_snapshot(void*,const GrowthSnapshot& s) noexcept {
     const U32 phase=s.completed_phase ? s.completed_phase : 1;
     g.apply_failure=nullptr;
@@ -595,7 +596,10 @@ bool apply_snapshot(void*,const GrowthSnapshot& s) noexcept {
         std::vector<Edit> friendly,enemy;
         // Starting every phase from the original map data prevents compounding.
         for(const auto& p:frozen::patches)if(s.talent_bits[p.bit/32]&(1u<<(p.bit%32)))
-            if(!plan_edit(friendly,{p.table,p.field,p.id},p.op,p.numerator,p.denominator))return false;
+            if(!talent_power::legacy_patch(friendly,p))return false;
+        if(talent_power::enabled)for(const auto& p:frozen::multi_target_patches)if(s.talent_bits[p.bit/32]&(1u<<(p.bit%32))){
+            if(!plan_edit(friendly,{0,8,p.unit_id},4,5,4)||!plan_edit(friendly,{0,27,p.unit_id},1,1,1))return false;
+        }
         if(!rework_combat_v5::plan_stats(s,friendly) || !rework_economy_v5::plan_stats(s,friendly))return false;
         if(s.curse_counts[1])for(U32 id=0;id<130;id++){
             if(!ordinary_weapon(id))continue;
@@ -699,7 +703,7 @@ void apply_unit_motion() {
         }
         std::uint64_t speed_num=1,speed_den=1;
         if(u->player==player_owner())for(const auto& p:frozen::movement_patches)
-            if(u->unit_id==p.unit_id && (g.growth.talent_bits[p.bit/32]&(1u<<(p.bit%32)))){speed_num*=p.numerator;speed_den*=p.denominator;}
+            if(u->unit_id==p.unit_id && (g.growth.talent_bits[p.bit/32]&(1u<<(p.bit%32)))){talent_power::multiply(speed_num,speed_den,p.bit,p.numerator,p.denominator);}
         if(regular_enemy(u) && g.growth.curse_counts[3]){speed_num*=40+3*g.growth.curse_counts[3];speed_den*=40;}
         if(regular_enemy(u) && t->command_until>g.game()->frame_count){speed_num*=6;speed_den*=5;}
         const auto speed_divisor=std::gcd(speed_num,speed_den);speed_num/=speed_divisor;speed_den/=speed_divisor;
@@ -717,7 +721,7 @@ void apply_unit_motion() {
             if(clock.launched && !clock.processed && current && weapon<130){
                 std::uint64_t numerator=1,denominator=1;
                 if(u->player==player_owner())for(const auto& patch:frozen::patches)
-                    if(patch.table==1 && patch.field==16 && patch.id==weapon && (g.growth.talent_bits[patch.bit/32]&(1u<<(patch.bit%32)))){numerator*=patch.numerator;denominator*=patch.denominator;}
+                    if(patch.table==1 && patch.field==16 && patch.id==weapon && (g.growth.talent_bits[patch.bit/32]&(1u<<(patch.bit%32)))){talent_power::multiply(numerator,denominator,patch.bit,patch.numerator,patch.denominator);}
                 if(is_enemy(u->player) && g.growth.curse_counts[3]){numerator*=40;denominator*=40+3*g.growth.curse_counts[3];}
                 // Rank and legacy ratios can share large common factors.
                 // Reduce before storing the carry denominator in its U32 field.

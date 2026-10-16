@@ -30,8 +30,12 @@ def enable(conn, catalog_path=None):
             # Correct future display/mechanics metadata only. Issued offers,
             # frozen input text, indices, ranks and completed checkpoints stay.
             old.update(description=new['description'],effect=copy.deepcopy(new['effect']))
+            for field in ('balance_revision','pre_balance_description','pre_balance_effect'):
+                if field in new:old[field]=copy.deepcopy(new[field])
             changed=True
     if changed:
+        for field in ('balance_revision','talent_power_halves'):
+            if field in catalog:pinned[field]=copy.deepcopy(catalog[field])
         validate_catalog(pinned,2)
         conn.execute('UPDATE growth_rework_catalog SET catalog_json=? WHERE id=1',
                      (json.dumps(pinned,ensure_ascii=False,sort_keys=True),))
@@ -49,7 +53,7 @@ def overlay(conn, catalog):
         positions={x[index]:x['id'] for x in result[kind]}
         known={x['id'] for x in result[kind]}
         for item in extra[kind]:
-            if item.get('rework_revision')!=5:continue
+            if item.get('rework_revision')!=5 and item.get('balance_revision')!=6:continue
             if item[index] in positions and positions[item[index]]!=item['id']:
                 raise GrowthError('catalog_incompatible','기존 성장 위치와 개편안 위치가 충돌합니다.')
             if item['id'] not in known:result[kind].append(copy.deepcopy(item))
@@ -57,6 +61,8 @@ def overlay(conn, catalog):
                 existing=next(x for x in result[kind] if x['id']==item['id'])
                 if existing.get('source_description')==item.get('source_description'):
                     existing.update(description=item['description'],effect=copy.deepcopy(item['effect']))
+                    for field in ('balance_revision','pre_balance_description','pre_balance_effect'):
+                        if field in item:existing[field]=copy.deepcopy(item[field])
     result.update(catalog_version=2,rework_revision=5,policy_revision=5)
     return validate_catalog(result,2)
 

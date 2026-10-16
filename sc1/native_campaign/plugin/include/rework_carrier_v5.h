@@ -23,13 +23,13 @@ inline Census census(const bw::Unit* carrier) noexcept {
  result.valid=true;return result;
 }
 inline U32 original_capacity(const bw::Unit* u) noexcept {return u && (u->unit_id==82 || rework_upgrade_storage::level(u->player,43))?8u:4u;}
-inline U32 capacity(const bw::Unit* u) noexcept {const auto base=original_capacity(u);return own(u) && rework_catalog::rank(g.growth,130)?std::min(12u,base+4):base;}
+inline U32 capacity(const bw::Unit* u) noexcept {const auto base=original_capacity(u);return own(u) && rework_catalog::rank(g.growth,130)?std::min(24u,base+talent_power::v5(130,4)):base;}
 struct CountMask {
  Identity who{};U8 inside=0,outside=0;bool masked=false;
  explicit CountMask(bw::Unit* u,bool native_already_eight) noexcept {
-  if(!own(u) || !rework_catalog::rank(g.growth,130) || !native_already_eight)return;
+  if(!own(u) || !rework_catalog::rank(g.growth,130) || (!native_already_eight&&!talent_power::enabled))return;
   const auto actual=census(u);if(!actual.valid || actual.inside!=u->unit_specific.bytes[16] || actual.outside!=u->unit_specific.bytes[17])return;
-  who=identity(u);inside=U8(actual.inside);outside=U8(actual.outside);U32 remove=4;
+  who=identity(u);inside=U8(actual.inside);outside=U8(actual.outside);U32 remove=talent_power::enabled?capacity(u)-8:4u;
   const auto a=std::min(remove,U32(inside));u->unit_specific.bytes[16]=U8(inside-a);remove-=a;u->unit_specific.bytes[17]=U8(outside-std::min(remove,U32(outside)));masked=true;
  }
  void restore() noexcept {if(!masked || !same(who))return;const auto actual=census(who.p);who.p->unit_specific.bytes[16]=actual.valid?U8(actual.inside):inside;who.p->unit_specific.bytes[17]=actual.valid?U8(actual.outside):outside;masked=false;}
@@ -65,7 +65,7 @@ struct LaunchScope {
   if(!active || !same(who) || !own(who.p) || !rework_catalog::rank(g.growth,136) || who.p->unit_specific.bytes[17]<=outside || !who.p->order_timer)return;
   if(launches.size()!=g.units_count)launches.assign(g.units_count,{});auto& clock=launches[static_cast<std::size_t>(who.p-g.units)];const auto frame=g.game()->frame_count;
   if(!same(clock.who) || clock.who.p!=who.p)clock={who,0,0,false};if(clock.sampled && clock.last_frame==frame)return;
-  const U32 total=U32(who.p->order_timer)*2+clock.carry;who.p->order_timer=U8(std::max(1u,total/3));clock.carry=total%3;clock.last_frame=frame;clock.sampled=true;
+  const U32 denominator=talent_power::enabled?5u:3u;const U32 total=U32(who.p->order_timer)*2+clock.carry;who.p->order_timer=U8(std::max(1u,total/denominator));clock.carry=total%denominator;clock.last_frame=frame;clock.sampled=true;
  }
 };
 inline void reset() noexcept {launches.clear();scope_depth=0;}

@@ -141,6 +141,11 @@ def build(coverage=None):
                 item['effect']['qa_revision'] = 20261016
             catalog['talents' if kind=='talent' else 'curses'].append(item)
             contract['new_talents' if kind=='talent' else 'new_curses'].append(copy.deepcopy(item))
+    from .talent_balance import decorate, generate_header
+    decorate(catalog)
+    contract['balance_revision']=6
+    contract['new_talents']=copy.deepcopy(catalog['talents'][238:])
+    generate_header(catalog, ROOT)
     contract['rank_slots_used']=rank_slot
     for path,value in ((TARGET,catalog),(CONTRACT,contract)):
         path.write_text(json.dumps(value,ensure_ascii=False,indent=2)+'\n',encoding='utf8')

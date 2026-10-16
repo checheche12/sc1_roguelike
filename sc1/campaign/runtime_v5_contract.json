@@ -11,7 +11,7 @@
       "id": "33987315-82f2-5eb7-bc92-621765bf9041",
       "name": "정밀 광물 운반",
       "target": "SCV · 드론 · 프로브",
-      "description": "일꾼이 미네랄을 반납할 때마다 미네랄을 2 더 받습니다.",
+      "description": "일꾼이 미네랄을 반납할 때마다 미네랄을 5 더 받습니다.",
       "trigger": "",
       "numbers": "",
       "notes": "생산 임무에 분산된 경제 선택에서만 등장합니다. 캠페인 전체 경제 보상은 5회입니다.",
@@ -33,7 +33,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 0,
-        "source_id": "33987315-82f2-5eb7-bc92-621765bf9041"
+        "source_id": "33987315-82f2-5eb7-bc92-621765bf9041",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 5
       },
       "target_units": [
         7,
@@ -99,13 +101,20 @@
         608,
         609,
         610
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "일꾼이 미네랄을 반납할 때마다 미네랄을 2 더 받습니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 0,
+        "source_id": "33987315-82f2-5eb7-bc92-621765bf9041"
+      }
     },
     {
       "id": "59ab0ba1-8ead-52ab-ab19-aed17bfceca6",
       "name": "압축 가스 용기",
       "target": "SCV · 드론 · 프로브",
-      "description": "일꾼이 가스를 반납할 때마다 가스를 2 더 받습니다.",
+      "description": "일꾼이 가스를 반납할 때마다 가스를 5 더 받습니다.",
       "trigger": "",
       "numbers": "",
       "notes": "생산 임무에 분산된 경제 선택에서만 등장합니다. 캠페인 전체 경제 보상은 5회입니다.",
@@ -127,7 +136,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 1,
-        "source_id": "59ab0ba1-8ead-52ab-ab19-aed17bfceca6"
+        "source_id": "59ab0ba1-8ead-52ab-ab19-aed17bfceca6",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 5
       },
       "target_units": [
         7,
@@ -193,13 +204,20 @@
         608,
         609,
         610
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "일꾼이 가스를 반납할 때마다 가스를 2 더 받습니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 1,
+        "source_id": "59ab0ba1-8ead-52ab-ab19-aed17bfceca6"
+      }
     },
     {
       "id": "fc2c0ddf-e8ff-59c3-bacf-e0698d11c07e",
       "name": "많은 자원",
       "target": "광물 / 가스",
-      "description": "광물과 간헐천에 남은 자원량이 3배가 됩니다.",
+      "description": "광물과 간헐천에 남은 자원량이 6배가 됩니다.",
       "trigger": "",
       "numbers": "",
       "notes": "생산 임무에 분산된 경제 선택에서만 등장합니다. 캠페인 전체 경제 보상은 5회입니다.",
@@ -221,7 +239,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 2,
-        "source_id": "fc2c0ddf-e8ff-59c3-bacf-e0698d11c07e"
+        "source_id": "fc2c0ddf-e8ff-59c3-bacf-e0698d11c07e",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 5
       },
       "target_units": [
         176,
@@ -291,13 +311,20 @@
         608,
         609,
         610
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "광물과 간헐천에 남은 자원량이 3배가 됩니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 2,
+        "source_id": "fc2c0ddf-e8ff-59c3-bacf-e0698d11c07e"
+      }
     },
     {
       "id": "1aa7b04c-5e5d-56db-844f-30d620c5b6da",
       "name": "초고속 인력 충원",
       "target": "SCV, 드론, 프로브",
-      "description": "SCV·드론·프로브의 생산 시간이 절반으로 줄어듭니다.",
+      "description": "SCV·드론·프로브의 생산 시간이 90% 줄어듭니다.",
       "trigger": "",
       "numbers": "",
       "notes": "생산 임무에 분산된 경제 선택에서만 등장합니다. 캠페인 전체 경제 보상은 5회입니다.",
@@ -319,7 +346,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 3,
-        "source_id": "1aa7b04c-5e5d-56db-844f-30d620c5b6da"
+        "source_id": "1aa7b04c-5e5d-56db-844f-30d620c5b6da",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 5
       },
       "target_units": [
         7,
@@ -385,13 +414,20 @@
         608,
         609,
         610
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "SCV·드론·프로브의 생산 시간이 절반으로 줄어듭니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 3,
+        "source_id": "1aa7b04c-5e5d-56db-844f-30d620c5b6da"
+      }
     },
     {
       "id": "bc5b8776-409f-582b-a36b-6b0271bf46b4",
       "name": "신속하고 여유 있는 보급",
       "target": "서플라이 디포 · 오버로드 · 파일런",
-      "description": "서플라이 디포·오버로드·파일런의 보급량 +8. 생산·건설 시간이 3초가 됩니다.",
+      "description": "서플라이 디포·오버로드·파일런의 보급량 +20. 생산·건설 시간이 약 1.2초가 됩니다.",
       "trigger": "",
       "numbers": "",
       "notes": "생산 임무에 분산된 경제 선택에서만 등장합니다. 캠페인 전체 경제 보상은 5회입니다.",
@@ -413,7 +449,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 4,
-        "source_id": "bc5b8776-409f-582b-a36b-6b0271bf46b4"
+        "source_id": "bc5b8776-409f-582b-a36b-6b0271bf46b4",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 5
       },
       "target_units": [
         109,
@@ -479,13 +517,20 @@
         608,
         609,
         610
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "서플라이 디포·오버로드·파일런의 보급량 +8. 생산·건설 시간이 3초가 됩니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 4,
+        "source_id": "bc5b8776-409f-582b-a36b-6b0271bf46b4"
+      }
     },
     {
       "id": "e490f090-f385-5961-93b9-76fdece67f52",
       "name": "임무 보급 상자",
       "target": "전역",
-      "description": "임무를 시작할 때 보유한 저주 하나당 미네랄·가스를 50씩 받습니다.",
+      "description": "임무를 시작할 때 보유한 저주 하나당 미네랄·가스를 125씩 받습니다.",
       "trigger": "",
       "numbers": "",
       "notes": "생산 임무에 분산된 경제 선택에서만 등장합니다. 캠페인 전체 경제 보상은 5회입니다.",
@@ -507,7 +552,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 5,
-        "source_id": "e490f090-f385-5961-93b9-76fdece67f52"
+        "source_id": "e490f090-f385-5961-93b9-76fdece67f52",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 5
       },
       "target_units": [],
       "requirements": {
@@ -569,13 +616,20 @@
         608,
         609,
         610
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "임무를 시작할 때 보유한 저주 하나당 미네랄·가스를 50씩 받습니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 5,
+        "source_id": "e490f090-f385-5961-93b9-76fdece67f52"
+      }
     },
     {
       "id": "f2722f1b-2962-5d8e-bb50-37c9d4f5d515",
       "name": "일꾼 부스터",
       "target": "SCV / 드론 / 프로브",
-      "description": "SCV·드론·프로브의 이동 속도가 50% 빨라집니다.",
+      "description": "SCV·드론·프로브의 이동 속도가 125% 빨라집니다.",
       "trigger": "",
       "numbers": "",
       "notes": "생산 임무에 분산된 경제 선택에서만 등장합니다. 캠페인 전체 경제 보상은 5회입니다.",
@@ -597,7 +651,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 6,
-        "source_id": "f2722f1b-2962-5d8e-bb50-37c9d4f5d515"
+        "source_id": "f2722f1b-2962-5d8e-bb50-37c9d4f5d515",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 5
       },
       "target_units": [
         7,
@@ -663,13 +719,20 @@
         608,
         609,
         610
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "SCV·드론·프로브의 이동 속도가 50% 빨라집니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 6,
+        "source_id": "f2722f1b-2962-5d8e-bb50-37c9d4f5d515"
+      }
     },
     {
       "id": "e66e3da3-d595-51a1-9a1f-ae9cace5aa1b",
       "name": "신속한 확장",
       "target": "커맨드 센터·해처리·넥서스",
-      "description": "새 커맨드 센터·해처리·넥서스의 비용과 건설 시간이 30% 줄어듭니다.",
+      "description": "새 커맨드 센터·해처리·넥서스의 비용과 건설 시간이 75% 줄어듭니다.",
       "trigger": "",
       "numbers": "",
       "notes": "레어·하이브 변태, 이미 시작한 건설·구출·트리거 생성 제외. 취소 환급은 실제 지불액 기준.\n생산 임무에 분산된 경제 선택에서만 등장합니다. 캠페인 전체 경제 보상은 5회입니다.",
@@ -691,7 +754,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 7,
-        "source_id": "e66e3da3-d595-51a1-9a1f-ae9cace5aa1b"
+        "source_id": "e66e3da3-d595-51a1-9a1f-ae9cace5aa1b",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 5
       },
       "target_units": [
         106,
@@ -757,13 +822,20 @@
         608,
         609,
         610
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "새 커맨드 센터·해처리·넥서스의 비용과 건설 시간이 30% 줄어듭니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 7,
+        "source_id": "e66e3da3-d595-51a1-9a1f-ae9cace5aa1b"
+      }
     },
     {
       "id": "de79fac2-8158-5994-88f2-6a5cb8464fb7",
       "name": "행군 교범",
       "target": "아군 지상 병력·영웅",
-      "description": "아군 지상 병력과 영웅의 이동 속도 +3%. 반복해서 고를 수 있습니다.",
+      "description": "아군 지상 병력과 영웅의 이동 속도 +4.5%. 반복해서 고를 수 있습니다.",
       "trigger": "",
       "numbers": "선택 횟수 제한 없음. 같은 창에서는 동일 재능 1개만 표시. 공격주기 = 원래 주기 × 0.97^중첩 수(해당 교범에만 적용). 엔진 최소 1틱, 매 단계 원본에서 다시 계산.",
       "notes": "일반 병력 교범은 보유 후에도 재등장합니다. 공격력·방어력은 중첩당 수치를 합산하고, 이동 속도는 원래 속도 × (1 + 0.03 × 중첩 수)로 계산합니다. 일꾼·건물·탄약은 제외하며, 인터셉터는 함대 교범의 공격력만 캐리어를 통해 1회 상속합니다. 지상/공중 분류는 겹치지 않습니다. 자폭·튀김의 타격 수와 마법 피해는 늘리지 않습니다. 기존 발급 선택과 과거 기록은 재해석하지 않습니다.",
@@ -785,7 +857,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 8,
-        "source_id": "de79fac2-8158-5994-88f2-6a5cb8464fb7"
+        "source_id": "de79fac2-8158-5994-88f2-6a5cb8464fb7",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 3
       },
       "target_units": [
         0,
@@ -908,13 +982,20 @@
         610,
         611
       ],
-      "rank_slot": 0
+      "rank_slot": 0,
+      "balance_revision": 6,
+      "pre_balance_description": "아군 지상 병력과 영웅의 이동 속도 +3%. 반복해서 고를 수 있습니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 8,
+        "source_id": "de79fac2-8158-5994-88f2-6a5cb8464fb7"
+      }
     },
     {
       "id": "7d62562c-179b-57b1-ad35-a60fb60b0054",
       "name": "편대 기동 교범",
       "target": "아군 공중 병력·영웅",
-      "description": "아군 공중 병력과 영웅의 이동 속도 +3%. 반복해서 고를 수 있습니다.",
+      "description": "아군 공중 병력과 영웅의 이동 속도 +4.5%. 반복해서 고를 수 있습니다.",
       "trigger": "",
       "numbers": "선택 횟수 제한 없음. 같은 창에서는 동일 재능 1개만 표시. 공격주기 = 원래 주기 × 0.97^중첩 수(해당 교범에만 적용). 엔진 최소 1틱, 매 단계 원본에서 다시 계산.",
       "notes": "일반 병력 교범은 보유 후에도 재등장합니다. 공격력·방어력은 중첩당 수치를 합산하고, 이동 속도는 원래 속도 × (1 + 0.03 × 중첩 수)로 계산합니다. 일꾼·건물·탄약은 제외하며, 인터셉터는 함대 교범의 공격력만 캐리어를 통해 1회 상속합니다. 지상/공중 분류는 겹치지 않습니다. 자폭·튀김의 타격 수와 마법 피해는 늘리지 않습니다. 기존 발급 선택과 과거 기록은 재해석하지 않습니다.",
@@ -936,7 +1017,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 9,
-        "source_id": "7d62562c-179b-57b1-ad35-a60fb60b0054"
+        "source_id": "7d62562c-179b-57b1-ad35-a60fb60b0054",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 3
       },
       "target_units": [
         8,
@@ -1041,13 +1124,20 @@
         610,
         611
       ],
-      "rank_slot": 1
+      "rank_slot": 1,
+      "balance_revision": 6,
+      "pre_balance_description": "아군 공중 병력과 영웅의 이동 속도 +3%. 반복해서 고를 수 있습니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 9,
+        "source_id": "7d62562c-179b-57b1-ad35-a60fb60b0054"
+      }
     },
     {
       "id": "4c0772ea-8024-592e-88dd-afc2871f8659",
       "name": "장거리 교전",
       "target": "아군 일반 원거리 무기",
-      "description": "아군 일반 원거리 무기의 사거리가 1타일 늘어납니다.",
+      "description": "아군 일반 원거리 무기의 사거리가 2타일 늘어납니다.",
       "trigger": "",
       "numbers": "",
       "notes": "",
@@ -1069,7 +1159,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 10,
-        "source_id": "4c0772ea-8024-592e-88dd-afc2871f8659"
+        "source_id": "4c0772ea-8024-592e-88dd-afc2871f8659",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 4
       },
       "target_units": [
         0,
@@ -1185,13 +1277,20 @@
         609,
         610,
         611
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "아군 일반 원거리 무기의 사거리가 1타일 늘어납니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 10,
+        "source_id": "4c0772ea-8024-592e-88dd-afc2871f8659"
+      }
     },
     {
       "id": "1ec96c5e-bd7f-5b05-a4e2-1707b863f061",
       "name": "전열 방호 교범",
       "target": "아군 지상 병력·영웅",
-      "description": "아군 지상 병력과 영웅의 방어력 +0.5. 반복해서 고를 수 있습니다.",
+      "description": "아군 지상 병력과 영웅의 방어력 +0.75. 반복해서 고를 수 있습니다.",
       "trigger": "",
       "numbers": "선택 횟수 제한 없음. 같은 창에서는 동일 재능 1개만 표시. 공격주기 = 원래 주기 × 0.97^중첩 수(해당 교범에만 적용). 엔진 최소 1틱, 매 단계 원본에서 다시 계산.",
       "notes": "일반 병력 교범은 보유 후에도 재등장합니다. 공격력·방어력은 중첩당 수치를 합산하고, 이동 속도는 원래 속도 × (1 + 0.03 × 중첩 수)로 계산합니다. 일꾼·건물·탄약은 제외하며, 인터셉터는 함대 교범의 공격력만 캐리어를 통해 1회 상속합니다. 지상/공중 분류는 겹치지 않습니다. 자폭·튀김의 타격 수와 마법 피해는 늘리지 않습니다. 기존 발급 선택과 과거 기록은 재해석하지 않습니다.",
@@ -1214,8 +1313,9 @@
         "type": "rework_v5",
         "ordinal": 11,
         "source_id": "1ec96c5e-bd7f-5b05-a4e2-1707b863f061",
-        "armor_per_rank": 0.5,
-        "qa_revision": 20261016
+        "armor_per_rank": 0.75,
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 3
       },
       "target_units": [
         0,
@@ -1338,13 +1438,22 @@
         610,
         611
       ],
-      "rank_slot": 2
+      "rank_slot": 2,
+      "balance_revision": 6,
+      "pre_balance_description": "아군 지상 병력과 영웅의 방어력 +0.5. 반복해서 고를 수 있습니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 11,
+        "source_id": "1ec96c5e-bd7f-5b05-a4e2-1707b863f061",
+        "armor_per_rank": 0.5,
+        "qa_revision": 20261016
+      }
     },
     {
       "id": "12dda10f-da28-5df4-9a3b-5f8d1aa30d81",
       "name": "공중 방호 교범",
       "target": "아군 공중 병력·영웅",
-      "description": "아군 공중 병력과 영웅의 방어력 +0.5. 반복해서 고를 수 있습니다.",
+      "description": "아군 공중 병력과 영웅의 방어력 +0.75. 반복해서 고를 수 있습니다.",
       "trigger": "",
       "numbers": "선택 횟수 제한 없음. 같은 창에서는 동일 재능 1개만 표시. 공격주기 = 원래 주기 × 0.97^중첩 수(해당 교범에만 적용). 엔진 최소 1틱, 매 단계 원본에서 다시 계산.",
       "notes": "일반 병력 교범은 보유 후에도 재등장합니다. 공격력·방어력은 중첩당 수치를 합산하고, 이동 속도는 원래 속도 × (1 + 0.03 × 중첩 수)로 계산합니다. 일꾼·건물·탄약은 제외하며, 인터셉터는 함대 교범의 공격력만 캐리어를 통해 1회 상속합니다. 지상/공중 분류는 겹치지 않습니다. 자폭·튀김의 타격 수와 마법 피해는 늘리지 않습니다. 기존 발급 선택과 과거 기록은 재해석하지 않습니다.",
@@ -1367,8 +1476,9 @@
         "type": "rework_v5",
         "ordinal": 12,
         "source_id": "12dda10f-da28-5df4-9a3b-5f8d1aa30d81",
-        "armor_per_rank": 0.5,
-        "qa_revision": 20261016
+        "armor_per_rank": 0.75,
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 3
       },
       "target_units": [
         8,
@@ -1473,13 +1583,22 @@
         610,
         611
       ],
-      "rank_slot": 3
+      "rank_slot": 3,
+      "balance_revision": 6,
+      "pre_balance_description": "아군 공중 병력과 영웅의 방어력 +0.5. 반복해서 고를 수 있습니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 12,
+        "source_id": "12dda10f-da28-5df4-9a3b-5f8d1aa30d81",
+        "armor_per_rank": 0.5,
+        "qa_revision": 20261016
+      }
     },
     {
       "id": "4738ccb5-2100-51a3-a11f-1b1c978d7ba9",
       "name": "정찰 교범",
       "target": "아군 병력·영웅",
-      "description": "아군 병력과 영웅의 시야가 1 늘어납니다. 탐지 능력은 생기지 않습니다.",
+      "description": "아군 병력과 영웅의 시야가 2 늘어납니다. 탐지 능력은 생기지 않습니다.",
       "trigger": "",
       "numbers": "",
       "notes": "",
@@ -1501,7 +1620,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 13,
-        "source_id": "4738ccb5-2100-51a3-a11f-1b1c978d7ba9"
+        "source_id": "4738ccb5-2100-51a3-a11f-1b1c978d7ba9",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 4
       },
       "target_units": [
         0,
@@ -1656,13 +1777,20 @@
         609,
         610,
         611
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "아군 병력과 영웅의 시야가 1 늘어납니다. 탐지 능력은 생기지 않습니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 13,
+        "source_id": "4738ccb5-2100-51a3-a11f-1b1c978d7ba9"
+      }
     },
     {
       "id": "bbf067dc-0ced-5875-a519-2c0443580c8d",
       "name": "전장 재배치",
       "target": "아군 병력·영웅",
-      "description": "아군이 공격한 뒤 0.75초 안에 이동 명령을 내리면 최대 1.5타일 도약합니다. 재사용 8초.",
+      "description": "아군이 공격한 뒤 2.25초 안에 이동 명령을 내리면 최대 4.5타일 도약합니다. 재사용 8초.",
       "trigger": "",
       "numbers": "",
       "notes": "공격 주기는 초기화하지 않음. 지상 병력은 현재 경로가 연결된 빈 착지점이 있어야 하며 벽·절벽을 넘지 않음.",
@@ -1684,7 +1812,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 14,
-        "source_id": "bbf067dc-0ced-5875-a519-2c0443580c8d"
+        "source_id": "bbf067dc-0ced-5875-a519-2c0443580c8d",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 6
       },
       "target_units": [
         0,
@@ -1839,13 +1969,20 @@
         609,
         610,
         611
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "아군이 공격한 뒤 0.75초 안에 이동 명령을 내리면 최대 1.5타일 도약합니다. 재사용 8초.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 14,
+        "source_id": "bbf067dc-0ced-5875-a519-2c0443580c8d"
+      }
     },
     {
       "id": "aeb3f3a6-c83e-55a9-8e70-4b1632bf872c",
       "name": "전술 표식",
       "target": "아군 마법에 직접 적중한 적",
-      "description": "아군 마법에 맞은 적은 3초간 일반 공격 피해를 15% 더 받습니다.",
+      "description": "아군 마법에 맞은 적은 9초간 일반 공격 피해를 45% 더 받습니다.",
       "trigger": "",
       "numbers": "",
       "notes": "지속 지대는 최초 적중만 발동.",
@@ -1867,7 +2004,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 15,
-        "source_id": "aeb3f3a6-c83e-55a9-8e70-4b1632bf872c"
+        "source_id": "aeb3f3a6-c83e-55a9-8e70-4b1632bf872c",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 6
       },
       "target_units": [
         1,
@@ -1962,13 +2101,20 @@
         609,
         610,
         611
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "아군 마법에 맞은 적은 3초간 일반 공격 피해를 15% 더 받습니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 15,
+        "source_id": "aeb3f3a6-c83e-55a9-8e70-4b1632bf872c"
+      }
     },
     {
       "id": "8c053349-58dc-58c6-b5d1-246640408969",
       "name": "전투 예열",
       "target": "아군 일반 공격 병력·영웅",
-      "description": "아군이 같은 적을 계속 공격하면 공격 간격이 최대 30% 짧아집니다. 표적 변경·3초 중단 시 초기화.",
+      "description": "아군이 같은 적을 계속 공격하면 공격 간격이 최대 90% 짧아집니다. 표적 변경·3초 중단 시 초기화.",
       "trigger": "",
       "numbers": "",
       "notes": "추가 탄환은 별도 중첩 아님.",
@@ -1990,7 +2136,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 16,
-        "source_id": "8c053349-58dc-58c6-b5d1-246640408969"
+        "source_id": "8c053349-58dc-58c6-b5d1-246640408969",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 6
       },
       "target_units": [
         0,
@@ -2138,13 +2286,20 @@
         609,
         610,
         611
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "아군이 같은 적을 계속 공격하면 공격 간격이 최대 30% 짧아집니다. 표적 변경·3초 중단 시 초기화.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 16,
+        "source_id": "8c053349-58dc-58c6-b5d1-246640408969"
+      }
     },
     {
       "id": "d2726c34-7c9d-582c-821b-4acb7edf87c7",
       "name": "응급 후퇴",
       "target": "아군 지상 병력·영웅",
-      "description": "체력 30% 이하인 아군에게 이동 명령을 내리면 1.25초간 병력 사이를 통과합니다. 재사용 20초.",
+      "description": "체력 30% 이하인 아군에게 이동 명령을 내리면 3.75초간 병력 사이를 통과합니다. 재사용 20초.",
       "trigger": "",
       "numbers": "",
       "notes": "지형 충돌·피격은 유지하고 통과 중 공격·마법은 불가. 종료 지점이 막혔으면 1타일 내 빈 지점 또는 시작 지점에 안전하게 정착.",
@@ -2166,7 +2321,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 17,
-        "source_id": "d2726c34-7c9d-582c-821b-4acb7edf87c7"
+        "source_id": "d2726c34-7c9d-582c-821b-4acb7edf87c7",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 6
       },
       "target_units": [
         0,
@@ -2288,13 +2445,20 @@
         609,
         610,
         611
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "체력 30% 이하인 아군에게 이동 명령을 내리면 1.25초간 병력 사이를 통과합니다. 재사용 20초.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 17,
+        "source_id": "d2726c34-7c9d-582c-821b-4acb7edf87c7"
+      }
     },
     {
       "id": "ccf515a4-0372-5837-b7af-423472b39fb6",
       "name": "무한 화력",
       "target": "아군 일반 공격 병력·영웅",
-      "description": "아군 일반 공격마다 원래 피해의 50%인 공격을 한 번 더 합니다. 원거리는 탄환을 추가 발사합니다.",
+      "description": "아군 일반 공격마다 원래 피해의 200%인 공격을 한 번 더 합니다. 원거리는 탄환을 추가 발사합니다.",
       "trigger": "",
       "numbers": "",
       "notes": "세부 적용: 주 공격마다 원래 일반 공격 피해의 50%인 추가 공격 1회. 원거리 무기는 추가 투사체, 근접은 추가 타격. 기존 타격 수 유지, 추가 공격의 재발동 금지.",
@@ -2316,7 +2480,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 18,
-        "source_id": "ccf515a4-0372-5837-b7af-423472b39fb6"
+        "source_id": "ccf515a4-0372-5837-b7af-423472b39fb6",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 8
       },
       "target_units": [
         0,
@@ -2464,13 +2630,20 @@
         609,
         610,
         611
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "아군 일반 공격마다 원래 피해의 50%인 공격을 한 번 더 합니다. 원거리는 탄환을 추가 발사합니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 18,
+        "source_id": "ccf515a4-0372-5837-b7af-423472b39fb6"
+      }
     },
     {
       "id": "372acb49-fc11-5127-b203-cd452953cd4c",
       "name": "최후의 돌파",
       "target": "아군 일반 무기 공격",
-      "description": "아군 일반 공격이 적의 체력 방어력을 무시합니다. 보호막 방어력은 유지됩니다.",
+      "description": "아군 일반 공격이 적의 체력 방어력과 보호막 방어력을 모두 무시합니다.",
       "trigger": "",
       "numbers": "",
       "notes": "표적 방어력 자체를 변경하지 않음.",
@@ -2492,7 +2665,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 19,
-        "source_id": "372acb49-fc11-5127-b203-cd452953cd4c"
+        "source_id": "372acb49-fc11-5127-b203-cd452953cd4c",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 8
       },
       "target_units": [
         0,
@@ -2640,13 +2815,20 @@
         609,
         610,
         611
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "아군 일반 공격이 적의 체력 방어력을 무시합니다. 보호막 방어력은 유지됩니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 19,
+        "source_id": "372acb49-fc11-5127-b203-cd452953cd4c"
+      }
     },
     {
       "id": "9f7709e0-52ab-5b4d-ba21-ca84e04c3c8d",
       "name": "건설 효율화",
       "target": "SCV",
-      "description": "SCV가 짓는 건물의 건설 시간이 절반으로 줄어듭니다.",
+      "description": "SCV가 짓는 건물의 건설 시간이 90% 줄어듭니다.",
       "trigger": "",
       "numbers": "",
       "notes": "생산 임무에 분산된 경제 선택에서만 등장합니다. 캠페인 전체 경제 보상은 5회입니다.",
@@ -2668,7 +2850,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 20,
-        "source_id": "9f7709e0-52ab-5b4d-ba21-ca84e04c3c8d"
+        "source_id": "9f7709e0-52ab-5b4d-ba21-ca84e04c3c8d",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 5
       },
       "target_units": [
         7
@@ -2693,13 +2877,20 @@
         515,
         506,
         508
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "SCV가 짓는 건물의 건설 시간이 절반으로 줄어듭니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 20,
+        "source_id": "9f7709e0-52ab-5b4d-ba21-ca84e04c3c8d"
+      }
     },
     {
       "id": "a488dc12-cfa7-5d1a-ab36-2407d415b662",
       "name": "빠르고 많이 나오는 애벌레",
       "target": "해처리 / 레어 / 하이브 / 애벌레",
-      "description": "해처리·레어·하이브가 애벌레를 6기까지 보유합니다. 애벌레 생성 속도 +30%.",
+      "description": "해처리·레어·하이브가 애벌레를 11기까지 보유합니다. 애벌레 생성 속도 +75%.",
       "trigger": "",
       "numbers": "",
       "notes": "생산 임무에 분산된 경제 선택에서만 등장합니다. 캠페인 전체 경제 보상은 5회입니다.",
@@ -2721,7 +2912,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 21,
-        "source_id": "a488dc12-cfa7-5d1a-ab36-2407d415b662"
+        "source_id": "a488dc12-cfa7-5d1a-ab36-2407d415b662",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 5
       },
       "target_units": [
         131,
@@ -2756,13 +2949,20 @@
         608,
         609,
         610
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "해처리·레어·하이브가 애벌레를 6기까지 보유합니다. 애벌레 생성 속도 +30%.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 21,
+        "source_id": "a488dc12-cfa7-5d1a-ab36-2407d415b662"
+      }
     },
     {
       "id": "93a63632-1508-577b-b7e6-cc3fc3e2ef54",
       "name": "소환 공정 개선",
       "target": "프로브",
-      "description": "프로브가 소환하는 건물의 건설 시간이 절반으로 줄어듭니다.",
+      "description": "프로브가 소환하는 건물의 건설 시간이 90% 줄어듭니다.",
       "trigger": "",
       "numbers": "",
       "notes": "생산 임무에 분산된 경제 선택에서만 등장합니다. 캠페인 전체 경제 보상은 5회입니다.",
@@ -2784,7 +2984,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 22,
-        "source_id": "93a63632-1508-577b-b7e6-cc3fc3e2ef54"
+        "source_id": "93a63632-1508-577b-b7e6-cc3fc3e2ef54",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 5
       },
       "target_units": [
         64
@@ -2808,13 +3010,20 @@
         406,
         407,
         408
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "프로브가 소환하는 건물의 건설 시간이 절반으로 줄어듭니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 22,
+        "source_id": "93a63632-1508-577b-b7e6-cc3fc3e2ef54"
+      }
     },
     {
       "id": "00aaef8d-4f01-527f-8f16-2fbdcda13482",
       "name": "지게 채광 지원",
       "target": "현재 아군 채광 기지",
-      "description": "2분부터 2분마다 기지 옆에 임시 채광기 1기가 옵니다. 45초간 채광하며 반납마다 미네랄 +8.",
+      "description": "2분부터 2분마다 기지 옆에 임시 채광기 1기가 옵니다. 약 112초간 채광하며 반납마다 미네랄 +20.",
       "trigger": "",
       "numbers": "",
       "notes": "보너스는 광물 매장량을 더 소모하지 않음. 건설·수리·가스·수송·공격 명령 및 인구 소모 없음. 만료 시 운반 중 자원은 반납하지 않고 사라짐. 광물·빈 배치점·기지가 없으면 그 회차 생략, 밀린 회차 적립 금지. 원래 SCV는 변경하지 않음.\n생산 임무에 분산된 경제 선택에서만 등장합니다. 캠페인 전체 경제 보상은 5회입니다.",
@@ -2836,7 +3045,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 23,
-        "source_id": "00aaef8d-4f01-527f-8f16-2fbdcda13482"
+        "source_id": "00aaef8d-4f01-527f-8f16-2fbdcda13482",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 5
       },
       "target_units": [
         106,
@@ -2862,13 +3073,20 @@
         515,
         506,
         508
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "2분부터 2분마다 기지 옆에 임시 채광기 1기가 옵니다. 45초간 채광하며 반납마다 미네랄 +8.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 23,
+        "source_id": "00aaef8d-4f01-527f-8f16-2fbdcda13482"
+      }
     },
     {
       "id": "c4203198-4af8-5b55-a109-4e4ae14e6c60",
       "name": "쌍둥이 일벌레",
       "target": "직접 생산하는 드론 알",
-      "description": "드론 한 알에서 2기가 나옵니다. 비용은 미네랄 100·인구 2이며 생산 시간은 그대로입니다.",
+      "description": "드론 한 알에서 2기가 나옵니다. 미네랄 75·인구 2를 쓰며 생산 시간이 50% 줄어듭니다.",
       "trigger": "",
       "numbers": "",
       "notes": "인구 부족 시 명령 거절. 취소 환급·애벌레 소모는 한 주문으로 처리. 구출·트리거 생성 제외.\n생산 임무에 분산된 경제 선택에서만 등장합니다. 캠페인 전체 경제 보상은 5회입니다.",
@@ -2890,7 +3108,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 24,
-        "source_id": "c4203198-4af8-5b55-a109-4e4ae14e6c60"
+        "source_id": "c4203198-4af8-5b55-a109-4e4ae14e6c60",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 5
       },
       "target_units": [
         35,
@@ -2925,13 +3145,20 @@
         608,
         609,
         610
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "드론 한 알에서 2기가 나옵니다. 비용은 미네랄 100·인구 2이며 생산 시간은 그대로입니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 24,
+        "source_id": "c4203198-4af8-5b55-a109-4e4ae14e6c60"
+      }
     },
     {
       "id": "5e964160-8e5f-55f1-b235-87c82069fd91",
       "name": "시간 증폭",
       "target": "작동 중인 아군 생산·연구 건물",
-      "description": "1분부터 90초마다 아군 건물의 생산·연구 속도가 20초간 50% 빨라집니다.",
+      "description": "1분부터 90초마다 아군 건물의 생산·연구 속도가 50초간 125% 빨라집니다.",
       "trigger": "",
       "numbers": "",
       "notes": "같은 건물에 중첩 불가.\n생산 임무에 분산된 경제 선택에서만 등장합니다. 캠페인 전체 경제 보상은 5회입니다.",
@@ -2953,7 +3180,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 25,
-        "source_id": "5e964160-8e5f-55f1-b235-87c82069fd91"
+        "source_id": "5e964160-8e5f-55f1-b235-87c82069fd91",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 5
       },
       "target_units": [
         154
@@ -2977,13 +3206,20 @@
         406,
         407,
         408
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "1분부터 90초마다 아군 건물의 생산·연구 속도가 20초간 50% 빨라집니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 25,
+        "source_id": "5e964160-8e5f-55f1-b235-87c82069fd91"
+      }
     },
     {
       "id": "39983934-eff0-5a0f-870c-41a6c6013969",
       "name": "생체 전열 강화",
       "target": "테란 지상 생체 병력·영웅",
-      "description": "테란 지상 생체 병력과 영웅의 최대 체력 +20%. 일꾼은 제외됩니다.",
+      "description": "테란 지상 생체 병력과 영웅의 최대 체력 +40%. 일꾼은 제외됩니다.",
       "trigger": "",
       "numbers": "",
       "notes": "현재 체력은 증가분만큼 자동 회복하지 않음.",
@@ -3005,7 +3241,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 26,
-        "source_id": "39983934-eff0-5a0f-870c-41a6c6013969"
+        "source_id": "39983934-eff0-5a0f-870c-41a6c6013969",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 4
       },
       "target_units": [
         0,
@@ -3042,13 +3280,20 @@
         506,
         507,
         508
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "테란 지상 생체 병력과 영웅의 최대 체력 +20%. 일꾼은 제외됩니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 26,
+        "source_id": "39983934-eff0-5a0f-870c-41a6c6013969"
+      }
     },
     {
       "id": "12d58417-b192-5873-8c39-d801578d78a0",
       "name": "기갑 차체 강화",
       "target": "테란 지상 기계 병력·영웅",
-      "description": "테란 지상 기계 병력과 영웅의 최대 체력 +20%. 전차·공성 모드 모두 적용됩니다.",
+      "description": "테란 지상 기계 병력과 영웅의 최대 체력 +40%. 전차·공성 모드 모두 적용됩니다.",
       "trigger": "",
       "numbers": "",
       "notes": "일꾼·보조 포탑·공중 제외.",
@@ -3070,7 +3315,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 27,
-        "source_id": "12d58417-b192-5873-8c39-d801578d78a0"
+        "source_id": "12d58417-b192-5873-8c39-d801578d78a0",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 4
       },
       "target_units": [
         2,
@@ -3111,13 +3358,20 @@
         506,
         507,
         508
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "테란 지상 기계 병력과 영웅의 최대 체력 +20%. 전차·공성 모드 모두 적용됩니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 27,
+        "source_id": "12d58417-b192-5873-8c39-d801578d78a0"
+      }
     },
     {
       "id": "a7a4b88b-99dd-5c73-880f-83bc6fbe59bc",
       "name": "비행 동체 강화",
       "target": "테란 공중 병력·영웅",
-      "description": "테란 공중 병력과 영웅의 최대 체력 +20%. 과학선·드롭십도 포함됩니다.",
+      "description": "테란 공중 병력과 영웅의 최대 체력 +40%. 과학선·드롭십도 포함됩니다.",
       "trigger": "",
       "numbers": "",
       "notes": "지상 기계 체력과 겹치지 않음.",
@@ -3139,7 +3393,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 28,
-        "source_id": "a7a4b88b-99dd-5c73-880f-83bc6fbe59bc"
+        "source_id": "a7a4b88b-99dd-5c73-880f-83bc6fbe59bc",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 4
       },
       "target_units": [
         8,
@@ -3177,13 +3433,20 @@
         506,
         507,
         508
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "테란 공중 병력과 영웅의 최대 체력 +20%. 과학선·드롭십도 포함됩니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 28,
+        "source_id": "a7a4b88b-99dd-5c73-880f-83bc6fbe59bc"
+      }
     },
     {
       "id": "2550fdb4-cace-5c0a-bc97-bfc04e0c0f33",
       "name": "보병 화력 교범",
       "target": "마린·파이어뱃·고스트",
-      "description": "마린·파이어뱃·고스트의 공격력 +10%, 공격 간격 -3%. 반복해서 고를 수 있습니다.",
+      "description": "마린·파이어뱃·고스트의 공격력 +15%, 공격 간격 -4.5%. 반복해서 고를 수 있습니다.",
       "trigger": "",
       "numbers": "선택 횟수 제한 없음. 같은 창에서는 동일 재능 1개만 표시. 공격주기 = 원래 주기 × 0.97^중첩 수(해당 교범에만 적용). 엔진 최소 1틱, 매 단계 원본에서 다시 계산.",
       "notes": "일반 병력 교범은 보유 후에도 재등장합니다. 공격력·방어력은 중첩당 수치를 합산하고, 이동 속도는 원래 속도 × (1 + 0.03 × 중첩 수)로 계산합니다. 일꾼·건물·탄약은 제외하며, 인터셉터는 함대 교범의 공격력만 캐리어를 통해 1회 상속합니다. 지상/공중 분류는 겹치지 않습니다. 자폭·튀김의 타격 수와 마법 피해는 늘리지 않습니다. 기존 발급 선택과 과거 기록은 재해석하지 않습니다.",
@@ -3206,9 +3469,10 @@
         "type": "rework_v5",
         "ordinal": 29,
         "source_id": "2550fdb4-cace-5c0a-bc97-bfc04e0c0f33",
-        "weapon_damage_percent_per_rank": 10,
+        "weapon_damage_percent_per_rank": 15,
         "weapon_damage_stacking": "additive",
-        "qa_revision": 20261016
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 3
       },
       "target_units": [
         0,
@@ -3245,13 +3509,23 @@
         507,
         508
       ],
-      "rank_slot": 4
+      "rank_slot": 4,
+      "balance_revision": 6,
+      "pre_balance_description": "마린·파이어뱃·고스트의 공격력 +10%, 공격 간격 -3%. 반복해서 고를 수 있습니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 29,
+        "source_id": "2550fdb4-cace-5c0a-bc97-bfc04e0c0f33",
+        "weapon_damage_percent_per_rank": 10,
+        "weapon_damage_stacking": "additive",
+        "qa_revision": 20261016
+      }
     },
     {
       "id": "281b533c-9236-5d60-8e77-19a04f9f3c50",
       "name": "기갑 화력 교범",
       "target": "벌처·골리앗·전차",
-      "description": "벌처·골리앗·전차의 공격력 +2, 공격 간격 -3%. 반복해서 고를 수 있습니다.",
+      "description": "벌처·골리앗·전차의 공격력 +3, 공격 간격 -4.5%. 반복해서 고를 수 있습니다.",
       "trigger": "",
       "numbers": "선택 횟수 제한 없음. 같은 창에서는 동일 재능 1개만 표시. 공격주기 = 원래 주기 × 0.97^중첩 수(해당 교범에만 적용). 엔진 최소 1틱, 매 단계 원본에서 다시 계산.",
       "notes": "일반 병력 교범은 보유 후에도 재등장합니다. 공격력·방어력은 중첩당 수치를 합산하고, 이동 속도는 원래 속도 × (1 + 0.03 × 중첩 수)로 계산합니다. 일꾼·건물·탄약은 제외하며, 인터셉터는 함대 교범의 공격력만 캐리어를 통해 1회 상속합니다. 지상/공중 분류는 겹치지 않습니다. 자폭·튀김의 타격 수와 마법 피해는 늘리지 않습니다. 기존 발급 선택과 과거 기록은 재해석하지 않습니다.",
@@ -3273,7 +3547,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 30,
-        "source_id": "281b533c-9236-5d60-8e77-19a04f9f3c50"
+        "source_id": "281b533c-9236-5d60-8e77-19a04f9f3c50",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 3
       },
       "target_units": [
         2,
@@ -3315,13 +3591,20 @@
         507,
         508
       ],
-      "rank_slot": 5
+      "rank_slot": 5,
+      "balance_revision": 6,
+      "pre_balance_description": "벌처·골리앗·전차의 공격력 +2, 공격 간격 -3%. 반복해서 고를 수 있습니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 30,
+        "source_id": "281b533c-9236-5d60-8e77-19a04f9f3c50"
+      }
     },
     {
       "id": "caaf0c3c-9317-52dc-ad95-df4ce66c1dc0",
       "name": "항공 화력 교범",
       "target": "테란 공격 항공기",
-      "description": "테란 공격 항공기의 공격력 +2, 공격 간격 -3%. 반복해서 고를 수 있습니다.",
+      "description": "테란 공격 항공기의 공격력 +3, 공격 간격 -4.5%. 반복해서 고를 수 있습니다.",
       "trigger": "",
       "numbers": "선택 횟수 제한 없음. 같은 창에서는 동일 재능 1개만 표시. 공격주기 = 원래 주기 × 0.97^중첩 수(해당 교범에만 적용). 엔진 최소 1틱, 매 단계 원본에서 다시 계산.",
       "notes": "일반 병력 교범은 보유 후에도 재등장합니다. 공격력·방어력은 중첩당 수치를 합산하고, 이동 속도는 원래 속도 × (1 + 0.03 × 중첩 수)로 계산합니다. 일꾼·건물·탄약은 제외하며, 인터셉터는 함대 교범의 공격력만 캐리어를 통해 1회 상속합니다. 지상/공중 분류는 겹치지 않습니다. 자폭·튀김의 타격 수와 마법 피해는 늘리지 않습니다. 기존 발급 선택과 과거 기록은 재해석하지 않습니다.",
@@ -3343,7 +3626,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 31,
-        "source_id": "caaf0c3c-9317-52dc-ad95-df4ce66c1dc0"
+        "source_id": "caaf0c3c-9317-52dc-ad95-df4ce66c1dc0",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 3
       },
       "target_units": [
         8,
@@ -3379,13 +3664,20 @@
         507,
         508
       ],
-      "rank_slot": 6
+      "rank_slot": 6,
+      "balance_revision": 6,
+      "pre_balance_description": "테란 공격 항공기의 공격력 +2, 공격 간격 -3%. 반복해서 고를 수 있습니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 31,
+        "source_id": "caaf0c3c-9317-52dc-ad95-df4ce66c1dc0"
+      }
     },
     {
       "id": "002f4cf7-508d-548b-9f5e-f03ea7e142a3",
       "name": "보병 야전 장비",
       "target": "테란 지상 생체 병력·영웅",
-      "description": "테란 지상 생체 병력과 영웅의 방어력 +1, 이동 속도 +15%.",
+      "description": "테란 지상 생체 병력과 영웅의 방어력 +2, 이동 속도 +25%.",
       "trigger": "",
       "numbers": "",
       "notes": "SCV 제외.",
@@ -3407,7 +3699,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 32,
-        "source_id": "002f4cf7-508d-548b-9f5e-f03ea7e142a3"
+        "source_id": "002f4cf7-508d-548b-9f5e-f03ea7e142a3",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 4
       },
       "target_units": [
         0,
@@ -3444,13 +3738,20 @@
         506,
         507,
         508
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "테란 지상 생체 병력과 영웅의 방어력 +1, 이동 속도 +15%.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 32,
+        "source_id": "002f4cf7-508d-548b-9f5e-f03ea7e142a3"
+      }
     },
     {
       "id": "0e858d2c-c892-569f-bfb7-340b4ee27918",
       "name": "대용량 수송",
       "target": "드롭십",
-      "description": "드롭십의 수송 공간이 16칸이 되고 이동 속도가 20% 빨라집니다.",
+      "description": "드롭십의 수송 공간이 16칸이 되고 이동 속도가 50% 빨라집니다.",
       "trigger": "",
       "numbers": "",
       "notes": "적재 중 획득·소유권 이전·해제 시 적재 병력 유실 금지.",
@@ -3472,7 +3773,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 33,
-        "source_id": "0e858d2c-c892-569f-bfb7-340b4ee27918"
+        "source_id": "0e858d2c-c892-569f-bfb7-340b4ee27918",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 5
       },
       "target_units": [
         11
@@ -3500,13 +3803,20 @@
         506,
         507,
         508
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "드롭십의 수송 공간이 16칸이 되고 이동 속도가 20% 빨라집니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 33,
+        "source_id": "0e858d2c-c892-569f-bfb7-340b4ee27918"
+      }
     },
     {
       "id": "764a2cb4-20c3-582e-80eb-dd1fc755050a",
       "name": "거점 사격 관제",
       "target": "벙커 안 병력·미사일 터렛",
-      "description": "벙커 안 병력과 미사일 터렛의 사거리가 1타일 늘어납니다.",
+      "description": "벙커 안 병력과 미사일 터렛의 사거리가 2.5타일 늘어납니다.",
       "trigger": "",
       "numbers": "",
       "notes": "하차한 병력의 원래 사거리는 유지.",
@@ -3528,7 +3838,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 34,
-        "source_id": "764a2cb4-20c3-582e-80eb-dd1fc755050a"
+        "source_id": "764a2cb4-20c3-582e-80eb-dd1fc755050a",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 5
       },
       "target_units": [
         0,
@@ -3567,13 +3879,20 @@
         506,
         507,
         508
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "벙커 안 병력과 미사일 터렛의 사거리가 1타일 늘어납니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 34,
+        "source_id": "764a2cb4-20c3-582e-80eb-dd1fc755050a"
+      }
     },
     {
       "id": "2cf35144-3f8f-543b-873a-fff282d37407",
       "name": "은폐 장치 효율화",
       "target": "고스트·레이스",
-      "description": "고스트·레이스의 은폐 유지 에너지 소모가 70% 줄어듭니다.",
+      "description": "고스트·레이스의 은폐 유지 에너지 소모가 90% 줄어듭니다.",
       "trigger": "",
       "numbers": "",
       "notes": "",
@@ -3595,7 +3914,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 35,
-        "source_id": "2cf35144-3f8f-543b-873a-fff282d37407"
+        "source_id": "2cf35144-3f8f-543b-873a-fff282d37407",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 5
       },
       "target_units": [
         1,
@@ -3629,13 +3950,20 @@
         506,
         507,
         508
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "고스트·레이스의 은폐 유지 에너지 소모가 70% 줄어듭니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 35,
+        "source_id": "2cf35144-3f8f-543b-873a-fff282d37407"
+      }
     },
     {
       "id": "221f97e2-ecb4-5c36-92e6-77b8ecbd015d",
       "name": "특수전 에너지 비축",
       "target": "고스트·메딕·과학선",
-      "description": "고스트·메딕·과학선의 최대 에너지 +100. 현재 에너지도 즉시 100 받습니다.",
+      "description": "고스트·메딕·과학선의 최대 에너지 +250. 현재 에너지도 즉시 250 받습니다.",
       "trigger": "",
       "numbers": "",
       "notes": "회복은 실제 최대 에너지까지 적용.",
@@ -3657,7 +3985,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 36,
-        "source_id": "221f97e2-ecb4-5c36-92e6-77b8ecbd015d"
+        "source_id": "221f97e2-ecb4-5c36-92e6-77b8ecbd015d",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 5
       },
       "target_units": [
         1,
@@ -3692,13 +4022,20 @@
         506,
         507,
         508
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "고스트·메딕·과학선의 최대 에너지 +100. 현재 에너지도 즉시 100 받습니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 36,
+        "source_id": "221f97e2-ecb4-5c36-92e6-77b8ecbd015d"
+      }
     },
     {
       "id": "edda0d79-69ca-5ed2-ab17-175eb0506277",
       "name": "특수전 에너지 순환",
       "target": "고스트·메딕·과학선",
-      "description": "고스트·메딕·과학선의 자연 에너지 회복이 2.5배 빨라집니다.",
+      "description": "고스트·메딕·과학선의 자연 에너지 회복이 4.75배 빨라집니다.",
       "trigger": "",
       "numbers": "",
       "notes": "",
@@ -3720,7 +4057,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 37,
-        "source_id": "edda0d79-69ca-5ed2-ab17-175eb0506277"
+        "source_id": "edda0d79-69ca-5ed2-ab17-175eb0506277",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 5
       },
       "target_units": [
         1,
@@ -3755,13 +4094,20 @@
         506,
         507,
         508
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "고스트·메딕·과학선의 자연 에너지 회복이 2.5배 빨라집니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 37,
+        "source_id": "edda0d79-69ca-5ed2-ab17-175eb0506277"
+      }
     },
     {
       "id": "c6b8243c-9044-5ea3-a22e-ec30219af91e",
       "name": "고효율 시전",
       "target": "고스트·메딕·과학선",
-      "description": "고스트·메딕·과학선의 마법 에너지 비용이 30% 줄어듭니다.",
+      "description": "고스트·메딕·과학선의 마법 에너지 비용이 75% 줄어듭니다.",
       "trigger": "",
       "numbers": "",
       "notes": "분수 잔여값 누적, 취소·실패 환급 중복 금지.",
@@ -3783,7 +4129,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 38,
-        "source_id": "c6b8243c-9044-5ea3-a22e-ec30219af91e"
+        "source_id": "c6b8243c-9044-5ea3-a22e-ec30219af91e",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 5
       },
       "target_units": [
         1,
@@ -3818,13 +4166,20 @@
         506,
         507,
         508
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "고스트·메딕·과학선의 마법 에너지 비용이 30% 줄어듭니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 38,
+        "source_id": "c6b8243c-9044-5ea3-a22e-ec30219af91e"
+      }
     },
     {
       "id": "1ef00fe8-eb60-576b-94a7-7e983af2dc77",
       "name": "지속형 전투 자극제",
       "target": "전투 자극제를 사용하는 병력",
-      "description": "전투 자극제의 지속 시간 +50%, 체력 비용 -50%.",
+      "description": "전투 자극제의 지속 시간 +125%, 체력 비용 -90%.",
       "trigger": "",
       "numbers": "",
       "notes": "",
@@ -3846,7 +4201,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 39,
-        "source_id": "1ef00fe8-eb60-576b-94a7-7e983af2dc77"
+        "source_id": "1ef00fe8-eb60-576b-94a7-7e983af2dc77",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 5
       },
       "target_units": [
         0,
@@ -3877,13 +4234,20 @@
         506,
         507,
         508
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "전투 자극제의 지속 시간 +50%, 체력 비용 -50%.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 39,
+        "source_id": "1ef00fe8-eb60-576b-94a7-7e983af2dc77"
+      }
     },
     {
       "id": "f6637256-f704-56db-a42b-e813ec9ebbe8",
       "name": "고밀도 치료",
       "target": "메딕 치료",
-      "description": "메딕의 치료 속도 +50%. 에너지 소모도 50% 늘어납니다.",
+      "description": "메딕의 치료 속도 +125%. 에너지 소모도 50% 늘어납니다.",
       "trigger": "",
       "numbers": "",
       "notes": "대상별 최대 체력 상한 준수.",
@@ -3905,7 +4269,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 40,
-        "source_id": "f6637256-f704-56db-a42b-e813ec9ebbe8"
+        "source_id": "f6637256-f704-56db-a42b-e813ec9ebbe8",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 5
       },
       "target_units": [
         34
@@ -3933,13 +4299,20 @@
         506,
         507,
         508
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "메딕의 치료 속도 +50%. 에너지 소모도 50% 늘어납니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 40,
+        "source_id": "f6637256-f704-56db-a42b-e813ec9ebbe8"
+      }
     },
     {
       "id": "ca27f6d0-8741-5968-a96b-5e258d458f88",
       "name": "정화 호위장",
       "target": "메딕 리스토레이션",
-      "description": "메딕의 리스토레이션이 아군을 8초간 호위합니다. 매초 체력 8 회복, 주변 적 최대 3기에 6 피해.",
+      "description": "메딕의 리스토레이션이 아군을 24초간 호위합니다. 매초 체력 24 회복, 주변 적 최대 3기에 18 피해.",
       "trigger": "",
       "numbers": "",
       "notes": "해로운 효과가 없는 아군에게도 시전할 수 있도록 별도 시전 처리를 설계합니다. 원래 정화는 즉시 1회, 첫 회복·공격은 1초 뒤입니다. 같은 소유자의 호위장은 한 대상에 하나만 유지하며 재시전은 시간만 갱신합니다. 실제 최대 체력까지만 회복하고, 구조물·탄약에는 시전하지 않습니다. 대상 사망·소유권 이전 시 종료. 무적·정지 상태를 무시하지 않으며 추가 피해는 재능을 재발동하지 않습니다. 원래 시전 에너지는 한 번만 지불합니다. 새 어댑터와 실제 엔진 검증이 필요합니다.",
@@ -3961,7 +4334,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 41,
-        "source_id": "ca27f6d0-8741-5968-a96b-5e258d458f88"
+        "source_id": "ca27f6d0-8741-5968-a96b-5e258d458f88",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 6
       },
       "target_units": [
         34
@@ -3989,13 +4364,20 @@
         506,
         507,
         508
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "메딕의 리스토레이션이 아군을 8초간 호위합니다. 매초 체력 8 회복, 주변 적 최대 3기에 6 피해.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 41,
+        "source_id": "ca27f6d0-8741-5968-a96b-5e258d458f88"
+      }
     },
     {
       "id": "dd72e6d0-ba79-5571-a218-e1064b0a7aa3",
       "name": "증폭 방어막",
       "target": "과학선 디펜시브 매트릭스",
-      "description": "과학선의 디펜시브 매트릭스 흡수량 +100, 지속 시간 +50%.",
+      "description": "과학선의 디펜시브 매트릭스 흡수량 +250, 지속 시간 +125%.",
       "trigger": "",
       "numbers": "",
       "notes": "",
@@ -4017,7 +4399,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 42,
-        "source_id": "dd72e6d0-ba79-5571-a218-e1064b0a7aa3"
+        "source_id": "dd72e6d0-ba79-5571-a218-e1064b0a7aa3",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 5
       },
       "target_units": [
         9,
@@ -4046,13 +4430,20 @@
         506,
         507,
         508
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "과학선의 디펜시브 매트릭스 흡수량 +100, 지속 시간 +50%.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 42,
+        "source_id": "dd72e6d0-ba79-5571-a218-e1064b0a7aa3"
+      }
     },
     {
       "id": "210863fb-b83e-53d8-beeb-91721a8ea4f6",
       "name": "장기 방사선",
       "target": "과학선 이레디에이트",
-      "description": "과학선의 이레디에이트 지속 시간이 50% 늘어납니다. 초당 피해는 그대로입니다.",
+      "description": "과학선의 이레디에이트 지속 시간이 125% 늘어납니다. 초당 피해는 그대로입니다.",
       "trigger": "",
       "numbers": "",
       "notes": "기존 시전 대상·생체 피해·오사 규칙 유지.",
@@ -4074,7 +4465,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 43,
-        "source_id": "210863fb-b83e-53d8-beeb-91721a8ea4f6"
+        "source_id": "210863fb-b83e-53d8-beeb-91721a8ea4f6",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 5
       },
       "target_units": [
         9,
@@ -4103,13 +4496,20 @@
         506,
         507,
         508
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "과학선의 이레디에이트 지속 시간이 50% 늘어납니다. 초당 피해는 그대로입니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 43,
+        "source_id": "210863fb-b83e-53d8-beeb-91721a8ea4f6"
+      }
     },
     {
       "id": "9836eb1c-7acf-58e1-9ebc-0a90983deceb",
       "name": "광역 EMP",
       "target": "과학선 EMP",
-      "description": "과학선의 EMP 반경이 50% 넓어집니다. 아군도 맞습니다.",
+      "description": "과학선의 EMP 반경이 125% 넓어집니다. 아군도 맞습니다.",
       "trigger": "",
       "numbers": "",
       "notes": "일반 무기 스플래시 수치로 대체하지 않음.",
@@ -4131,7 +4531,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 44,
-        "source_id": "9836eb1c-7acf-58e1-9ebc-0a90983deceb"
+        "source_id": "9836eb1c-7acf-58e1-9ebc-0a90983deceb",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 5
       },
       "target_units": [
         9,
@@ -4160,13 +4562,20 @@
         506,
         507,
         508
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "과학선의 EMP 반경이 50% 넓어집니다. 아군도 맞습니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 44,
+        "source_id": "9836eb1c-7acf-58e1-9ebc-0a90983deceb"
+      }
     },
     {
       "id": "2d51c78a-b4ca-5532-9c49-b495a5816f75",
       "name": "지속 봉쇄",
       "target": "고스트 락다운",
-      "description": "고스트의 락다운 지속 시간이 50% 늘어납니다.",
+      "description": "고스트의 락다운 지속 시간이 125% 늘어납니다.",
       "trigger": "",
       "numbers": "",
       "notes": "",
@@ -4188,7 +4597,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 45,
-        "source_id": "2d51c78a-b4ca-5532-9c49-b495a5816f75"
+        "source_id": "2d51c78a-b4ca-5532-9c49-b495a5816f75",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 5
       },
       "target_units": [
         1,
@@ -4220,13 +4631,20 @@
         506,
         507,
         508
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "고스트의 락다운 지속 시간이 50% 늘어납니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 45,
+        "source_id": "2d51c78a-b4ca-5532-9c49-b495a5816f75"
+      }
     },
     {
       "id": "93f1cae8-5d40-5c23-b27f-4c5939d77a5a",
       "name": "정밀 핵 유도",
       "target": "고스트 핵 공격",
-      "description": "고스트가 발사하는 핵의 낙하 경고 시간이 5초가 됩니다. 피해와 반경은 그대로입니다.",
+      "description": "고스트 핵의 낙하 경고가 5초로 줄고, 적에게 주는 핵 피해가 50% 늘어납니다.",
       "trigger": "",
       "numbers": "",
       "notes": "",
@@ -4250,7 +4668,8 @@
         "ordinal": 46,
         "source_id": "93f1cae8-5d40-5c23-b27f-4c5939d77a5a",
         "nuclear_warning_frames": 120,
-        "qa_revision": 20261016
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 5
       },
       "target_units": [
         1,
@@ -4283,13 +4702,22 @@
         506,
         507,
         508
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "고스트가 발사하는 핵의 낙하 경고 시간이 5초가 됩니다. 피해와 반경은 그대로입니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 46,
+        "source_id": "93f1cae8-5d40-5c23-b27f-4c5939d77a5a",
+        "nuclear_warning_frames": 120,
+        "qa_revision": 20261016
+      }
     },
     {
       "id": "93d7201b-f0e9-5e54-87d5-28ffa9da3519",
       "name": "유도탄 재탐색",
       "target": "테란 일반 유도 미사일",
-      "description": "테란 유도 미사일의 표적이 죽으면 2타일 안 같은 지상·공중층의 다른 적을 한 번 추적합니다.",
+      "description": "테란 유도탄의 표적이 죽으면 5타일 안 같은 공격층의 다른 적을 한 번 추적합니다.",
       "trigger": "",
       "numbers": "",
       "notes": "",
@@ -4311,7 +4739,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 47,
-        "source_id": "93d7201b-f0e9-5e54-87d5-28ffa9da3519"
+        "source_id": "93d7201b-f0e9-5e54-87d5-28ffa9da3519",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 5
       },
       "target_units": [
         4,
@@ -4341,13 +4771,20 @@
         506,
         507,
         508
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "테란 유도 미사일의 표적이 죽으면 2타일 안 같은 지상·공중층의 다른 적을 한 번 추적합니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 47,
+        "source_id": "93d7201b-f0e9-5e54-87d5-28ffa9da3519"
+      }
     },
     {
       "id": "01f9fd83-d1a5-5db7-bdc4-c7a2181e6bb3",
       "name": "파열 탄두",
       "target": "테란 기계 일반 원거리 공격",
-      "description": "테란 기계의 일반 원거리 공격이 주변 적 최대 3기에 25% 피해를 줍니다. 원래 광역 무기는 제외.",
+      "description": "테란 기계의 일반 원거리 공격이 주변 적 최대 3기에 63% 피해를 줍니다. 원래 광역 무기는 제외.",
       "trigger": "",
       "numbers": "",
       "notes": "추가 피해의 재발동 금지.",
@@ -4369,7 +4806,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 48,
-        "source_id": "01f9fd83-d1a5-5db7-bdc4-c7a2181e6bb3"
+        "source_id": "01f9fd83-d1a5-5db7-bdc4-c7a2181e6bb3",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 5
       },
       "target_units": [
         2,
@@ -4410,13 +4849,20 @@
         506,
         507,
         508
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "테란 기계의 일반 원거리 공격이 주변 적 최대 3기에 25% 피해를 줍니다. 원래 광역 무기는 제외.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 48,
+        "source_id": "01f9fd83-d1a5-5db7-bdc4-c7a2181e6bb3"
+      }
     },
     {
       "id": "13e89b70-3b8d-50d4-92f5-2b64f90ba503",
       "name": "관통 저격",
       "target": "고스트 일반 공격",
-      "description": "고스트가 생체 적의 체력 방어력을 무시합니다. 표적 뒤의 생체 적 1기에도 50% 피해.",
+      "description": "고스트가 생체 적의 체력 방어력을 무시합니다. 표적 뒤의 생체 적 1기에도 150% 피해.",
       "trigger": "",
       "numbers": "",
       "notes": "고스트 계열이라는게 무슨 뜻이야???",
@@ -4438,7 +4884,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 49,
-        "source_id": "13e89b70-3b8d-50d4-92f5-2b64f90ba503"
+        "source_id": "13e89b70-3b8d-50d4-92f5-2b64f90ba503",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 6
       },
       "target_units": [
         1,
@@ -4470,13 +4918,20 @@
         506,
         507,
         508
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "고스트가 생체 적의 체력 방어력을 무시합니다. 표적 뒤의 생체 적 1기에도 50% 피해.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 49,
+        "source_id": "13e89b70-3b8d-50d4-92f5-2b64f90ba503"
+      }
     },
     {
       "id": "67ef7498-8c62-5ff4-b063-cfc8ddaff1d5",
       "name": "응급 처치",
       "target": "메딕",
-      "description": "메딕이 체력 30% 이하인 생체 아군을 치료하기 시작하면 체력을 즉시 15 회복합니다.",
+      "description": "메딕이 체력 30% 이하인 생체 아군을 치료하기 시작하면 체력을 즉시 45 회복합니다.",
       "trigger": "",
       "numbers": "",
       "notes": "개편 효과 제안: 체력 30% 이하 생체 아군을 치료하기 시작하면 즉시 15 회복. 에너지 +10, 메딕별 재사용 20초, 같은 대상 5초 재적용 금지.",
@@ -4498,7 +4953,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 50,
-        "source_id": "67ef7498-8c62-5ff4-b063-cfc8ddaff1d5"
+        "source_id": "67ef7498-8c62-5ff4-b063-cfc8ddaff1d5",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 6
       },
       "target_units": [
         34
@@ -4526,13 +4983,20 @@
         506,
         507,
         508
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "메딕이 체력 30% 이하인 생체 아군을 치료하기 시작하면 체력을 즉시 15 회복합니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 50,
+        "source_id": "67ef7498-8c62-5ff4-b063-cfc8ddaff1d5"
+      }
     },
     {
       "id": "9653d275-b027-51c6-bb5d-920e2bab74c4",
       "name": "표적 지시탄",
       "target": "고스트 일반 공격과 아군 유도 투사체",
-      "description": "고스트에게 맞은 적은 5초간 아군 일반 공격에 방어력이 0이 됩니다. 방어 업그레이드와 보호막 방어도 무시합니다.",
+      "description": "고스트에게 맞은 적은 15초간 아군 일반 공격에 방어력이 0이 됩니다. 방어 업그레이드와 보호막 방어도 무시합니다.",
       "trigger": "",
       "numbers": "",
       "notes": "개편 효과 제안: 적중한 적에게 3초간 표식. 표적이 죽으면 그 적을 향해 날아가던 아군 일반 유도 투사체가 2타일 내 같은 지상/공중층의 다른 적에게 한 번 재유도. 원래 피해·탄수·수명 유지. 스캐럽·마법·튀기는 탄환은 제외, 투사체당 재유도 1회, 표식 중첩 불가.",
@@ -4555,11 +5019,12 @@
         "type": "rework_v5",
         "ordinal": 51,
         "source_id": "9653d275-b027-51c6-bb5d-920e2bab74c4",
-        "armor_mark_frames": 120,
+        "armor_mark_frames": 360,
         "marked_armor": 0,
         "include_armor_upgrades": true,
         "include_shield_armor": true,
-        "qa_revision": 20261016
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 6
       },
       "target_units": [
         1,
@@ -4591,13 +5056,25 @@
         506,
         507,
         508
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "고스트에게 맞은 적은 5초간 아군 일반 공격에 방어력이 0이 됩니다. 방어 업그레이드와 보호막 방어도 무시합니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 51,
+        "source_id": "9653d275-b027-51c6-bb5d-920e2bab74c4",
+        "armor_mark_frames": 120,
+        "marked_armor": 0,
+        "include_armor_upgrades": true,
+        "include_shield_armor": true,
+        "qa_revision": 20261016
+      }
     },
     {
       "id": "32417e61-ac3d-5dac-b993-67a924c82829",
       "name": "잔류 화염",
       "target": "파이어뱃 일반 공격",
-      "description": "파이어뱃의 공격이 명중한 자리에 2초간 화염 지대를 남깁니다.",
+      "description": "파이어뱃의 공격이 명중한 자리에 6초간 화염 지대를 남깁니다.",
       "trigger": "",
       "numbers": "",
       "notes": "개편 효과 제안: 적중점 반경 0.75타일에 2초 화염. 0.5초마다 지상 적에게 2피해. 병력당 활성 지대 1개, 같은 플레이어 화염 피해 중첩 금지.",
@@ -4619,7 +5096,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 52,
-        "source_id": "32417e61-ac3d-5dac-b993-67a924c82829"
+        "source_id": "32417e61-ac3d-5dac-b993-67a924c82829",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 6
       },
       "target_units": [
         10,
@@ -4648,13 +5127,20 @@
         506,
         507,
         508
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "파이어뱃의 공격이 명중한 자리에 2초간 화염 지대를 남깁니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 52,
+        "source_id": "32417e61-ac3d-5dac-b993-67a924c82829"
+      }
     },
     {
       "id": "a6e806d8-2677-5c80-b35c-a6629160aeb8",
       "name": "삼점사 소총",
       "target": "마린 일반 공격",
-      "description": "마린이 한 번에 3점사합니다. 탄환마다 원래 피해의 60%를 줍니다.",
+      "description": "마린이 한 번에 3점사합니다. 탄환마다 원래 피해의 180%를 줍니다.",
       "trigger": "",
       "numbers": "",
       "notes": "개편 효과 제안: 원래 공격 주기마다 0.08초 간격 3발, 탄당 원래 피해의 60%. 주 공격은 별도 유지하지 않음. 추가 공격 재발동 금지.",
@@ -4676,7 +5162,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 53,
-        "source_id": "a6e806d8-2677-5c80-b35c-a6629160aeb8"
+        "source_id": "a6e806d8-2677-5c80-b35c-a6629160aeb8",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 6
       },
       "target_units": [
         0,
@@ -4705,13 +5193,20 @@
         506,
         507,
         508
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "마린이 한 번에 3점사합니다. 탄환마다 원래 피해의 60%를 줍니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 53,
+        "source_id": "a6e806d8-2677-5c80-b35c-a6629160aeb8"
+      }
     },
     {
       "id": "3e935eb6-53f2-5bf6-8c13-f3f0ea60c7fc",
       "name": "주행 사격",
       "target": "벌처",
-      "description": "벌처가 이동하면서 가까운 지상 적을 공격합니다.",
+      "description": "벌처가 이동하면서 지상 적을 공격합니다. 이동 사격 피해는 원래 공격의 300%입니다.",
       "trigger": "",
       "numbers": "",
       "notes": "개편 효과 제안: 이동 명령을 유지하며 원래 사거리 내 지상 적에게 사격. 이동 중 피해 70%, 정지 시 100%, 기본 공격 주기 유지.",
@@ -4733,7 +5228,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 54,
-        "source_id": "3e935eb6-53f2-5bf6-8c13-f3f0ea60c7fc"
+        "source_id": "3e935eb6-53f2-5bf6-8c13-f3f0ea60c7fc",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 6
       },
       "target_units": [
         2,
@@ -4762,13 +5259,20 @@
         506,
         507,
         508
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "벌처가 이동하면서 가까운 지상 적을 공격합니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 54,
+        "source_id": "3e935eb6-53f2-5bf6-8c13-f3f0ea60c7fc"
+      }
     },
     {
       "id": "eb354299-5c88-5171-bb4a-cfc53a9fae8e",
       "name": "이동식 공성포",
       "target": "시즈 탱크 공성 모드",
-      "description": "시즈 탱크가 공성 모드에서 전차 속도의 50%로 이동합니다. 이동 중에는 공격하지 않습니다.",
+      "description": "시즈 탱크가 공성 모드에서 전차 속도의 100%로 이동합니다. 이동 중에는 공격하지 않습니다.",
       "trigger": "",
       "numbers": "",
       "notes": "개편 효과 제안: 전차 모드 이동 속도의 50%로 이동. 이동 중 사격 불가, 정지 0.5초 후 공성 사격. 경로·변신·포탑·원래 최소 사거리 유지.",
@@ -4790,7 +5294,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 55,
-        "source_id": "eb354299-5c88-5171-bb4a-cfc53a9fae8e"
+        "source_id": "eb354299-5c88-5171-bb4a-cfc53a9fae8e",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 6
       },
       "target_units": [
         25,
@@ -4819,13 +5325,20 @@
         506,
         507,
         508
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "시즈 탱크가 공성 모드에서 전차 속도의 50%로 이동합니다. 이동 중에는 공격하지 않습니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 55,
+        "source_id": "eb354299-5c88-5171-bb4a-cfc53a9fae8e"
+      }
     },
     {
       "id": "2b78f9df-7b32-5b8d-9bf2-2000c5084a13",
       "name": "복합 표적 사격",
       "target": "골리앗",
-      "description": "골리앗이 서로 다른 적 최대 2기를 동시에 공격합니다. 각 대상에게 원래 피해를 줍니다.",
+      "description": "골리앗이 서로 다른 적 최대 4기를 동시에 공격합니다. 각 대상에게 원래 피해를 줍니다.",
       "trigger": "",
       "numbers": "",
       "notes": "세부 적용: 서로 다른 적 최대 2기 동시 공격. 기존 지상·공중 무기, 사거리, 공격 주기와 원래 피해 유지. 같은 대상 이중 선택 금지.",
@@ -4847,7 +5360,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 56,
-        "source_id": "2b78f9df-7b32-5b8d-9bf2-2000c5084a13"
+        "source_id": "2b78f9df-7b32-5b8d-9bf2-2000c5084a13",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 6
       },
       "target_units": [
         3,
@@ -4878,13 +5393,20 @@
         506,
         507,
         508
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "골리앗이 서로 다른 적 최대 2기를 동시에 공격합니다. 각 대상에게 원래 피해를 줍니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 56,
+        "source_id": "2b78f9df-7b32-5b8d-9bf2-2000c5084a13"
+      }
     },
     {
       "id": "e6f8092d-895b-5c09-bb7d-68e30c4ac72f",
       "name": "분산 전함 포격",
       "target": "배틀크루저",
-      "description": "배틀크루저가 서로 다른 적 최대 3기를 동시에 공격합니다. 각 대상에게 원래 피해를 줍니다.",
+      "description": "배틀크루저가 서로 다른 적 최대 7기를 동시에 공격합니다. 각 대상에게 원래 피해를 줍니다.",
       "trigger": "",
       "numbers": "",
       "notes": "세부 적용: 서로 다른 적 최대 3기 동시 공격, 대상별 원래 일반 무기 피해. 원래 총기수·주기 유지, 추가 공격 재발동 금지.",
@@ -4906,7 +5428,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 57,
-        "source_id": "e6f8092d-895b-5c09-bb7d-68e30c4ac72f"
+        "source_id": "e6f8092d-895b-5c09-bb7d-68e30c4ac72f",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 6
       },
       "target_units": [
         12
@@ -4934,13 +5458,20 @@
         506,
         507,
         508
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "배틀크루저가 서로 다른 적 최대 3기를 동시에 공격합니다. 각 대상에게 원래 피해를 줍니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 57,
+        "source_id": "e6f8092d-895b-5c09-bb7d-68e30c4ac72f"
+      }
     },
     {
       "id": "484803cb-9456-57c1-a263-c8cfcd7a8fa1",
       "name": "지상 유도탄",
       "target": "발키리",
-      "description": "발키리가 지상 적도 공격합니다. 지상 피해는 60%이며 원래 8발과 광역 피해를 유지합니다.",
+      "description": "발키리가 지상 적도 공격합니다. 지상 피해는 180%이며 원래 8발과 광역 피해를 유지합니다.",
       "trigger": "",
       "numbers": "",
       "notes": "같은 주기에 공중/지상 중 주 표적 1개.",
@@ -4962,7 +5493,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 58,
-        "source_id": "484803cb-9456-57c1-a263-c8cfcd7a8fa1"
+        "source_id": "484803cb-9456-57c1-a263-c8cfcd7a8fa1",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 6
       },
       "target_units": [
         58
@@ -4990,13 +5523,20 @@
         506,
         507,
         508
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "발키리가 지상 적도 공격합니다. 지상 피해는 60%이며 원래 8발과 광역 피해를 유지합니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 58,
+        "source_id": "484803cb-9456-57c1-a263-c8cfcd7a8fa1"
+      }
     },
     {
       "id": "6c589723-954e-5cb8-abd5-529cf9ad1b91",
       "name": "대공 화염 분사",
       "target": "파이어뱃",
-      "description": "파이어뱃이 공중 적도 공격합니다. 대공 사거리 2타일.",
+      "description": "파이어뱃이 공중 적도 공격합니다. 대공 사거리 6타일.",
       "trigger": "",
       "numbers": "",
       "notes": "지상/공중 피해층 혼합 금지.",
@@ -5018,7 +5558,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 59,
-        "source_id": "6c589723-954e-5cb8-abd5-529cf9ad1b91"
+        "source_id": "6c589723-954e-5cb8-abd5-529cf9ad1b91",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 6
       },
       "target_units": [
         10,
@@ -5047,13 +5589,20 @@
         506,
         507,
         508
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "파이어뱃이 공중 적도 공격합니다. 대공 사거리 2타일.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 59,
+        "source_id": "6c589723-954e-5cb8-abd5-529cf9ad1b91"
+      }
     },
     {
       "id": "19d1a884-1eea-5c77-906f-8941cde82c77",
       "name": "범용 지뢰",
       "target": "벌처 스파이더 마인",
-      "description": "스파이더 마인이 공중 적도 추적합니다. 표적 아래로 이동해 2타일 안에서 폭발합니다.",
+      "description": "스파이더 마인이 공중 적도 추적하며 2타일 안에서 폭발합니다. 대공 피해 +50%.",
       "trigger": "",
       "numbers": "",
       "notes": "원래 지뢰 피해·소모 유지.",
@@ -5075,7 +5624,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 60,
-        "source_id": "19d1a884-1eea-5c77-906f-8941cde82c77"
+        "source_id": "19d1a884-1eea-5c77-906f-8941cde82c77",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 6
       },
       "target_units": [
         13
@@ -5103,13 +5654,20 @@
         506,
         507,
         508
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "스파이더 마인이 공중 적도 추적합니다. 표적 아래로 이동해 2타일 안에서 폭발합니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 60,
+        "source_id": "19d1a884-1eea-5c77-906f-8941cde82c77"
+      }
     },
     {
       "id": "a8b767de-c945-5116-8e5d-a8e8c8478b5b",
       "name": "방사선 연쇄",
       "target": "과학선 이레디에이트",
-      "description": "과학선의 이레디에이트 반경이 2배가 됩니다. 대상이 죽으면 남은 효과가 다른 적에게 최대 2회 옮겨갑니다.",
+      "description": "과학선의 이레디에이트 반경이 2배가 됩니다. 대상이 죽으면 남은 효과가 다른 적에게 최대 8회 옮겨갑니다.",
       "trigger": "",
       "numbers": "",
       "notes": "이전 효과 재복제 금지, 원래 오사 규칙 유지.",
@@ -5131,7 +5689,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 61,
-        "source_id": "a8b767de-c945-5116-8e5d-a8e8c8478b5b"
+        "source_id": "a8b767de-c945-5116-8e5d-a8e8c8478b5b",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 8
       },
       "target_units": [
         9,
@@ -5160,13 +5720,20 @@
         506,
         507,
         508
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "과학선의 이레디에이트 반경이 2배가 됩니다. 대상이 죽으면 남은 효과가 다른 적에게 최대 2회 옮겨갑니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 61,
+        "source_id": "a8b767de-c945-5116-8e5d-a8e8c8478b5b"
+      }
     },
     {
       "id": "d9088172-b4d8-5fdc-a845-667e36e1681e",
       "name": "EMP 과충전",
       "target": "과학선 EMP",
-      "description": "과학선의 EMP가 제거한 보호막·에너지의 25%만큼 체력 피해도 줍니다. 대상당 최대 100.",
+      "description": "과학선의 EMP가 제거한 보호막·에너지의 100%만큼 체력 피해도 줍니다. 대상당 최대 400.",
       "trigger": "",
       "numbers": "",
       "notes": "1개 시전당 대상별 1회.",
@@ -5188,7 +5755,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 62,
-        "source_id": "d9088172-b4d8-5fdc-a845-667e36e1681e"
+        "source_id": "d9088172-b4d8-5fdc-a845-667e36e1681e",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 8
       },
       "target_units": [
         9,
@@ -5217,13 +5786,20 @@
         506,
         507,
         508
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "과학선의 EMP가 제거한 보호막·에너지의 25%만큼 체력 피해도 줍니다. 대상당 최대 100.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 62,
+        "source_id": "d9088172-b4d8-5fdc-a845-667e36e1681e"
+      }
     },
     {
       "id": "dee1eebb-31d8-526f-b895-9785e0f2f5b0",
       "name": "생체 신경 봉쇄",
       "target": "고스트 락다운",
-      "description": "고스트의 락다운으로 생체 전투 유닛도 봉쇄할 수 있습니다.",
+      "description": "락다운이 생체 전투 유닛에도 적용되며, 생체 대상의 지속 시간이 최대 4배가 됩니다.",
       "trigger": "",
       "numbers": "",
       "notes": "건물·원본 면역 대상은 제외.",
@@ -5245,7 +5821,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 63,
-        "source_id": "dee1eebb-31d8-526f-b895-9785e0f2f5b0"
+        "source_id": "dee1eebb-31d8-526f-b895-9785e0f2f5b0",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 8
       },
       "target_units": [
         1,
@@ -5277,13 +5855,20 @@
         506,
         507,
         508
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "고스트의 락다운으로 생체 전투 유닛도 봉쇄할 수 있습니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 63,
+        "source_id": "dee1eebb-31d8-526f-b895-9785e0f2f5b0"
+      }
     },
     {
       "id": "b8a603b2-ca89-5cf0-bdab-f5b7549480e4",
       "name": "삼중 야마토",
       "target": "배틀크루저 야마토",
-      "description": "배틀크루저의 야마토가 주변의 다른 적 최대 2기에도 50% 피해를 줍니다. 에너지는 한 번만 사용.",
+      "description": "배틀크루저의 야마토가 주변의 다른 적 최대 2기에도 200% 피해를 줍니다. 에너지는 한 번만 사용.",
       "trigger": "",
       "numbers": "",
       "notes": "세부 적용: 주 표적 원래 피해, 반경 3타일 내 다른 적 최대 2기에 각각 원래 피해의 50%. 비용·주 시전 1회, 동일 대상 중복 금지.",
@@ -5305,7 +5890,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 64,
-        "source_id": "b8a603b2-ca89-5cf0-bdab-f5b7549480e4"
+        "source_id": "b8a603b2-ca89-5cf0-bdab-f5b7549480e4",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 8
       },
       "target_units": [
         12,
@@ -5337,13 +5924,20 @@
         506,
         507,
         508
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "배틀크루저의 야마토가 주변의 다른 적 최대 2기에도 50% 피해를 줍니다. 에너지는 한 번만 사용.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 64,
+        "source_id": "b8a603b2-ca89-5cf0-bdab-f5b7549480e4"
+      }
     },
     {
       "id": "e2575cd1-1d24-5048-addd-b0eccccbccd9",
       "name": "전방위 전함",
       "target": "배틀크루저 일반 공격",
-      "description": "배틀크루저가 지상과 공중을 동시에 공격합니다. 분산 전함 포격이 있으면 각 층에서 최대 3기.",
+      "description": "배틀크루저가 지상·공중을 동시에 공격합니다. 추가 공격층의 피해는 400%입니다.",
       "trigger": "",
       "numbers": "",
       "notes": "세부 적용: 지상 무기와 공중 무기가 각각 적합한 주 표적을 독립 공격. 각 무기의 원래 주기 유지. 분산 포격이 있으면 각 층 최대 3기, 중복 대상·재귀 금지.",
@@ -5365,7 +5959,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 65,
-        "source_id": "e2575cd1-1d24-5048-addd-b0eccccbccd9"
+        "source_id": "e2575cd1-1d24-5048-addd-b0eccccbccd9",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 8
       },
       "target_units": [
         12,
@@ -5397,13 +5993,20 @@
         506,
         507,
         508
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "배틀크루저가 지상과 공중을 동시에 공격합니다. 분산 전함 포격이 있으면 각 층에서 최대 3기.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 65,
+        "source_id": "e2575cd1-1d24-5048-addd-b0eccccbccd9"
+      }
     },
     {
       "id": "4042391d-cef3-5321-9cf9-2bfa33ec067c",
       "name": "치료 광선망",
       "target": "메딕 치료",
-      "description": "메딕이 주변 생체 아군 2기를 추가로 치료합니다. 추가 치료 속도 50%, 총 에너지 소모 2배.",
+      "description": "메딕이 주변 생체 아군 최대 8기를 원래 치료 속도의 200%로 추가 치료합니다. 총 에너지 소모 2배.",
       "trigger": "",
       "numbers": "",
       "notes": "각 대상의 실제 최대 체력으로 제한.",
@@ -5425,7 +6028,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 66,
-        "source_id": "4042391d-cef3-5321-9cf9-2bfa33ec067c"
+        "source_id": "4042391d-cef3-5321-9cf9-2bfa33ec067c",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 8
       },
       "target_units": [
         34
@@ -5453,13 +6058,20 @@
         506,
         507,
         508
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "메딕이 주변 생체 아군 2기를 추가로 치료합니다. 추가 치료 속도 50%, 총 에너지 소모 2배.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 66,
+        "source_id": "4042391d-cef3-5321-9cf9-2bfa33ec067c"
+      }
     },
     {
       "id": "8339d38d-2b37-56c8-a5e3-98d88ba0b146",
       "name": "돌격 군체 갑각",
       "target": "저글링·울트라리스크·브루들링·감염된 테란·동일 유형 영웅",
-      "description": "저글링·울트라·브루들링·감염된 테란과 같은 계열 영웅의 최대 체력 +20%.",
+      "description": "저글링·울트라·브루들링·감염된 테란과 같은 계열 영웅의 최대 체력 +40%.",
       "trigger": "",
       "numbers": "",
       "notes": "일꾼·공중·원거리·지원 제외.",
@@ -5481,7 +6093,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 67,
-        "source_id": "8339d38d-2b37-56c8-a5e3-98d88ba0b146"
+        "source_id": "8339d38d-2b37-56c8-a5e3-98d88ba0b146",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 4
       },
       "target_units": [
         37,
@@ -5521,13 +6135,20 @@
         608,
         609,
         610
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "저글링·울트라·브루들링·감염된 테란과 같은 계열 영웅의 최대 체력 +20%.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 67,
+        "source_id": "8339d38d-2b37-56c8-a5e3-98d88ba0b146"
+      }
     },
     {
       "id": "c6944d6f-83df-58e1-b9a9-ecd8e2da96a0",
       "name": "가시·지원 군체 갑각",
       "target": "히드라리스크·러커·디파일러·동일 유형 영웅",
-      "description": "히드라·러커·디파일러와 같은 계열 영웅의 최대 체력 +20%.",
+      "description": "히드라·러커·디파일러와 같은 계열 영웅의 최대 체력 +40%.",
       "trigger": "",
       "numbers": "",
       "notes": "디파일러 전용 지상 지원 갑각을 이 카드로 통합합니다. 저글링·울트라리스크·브루들링·감염된 테란은 돌격 군체, 퀸·오버로드 등 모든 공중 병력은 비행 군체에만 포함하여 중복 적용하지 않습니다.",
@@ -5549,7 +6170,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 68,
-        "source_id": "c6944d6f-83df-58e1-b9a9-ecd8e2da96a0"
+        "source_id": "c6944d6f-83df-58e1-b9a9-ecd8e2da96a0",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 4
       },
       "target_units": [
         38,
@@ -5587,13 +6210,20 @@
         608,
         609,
         610
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "히드라·러커·디파일러와 같은 계열 영웅의 최대 체력 +20%.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 68,
+        "source_id": "c6944d6f-83df-58e1-b9a9-ecd8e2da96a0"
+      }
     },
     {
       "id": "0acfc640-2141-5dbb-aef3-59b6d96fd8b6",
       "name": "비행 군체 외피",
       "target": "저그 공중 병력·영웅",
-      "description": "저그 공중 병력과 영웅의 최대 체력 +20%. 퀸·오버로드도 포함됩니다.",
+      "description": "저그 공중 병력과 영웅의 최대 체력 +40%. 퀸·오버로드도 포함됩니다.",
       "trigger": "",
       "numbers": "",
       "notes": "모든 공중 병력은 이 카드에만 포함됩니다. 퀸·오버로드 포함, 지상 갑각 카드와 겹치지 않습니다.",
@@ -5615,7 +6245,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 69,
-        "source_id": "0acfc640-2141-5dbb-aef3-59b6d96fd8b6"
+        "source_id": "0acfc640-2141-5dbb-aef3-59b6d96fd8b6",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 4
       },
       "target_units": [
         42,
@@ -5658,13 +6290,20 @@
         608,
         609,
         610
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "저그 공중 병력과 영웅의 최대 체력 +20%. 퀸·오버로드도 포함됩니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 69,
+        "source_id": "0acfc640-2141-5dbb-aef3-59b6d96fd8b6"
+      }
     },
     {
       "id": "369d47f3-7d0b-5f3e-9dc5-9831dee8b9b6",
       "name": "돌격 화력 교범",
       "target": "저그 지상 근접",
-      "description": "저글링·울트라·브루들링의 공격력 +1, 공격 간격 -3%. 반복해서 고를 수 있습니다.",
+      "description": "저글링·울트라·브루들링의 공격력 +1.5 (정수 반올림), 공격 간격 -4.5%. 반복해서 고를 수 있습니다.",
       "trigger": "",
       "numbers": "선택 횟수 제한 없음. 같은 창에서는 동일 재능 1개만 표시. 공격주기 = 원래 주기 × 0.97^중첩 수(해당 교범에만 적용). 엔진 최소 1틱, 매 단계 원본에서 다시 계산.",
       "notes": "일반 병력 교범은 보유 후에도 재등장합니다. 공격력·방어력은 중첩당 수치를 합산하고, 이동 속도는 원래 속도 × (1 + 0.03 × 중첩 수)로 계산합니다. 일꾼·건물·탄약은 제외하며, 인터셉터는 함대 교범의 공격력만 캐리어를 통해 1회 상속합니다. 지상/공중 분류는 겹치지 않습니다. 자폭·튀김의 타격 수와 마법 피해는 늘리지 않습니다. 기존 발급 선택과 과거 기록은 재해석하지 않습니다.",
@@ -5686,7 +6325,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 70,
-        "source_id": "369d47f3-7d0b-5f3e-9dc5-9831dee8b9b6"
+        "source_id": "369d47f3-7d0b-5f3e-9dc5-9831dee8b9b6",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 3
       },
       "target_units": [
         37,
@@ -5725,13 +6366,20 @@
         609,
         610
       ],
-      "rank_slot": 7
+      "rank_slot": 7,
+      "balance_revision": 6,
+      "pre_balance_description": "저글링·울트라·브루들링의 공격력 +1, 공격 간격 -3%. 반복해서 고를 수 있습니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 70,
+        "source_id": "369d47f3-7d0b-5f3e-9dc5-9831dee8b9b6"
+      }
     },
     {
       "id": "62db7732-c1df-5422-ac36-76749a24b5ef",
       "name": "가시 화력 교범",
       "target": "히드라·러커",
-      "description": "히드라·러커의 공격력 +2, 공격 간격 -3%. 반복해서 고를 수 있습니다.",
+      "description": "히드라·러커의 공격력 +3, 공격 간격 -4.5%. 반복해서 고를 수 있습니다.",
       "trigger": "",
       "numbers": "선택 횟수 제한 없음. 같은 창에서는 동일 재능 1개만 표시. 공격주기 = 원래 주기 × 0.97^중첩 수(해당 교범에만 적용). 엔진 최소 1틱, 매 단계 원본에서 다시 계산.",
       "notes": "일반 병력 교범은 보유 후에도 재등장합니다. 공격력·방어력은 중첩당 수치를 합산하고, 이동 속도는 원래 속도 × (1 + 0.03 × 중첩 수)로 계산합니다. 일꾼·건물·탄약은 제외하며, 인터셉터는 함대 교범의 공격력만 캐리어를 통해 1회 상속합니다. 지상/공중 분류는 겹치지 않습니다. 자폭·튀김의 타격 수와 마법 피해는 늘리지 않습니다. 기존 발급 선택과 과거 기록은 재해석하지 않습니다.",
@@ -5753,7 +6401,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 71,
-        "source_id": "62db7732-c1df-5422-ac36-76749a24b5ef"
+        "source_id": "62db7732-c1df-5422-ac36-76749a24b5ef",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 3
       },
       "target_units": [
         38,
@@ -5790,13 +6440,20 @@
         609,
         610
       ],
-      "rank_slot": 8
+      "rank_slot": 8,
+      "balance_revision": 6,
+      "pre_balance_description": "히드라·러커의 공격력 +2, 공격 간격 -3%. 반복해서 고를 수 있습니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 71,
+        "source_id": "62db7732-c1df-5422-ac36-76749a24b5ef"
+      }
     },
     {
       "id": "16cf5d07-b1b7-5697-a7c3-220a82bbad55",
       "name": "비행 군체 화력 교범",
       "target": "뮤탈·가디언·디바우러·스커지",
-      "description": "뮤탈·가디언·디바우러·스커지의 공격력 +2. 반복해서 고를 수 있습니다.",
+      "description": "뮤탈·가디언·디바우러·스커지의 공격력 +3. 반복해서 고를 수 있습니다.",
       "trigger": "",
       "numbers": "선택 횟수 제한 없음. 같은 창에서는 동일 재능 1개만 표시. 공격주기 = 원래 주기 × 0.97^중첩 수(해당 교범에만 적용). 엔진 최소 1틱, 매 단계 원본에서 다시 계산.",
       "notes": "일반 병력 교범은 보유 후에도 재등장합니다. 공격력·방어력은 중첩당 수치를 합산하고, 이동 속도는 원래 속도 × (1 + 0.03 × 중첩 수)로 계산합니다. 일꾼·건물·탄약은 제외하며, 인터셉터는 함대 교범의 공격력만 캐리어를 통해 1회 상속합니다. 지상/공중 분류는 겹치지 않습니다. 자폭·튀김의 타격 수와 마법 피해는 늘리지 않습니다. 기존 발급 선택과 과거 기록은 재해석하지 않습니다.",
@@ -5818,7 +6475,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 72,
-        "source_id": "16cf5d07-b1b7-5697-a7c3-220a82bbad55"
+        "source_id": "16cf5d07-b1b7-5697-a7c3-220a82bbad55",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 3
       },
       "target_units": [
         43,
@@ -5858,13 +6517,20 @@
         609,
         610
       ],
-      "rank_slot": 9
+      "rank_slot": 9,
+      "balance_revision": 6,
+      "pre_balance_description": "뮤탈·가디언·디바우러·스커지의 공격력 +2. 반복해서 고를 수 있습니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 72,
+        "source_id": "16cf5d07-b1b7-5697-a7c3-220a82bbad55"
+      }
     },
     {
       "id": "26f82c37-e396-57e9-b3c2-4a37fe44ca10",
       "name": "잠복 정찰망",
       "target": "잠복 가능한 저그 병력",
-      "description": "잠복한 저그 병력의 시야 +2. 탐지 능력은 생기지 않습니다.",
+      "description": "잠복한 저그 병력의 시야 +5. 탐지 능력은 생기지 않습니다.",
       "trigger": "",
       "numbers": "",
       "notes": "",
@@ -5886,7 +6552,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 73,
-        "source_id": "26f82c37-e396-57e9-b3c2-4a37fe44ca10"
+        "source_id": "26f82c37-e396-57e9-b3c2-4a37fe44ca10",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 5
       },
       "target_units": [
         37,
@@ -5932,13 +6600,20 @@
         608,
         609,
         610
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "잠복한 저그 병력의 시야 +2. 탐지 능력은 생기지 않습니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 73,
+        "source_id": "26f82c37-e396-57e9-b3c2-4a37fe44ca10"
+      }
     },
     {
       "id": "cf9d7028-0a05-5bdc-ba77-ababbaf03c09",
       "name": "비행 운반낭",
       "target": "오버로드",
-      "description": "오버로드의 수송 공간이 12칸이 되고 이동 속도가 20% 빨라집니다.",
+      "description": "수송 업그레이드가 끝난 오버로드의 수송 공간이 16칸이 되며 이동 속도 +50%.",
       "trigger": "",
       "numbers": "",
       "notes": "수송 기술을 새로 해금하지 않음.",
@@ -5960,7 +6635,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 74,
-        "source_id": "cf9d7028-0a05-5bdc-ba77-ababbaf03c09"
+        "source_id": "cf9d7028-0a05-5bdc-ba77-ababbaf03c09",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 5
       },
       "target_units": [
         42,
@@ -5995,13 +6672,20 @@
         608,
         609,
         610
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "오버로드의 수송 공간이 12칸이 되고 이동 속도가 20% 빨라집니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 74,
+        "source_id": "cf9d7028-0a05-5bdc-ba77-ababbaf03c09"
+      }
     },
     {
       "id": "7c46a79c-240e-5f99-bf29-84ab7ac0fd48",
       "name": "점막 행군",
       "target": "점막 위 저그 지상 병력",
-      "description": "점막 위에 있는 저그 지상 병력의 이동 속도가 25% 빨라집니다.",
+      "description": "점막 위에 있는 저그 지상 병력의 이동 속도가 62.5% 빨라집니다.",
       "trigger": "",
       "numbers": "",
       "notes": "일꾼·알·애벌레 제외.",
@@ -6023,7 +6707,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 75,
-        "source_id": "7c46a79c-240e-5f99-bf29-84ab7ac0fd48"
+        "source_id": "7c46a79c-240e-5f99-bf29-84ab7ac0fd48",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 5
       },
       "target_units": [
         37,
@@ -6069,13 +6755,20 @@
         608,
         609,
         610
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "점막 위에 있는 저그 지상 병력의 이동 속도가 25% 빨라집니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 75,
+        "source_id": "7c46a79c-240e-5f99-bf29-84ab7ac0fd48"
+      }
     },
     {
       "id": "b5521a38-81d0-5f52-9b4e-1b8454831afa",
       "name": "군체 정신 비축",
       "target": "퀸·디파일러",
-      "description": "퀸·디파일러의 최대 에너지가 100 늘어납니다.",
+      "description": "퀸·디파일러의 최대 에너지가 250 늘어납니다.",
       "trigger": "",
       "numbers": "",
       "notes": "회복은 실제 최대 에너지까지 적용.",
@@ -6097,7 +6790,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 76,
-        "source_id": "b5521a38-81d0-5f52-9b4e-1b8454831afa"
+        "source_id": "b5521a38-81d0-5f52-9b4e-1b8454831afa",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 5
       },
       "target_units": [
         45,
@@ -6134,13 +6829,20 @@
         608,
         609,
         610
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "퀸·디파일러의 최대 에너지가 100 늘어납니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 76,
+        "source_id": "b5521a38-81d0-5f52-9b4e-1b8454831afa"
+      }
     },
     {
       "id": "121291d9-885f-5d13-84b4-297c6a6ebeb9",
       "name": "군체 정신 순환",
       "target": "퀸·디파일러",
-      "description": "퀸·디파일러의 자연 에너지 회복이 2배 빨라집니다.",
+      "description": "퀸·디파일러의 자연 에너지 회복이 3.5배 빨라집니다.",
       "trigger": "",
       "numbers": "",
       "notes": "",
@@ -6162,7 +6864,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 77,
-        "source_id": "121291d9-885f-5d13-84b4-297c6a6ebeb9"
+        "source_id": "121291d9-885f-5d13-84b4-297c6a6ebeb9",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 5
       },
       "target_units": [
         45,
@@ -6199,13 +6903,20 @@
         608,
         609,
         610
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "퀸·디파일러의 자연 에너지 회복이 2배 빨라집니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 77,
+        "source_id": "121291d9-885f-5d13-84b4-297c6a6ebeb9"
+      }
     },
     {
       "id": "5c56df06-a27f-553d-8053-029c25101e4b",
       "name": "효율적 군체 마법",
       "target": "퀸·디파일러",
-      "description": "퀸·디파일러의 마법 에너지 비용이 25% 줄어듭니다.",
+      "description": "퀸·디파일러의 마법 에너지 비용이 63% 줄어듭니다.",
       "trigger": "",
       "numbers": "",
       "notes": "",
@@ -6227,7 +6938,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 78,
-        "source_id": "5c56df06-a27f-553d-8053-029c25101e4b"
+        "source_id": "5c56df06-a27f-553d-8053-029c25101e4b",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 5
       },
       "target_units": [
         45,
@@ -6264,13 +6977,20 @@
         608,
         609,
         610
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "퀸·디파일러의 마법 에너지 비용이 25% 줄어듭니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 78,
+        "source_id": "5c56df06-a27f-553d-8053-029c25101e4b"
+      }
     },
     {
       "id": "abb905f3-6a0d-5d50-8312-03949ab51042",
       "name": "고효율 컨슘",
       "target": "디파일러 컨슘",
-      "description": "디파일러가 컨슘으로 얻는 에너지 +50. 최대 에너지를 넘지 않습니다.",
+      "description": "디파일러가 컨슘으로 얻는 에너지 +125. 최대 에너지를 넘지 않습니다.",
       "trigger": "",
       "numbers": "",
       "notes": "죽이지 못했으면 지급 없음.",
@@ -6292,7 +7012,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 79,
-        "source_id": "abb905f3-6a0d-5d50-8312-03949ab51042"
+        "source_id": "abb905f3-6a0d-5d50-8312-03949ab51042",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 5
       },
       "target_units": [
         46,
@@ -6327,13 +7049,20 @@
         608,
         609,
         610
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "디파일러가 컨슘으로 얻는 에너지 +50. 최대 에너지를 넘지 않습니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 79,
+        "source_id": "abb905f3-6a0d-5d50-8312-03949ab51042"
+      }
     },
     {
       "id": "10cc66bc-17ac-5728-8d91-d181509f5382",
       "name": "끈질긴 인스네어",
       "target": "퀸 인스네어",
-      "description": "퀸의 인스네어 반경 +25%, 지속 시간 +50%.",
+      "description": "퀸의 인스네어 반경 +62.5%, 지속 시간 +125%.",
       "trigger": "",
       "numbers": "",
       "notes": "",
@@ -6355,7 +7084,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 80,
-        "source_id": "10cc66bc-17ac-5728-8d91-d181509f5382"
+        "source_id": "10cc66bc-17ac-5728-8d91-d181509f5382",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 5
       },
       "target_units": [
         45,
@@ -6390,13 +7121,20 @@
         608,
         609,
         610
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "퀸의 인스네어 반경 +25%, 지속 시간 +50%.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 80,
+        "source_id": "10cc66bc-17ac-5728-8d91-d181509f5382"
+      }
     },
     {
       "id": "722052dd-797c-545c-baa1-3d848dee8cd8",
       "name": "기생충 사냥 표식",
       "target": "퀸 기생충이 붙은 적",
-      "description": "퀸의 기생충이 붙은 적은 아군 일반 공격 피해를 더 받습니다.",
+      "description": "기생충이 붙은 적은 아군 일반 공격 피해를 38% 더 받습니다.",
       "trigger": "",
       "numbers": "",
       "notes": "개편 효과 제안: 기생충 표식이 있는 동안 아군 일반 공격 피해 10% 증가. 동일 표식 중첩 금지. 마법 피해 제외.",
@@ -6418,7 +7156,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 81,
-        "source_id": "722052dd-797c-545c-baa1-3d848dee8cd8"
+        "source_id": "722052dd-797c-545c-baa1-3d848dee8cd8",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 5
       },
       "target_units": [
         45,
@@ -6453,13 +7193,20 @@
         608,
         609,
         610
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "퀸의 기생충이 붙은 적은 아군 일반 공격 피해를 더 받습니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 81,
+        "source_id": "722052dd-797c-545c-baa1-3d848dee8cd8"
+      }
     },
     {
       "id": "2883c2a0-bf37-5d93-a894-7e5c7bfa9b46",
       "name": "증식 브루들링",
       "target": "퀸 스폰 브루들링",
-      "description": "퀸이 스폰 브루들링을 쓰면 브루들링 3기가 나옵니다.",
+      "description": "퀸이 스폰 브루들링을 쓰면 브루들링 5기가 나옵니다.",
       "trigger": "",
       "numbers": "",
       "notes": "공간 부족이면 가능한 수만 생성.",
@@ -6481,7 +7228,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 82,
-        "source_id": "2883c2a0-bf37-5d93-a894-7e5c7bfa9b46"
+        "source_id": "2883c2a0-bf37-5d93-a894-7e5c7bfa9b46",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 5
       },
       "target_units": [
         45,
@@ -6516,13 +7265,20 @@
         608,
         609,
         610
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "퀸이 스폰 브루들링을 쓰면 브루들링 3기가 나옵니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 82,
+        "source_id": "2883c2a0-bf37-5d93-a894-7e5c7bfa9b46"
+      }
     },
     {
       "id": "d5990802-46fc-50ce-88a4-9acd03cdff55",
       "name": "확장 다크 스웜",
       "target": "디파일러 다크 스웜",
-      "description": "디파일러의 다크 스웜 반경이 50% 넓어집니다.",
+      "description": "디파일러의 다크 스웜 반경이 125% 넓어집니다.",
       "trigger": "",
       "numbers": "",
       "notes": "",
@@ -6544,7 +7300,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 83,
-        "source_id": "d5990802-46fc-50ce-88a4-9acd03cdff55"
+        "source_id": "d5990802-46fc-50ce-88a4-9acd03cdff55",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 5
       },
       "target_units": [
         46,
@@ -6579,13 +7337,20 @@
         608,
         609,
         610
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "디파일러의 다크 스웜 반경이 50% 넓어집니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 83,
+        "source_id": "d5990802-46fc-50ce-88a4-9acd03cdff55"
+      }
     },
     {
       "id": "d0ebe78b-5792-519e-b7cb-dc20a6f0a3f2",
       "name": "지속 역병",
       "target": "디파일러 플레이그",
-      "description": "디파일러의 플레이그 지속 시간이 50% 늘어납니다. 초당 피해는 그대로입니다.",
+      "description": "디파일러의 플레이그 지속 시간이 125% 늘어납니다. 초당 피해는 그대로입니다.",
       "trigger": "",
       "numbers": "",
       "notes": "",
@@ -6607,7 +7372,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 84,
-        "source_id": "d0ebe78b-5792-519e-b7cb-dc20a6f0a3f2"
+        "source_id": "d0ebe78b-5792-519e-b7cb-dc20a6f0a3f2",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 5
       },
       "target_units": [
         46,
@@ -6642,13 +7409,20 @@
         608,
         609,
         610
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "디파일러의 플레이그 지속 시간이 50% 늘어납니다. 초당 피해는 그대로입니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 84,
+        "source_id": "d0ebe78b-5792-519e-b7cb-dc20a6f0a3f2"
+      }
     },
     {
       "id": "0092e1dd-7b0d-5974-9145-b2713cd19dee",
       "name": "감염 촉매",
       "target": "퀸 인페스트 커맨드 센터",
-      "description": "퀸이 체력 75% 이하인 커맨드 센터를 감염시킬 수 있습니다.",
+      "description": "퀸이 체력 75% 이하인 커맨드 센터를 감염시킬 수 있습니다. 인페스트 에너지 비용 -25%.",
       "trigger": "",
       "numbers": "",
       "notes": "",
@@ -6670,7 +7444,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 85,
-        "source_id": "0092e1dd-7b0d-5974-9145-b2713cd19dee"
+        "source_id": "0092e1dd-7b0d-5974-9145-b2713cd19dee",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 5
       },
       "target_units": [
         45,
@@ -6705,13 +7481,20 @@
         608,
         609,
         610
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "퀸이 체력 75% 이하인 커맨드 센터를 감염시킬 수 있습니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 85,
+        "source_id": "0092e1dd-7b0d-5974-9145-b2713cd19dee"
+      }
     },
     {
       "id": "525c2040-51f1-5484-a045-8bf7229f4b0b",
       "name": "농축 산성 포자",
       "target": "디바우러 산성 포자",
-      "description": "디바우러의 산성 포자가 12중첩까지 쌓입니다. 지속 시간 +50%.",
+      "description": "산성 포자가 최대 17중첩까지 쌓이며 지속 시간이 최대 85초까지 늘어납니다.",
       "trigger": "",
       "numbers": "",
       "notes": "",
@@ -6733,7 +7516,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 86,
-        "source_id": "525c2040-51f1-5484-a045-8bf7229f4b0b"
+        "source_id": "525c2040-51f1-5484-a045-8bf7229f4b0b",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 5
       },
       "target_units": [
         62
@@ -6767,13 +7552,20 @@
         608,
         609,
         610
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "디바우러의 산성 포자가 12중첩까지 쌓입니다. 지속 시간 +50%.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 86,
+        "source_id": "525c2040-51f1-5484-a045-8bf7229f4b0b"
+      }
     },
     {
       "id": "08d42ee8-1774-5ca7-961d-97e1af65a55d",
       "name": "요격 재탐색",
       "target": "스커지",
-      "description": "스커지의 추격 대상이 죽으면 3타일 안 다른 공중 적을 한 번 추적합니다.",
+      "description": "스커지의 추격 대상이 죽으면 7.5타일 안 다른 공중 적을 한 번 추적합니다.",
       "trigger": "",
       "numbers": "",
       "notes": "",
@@ -6795,7 +7587,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 87,
-        "source_id": "08d42ee8-1774-5ca7-961d-97e1af65a55d"
+        "source_id": "08d42ee8-1774-5ca7-961d-97e1af65a55d",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 5
       },
       "target_units": [
         47
@@ -6829,13 +7623,20 @@
         608,
         609,
         610
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "스커지의 추격 대상이 죽으면 3타일 안 다른 공중 적을 한 번 추적합니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 87,
+        "source_id": "08d42ee8-1774-5ca7-961d-97e1af65a55d"
+      }
     },
     {
       "id": "21df927a-6938-5f2e-97d1-e3e08b6f4302",
       "name": "충격 포격",
       "target": "가디언 일반 공격",
-      "description": "가디언의 포탄이 주변 지상 적 최대 3기에도 25% 피해를 줍니다.",
+      "description": "가디언 포탄이 주변 지상 적 최대 3기에도 63% 피해를 줍니다.",
       "trigger": "",
       "numbers": "",
       "notes": "",
@@ -6857,7 +7658,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 88,
-        "source_id": "21df927a-6938-5f2e-97d1-e3e08b6f4302"
+        "source_id": "21df927a-6938-5f2e-97d1-e3e08b6f4302",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 5
       },
       "target_units": [
         44,
@@ -6892,13 +7695,20 @@
         608,
         609,
         610
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "가디언의 포탄이 주변 지상 적 최대 3기에도 25% 피해를 줍니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 88,
+        "source_id": "21df927a-6938-5f2e-97d1-e3e08b6f4302"
+      }
     },
     {
       "id": "75260dd5-debb-5089-9456-ee7cf86d0a4d",
       "name": "잠복 재생",
       "target": "잠복 가능한 저그 병력",
-      "description": "잠복 후 3초간 공격하거나 맞지 않으면 초당 최대 체력의 1%를 추가 회복합니다.",
+      "description": "잠복 후 3초간 공격하거나 맞지 않으면 초당 최대 체력의 2.5%를 추가 회복합니다.",
       "trigger": "",
       "numbers": "",
       "notes": "",
@@ -6920,7 +7730,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 89,
-        "source_id": "75260dd5-debb-5089-9456-ee7cf86d0a4d"
+        "source_id": "75260dd5-debb-5089-9456-ee7cf86d0a4d",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 5
       },
       "target_units": [
         37,
@@ -6966,13 +7778,20 @@
         608,
         609,
         610
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "잠복 후 3초간 공격하거나 맞지 않으면 초당 최대 체력의 1%를 추가 회복합니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 89,
+        "source_id": "75260dd5-debb-5089-9456-ee7cf86d0a4d"
+      }
     },
     {
       "id": "b63d7b59-66e3-5f61-86ea-a7e81d3000e8",
       "name": "관통 가시",
       "target": "히드라 일반 공격",
-      "description": "히드라의 공격이 표적 뒤의 적 1기를 더 관통합니다.",
+      "description": "히드라의 공격이 표적 뒤 적 1기를 관통해 원래 공격의 150% 피해를 줍니다.",
       "trigger": "",
       "numbers": "",
       "notes": "개편 효과 제안: 주 표적 원래 피해, 뒤쪽 2타일 내 같은 지상/공중층 적 1기에 50% 추가 피해.",
@@ -6994,7 +7813,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 90,
-        "source_id": "b63d7b59-66e3-5f61-86ea-a7e81d3000e8"
+        "source_id": "b63d7b59-66e3-5f61-86ea-a7e81d3000e8",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 6
       },
       "target_units": [
         38,
@@ -7029,13 +7850,20 @@
         608,
         609,
         610
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "히드라의 공격이 표적 뒤의 적 1기를 더 관통합니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 90,
+        "source_id": "b63d7b59-66e3-5f61-86ea-a7e81d3000e8"
+      }
     },
     {
       "id": "cc95053a-6171-50d5-bb9c-4cfd4daabf75",
       "name": "잠행 이동",
       "target": "러커",
-      "description": "러커가 잠복한 채 원래 속도의 25%로 이동합니다. 이동 중에는 공격하지 않습니다.",
+      "description": "러커가 잠복한 채 원래 속도의 75%로 이동합니다. 이동 중에는 공격하지 않습니다.",
       "trigger": "",
       "numbers": "",
       "notes": "개편 효과 제안: 잠복 상태로 원래 지상 이동 속도의 25% 이동. 이동 중 공격 불가, 정지 0.5초 후 가시 재개.",
@@ -7057,7 +7885,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 91,
-        "source_id": "cc95053a-6171-50d5-bb9c-4cfd4daabf75"
+        "source_id": "cc95053a-6171-50d5-bb9c-4cfd4daabf75",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 6
       },
       "target_units": [
         103
@@ -7091,13 +7921,20 @@
         608,
         609,
         610
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "러커가 잠복한 채 원래 속도의 25%로 이동합니다. 이동 중에는 공격하지 않습니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 91,
+        "source_id": "cc95053a-6171-50d5-bb9c-4cfd4daabf75"
+      }
     },
     {
       "id": "26515758-366b-5bd0-98d2-30714ab37f58",
       "name": "전방 휩쓸기",
       "target": "울트라 일반 공격",
-      "description": "울트라의 공격이 표적 주변의 전방 적들에게도 피해를 줍니다.",
+      "description": "울트라 공격이 전방의 다른 적 최대 3기에 원래 공격의 150% 피해를 줍니다.",
       "trigger": "",
       "numbers": "",
       "notes": "개편 효과 제안: 정면 90도·반경 1.5타일의 추가 지상 적 최대 3기에 원래 피해의 50%. 주 표적 원래 피해.",
@@ -7119,7 +7956,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 92,
-        "source_id": "26515758-366b-5bd0-98d2-30714ab37f58"
+        "source_id": "26515758-366b-5bd0-98d2-30714ab37f58",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 6
       },
       "target_units": [
         39,
@@ -7154,13 +7993,20 @@
         608,
         609,
         610
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "울트라의 공격이 표적 주변의 전방 적들에게도 피해를 줍니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 92,
+        "source_id": "26515758-366b-5bd0-98d2-30714ab37f58"
+      }
     },
     {
       "id": "30b5884f-a399-56cb-858b-483d5c8d27d4",
       "name": "네 번째 쐐기벌레",
       "target": "뮤탈 일반 공격",
-      "description": "뮤탈의 쐐기벌레가 적 1기에게 한 번 더 튕깁니다.",
+      "description": "뮤탈의 쐐기벌레가 최대 3회 더 튕깁니다. 튕김 피해 감쇠는 유지됩니다.",
       "trigger": "",
       "numbers": "",
       "notes": "개편 효과 제안: 최대 4대상, 피해 비율 1·1/3·1/9·1/27. 기존 튕김 탐색 반경 유지.",
@@ -7182,7 +8028,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 93,
-        "source_id": "30b5884f-a399-56cb-858b-483d5c8d27d4"
+        "source_id": "30b5884f-a399-56cb-858b-483d5c8d27d4",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 6
       },
       "target_units": [
         43,
@@ -7217,13 +8065,20 @@
         608,
         609,
         610
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "뮤탈의 쐐기벌레가 적 1기에게 한 번 더 튕깁니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 93,
+        "source_id": "30b5884f-a399-56cb-858b-483d5c8d27d4"
+      }
     },
     {
       "id": "567537fb-ab08-5c9f-a427-26d2f77becfb",
       "name": "충격 포낭",
       "target": "가디언 직접 공격",
-      "description": "가디언의 포탄에 직접 맞은 지상 적이 잠시 느려집니다.",
+      "description": "가디언에게 직접 맞은 지상 적은 6초간 이동 속도 -60%.",
       "trigger": "",
       "numbers": "",
       "notes": "개편 효과 제안: 직접 적중한 지상 적의 이동 속도 20% 감소, 2초. 중첩하지 않고 갱신.",
@@ -7245,7 +8100,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 94,
-        "source_id": "567537fb-ab08-5c9f-a427-26d2f77becfb"
+        "source_id": "567537fb-ab08-5c9f-a427-26d2f77becfb",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 6
       },
       "target_units": [
         44,
@@ -7280,13 +8137,20 @@
         608,
         609,
         610
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "가디언의 포탄에 직접 맞은 지상 적이 잠시 느려집니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 94,
+        "source_id": "567537fb-ab08-5c9f-a427-26d2f77becfb"
+      }
     },
     {
       "id": "e3c62acb-9064-59af-b392-7caa09ea918c",
       "name": "대공 감염 폭발",
       "target": "감염된 테란",
-      "description": "감염된 테란이 공중 적도 공격합니다. 표적 아래 2타일 안에서 폭발하며 공중 피해는 70%.",
+      "description": "감염된 테란이 공중 적도 공격합니다. 표적 아래 2타일 안에서 폭발하며 공중 피해는 210%.",
       "trigger": "",
       "numbers": "",
       "notes": "",
@@ -7308,7 +8172,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 95,
-        "source_id": "e3c62acb-9064-59af-b392-7caa09ea918c"
+        "source_id": "e3c62acb-9064-59af-b392-7caa09ea918c",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 6
       },
       "target_units": [
         50
@@ -7342,13 +8208,20 @@
         608,
         609,
         610
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "감염된 테란이 공중 적도 공격합니다. 표적 아래 2타일 안에서 폭발하며 공중 피해는 70%.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 95,
+        "source_id": "e3c62acb-9064-59af-b392-7caa09ea918c"
+      }
     },
     {
       "id": "ca756d48-4004-5862-bd36-d66e7fa51c7f",
       "name": "지상 갈귀",
       "target": "스커지",
-      "description": "스커지가 지상 적도 공격합니다. 지상 피해는 70%입니다.",
+      "description": "스커지가 지상 적도 공격합니다. 지상 피해는 210%입니다.",
       "trigger": "",
       "numbers": "",
       "notes": "",
@@ -7370,7 +8243,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 96,
-        "source_id": "ca756d48-4004-5862-bd36-d66e7fa51c7f"
+        "source_id": "ca756d48-4004-5862-bd36-d66e7fa51c7f",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 6
       },
       "target_units": [
         47
@@ -7404,13 +8279,20 @@
         608,
         609,
         610
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "스커지가 지상 적도 공격합니다. 지상 피해는 70%입니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 96,
+        "source_id": "ca756d48-4004-5862-bd36-d66e7fa51c7f"
+      }
     },
     {
       "id": "eb164112-2629-5cb2-950e-2204c2e3be44",
       "name": "공중 가시",
       "target": "러커",
-      "description": "러커가 공중 적에게도 가시를 쏩니다. 한 공격은 지상·공중 중 한쪽만 맞힙니다.",
+      "description": "러커가 공중 적에게도 가시를 쏩니다. 대공 피해 +50%. 한 공격은 한 공격층만 맞힙니다.",
       "trigger": "",
       "numbers": "",
       "notes": "지상 공격 주기·사거리 유지.",
@@ -7432,7 +8314,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 97,
-        "source_id": "eb164112-2629-5cb2-950e-2204c2e3be44"
+        "source_id": "eb164112-2629-5cb2-950e-2204c2e3be44",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 6
       },
       "target_units": [
         103
@@ -7466,13 +8350,20 @@
         608,
         609,
         610
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "러커가 공중 적에게도 가시를 쏩니다. 한 공격은 지상·공중 중 한쪽만 맞힙니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 97,
+        "source_id": "eb164112-2629-5cb2-950e-2204c2e3be44"
+      }
     },
     {
       "id": "a9e0bf57-ae95-514f-8ecd-e8a2b3eb89a1",
       "name": "도약 저글링",
       "target": "저글링",
-      "description": "저글링이 2~4타일 떨어진 적에게 도약합니다. 재사용 8초.",
+      "description": "저글링이 2~4타일 떨어진 적에게 도약합니다. 재사용 약 2.7초.",
       "trigger": "",
       "numbers": "",
       "notes": "지상 경로 연결·빈 착지점 필요. 공중 공격은 부여하지 않음.",
@@ -7494,7 +8385,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 98,
-        "source_id": "a9e0bf57-ae95-514f-8ecd-e8a2b3eb89a1"
+        "source_id": "a9e0bf57-ae95-514f-8ecd-e8a2b3eb89a1",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 6
       },
       "target_units": [
         37,
@@ -7529,13 +8422,20 @@
         608,
         609,
         610
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "저글링이 2~4타일 떨어진 적에게 도약합니다. 재사용 8초.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 98,
+        "source_id": "a9e0bf57-ae95-514f-8ecd-e8a2b3eb89a1"
+      }
     },
     {
       "id": "32fec2f1-00ec-5078-97cb-ba0f7bf7dec3",
       "name": "부식성 독낭",
       "target": "히드라 직접 공격",
-      "description": "히드라가 원래 피해의 20%를 3초간 독 피해로 더 줍니다. 같은 히드라의 독은 겹치지 않습니다.",
+      "description": "히드라가 원래 피해의 60%를 3초간 독 피해로 더 줍니다. 같은 히드라의 독은 겹치지 않습니다.",
       "trigger": "",
       "numbers": "",
       "notes": "",
@@ -7557,7 +8457,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 99,
-        "source_id": "32fec2f1-00ec-5078-97cb-ba0f7bf7dec3"
+        "source_id": "32fec2f1-00ec-5078-97cb-ba0f7bf7dec3",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 6
       },
       "target_units": [
         38,
@@ -7592,13 +8494,20 @@
         608,
         609,
         610
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "히드라가 원래 피해의 20%를 3초간 독 피해로 더 줍니다. 같은 히드라의 독은 겹치지 않습니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 99,
+        "source_id": "32fec2f1-00ec-5078-97cb-ba0f7bf7dec3"
+      }
     },
     {
       "id": "f83289ec-9c66-589f-96c3-1f9e57f775dd",
       "name": "전염성 산성",
       "target": "디바우러 산성 포자",
-      "description": "디바우러의 공격이 주변 공중 적 최대 2기에도 산성 포자 1중첩을 묻힙니다.",
+      "description": "디바우러가 주변 공중 적 최대 6기에 산성 포자를 추가로 묻힙니다.",
       "trigger": "",
       "numbers": "",
       "notes": "",
@@ -7620,7 +8529,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 100,
-        "source_id": "f83289ec-9c66-589f-96c3-1f9e57f775dd"
+        "source_id": "f83289ec-9c66-589f-96c3-1f9e57f775dd",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 6
       },
       "target_units": [
         62
@@ -7654,13 +8565,20 @@
         608,
         609,
         610
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "디바우러의 공격이 주변 공중 적 최대 2기에도 산성 포자 1중첩을 묻힙니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 100,
+        "source_id": "f83289ec-9c66-589f-96c3-1f9e57f775dd"
+      }
     },
     {
       "id": "a03fb17f-d104-5b7a-a37a-ebd60309ecc6",
       "name": "전투 변태",
       "target": "러커·가디언·디바우러 변태",
-      "description": "러커·가디언·디바우러의 변태가 끝나면 2타일 안 아군 저그 병력의 체력을 20 회복합니다.",
+      "description": "러커·가디언·디바우러의 변태가 끝나면 2타일 안 아군 저그 병력의 체력을 60 회복합니다.",
       "trigger": "",
       "numbers": "",
       "notes": "",
@@ -7682,7 +8600,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 101,
-        "source_id": "a03fb17f-d104-5b7a-a37a-ebd60309ecc6"
+        "source_id": "a03fb17f-d104-5b7a-a37a-ebd60309ecc6",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 6
       },
       "target_units": [
         44,
@@ -7718,13 +8638,20 @@
         608,
         609,
         610
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "러커·가디언·디바우러의 변태가 끝나면 2타일 안 아군 저그 병력의 체력을 20 회복합니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 101,
+        "source_id": "a03fb17f-d104-5b7a-a37a-ebd60309ecc6"
+      }
     },
     {
       "id": "07e45846-21f6-55ec-bcaf-6dde8c3e4919",
       "name": "죽음의 역병",
       "target": "디파일러 플레이그",
-      "description": "디파일러의 플레이그로 적을 죽일 수 있습니다. 아군에게도 치명적입니다.",
+      "description": "플레이그가 적을 죽일 수 있으며 체력 피해가 4배가 됩니다. 아군 피해도 유지됩니다.",
       "trigger": "",
       "numbers": "",
       "notes": "직접 소유 시전만 적용.",
@@ -7746,7 +8673,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 102,
-        "source_id": "07e45846-21f6-55ec-bcaf-6dde8c3e4919"
+        "source_id": "07e45846-21f6-55ec-bcaf-6dde8c3e4919",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 8
       },
       "target_units": [
         46,
@@ -7781,13 +8710,20 @@
         608,
         609,
         610
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "디파일러의 플레이그로 적을 죽일 수 있습니다. 아군에게도 치명적입니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 102,
+        "source_id": "07e45846-21f6-55ec-bcaf-6dde8c3e4919"
+      }
     },
     {
       "id": "c2629f66-3675-5912-a0c0-171c6dddddac",
       "name": "하늘을 덮는 군체",
       "target": "디파일러 다크 스웜",
-      "description": "다크 스웜 안의 아군 공중 유닛도 일반 원거리 공격에서 보호받습니다. 마법·광역 공격 예외는 유지.",
+      "description": "다크 스웜이 아군 공중 유닛도 보호하며 보호 범위가 최소 10타일로 늘어납니다. 마법·광역 예외 유지.",
       "trigger": "",
       "numbers": "",
       "notes": "",
@@ -7809,7 +8745,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 103,
-        "source_id": "c2629f66-3675-5912-a0c0-171c6dddddac"
+        "source_id": "c2629f66-3675-5912-a0c0-171c6dddddac",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 8
       },
       "target_units": [
         46,
@@ -7844,13 +8782,20 @@
         608,
         609,
         610
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "다크 스웜 안의 아군 공중 유닛도 일반 원거리 공격에서 보호받습니다. 마법·광역 공격 예외는 유지.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 103,
+        "source_id": "c2629f66-3675-5912-a0c0-171c6dddddac"
+      }
     },
     {
       "id": "1e9dba99-6b7c-5d98-b71f-0e1aa412cfa1",
       "name": "폭증하는 무리",
       "target": "퀸 스폰 브루들링",
-      "description": "퀸의 스폰 브루들링이 총 6기를 만듭니다. 증식 브루들링과 합쳐도 총 6기입니다.",
+      "description": "퀸의 스폰 브루들링이 총 18기를 만듭니다. 증식 브루들링과 합쳐도 총 18기입니다.",
       "trigger": "",
       "numbers": "",
       "notes": "원래 수명·비용·대상 제한 유지.",
@@ -7872,7 +8817,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 104,
-        "source_id": "1e9dba99-6b7c-5d98-b71f-0e1aa412cfa1"
+        "source_id": "1e9dba99-6b7c-5d98-b71f-0e1aa412cfa1",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 8
       },
       "target_units": [
         45,
@@ -7907,13 +8854,20 @@
         608,
         609,
         610
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "퀸의 스폰 브루들링이 총 6기를 만듭니다. 증식 브루들링과 합쳐도 총 6기입니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 104,
+        "source_id": "1e9dba99-6b7c-5d98-b71f-0e1aa412cfa1"
+      }
     },
     {
       "id": "051c93bb-ca5d-5a11-8728-e640cad23f20",
       "name": "쐐기 폭풍",
       "target": "뮤탈 일반 공격",
-      "description": "뮤탈이 쐐기벌레를 2발씩 쏩니다. 각 발은 60% 피해를 주며 따로 튕깁니다.",
+      "description": "뮤탈이 쐐기벌레를 2발씩 쏩니다. 각 발은 240% 피해를 주며 따로 튕깁니다.",
       "trigger": "",
       "numbers": "",
       "notes": "세부 적용: 원래 공격을 독립 쐐기벌레 2발로 교체, 발당 원래 피해의 60%. 각 발은 자기 튕김 규칙 유지. 한 발 내부 중복 표적·재귀 금지.",
@@ -7935,7 +8889,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 105,
-        "source_id": "051c93bb-ca5d-5a11-8728-e640cad23f20"
+        "source_id": "051c93bb-ca5d-5a11-8728-e640cad23f20",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 8
       },
       "target_units": [
         43,
@@ -7970,13 +8926,20 @@
         608,
         609,
         610
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "뮤탈이 쐐기벌레를 2발씩 쏩니다. 각 발은 60% 피해를 주며 따로 튕깁니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 105,
+        "source_id": "051c93bb-ca5d-5a11-8728-e640cad23f20"
+      }
     },
     {
       "id": "c4785029-f1e2-5f2c-b59a-6e2f3dcca705",
       "name": "산성 폭풍",
       "target": "디바우러",
-      "description": "디바우러가 지상 적도 공격하며 산성 포자도 묻힙니다.",
+      "description": "디바우러가 지상 적도 공격합니다. 지상 피해 400%, 산성 포자도 적용됩니다.",
       "trigger": "",
       "numbers": "",
       "notes": "한 공격의 피해·포자 중복 금지, 원래 공격 주기 유지.",
@@ -7998,7 +8961,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 106,
-        "source_id": "c4785029-f1e2-5f2c-b59a-6e2f3dcca705"
+        "source_id": "c4785029-f1e2-5f2c-b59a-6e2f3dcca705",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 8
       },
       "target_units": [
         62
@@ -8032,13 +8997,20 @@
         608,
         609,
         610
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "디바우러가 지상 적도 공격하며 산성 포자도 묻힙니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 106,
+        "source_id": "c4785029-f1e2-5f2c-b59a-6e2f3dcca705"
+      }
     },
     {
       "id": "b1da8423-1b19-55c8-8771-f979597efb1b",
       "name": "정신 감염",
       "target": "퀸 인페스트 시전",
-      "description": "퀸이 인페스트로 체력 25% 이하인 적 전투 유닛을 30초간 조종합니다. 에너지 150.",
+      "description": "퀸이 인페스트로 체력 25% 이하인 적 전투 유닛을 120초간 조종합니다. 에너지 150.",
       "trigger": "",
       "numbers": "",
       "notes": "건물·영웅·원본 임무 목표·원래 면역 대상 제외. 만료 시 원 소유자 복귀, 획득·재획득 중첩 금지.",
@@ -8060,7 +9032,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 107,
-        "source_id": "b1da8423-1b19-55c8-8771-f979597efb1b"
+        "source_id": "b1da8423-1b19-55c8-8771-f979597efb1b",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 8
       },
       "target_units": [
         45,
@@ -8095,13 +9069,20 @@
         608,
         609,
         610
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "퀸이 인페스트로 체력 25% 이하인 적 전투 유닛을 30초간 조종합니다. 에너지 150.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 107,
+        "source_id": "b1da8423-1b19-55c8-8771-f979597efb1b"
+      }
     },
     {
       "id": "f98413ba-abcb-51f0-87cd-0855115d04ea",
       "name": "전사 생명력",
       "target": "프로토스 지상 생체·에너지 병력",
-      "description": "프로토스 지상 생체·에너지 병력의 최대 체력·보호막 +20%. 질럿·템플러·아콘 계열.",
+      "description": "프로토스 지상 생체·에너지 병력의 최대 체력·보호막 +40%. 질럿·템플러·아콘 계열.",
       "trigger": "",
       "numbers": "",
       "notes": "아콘·다크 아콘도 이 전사 계열에 포함. 기계·공중·일꾼 제외.",
@@ -8123,7 +9104,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 108,
-        "source_id": "f98413ba-abcb-51f0-87cd-0855115d04ea"
+        "source_id": "f98413ba-abcb-51f0-87cd-0855115d04ea",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 4
       },
       "target_units": [
         61,
@@ -8161,13 +9144,20 @@
         407,
         408,
         611
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "프로토스 지상 생체·에너지 병력의 최대 체력·보호막 +20%. 질럿·템플러·아콘 계열.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 108,
+        "source_id": "f98413ba-abcb-51f0-87cd-0855115d04ea"
+      }
     },
     {
       "id": "1295a6ab-05cb-5760-ba2c-830e661e0a5c",
       "name": "지상 기체 강화",
       "target": "프로토스 지상 기계 병력",
-      "description": "프로토스 지상 기계 병력의 최대 체력·보호막 +20%. 드라군·리버 계열.",
+      "description": "프로토스 지상 기계 병력의 최대 체력·보호막 +40%. 드라군·리버 계열.",
       "trigger": "",
       "numbers": "",
       "notes": "공중 관측선·셔틀 등 제외.",
@@ -8189,7 +9179,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 109,
-        "source_id": "1295a6ab-05cb-5760-ba2c-830e661e0a5c"
+        "source_id": "1295a6ab-05cb-5760-ba2c-830e661e0a5c",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 4
       },
       "target_units": [
         66,
@@ -8220,13 +9212,20 @@
         407,
         408,
         611
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "프로토스 지상 기계 병력의 최대 체력·보호막 +20%. 드라군·리버 계열.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 109,
+        "source_id": "1295a6ab-05cb-5760-ba2c-830e661e0a5c"
+      }
     },
     {
       "id": "6e8a9b64-74d6-573f-a944-94a9c5e0d0bd",
       "name": "함대 동체 강화",
       "target": "프로토스 공중 병력·영웅",
-      "description": "프로토스 공중 병력과 영웅의 최대 체력·보호막 +20%.",
+      "description": "프로토스 공중 병력과 영웅의 최대 체력·보호막 +40%.",
       "trigger": "",
       "numbers": "",
       "notes": "인터셉터 탄약 제외.",
@@ -8248,7 +9247,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 110,
-        "source_id": "6e8a9b64-74d6-573f-a944-94a9c5e0d0bd"
+        "source_id": "6e8a9b64-74d6-573f-a944-94a9c5e0d0bd",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 4
       },
       "target_units": [
         60,
@@ -8287,13 +9288,20 @@
         407,
         408,
         611
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "프로토스 공중 병력과 영웅의 최대 체력·보호막 +20%.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 110,
+        "source_id": "6e8a9b64-74d6-573f-a944-94a9c5e0d0bd"
+      }
     },
     {
       "id": "023f3a37-8713-59a6-8b1c-0a7909529a1c",
       "name": "기사단 화력 교범",
       "target": "프로토스 일반 지상 전투 병력",
-      "description": "질럿·드라군·다크 템플러·아콘·리버의 공격력 +1, 공격 간격 -3%. 반복해서 고를 수 있습니다.",
+      "description": "질럿·드라군·다크 템플러·아콘·리버의 공격력 +1.5 (정수 반올림), 공격 간격 -4.5%. 반복해서 고를 수 있습니다.",
       "trigger": "",
       "numbers": "선택 횟수 제한 없음. 같은 창에서는 동일 재능 1개만 표시. 공격주기 = 원래 주기 × 0.97^중첩 수(해당 교범에만 적용). 엔진 최소 1틱, 매 단계 원본에서 다시 계산.",
       "notes": "일반 병력 교범은 보유 후에도 재등장합니다. 공격력·방어력은 중첩당 수치를 합산하고, 이동 속도는 원래 속도 × (1 + 0.03 × 중첩 수)로 계산합니다. 일꾼·건물·탄약은 제외하며, 인터셉터는 함대 교범의 공격력만 캐리어를 통해 1회 상속합니다. 지상/공중 분류는 겹치지 않습니다. 자폭·튀김의 타격 수와 마법 피해는 늘리지 않습니다. 기존 발급 선택과 과거 기록은 재해석하지 않습니다.",
@@ -8315,7 +9323,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 111,
-        "source_id": "023f3a37-8713-59a6-8b1c-0a7909529a1c"
+        "source_id": "023f3a37-8713-59a6-8b1c-0a7909529a1c",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 3
       },
       "target_units": [
         61,
@@ -8355,13 +9365,20 @@
         408,
         611
       ],
-      "rank_slot": 10
+      "rank_slot": 10,
+      "balance_revision": 6,
+      "pre_balance_description": "질럿·드라군·다크 템플러·아콘·리버의 공격력 +1, 공격 간격 -3%. 반복해서 고를 수 있습니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 111,
+        "source_id": "023f3a37-8713-59a6-8b1c-0a7909529a1c"
+      }
     },
     {
       "id": "a217d71f-2e7d-5655-a8ca-3f2e7e0acbca",
       "name": "함대 화력 교범",
       "target": "프로토스 공격 항공기",
-      "description": "프로토스 공격 항공기와 인터셉터의 공격력 +2. 반복해서 고를 수 있습니다.",
+      "description": "프로토스 공격 항공기와 인터셉터의 공격력 +3. 반복해서 고를 수 있습니다.",
       "trigger": "",
       "numbers": "선택 횟수 제한 없음. 같은 창에서는 동일 재능 1개만 표시. 공격주기 = 원래 주기 × 0.97^중첩 수(해당 교범에만 적용). 엔진 최소 1틱, 매 단계 원본에서 다시 계산.",
       "notes": "일반 병력 교범은 보유 후에도 재등장합니다. 공격력·방어력은 중첩당 수치를 합산하고, 이동 속도는 원래 속도 × (1 + 0.03 × 중첩 수)로 계산합니다. 일꾼·건물·탄약은 제외하며, 인터셉터는 함대 교범의 공격력만 캐리어를 통해 1회 상속합니다. 지상/공중 분류는 겹치지 않습니다. 자폭·튀김의 타격 수와 마법 피해는 늘리지 않습니다. 기존 발급 선택과 과거 기록은 재해석하지 않습니다.",
@@ -8383,7 +9400,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 112,
-        "source_id": "a217d71f-2e7d-5655-a8ca-3f2e7e0acbca"
+        "source_id": "a217d71f-2e7d-5655-a8ca-3f2e7e0acbca",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 3
       },
       "target_units": [
         60,
@@ -8419,13 +9438,20 @@
         408,
         611
       ],
-      "rank_slot": 11
+      "rank_slot": 11,
+      "balance_revision": 6,
+      "pre_balance_description": "프로토스 공격 항공기와 인터셉터의 공격력 +2. 반복해서 고를 수 있습니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 112,
+        "source_id": "a217d71f-2e7d-5655-a8ca-3f2e7e0acbca"
+      }
     },
     {
       "id": "b1767caa-63a3-5a03-839a-683b1f78520a",
       "name": "보호막 굴절",
       "target": "프로토스 병력·영웅",
-      "description": "프로토스 병력과 영웅의 보호막 방어력 +1.",
+      "description": "프로토스 병력과 영웅의 보호막 방어력 +2.",
       "trigger": "",
       "numbers": "",
       "notes": "일꾼·구조물 제외.",
@@ -8447,7 +9473,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 113,
-        "source_id": "b1767caa-63a3-5a03-839a-683b1f78520a"
+        "source_id": "b1767caa-63a3-5a03-839a-683b1f78520a",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 4
       },
       "target_units": [
         60,
@@ -8501,13 +9529,20 @@
         407,
         408,
         611
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "프로토스 병력과 영웅의 보호막 방어력 +1.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 113,
+        "source_id": "b1767caa-63a3-5a03-839a-683b1f78520a"
+      }
     },
     {
       "id": "d84de79a-e0b0-535e-8024-204646bbf4b8",
       "name": "보호막 재충전",
       "target": "프로토스 병력·영웅",
-      "description": "프로토스 병력이 6초간 맞지 않으면 보호막 자연 회복이 2배 빨라집니다.",
+      "description": "프로토스 병력이 6초간 맞지 않으면 보호막 자연 회복이 3.5배 빨라집니다.",
       "trigger": "",
       "numbers": "",
       "notes": "현재 소유자의 실제 최대 보호막으로 제한.",
@@ -8529,7 +9564,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 114,
-        "source_id": "d84de79a-e0b0-535e-8024-204646bbf4b8"
+        "source_id": "d84de79a-e0b0-535e-8024-204646bbf4b8",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 5
       },
       "target_units": [
         60,
@@ -8583,13 +9620,20 @@
         407,
         408,
         611
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "프로토스 병력이 6초간 맞지 않으면 보호막 자연 회복이 2배 빨라집니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 114,
+        "source_id": "d84de79a-e0b0-535e-8024-204646bbf4b8"
+      }
     },
     {
       "id": "95731e09-a96a-5723-a329-ef3a8bdda706",
       "name": "확장 차원 수송",
       "target": "셔틀",
-      "description": "셔틀의 수송 공간이 12칸이 되고 이동 속도가 20% 빨라집니다.",
+      "description": "셔틀의 수송 공간이 16칸이 되며 이동 속도 +50%.",
       "trigger": "",
       "numbers": "",
       "notes": "적재 병력 유실·중복 하차 금지.",
@@ -8611,7 +9655,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 115,
-        "source_id": "95731e09-a96a-5723-a329-ef3a8bdda706"
+        "source_id": "95731e09-a96a-5723-a329-ef3a8bdda706",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 5
       },
       "target_units": [
         69
@@ -8639,13 +9685,20 @@
         407,
         408,
         611
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "셔틀의 수송 공간이 12칸이 되고 이동 속도가 20% 빨라집니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 115,
+        "source_id": "95731e09-a96a-5723-a329-ef3a8bdda706"
+      }
     },
     {
       "id": "c98e62be-d225-5f09-8917-42868647f5a0",
       "name": "관측 지원망",
       "target": "옵저버",
-      "description": "옵저버의 시야와 탐지 반경이 2 늘어납니다.",
+      "description": "옵저버의 시야·탐지 반경 +5(최대 11), 최대 체력·보호막 +25%.",
       "trigger": "",
       "numbers": "",
       "notes": "기존 은폐·피탐지·에너지 없음 규칙 유지.",
@@ -8667,7 +9720,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 116,
-        "source_id": "c98e62be-d225-5f09-8917-42868647f5a0"
+        "source_id": "c98e62be-d225-5f09-8917-42868647f5a0",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 5
       },
       "target_units": [
         84
@@ -8695,13 +9750,20 @@
         407,
         408,
         611
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "옵저버의 시야와 탐지 반경이 2 늘어납니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 116,
+        "source_id": "c98e62be-d225-5f09-8917-42868647f5a0"
+      }
     },
     {
       "id": "445755c6-36b9-570b-969a-6c6d45ab560f",
       "name": "탄약 생산 공정",
       "target": "리버 스캐럽·캐리어 인터셉터",
-      "description": "스캐럽·인터셉터의 생산 비용과 시간이 절반으로 줄어듭니다.",
+      "description": "스캐럽·인터셉터의 생산 비용과 시간이 90% 줄어듭니다. 유료 항목은 최소 1입니다.",
       "trigger": "",
       "numbers": "",
       "notes": "총 탄약 수는 변화 없음.",
@@ -8723,7 +9785,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 117,
-        "source_id": "445755c6-36b9-570b-969a-6c6d45ab560f"
+        "source_id": "445755c6-36b9-570b-969a-6c6d45ab560f",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 5
       },
       "target_units": [
         73,
@@ -8748,13 +9812,20 @@
         406,
         407,
         408
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "스캐럽·인터셉터의 생산 비용과 시간이 절반으로 줄어듭니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 117,
+        "source_id": "445755c6-36b9-570b-969a-6c6d45ab560f"
+      }
     },
     {
       "id": "10be23c9-95d7-5410-ac9f-bb7212ed43fc",
       "name": "기사단 정신 비축",
       "target": "하이 템플러·다크 아콘·아비터·커세어",
-      "description": "하이 템플러·다크 아콘·아비터·커세어의 최대 에너지 +100.",
+      "description": "하이 템플러·다크 아콘·아비터·커세어의 최대 에너지 +250.",
       "trigger": "",
       "numbers": "",
       "notes": "회복은 실제 최대 에너지까지 적용.",
@@ -8776,7 +9847,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 118,
-        "source_id": "10be23c9-95d7-5410-ac9f-bb7212ed43fc"
+        "source_id": "10be23c9-95d7-5410-ac9f-bb7212ed43fc",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 5
       },
       "target_units": [
         60,
@@ -8811,13 +9884,20 @@
         407,
         408,
         611
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "하이 템플러·다크 아콘·아비터·커세어의 최대 에너지 +100.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 118,
+        "source_id": "10be23c9-95d7-5410-ac9f-bb7212ed43fc"
+      }
     },
     {
       "id": "4b8f7505-c8b3-5f04-91e3-81d4e52de653",
       "name": "기사단 정신 순환",
       "target": "프로토스 마법 유닛",
-      "description": "프로토스 마법 유닛의 자연 에너지 회복이 2배 빨라집니다.",
+      "description": "프로토스 마법 유닛의 자연 에너지 회복이 3.5배 빨라집니다.",
       "trigger": "",
       "numbers": "",
       "notes": "",
@@ -8839,7 +9919,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 119,
-        "source_id": "4b8f7505-c8b3-5f04-91e3-81d4e52de653"
+        "source_id": "4b8f7505-c8b3-5f04-91e3-81d4e52de653",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 5
       },
       "target_units": [
         60,
@@ -8874,13 +9956,20 @@
         407,
         408,
         611
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "프로토스 마법 유닛의 자연 에너지 회복이 2배 빨라집니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 119,
+        "source_id": "4b8f7505-c8b3-5f04-91e3-81d4e52de653"
+      }
     },
     {
       "id": "6eeb42b3-804e-5c96-91e1-3bb9d497c6cc",
       "name": "정교한 시전",
       "target": "프로토스 마법 유닛",
-      "description": "프로토스 마법 유닛의 마법 에너지 비용이 25% 줄어듭니다.",
+      "description": "프로토스 마법 유닛의 마법 에너지 비용이 63% 줄어듭니다.",
       "trigger": "",
       "numbers": "",
       "notes": "",
@@ -8902,7 +9991,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 120,
-        "source_id": "6eeb42b3-804e-5c96-91e1-3bb9d497c6cc"
+        "source_id": "6eeb42b3-804e-5c96-91e1-3bb9d497c6cc",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 5
       },
       "target_units": [
         60,
@@ -8937,13 +10028,20 @@
         407,
         408,
         611
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "프로토스 마법 유닛의 마법 에너지 비용이 25% 줄어듭니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 120,
+        "source_id": "6eeb42b3-804e-5c96-91e1-3bb9d497c6cc"
+      }
     },
     {
       "id": "a09286a4-1d9d-5b01-bdac-509361da8e18",
       "name": "증폭 사이오닉 스톰",
       "target": "하이 템플러 사이오닉 스톰",
-      "description": "하이 템플러의 사이오닉 스톰 피해가 25% 늘어납니다.",
+      "description": "하이 템플러의 사이오닉 스톰 피해가 63% 늘어납니다.",
       "trigger": "",
       "numbers": "",
       "notes": "",
@@ -8965,7 +10063,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 121,
-        "source_id": "a09286a4-1d9d-5b01-bdac-509361da8e18"
+        "source_id": "a09286a4-1d9d-5b01-bdac-509361da8e18",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 5
       },
       "target_units": [
         67,
@@ -8994,13 +10094,20 @@
         407,
         408,
         611
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "하이 템플러의 사이오닉 스톰 피해가 25% 늘어납니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 121,
+        "source_id": "a09286a4-1d9d-5b01-bdac-509361da8e18"
+      }
     },
     {
       "id": "45807d4f-cf85-5ddf-9842-26cfcefd5042",
       "name": "확장 할루시네이션",
       "target": "하이 템플러 할루시네이션",
-      "description": "하이 템플러가 할루시네이션을 쓰면 환영 4기가 나옵니다.",
+      "description": "하이 템플러가 할루시네이션을 쓰면 환영 8기가 나옵니다.",
       "trigger": "",
       "numbers": "",
       "notes": "환영에서 다른 생성 효과 재발동 금지.",
@@ -9022,7 +10129,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 122,
-        "source_id": "45807d4f-cf85-5ddf-9842-26cfcefd5042"
+        "source_id": "45807d4f-cf85-5ddf-9842-26cfcefd5042",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 5
       },
       "target_units": [
         67,
@@ -9051,13 +10160,20 @@
         407,
         408,
         611
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "하이 템플러가 할루시네이션을 쓰면 환영 4기가 나옵니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 122,
+        "source_id": "45807d4f-cf85-5ddf-9842-26cfcefd5042"
+      }
     },
     {
       "id": "660502e8-e9da-530f-bbaa-b6c9754bb74b",
       "name": "강화 피드백",
       "target": "다크 아콘 피드백",
-      "description": "다크 아콘의 피드백이 제거한 에너지당 피해를 25% 더 줍니다.",
+      "description": "다크 아콘의 피드백이 제거한 에너지당 피해를 63% 더 줍니다.",
       "trigger": "",
       "numbers": "",
       "notes": "대상별 원래 시전 제한 유지.",
@@ -9079,7 +10195,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 123,
-        "source_id": "660502e8-e9da-530f-bbaa-b6c9754bb74b"
+        "source_id": "660502e8-e9da-530f-bbaa-b6c9754bb74b",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 5
       },
       "target_units": [
         63
@@ -9107,13 +10225,20 @@
         407,
         408,
         611
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "다크 아콘의 피드백이 제거한 에너지당 피해를 25% 더 줍니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 123,
+        "source_id": "660502e8-e9da-530f-bbaa-b6c9754bb74b"
+      }
     },
     {
       "id": "ac9a68f0-9370-5682-b6bf-2fac35b7f755",
       "name": "확장 마엘스트롬",
       "target": "다크 아콘 마엘스트롬",
-      "description": "다크 아콘의 마엘스트롬 반경 +25%, 지속 시간 +50%.",
+      "description": "다크 아콘의 마엘스트롬 반경 +62.5%, 지속 시간 +125%.",
       "trigger": "",
       "numbers": "",
       "notes": "",
@@ -9135,7 +10260,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 124,
-        "source_id": "ac9a68f0-9370-5682-b6bf-2fac35b7f755"
+        "source_id": "ac9a68f0-9370-5682-b6bf-2fac35b7f755",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 5
       },
       "target_units": [
         63
@@ -9163,13 +10290,20 @@
         407,
         408,
         611
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "다크 아콘의 마엘스트롬 반경 +25%, 지속 시간 +50%.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 124,
+        "source_id": "ac9a68f0-9370-5682-b6bf-2fac35b7f755"
+      }
     },
     {
       "id": "ddb01db1-f765-5556-911b-0cd335ff441d",
       "name": "정신 집중 방어",
       "target": "다크 아콘 마인드 컨트롤",
-      "description": "다크 아콘이 마인드 컨트롤에 성공하면 시전 전 보호막의 절반이 남습니다.",
+      "description": "다크 아콘이 마인드 컨트롤에 성공하면 시전 전 보호막의 전부 남습니다.",
       "trigger": "",
       "numbers": "",
       "notes": "",
@@ -9191,7 +10325,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 125,
-        "source_id": "ddb01db1-f765-5556-911b-0cd335ff441d"
+        "source_id": "ddb01db1-f765-5556-911b-0cd335ff441d",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 5
       },
       "target_units": [
         63
@@ -9219,13 +10355,20 @@
         407,
         408,
         611
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "다크 아콘이 마인드 컨트롤에 성공하면 시전 전 보호막의 절반이 남습니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 125,
+        "source_id": "ddb01db1-f765-5556-911b-0cd335ff441d"
+      }
     },
     {
       "id": "d5d38c06-dd88-5e98-8e8d-27fecb900346",
       "name": "절약된 리콜",
       "target": "아비터 리콜",
-      "description": "아비터의 리콜 에너지 비용이 75 줄어듭니다.",
+      "description": "아비터의 리콜 에너지 비용이 최대 187.5 줄어듭니다.",
       "trigger": "",
       "numbers": "",
       "notes": "",
@@ -9247,7 +10390,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 126,
-        "source_id": "d5d38c06-dd88-5e98-8e8d-27fecb900346"
+        "source_id": "d5d38c06-dd88-5e98-8e8d-27fecb900346",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 5
       },
       "target_units": [
         71,
@@ -9276,13 +10421,20 @@
         407,
         408,
         611
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "아비터의 리콜 에너지 비용이 75 줄어듭니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 126,
+        "source_id": "d5d38c06-dd88-5e98-8e8d-27fecb900346"
+      }
     },
     {
       "id": "8a4cb489-6634-59eb-a23d-e1ceaa267fe6",
       "name": "확장 스테이시스",
       "target": "아비터 스테이시스 필드",
-      "description": "아비터의 스테이시스 필드 반경 +25%, 지속 시간 +50%. 아군도 갇힙니다.",
+      "description": "아비터의 스테이시스 필드 반경 +62.5%, 지속 시간 +125%. 아군도 갇힙니다.",
       "trigger": "",
       "numbers": "",
       "notes": "삭제된 선택적 정지장을 복원하지 않음.",
@@ -9304,7 +10456,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 127,
-        "source_id": "8a4cb489-6634-59eb-a23d-e1ceaa267fe6"
+        "source_id": "8a4cb489-6634-59eb-a23d-e1ceaa267fe6",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 5
       },
       "target_units": [
         71,
@@ -9333,13 +10487,20 @@
         407,
         408,
         611
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "아비터의 스테이시스 필드 반경 +25%, 지속 시간 +50%. 아군도 갇힙니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 127,
+        "source_id": "8a4cb489-6634-59eb-a23d-e1ceaa267fe6"
+      }
     },
     {
       "id": "75635ec4-c3f1-5337-80cd-6fc4f69aeb3f",
       "name": "지속 디스럽션 웹",
       "target": "커세어 디스럽션 웹",
-      "description": "커세어의 디스럽션 웹 반경 +25%, 지속 시간 +50%.",
+      "description": "커세어의 디스럽션 웹 반경 +62.5%, 지속 시간 +125%.",
       "trigger": "",
       "numbers": "",
       "notes": "",
@@ -9361,7 +10522,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 128,
-        "source_id": "75635ec4-c3f1-5337-80cd-6fc4f69aeb3f"
+        "source_id": "75635ec4-c3f1-5337-80cd-6fc4f69aeb3f",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 5
       },
       "target_units": [
         60,
@@ -9390,13 +10553,20 @@
         407,
         408,
         611
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "커세어의 디스럽션 웹 반경 +25%, 지속 시간 +50%.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 128,
+        "source_id": "75635ec4-c3f1-5337-80cd-6fc4f69aeb3f"
+      }
     },
     {
       "id": "2a79955b-a51c-51f9-b330-040df65d0783",
       "name": "확산 사이오닉 파동",
       "target": "아콘 일반 공격",
-      "description": "아콘의 광역 공격 반경이 25% 넓어집니다.",
+      "description": "아콘의 광역 공격 반경이 62.5% 넓어집니다.",
       "trigger": "",
       "numbers": "",
       "notes": "",
@@ -9418,7 +10588,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 129,
-        "source_id": "2a79955b-a51c-51f9-b330-040df65d0783"
+        "source_id": "2a79955b-a51c-51f9-b330-040df65d0783",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 5
       },
       "target_units": [
         68,
@@ -9447,13 +10619,20 @@
         407,
         408,
         611
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "아콘의 광역 공격 반경이 25% 넓어집니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 129,
+        "source_id": "2a79955b-a51c-51f9-b330-040df65d0783"
+      }
     },
     {
       "id": "f52833ba-5dad-5430-8ed7-6d2cf38d7290",
       "name": "확장 인터셉터 격납고",
       "target": "캐리어",
-      "description": "캐리어의 인터셉터 한도가 4기 늘어납니다. 업그레이드 후 최대 12기.",
+      "description": "캐리어의 인터셉터 한도가 10기 늘어납니다. 업그레이드 후 최대 18기.",
       "trigger": "",
       "numbers": "",
       "notes": "소유권 이전·격납고 상한 해제 시 생존 탄약 보존.",
@@ -9475,7 +10654,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 130,
-        "source_id": "f52833ba-5dad-5430-8ed7-6d2cf38d7290"
+        "source_id": "f52833ba-5dad-5430-8ed7-6d2cf38d7290",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 5
       },
       "target_units": [
         72,
@@ -9504,13 +10685,20 @@
         407,
         408,
         611
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "캐리어의 인터셉터 한도가 4기 늘어납니다. 업그레이드 후 최대 12기.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 130,
+        "source_id": "f52833ba-5dad-5430-8ed7-6d2cf38d7290"
+      }
     },
     {
       "id": "37a85a67-c58f-545c-a380-7d027a40f554",
       "name": "위상탄 가속",
       "target": "드라군 일반 투사체",
-      "description": "드라군의 위상탄이 50% 빠르게 날아갑니다.",
+      "description": "드라군의 위상탄이 125% 빠르게 날아갑니다.",
       "trigger": "",
       "numbers": "",
       "notes": "다른 플레이어의 투사체에는 적용하지 않음.",
@@ -9532,7 +10720,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 131,
-        "source_id": "37a85a67-c58f-545c-a380-7d027a40f554"
+        "source_id": "37a85a67-c58f-545c-a380-7d027a40f554",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 5
       },
       "target_units": [
         66,
@@ -9561,13 +10751,20 @@
         407,
         408,
         611
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "드라군의 위상탄이 50% 빠르게 날아갑니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 131,
+        "source_id": "37a85a67-c58f-545c-a380-7d027a40f554"
+      }
     },
     {
       "id": "a29090c6-3260-5477-ae42-d044a220a522",
       "name": "돌진 진입",
       "target": "질럿",
-      "description": "질럿이 지상 적에게 접근할 때 짧게 돌진합니다.",
+      "description": "질럿이 적에게 접근할 때 3초간 이동 속도 +210%로 돌진합니다.",
       "trigger": "",
       "numbers": "",
       "notes": "개편 효과 제안: 공격 표적까지 2~5타일일 때 1초간 이동 속도 70% 증가. 개체별 재사용 8초. 경로·명령 유지.",
@@ -9589,7 +10786,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 132,
-        "source_id": "a29090c6-3260-5477-ae42-d044a220a522"
+        "source_id": "a29090c6-3260-5477-ae42-d044a220a522",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 6
       },
       "target_units": [
         65,
@@ -9618,13 +10817,20 @@
         407,
         408,
         611
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "질럿이 지상 적에게 접근할 때 짧게 돌진합니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 132,
+        "source_id": "a29090c6-3260-5477-ae42-d044a220a522"
+      }
     },
     {
       "id": "39b4214d-0092-5543-aaa7-64fb08df1d3e",
       "name": "위상탄 재유도",
       "target": "드라군 투사체",
-      "description": "드라군의 위상탄은 표적이 죽으면 가까운 다른 적을 한 번 추적합니다.",
+      "description": "드라군의 위상탄은 표적이 죽으면 6타일 안 다른 적을 한 번 추적합니다.",
       "trigger": "",
       "numbers": "",
       "notes": "개편 효과 제안: 비행 중 주 표적 사망 시 원래 표적 위치 2타일 내 같은 층 적 1기로 재유도. 피해·탄수·수명 유지.",
@@ -9646,7 +10852,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 133,
-        "source_id": "39b4214d-0092-5543-aaa7-64fb08df1d3e"
+        "source_id": "39b4214d-0092-5543-aaa7-64fb08df1d3e",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 6
       },
       "target_units": [
         66,
@@ -9675,13 +10883,20 @@
         407,
         408,
         611
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "드라군의 위상탄은 표적이 죽으면 가까운 다른 적을 한 번 추적합니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 133,
+        "source_id": "39b4214d-0092-5543-aaa7-64fb08df1d3e"
+      }
     },
     {
       "id": "02f86356-150e-574e-a7ab-55d2345a480a",
       "name": "그림자 도약",
       "target": "다크 템플러",
-      "description": "다크 템플러가 가까운 빈 지상 지점으로 도약할 수 있습니다.",
+      "description": "다크 템플러가 가까운 빈 지상 지점으로 최대 9타일 도약합니다. 재사용 12초.",
       "trigger": "",
       "numbers": "",
       "notes": "개편 효과 제안: 빈 지상 지점으로 최대 3타일 도약. 개체별 재사용 12초. 현재 지상 경로가 연결된 곳만 허용.",
@@ -9703,7 +10918,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 134,
-        "source_id": "02f86356-150e-574e-a7ab-55d2345a480a"
+        "source_id": "02f86356-150e-574e-a7ab-55d2345a480a",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 6
       },
       "target_units": [
         61,
@@ -9733,13 +10950,20 @@
         407,
         408,
         611
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "다크 템플러가 가까운 빈 지상 지점으로 도약할 수 있습니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 134,
+        "source_id": "02f86356-150e-574e-a7ab-55d2345a480a"
+      }
     },
     {
       "id": "c2bf0dea-c215-549e-ace2-a03b9ce8b83a",
       "name": "과부하 교란탄",
       "target": "커세어 일반 공격",
-      "description": "커세어에게 맞은 공중 적의 이동 속도가 잠시 느려집니다.",
+      "description": "커세어의 네 번째 공격에 맞은 공중 적은 6초간 이동 속도 -60%.",
       "trigger": "",
       "numbers": "",
       "notes": "개편 효과 제안: 네 번째 주 공격의 직접 표적 이동 속도 20% 감소, 2초. 스플래시·추가 공격으로 번지지 않음.",
@@ -9761,7 +10985,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 135,
-        "source_id": "c2bf0dea-c215-549e-ace2-a03b9ce8b83a"
+        "source_id": "c2bf0dea-c215-549e-ace2-a03b9ce8b83a",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 6
       },
       "target_units": [
         60,
@@ -9790,13 +11016,20 @@
         407,
         408,
         611
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "커세어에게 맞은 공중 적의 이동 속도가 잠시 느려집니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 135,
+        "source_id": "c2bf0dea-c215-549e-ace2-a03b9ce8b83a"
+      }
     },
     {
       "id": "afec03a0-460d-503a-872f-dd2f7a7afb79",
       "name": "반중력 발사대",
       "target": "캐리어·인터셉터",
-      "description": "캐리어의 출격과 인터셉터 이동이 빨라집니다. 인터셉터 공격이 체력 방어력을 무시합니다.",
+      "description": "캐리어 출격·인터셉터 이동 속도가 2.5배가 되며 인터셉터가 체력 방어력을 무시합니다.",
       "trigger": "",
       "numbers": "",
       "notes": "개편 효과 제안: 인터셉터 출격 진행·이동 속도 50% 증가, 일반 공격이 체력 방어력 무시. 원래 보호막 방어·탄수·개별 공격 주기 유지.",
@@ -9818,7 +11051,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 136,
-        "source_id": "afec03a0-460d-503a-872f-dd2f7a7afb79"
+        "source_id": "afec03a0-460d-503a-872f-dd2f7a7afb79",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 6
       },
       "target_units": [
         72,
@@ -9848,13 +11083,20 @@
         407,
         408,
         611
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "캐리어의 출격과 인터셉터 이동이 빨라집니다. 인터셉터 공격이 체력 방어력을 무시합니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 136,
+        "source_id": "afec03a0-460d-503a-872f-dd2f7a7afb79"
+      }
     },
     {
       "id": "b481fcc3-cc2a-5319-adf8-bef0e10b6abd",
       "name": "분열 위상탄",
       "target": "드라군 일반 공격",
-      "description": "드라군의 위상탄이 명중하면 주변의 다른 적 최대 2기에 50% 피해 탄환을 쏩니다.",
+      "description": "드라군의 위상탄이 명중하면 주변의 다른 적 최대 2기에 150% 피해 탄환을 쏩니다.",
       "trigger": "",
       "numbers": "",
       "notes": "",
@@ -9876,7 +11118,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 137,
-        "source_id": "b481fcc3-cc2a-5319-adf8-bef0e10b6abd"
+        "source_id": "b481fcc3-cc2a-5319-adf8-bef0e10b6abd",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 6
       },
       "target_units": [
         66,
@@ -9905,13 +11149,20 @@
         407,
         408,
         611
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "드라군의 위상탄이 명중하면 주변의 다른 적 최대 2기에 50% 피해 탄환을 쏩니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 137,
+        "source_id": "b481fcc3-cc2a-5319-adf8-bef0e10b6abd"
+      }
     },
     {
       "id": "8c38fecf-9607-59d3-b750-78666a048004",
       "name": "공허의 검",
       "target": "다크 템플러",
-      "description": "다크 템플러가 공중 적도 공격합니다. 대공 사거리 2타일.",
+      "description": "다크 템플러가 공중 적도 공격합니다. 대공 사거리 6타일.",
       "trigger": "",
       "numbers": "",
       "notes": "",
@@ -9933,7 +11184,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 138,
-        "source_id": "8c38fecf-9607-59d3-b750-78666a048004"
+        "source_id": "8c38fecf-9607-59d3-b750-78666a048004",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 6
       },
       "target_units": [
         61,
@@ -9963,13 +11216,20 @@
         407,
         408,
         611
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "다크 템플러가 공중 적도 공격합니다. 대공 사거리 2타일.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 138,
+        "source_id": "8c38fecf-9607-59d3-b750-78666a048004"
+      }
     },
     {
       "id": "edc6957f-823f-5a29-bcaf-d7e67565d19b",
       "name": "쌍방향 사이오닉",
       "target": "아콘",
-      "description": "아콘이 서로 다른 적 최대 2기를 동시에 공격합니다. 각 대상에게 원래 피해를 줍니다.",
+      "description": "아콘이 서로 다른 적 최대 4기를 동시에 공격합니다. 각 대상에게 원래 피해를 줍니다.",
       "trigger": "",
       "numbers": "",
       "notes": "세부 적용: 서로 다른 적 최대 2기에게 독립 일반 공격. 원래 주기·스플래시 유지, 같은 표적 이중 선택 금지.",
@@ -9991,7 +11251,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 139,
-        "source_id": "edc6957f-823f-5a29-bcaf-d7e67565d19b"
+        "source_id": "edc6957f-823f-5a29-bcaf-d7e67565d19b",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 6
       },
       "target_units": [
         68,
@@ -10020,13 +11282,20 @@
         407,
         408,
         611
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "아콘이 서로 다른 적 최대 2기를 동시에 공격합니다. 각 대상에게 원래 피해를 줍니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 139,
+        "source_id": "edc6957f-823f-5a29-bcaf-d7e67565d19b"
+      }
     },
     {
       "id": "8168843b-7c24-50d3-86c3-4a13ef8b0b9b",
       "name": "이동하는 폭풍체",
       "target": "아콘",
-      "description": "아콘이 이동하면서 공격합니다. 이동 중 피해는 60%, 정지 시 100%.",
+      "description": "아콘이 이동하면서 공격합니다. 이동 중 피해는 180%, 정지 시 100%.",
       "trigger": "",
       "numbers": "",
       "notes": "",
@@ -10048,7 +11317,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 140,
-        "source_id": "8168843b-7c24-50d3-86c3-4a13ef8b0b9b"
+        "source_id": "8168843b-7c24-50d3-86c3-4a13ef8b0b9b",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 6
       },
       "target_units": [
         68,
@@ -10077,13 +11348,20 @@
         407,
         408,
         611
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "아콘이 이동하면서 공격합니다. 이동 중 피해는 60%, 정지 시 100%.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 140,
+        "source_id": "8168843b-7c24-50d3-86c3-4a13ef8b0b9b"
+      }
     },
     {
       "id": "80b2b8c1-e93a-5a4e-b5b9-272c031fc75e",
       "name": "갑충 분열탄",
       "target": "리버 스캐럽",
-      "description": "리버의 스캐럽이 폭발한 뒤 주변 다른 지상 적 최대 2곳에 50% 피해 폭발을 일으킵니다.",
+      "description": "리버의 스캐럽이 폭발한 뒤 주변 다른 지상 적 최대 2곳에 150% 피해 폭발을 일으킵니다.",
       "trigger": "",
       "numbers": "",
       "notes": "재탐색 능력은 부여하지 않음.",
@@ -10105,7 +11383,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 141,
-        "source_id": "80b2b8c1-e93a-5a4e-b5b9-272c031fc75e"
+        "source_id": "80b2b8c1-e93a-5a4e-b5b9-272c031fc75e",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 6
       },
       "target_units": [
         81,
@@ -10135,13 +11415,20 @@
         407,
         408,
         611
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "리버의 스캐럽이 폭발한 뒤 주변 다른 지상 적 최대 2곳에 50% 피해 폭발을 일으킵니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 141,
+        "source_id": "80b2b8c1-e93a-5a4e-b5b9-272c031fc75e"
+      }
     },
     {
       "id": "a16010ef-35d5-5f94-a64f-319e00102b66",
       "name": "복합 정찰 사격",
       "target": "스카우트",
-      "description": "스카우트가 지상과 공중을 동시에 공격합니다.",
+      "description": "스카우트가 지상·공중을 동시에 공격합니다. 추가 공격층의 피해는 300%입니다.",
       "trigger": "",
       "numbers": "",
       "notes": "세부 적용: 지상·공중 무기가 각각 적합한 주 표적을 독립 공격. 각 무기의 원래 피해·주기 유지.",
@@ -10163,7 +11450,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 142,
-        "source_id": "a16010ef-35d5-5f94-a64f-319e00102b66"
+        "source_id": "a16010ef-35d5-5f94-a64f-319e00102b66",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 6
       },
       "target_units": [
         70,
@@ -10193,13 +11482,20 @@
         407,
         408,
         611
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "스카우트가 지상과 공중을 동시에 공격합니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 142,
+        "source_id": "a16010ef-35d5-5f94-a64f-319e00102b66"
+      }
     },
     {
       "id": "65382db3-0f00-582e-ac8b-63ceb20197b0",
       "name": "소환 균열",
       "target": "아비터 리콜",
-      "description": "아비터의 리콜 도착 지점에 3초간 균열이 남습니다. 2.5타일 안 지상 적의 이동 속도 -30%.",
+      "description": "아비터의 리콜 도착 지점에 9초간 균열이 남습니다. 2.5타일 안 지상 적의 이동 속도 -90%.",
       "trigger": "",
       "numbers": "",
       "notes": "",
@@ -10221,7 +11517,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 143,
-        "source_id": "65382db3-0f00-582e-ac8b-63ceb20197b0"
+        "source_id": "65382db3-0f00-582e-ac8b-63ceb20197b0",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 6
       },
       "target_units": [
         71,
@@ -10250,13 +11548,20 @@
         407,
         408,
         611
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "아비터의 리콜 도착 지점에 3초간 균열이 남습니다. 2.5타일 안 지상 적의 이동 속도 -30%.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 143,
+        "source_id": "65382db3-0f00-582e-ac8b-63ceb20197b0"
+      }
     },
     {
       "id": "a5677a0d-735e-5c07-aa45-c03e7a0f73b4",
       "name": "중첩 폭풍",
       "target": "하이 템플러 사이오닉 스톰",
-      "description": "하이 템플러의 스톰 반경 +50%. 서로 다른 스톰의 피해가 같은 지점에서 최대 4개 겹칩니다.",
+      "description": "하이 템플러의 스톰 반경 +200%. 서로 다른 스톰의 피해가 같은 지점에서 최대 13개 겹칩니다.",
       "trigger": "",
       "numbers": "",
       "notes": "한 시전의 같은 tick을 중복 지급하지 않음.",
@@ -10278,7 +11583,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 144,
-        "source_id": "a5677a0d-735e-5c07-aa45-c03e7a0f73b4"
+        "source_id": "a5677a0d-735e-5c07-aa45-c03e7a0f73b4",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 8
       },
       "target_units": [
         67,
@@ -10307,13 +11614,20 @@
         407,
         408,
         611
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "하이 템플러의 스톰 반경 +50%. 서로 다른 스톰의 피해가 같은 지점에서 최대 4개 겹칩니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 144,
+        "source_id": "a5677a0d-735e-5c07-aa45-c03e7a0f73b4"
+      }
     },
     {
       "id": "ff1bb721-2dc7-5e9b-bb37-35a9b77a4e5f",
       "name": "전장 소환문",
       "target": "아비터 리콜",
-      "description": "아비터가 리콜한 뒤 12초간 소환문을 남깁니다. 3초마다 같은 출발지의 아군을 같은 도착지로 소환.",
+      "description": "아비터가 리콜한 뒤 48초간 소환문을 남깁니다. 3초마다 같은 출발지의 아군을 같은 도착지로 소환.",
       "trigger": "",
       "numbers": "",
       "notes": "",
@@ -10335,7 +11649,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 145,
-        "source_id": "ff1bb721-2dc7-5e9b-bb37-35a9b77a4e5f"
+        "source_id": "ff1bb721-2dc7-5e9b-bb37-35a9b77a4e5f",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 8
       },
       "target_units": [
         71,
@@ -10364,13 +11680,20 @@
         407,
         408,
         611
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "아비터가 리콜한 뒤 12초간 소환문을 남깁니다. 3초마다 같은 출발지의 아군을 같은 도착지로 소환.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 145,
+        "source_id": "ff1bb721-2dc7-5e9b-bb37-35a9b77a4e5f"
+      }
     },
     {
       "id": "3bca39ce-0e6b-587c-ae4a-9facdeee2785",
       "name": "연쇄 정신 지배",
       "target": "다크 아콘 마인드 컨트롤",
-      "description": "다크 아콘이 마인드 컨트롤한 적 주변의 다른 적 1기도 지배합니다. 추가 대상 인구는 주 대상 이하.",
+      "description": "다크 아콘이 마인드 컨트롤한 적 주변의 다른 적 4기도 지배합니다. 추가 대상 인구는 주 대상 이하.",
       "trigger": "",
       "numbers": "",
       "notes": "비용·시전 1회, 영웅/임무 목표/면역 제한 유지.",
@@ -10392,7 +11715,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 146,
-        "source_id": "3bca39ce-0e6b-587c-ae4a-9facdeee2785"
+        "source_id": "3bca39ce-0e6b-587c-ae4a-9facdeee2785",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 8
       },
       "target_units": [
         63
@@ -10420,13 +11745,20 @@
         407,
         408,
         611
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "다크 아콘이 마인드 컨트롤한 적 주변의 다른 적 1기도 지배합니다. 추가 대상 인구는 주 대상 이하.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 146,
+        "source_id": "3bca39ce-0e6b-587c-ae4a-9facdeee2785"
+      }
     },
     {
       "id": "ba21859d-8553-5b1c-ae55-810bd624c699",
       "name": "실체화 환영",
       "target": "하이 템플러가 직접 만든 환영",
-      "description": "하이 템플러가 만든 환영의 일반 공격이 원래 피해의 25%를 실제 피해로 줍니다.",
+      "description": "하이 템플러가 만든 환영의 일반 공격이 원래 피해의 100%를 실제 피해로 줍니다.",
       "trigger": "",
       "numbers": "",
       "notes": "환영의 생성·자원·추가 공격 발동 금지.",
@@ -10448,7 +11780,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 147,
-        "source_id": "ba21859d-8553-5b1c-ae55-810bd624c699"
+        "source_id": "ba21859d-8553-5b1c-ae55-810bd624c699",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 8
       },
       "target_units": [
         67,
@@ -10477,13 +11811,20 @@
         407,
         408,
         611
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "하이 템플러가 만든 환영의 일반 공격이 원래 피해의 25%를 실제 피해로 줍니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 147,
+        "source_id": "ba21859d-8553-5b1c-ae55-810bd624c699"
+      }
     },
     {
       "id": "e021408c-a180-5275-9f8b-1792e28b2524",
       "name": "전방위 요격",
       "target": "인터셉터",
-      "description": "인터셉터가 주변의 다른 적 1기도 공격합니다. 각 대상에게 원래 피해를 줍니다.",
+      "description": "인터셉터가 주변의 다른 적 4기도 공격합니다. 각 대상에게 원래 피해를 줍니다.",
       "trigger": "",
       "numbers": "",
       "notes": "세부 적용: 주 공격마다 사거리 내 다른 적 1기에게 같은 원래 피해 추가 공격. 같은 대상 중복 금지, 추가 공격 재발동 금지. 캐리어 총기수 유지.",
@@ -10505,7 +11846,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 148,
-        "source_id": "e021408c-a180-5275-9f8b-1792e28b2524"
+        "source_id": "e021408c-a180-5275-9f8b-1792e28b2524",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 8
       },
       "target_units": [
         73
@@ -10533,13 +11876,20 @@
         407,
         408,
         611
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "인터셉터가 주변의 다른 적 1기도 공격합니다. 각 대상에게 원래 피해를 줍니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 148,
+        "source_id": "e021408c-a180-5275-9f8b-1792e28b2524"
+      }
     },
     {
       "id": "64af92bd-7322-535c-96ff-543a767818ad",
       "name": "정지장 폭쇄",
       "target": "아비터 스테이시스 필드",
-      "description": "아비터의 스테이시스가 끝나면 갇혔던 적에게 보호막 피해 100·체력 피해 75를 줍니다.",
+      "description": "아비터의 스테이시스가 끝나면 갇혔던 적에게 보호막 피해 400·체력 피해 300을 줍니다.",
       "trigger": "",
       "numbers": "",
       "notes": "중첩 시 마지막 만료에서 1회.",
@@ -10561,7 +11911,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 149,
-        "source_id": "64af92bd-7322-535c-96ff-543a767818ad"
+        "source_id": "64af92bd-7322-535c-96ff-543a767818ad",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 8
       },
       "target_units": [
         71,
@@ -10590,13 +11942,20 @@
         407,
         408,
         611
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "아비터의 스테이시스가 끝나면 갇혔던 적에게 보호막 피해 100·체력 피해 75를 줍니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 149,
+        "source_id": "64af92bd-7322-535c-96ff-543a767818ad"
+      }
     },
     {
       "id": "5bdb025f-f544-54f4-b00a-b9f9754f29e1",
       "name": "근접전 숙련",
       "target": "파이어뱃·저글링·울트라리스크·브루들링·질럿·다크 템플러",
-      "description": "파이어뱃과 근접 병력이 공격을 맞히면 3초간 받는 일반 공격 피해가 20% 줄어듭니다.",
+      "description": "파이어뱃과 근접 병력이 공격을 맞히면 6초간 받는 일반 공격 피해가 40% 줄어듭니다.",
       "trigger": "",
       "numbers": "",
       "notes": "표시 대상과 같은 유형의 아군 영웅 포함. 사거리를 늘리지 않습니다. 공격 적중 시 지속 시간만 갱신하며 중첩하지 않습니다. 마법 피해에는 적용하지 않고, 방어력 계산 후 피해를 줄입니다. 한 발의 여러 피해 판정으로 여러 번 발동하지 않습니다.",
@@ -10618,7 +11977,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 150,
-        "source_id": "5bdb025f-f544-54f4-b00a-b9f9754f29e1"
+        "source_id": "5bdb025f-f544-54f4-b00a-b9f9754f29e1",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 4
       },
       "target_units": [
         10,
@@ -10701,13 +12062,20 @@
         609,
         610,
         611
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "파이어뱃과 근접 병력이 공격을 맞히면 3초간 받는 일반 공격 피해가 20% 줄어듭니다.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 150,
+        "source_id": "5bdb025f-f544-54f4-b00a-b9f9754f29e1"
+      }
     },
     {
       "id": "a658caec-4220-56e3-9889-2316879eaf04",
       "name": "보병 공동 조달",
       "target": "마린·파이어뱃·고스트·메딕",
-      "description": "마린·파이어뱃·고스트·메딕의 생산 비용 -20%.",
+      "description": "마린·파이어뱃·고스트·메딕의 생산 비용 -50%.",
       "trigger": "",
       "numbers": "",
       "notes": "별도 경제 선택에서만 등장하며 경제 보상은 캠페인 전체 5회입니다. 직접 생산·변태할 때 실제로 지불하는 미네랄과 가스에 20% 할인을 적용합니다. 양수 비용은 80%를 올림하여 최소 1, 원래 0은 0입니다. 저글링·스커지 한 알의 묶음 가격과 변태 시 추가 지불액을 기준으로 하며, 이미 지불한 이전 형태 비용은 환급하지 않습니다. 취소 환급은 실제 지불액 기준. 일꾼·건물·영웅·스캐럽·인터셉터·무료 합체·구출·트리거 생성은 제외합니다. 인구·생산 시간은 그대로입니다. 큐 삽입·취소·변태마다 중복 환급하지 않습니다.",
@@ -10729,7 +12097,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 151,
-        "source_id": "a658caec-4220-56e3-9889-2316879eaf04"
+        "source_id": "a658caec-4220-56e3-9889-2316879eaf04",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 5
       },
       "target_units": [
         0,
@@ -10757,13 +12127,20 @@
         515,
         506,
         508
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "마린·파이어뱃·고스트·메딕의 생산 비용 -20%.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 151,
+        "source_id": "a658caec-4220-56e3-9889-2316879eaf04"
+      }
     },
     {
       "id": "9b76c05b-4852-57f1-bb46-b2a407bc2fc2",
       "name": "기갑 공동 조달",
       "target": "벌처·골리앗·시즈 탱크",
-      "description": "벌처·골리앗·시즈 탱크의 생산 비용 -20%.",
+      "description": "벌처·골리앗·시즈 탱크의 생산 비용 -50%.",
       "trigger": "",
       "numbers": "",
       "notes": "별도 경제 선택에서만 등장하며 경제 보상은 캠페인 전체 5회입니다. 직접 생산·변태할 때 실제로 지불하는 미네랄과 가스에 20% 할인을 적용합니다. 양수 비용은 80%를 올림하여 최소 1, 원래 0은 0입니다. 저글링·스커지 한 알의 묶음 가격과 변태 시 추가 지불액을 기준으로 하며, 이미 지불한 이전 형태 비용은 환급하지 않습니다. 취소 환급은 실제 지불액 기준. 일꾼·건물·영웅·스캐럽·인터셉터·무료 합체·구출·트리거 생성은 제외합니다. 인구·생산 시간은 그대로입니다. 큐 삽입·취소·변태마다 중복 환급하지 않습니다.",
@@ -10785,7 +12162,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 152,
-        "source_id": "9b76c05b-4852-57f1-bb46-b2a407bc2fc2"
+        "source_id": "9b76c05b-4852-57f1-bb46-b2a407bc2fc2",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 5
       },
       "target_units": [
         2,
@@ -10812,13 +12191,20 @@
         515,
         506,
         508
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "벌처·골리앗·시즈 탱크의 생산 비용 -20%.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 152,
+        "source_id": "9b76c05b-4852-57f1-bb46-b2a407bc2fc2"
+      }
     },
     {
       "id": "ed7dc56a-5a05-54b3-9587-33b53b9462c1",
       "name": "항공 공동 조달",
       "target": "레이스·발키리·배틀크루저·과학선·드롭십",
-      "description": "레이스·발키리·배틀크루저·과학선·드롭십의 생산 비용 -20%.",
+      "description": "레이스·발키리·배틀크루저·과학선·드롭십의 생산 비용 -50%.",
       "trigger": "",
       "numbers": "",
       "notes": "별도 경제 선택에서만 등장하며 경제 보상은 캠페인 전체 5회입니다. 직접 생산·변태할 때 실제로 지불하는 미네랄과 가스에 20% 할인을 적용합니다. 양수 비용은 80%를 올림하여 최소 1, 원래 0은 0입니다. 저글링·스커지 한 알의 묶음 가격과 변태 시 추가 지불액을 기준으로 하며, 이미 지불한 이전 형태 비용은 환급하지 않습니다. 취소 환급은 실제 지불액 기준. 일꾼·건물·영웅·스캐럽·인터셉터·무료 합체·구출·트리거 생성은 제외합니다. 인구·생산 시간은 그대로입니다. 큐 삽입·취소·변태마다 중복 환급하지 않습니다.",
@@ -10840,7 +12226,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 153,
-        "source_id": "ed7dc56a-5a05-54b3-9587-33b53b9462c1"
+        "source_id": "ed7dc56a-5a05-54b3-9587-33b53b9462c1",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 5
       },
       "target_units": [
         8,
@@ -10869,13 +12257,20 @@
         515,
         506,
         508
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "레이스·발키리·배틀크루저·과학선·드롭십의 생산 비용 -20%.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 153,
+        "source_id": "ed7dc56a-5a05-54b3-9587-33b53b9462c1"
+      }
     },
     {
       "id": "8fccca14-90a3-54c6-b681-7b0c5ed307b8",
       "name": "돌격 군체 배양",
       "target": "저글링·울트라리스크",
-      "description": "저글링·울트라리스크의 생산 비용 -20%.",
+      "description": "저글링·울트라리스크의 생산 비용 -50%.",
       "trigger": "",
       "numbers": "",
       "notes": "별도 경제 선택에서만 등장하며 경제 보상은 캠페인 전체 5회입니다. 직접 생산·변태할 때 실제로 지불하는 미네랄과 가스에 20% 할인을 적용합니다. 양수 비용은 80%를 올림하여 최소 1, 원래 0은 0입니다. 저글링·스커지 한 알의 묶음 가격과 변태 시 추가 지불액을 기준으로 하며, 이미 지불한 이전 형태 비용은 환급하지 않습니다. 취소 환급은 실제 지불액 기준. 일꾼·건물·영웅·스캐럽·인터셉터·무료 합체·구출·트리거 생성은 제외합니다. 인구·생산 시간은 그대로입니다. 큐 삽입·취소·변태마다 중복 환급하지 않습니다.",
@@ -10897,7 +12292,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 154,
-        "source_id": "8fccca14-90a3-54c6-b681-7b0c5ed307b8"
+        "source_id": "8fccca14-90a3-54c6-b681-7b0c5ed307b8",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 5
       },
       "target_units": [
         37,
@@ -10931,13 +12328,20 @@
         608,
         609,
         610
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "저글링·울트라리스크의 생산 비용 -20%.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 154,
+        "source_id": "8fccca14-90a3-54c6-b681-7b0c5ed307b8"
+      }
     },
     {
       "id": "8a8ad5b0-d4a9-5df7-851a-1ce7886fc176",
       "name": "가시 군체 배양",
       "target": "히드라리스크·러커",
-      "description": "히드라리스크·러커의 생산·변태 비용 -20%.",
+      "description": "히드라리스크·러커의 생산·변태 비용 -50%.",
       "trigger": "",
       "numbers": "",
       "notes": "별도 경제 선택에서만 등장하며 경제 보상은 캠페인 전체 5회입니다. 직접 생산·변태할 때 실제로 지불하는 미네랄과 가스에 20% 할인을 적용합니다. 양수 비용은 80%를 올림하여 최소 1, 원래 0은 0입니다. 저글링·스커지 한 알의 묶음 가격과 변태 시 추가 지불액을 기준으로 하며, 이미 지불한 이전 형태 비용은 환급하지 않습니다. 취소 환급은 실제 지불액 기준. 일꾼·건물·영웅·스캐럽·인터셉터·무료 합체·구출·트리거 생성은 제외합니다. 인구·생산 시간은 그대로입니다. 큐 삽입·취소·변태마다 중복 환급하지 않습니다.",
@@ -10959,7 +12363,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 155,
-        "source_id": "8a8ad5b0-d4a9-5df7-851a-1ce7886fc176"
+        "source_id": "8a8ad5b0-d4a9-5df7-851a-1ce7886fc176",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 5
       },
       "target_units": [
         38,
@@ -10993,13 +12399,20 @@
         608,
         609,
         610
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "히드라리스크·러커의 생산·변태 비용 -20%.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 155,
+        "source_id": "8a8ad5b0-d4a9-5df7-851a-1ce7886fc176"
+      }
     },
     {
       "id": "836e670b-e909-5c58-8bb0-e4e3af70b142",
       "name": "정신 군체 배양",
       "target": "퀸·디파일러",
-      "description": "퀸·디파일러의 생산 비용 -20%.",
+      "description": "퀸·디파일러의 생산 비용 -50%.",
       "trigger": "",
       "numbers": "",
       "notes": "별도 경제 선택에서만 등장하며 경제 보상은 캠페인 전체 5회입니다. 직접 생산·변태할 때 실제로 지불하는 미네랄과 가스에 20% 할인을 적용합니다. 양수 비용은 80%를 올림하여 최소 1, 원래 0은 0입니다. 저글링·스커지 한 알의 묶음 가격과 변태 시 추가 지불액을 기준으로 하며, 이미 지불한 이전 형태 비용은 환급하지 않습니다. 취소 환급은 실제 지불액 기준. 일꾼·건물·영웅·스캐럽·인터셉터·무료 합체·구출·트리거 생성은 제외합니다. 인구·생산 시간은 그대로입니다. 큐 삽입·취소·변태마다 중복 환급하지 않습니다.",
@@ -11021,7 +12434,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 156,
-        "source_id": "836e670b-e909-5c58-8bb0-e4e3af70b142"
+        "source_id": "836e670b-e909-5c58-8bb0-e4e3af70b142",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 5
       },
       "target_units": [
         45,
@@ -11055,13 +12470,20 @@
         608,
         609,
         610
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "퀸·디파일러의 생산 비용 -20%.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 156,
+        "source_id": "836e670b-e909-5c58-8bb0-e4e3af70b142"
+      }
     },
     {
       "id": "5ec00495-8218-5c6c-9580-2ab4bf35a601",
       "name": "비행 군체 배양",
       "target": "뮤탈리스크·가디언·디바우러·스커지",
-      "description": "뮤탈·가디언·디바우러·스커지의 생산·변태 비용 -20%.",
+      "description": "뮤탈·가디언·디바우러·스커지의 생산·변태 비용 -50%.",
       "trigger": "",
       "numbers": "",
       "notes": "별도 경제 선택에서만 등장하며 경제 보상은 캠페인 전체 5회입니다. 직접 생산·변태할 때 실제로 지불하는 미네랄과 가스에 20% 할인을 적용합니다. 양수 비용은 80%를 올림하여 최소 1, 원래 0은 0입니다. 저글링·스커지 한 알의 묶음 가격과 변태 시 추가 지불액을 기준으로 하며, 이미 지불한 이전 형태 비용은 환급하지 않습니다. 취소 환급은 실제 지불액 기준. 일꾼·건물·영웅·스캐럽·인터셉터·무료 합체·구출·트리거 생성은 제외합니다. 인구·생산 시간은 그대로입니다. 큐 삽입·취소·변태마다 중복 환급하지 않습니다.",
@@ -11083,7 +12505,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 157,
-        "source_id": "5ec00495-8218-5c6c-9580-2ab4bf35a601"
+        "source_id": "5ec00495-8218-5c6c-9580-2ab4bf35a601",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 5
       },
       "target_units": [
         43,
@@ -11119,13 +12543,20 @@
         608,
         609,
         610
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "뮤탈·가디언·디바우러·스커지의 생산·변태 비용 -20%.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 157,
+        "source_id": "5ec00495-8218-5c6c-9580-2ab4bf35a601"
+      }
     },
     {
       "id": "e678465b-249f-5431-b778-95ff34fbff56",
       "name": "기사단 공동 소환",
       "target": "질럿·하이 템플러·다크 템플러",
-      "description": "질럿·하이 템플러·다크 템플러의 생산 비용 -20%.",
+      "description": "질럿·하이 템플러·다크 템플러의 생산 비용 -50%.",
       "trigger": "",
       "numbers": "",
       "notes": "별도 경제 선택에서만 등장하며 경제 보상은 캠페인 전체 5회입니다. 직접 생산·변태할 때 실제로 지불하는 미네랄과 가스에 20% 할인을 적용합니다. 양수 비용은 80%를 올림하여 최소 1, 원래 0은 0입니다. 저글링·스커지 한 알의 묶음 가격과 변태 시 추가 지불액을 기준으로 하며, 이미 지불한 이전 형태 비용은 환급하지 않습니다. 취소 환급은 실제 지불액 기준. 일꾼·건물·영웅·스캐럽·인터셉터·무료 합체·구출·트리거 생성은 제외합니다. 인구·생산 시간은 그대로입니다. 큐 삽입·취소·변태마다 중복 환급하지 않습니다.",
@@ -11147,7 +12578,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 158,
-        "source_id": "e678465b-249f-5431-b778-95ff34fbff56"
+        "source_id": "e678465b-249f-5431-b778-95ff34fbff56",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 5
       },
       "target_units": [
         61,
@@ -11173,13 +12606,20 @@
         406,
         407,
         408
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "질럿·하이 템플러·다크 템플러의 생산 비용 -20%.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 158,
+        "source_id": "e678465b-249f-5431-b778-95ff34fbff56"
+      }
     },
     {
       "id": "18831683-b900-570f-b2ea-92b93321cd36",
       "name": "전쟁 기계 공동 소환",
       "target": "드라군·리버",
-      "description": "드라군·리버의 생산 비용 -20%.",
+      "description": "드라군·리버의 생산 비용 -50%.",
       "trigger": "",
       "numbers": "",
       "notes": "별도 경제 선택에서만 등장하며 경제 보상은 캠페인 전체 5회입니다. 직접 생산·변태할 때 실제로 지불하는 미네랄과 가스에 20% 할인을 적용합니다. 양수 비용은 80%를 올림하여 최소 1, 원래 0은 0입니다. 저글링·스커지 한 알의 묶음 가격과 변태 시 추가 지불액을 기준으로 하며, 이미 지불한 이전 형태 비용은 환급하지 않습니다. 취소 환급은 실제 지불액 기준. 일꾼·건물·영웅·스캐럽·인터셉터·무료 합체·구출·트리거 생성은 제외합니다. 인구·생산 시간은 그대로입니다. 큐 삽입·취소·변태마다 중복 환급하지 않습니다.",
@@ -11201,7 +12641,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 159,
-        "source_id": "18831683-b900-570f-b2ea-92b93321cd36"
+        "source_id": "18831683-b900-570f-b2ea-92b93321cd36",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 5
       },
       "target_units": [
         66,
@@ -11226,13 +12668,20 @@
         406,
         407,
         408
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "드라군·리버의 생산 비용 -20%.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 159,
+        "source_id": "18831683-b900-570f-b2ea-92b93321cd36"
+      }
     },
     {
       "id": "3e5f0fa1-e055-5e5a-b2b7-57c939efe61b",
       "name": "함대 공동 소환",
       "target": "스카우트·커세어·캐리어·아비터·셔틀·옵저버",
-      "description": "스카우트·커세어·캐리어·아비터·셔틀·옵저버의 생산 비용 -20%.",
+      "description": "스카우트·커세어·캐리어·아비터·셔틀·옵저버의 생산 비용 -50%.",
       "trigger": "",
       "numbers": "",
       "notes": "별도 경제 선택에서만 등장하며 경제 보상은 캠페인 전체 5회입니다. 직접 생산·변태할 때 실제로 지불하는 미네랄과 가스에 20% 할인을 적용합니다. 양수 비용은 80%를 올림하여 최소 1, 원래 0은 0입니다. 저글링·스커지 한 알의 묶음 가격과 변태 시 추가 지불액을 기준으로 하며, 이미 지불한 이전 형태 비용은 환급하지 않습니다. 취소 환급은 실제 지불액 기준. 일꾼·건물·영웅·스캐럽·인터셉터·무료 합체·구출·트리거 생성은 제외합니다. 인구·생산 시간은 그대로입니다. 큐 삽입·취소·변태마다 중복 환급하지 않습니다.",
@@ -11254,7 +12703,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 160,
-        "source_id": "3e5f0fa1-e055-5e5a-b2b7-57c939efe61b"
+        "source_id": "3e5f0fa1-e055-5e5a-b2b7-57c939efe61b",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 5
       },
       "target_units": [
         60,
@@ -11283,13 +12734,20 @@
         406,
         407,
         408
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "스카우트·커세어·캐리어·아비터·셔틀·옵저버의 생산 비용 -20%.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 160,
+        "source_id": "3e5f0fa1-e055-5e5a-b2b7-57c939efe61b"
+      }
     },
     {
       "id": "5076f56c-71f0-5b72-99c2-ca663cf98549",
       "name": "추적 광학 표식",
       "target": "메딕 옵티컬 플레어",
-      "description": "메딕의 옵티컬 플레어가 8초간 공격 표식을 남깁니다. 매초 표적과 주변 다른 적 최대 2기에 8 피해.",
+      "description": "메딕의 옵티컬 플레어가 24초간 공격 표식을 남깁니다. 매초 표적과 주변 다른 적 최대 2기에 24 피해.",
       "trigger": "",
       "numbers": "",
       "notes": "이전의 단순 범위 증가 카드와 다른 신규 효과입니다. 원래 실명 효과는 유지하고, 추가 공격 표식만 8초간 유지합니다. 에너지 한 번 지불, 첫 공격은 1초 뒤. 재시전은 중첩하지 않고 표식 시간만 갱신. 적 소유자·합법 대상·무적·정지 상태를 확인하며 아군은 공격하지 않습니다. 표적 사망·소유권 이전 시 종료합니다. 영웅 임무 목표를 특별히 즉사시키지 않습니다. 새 시전 식별·지속 효과 어댑터가 필요하며 게임 구현 전 설계입니다.",
@@ -11311,7 +12769,9 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 161,
-        "source_id": "5076f56c-71f0-5b72-99c2-ca663cf98549"
+        "source_id": "5076f56c-71f0-5b72-99c2-ca663cf98549",
+        "qa_revision": 2026101606,
+        "benefit_power_halves": 6
       },
       "target_units": [
         34
@@ -11339,7 +12799,14 @@
         506,
         507,
         508
-      ]
+      ],
+      "balance_revision": 6,
+      "pre_balance_description": "메딕의 옵티컬 플레어가 8초간 공격 표식을 남깁니다. 매초 표적과 주변 다른 적 최대 2기에 8 피해.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 161,
+        "source_id": "5076f56c-71f0-5b72-99c2-ca663cf98549"
+      }
     }
   ],
   "new_curses": [
@@ -14500,5 +15967,6 @@
     ],
     "words": 65
   },
-  "rank_slots_used": 12
+  "rank_slots_used": 12,
+  "balance_revision": 6
 }

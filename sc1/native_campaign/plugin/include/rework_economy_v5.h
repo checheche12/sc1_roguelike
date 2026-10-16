@@ -15,8 +15,8 @@ inline bool resource(U32 id) noexcept {return in(id,{176,177,178,188,110,149,157
 inline U32 ceiling(U32 value,U32 n,U32 d) noexcept {return static_cast<U32>((std::uint64_t(value)*n+d-1)/d);}
 inline U32 price(const GrowthSnapshot& s,U32 id,U32 base) noexcept {
     U32 value=base;
-    if(rank(s,7) && in(id,{106,131,154}))value=ceiling(value,7,10);
-    if(rank(s,117) && in(id,{73,85}))value=ceiling(value,1,2);
+    if(rank(s,7) && in(id,{106,131,154}))value=talent_power::discount(7,value,7,10);
+    if(rank(s,117) && in(id,{73,85}))value=talent_power::discount(117,value,1,2);
     constexpr U32 ordinals[]={151,152,153,154,155,156,157,158,159,160};
     const auto group=[&](U32 ordinal){switch(ordinal){
         case 151:return in(id,{0,1,32,34});case 152:return in(id,{2,3,5});
@@ -25,23 +25,23 @@ inline U32 price(const GrowthSnapshot& s,U32 id,U32 base) noexcept {
         case 157:return in(id,{43,44,47,62});case 158:return in(id,{61,65,67});
         case 159:return in(id,{66,83});case 160:return in(id,{60,69,70,71,72,84});
         default:return false;}};
-    for(U32 ordinal:ordinals)if(rank(s,ordinal) && group(ordinal))value=ceiling(value,4,5);
-    if(rank(s,24) && id==41)value=ceiling(value,2,1);
+    for(U32 ordinal:ordinals)if(rank(s,ordinal) && group(ordinal))value=talent_power::discount(ordinal,value,4,5);
+    if(rank(s,24) && id==41){value=ceiling(value,2,1);if(talent_power::enabled)value=ceiling(value,3,4);}
     return value;
 }
 inline bool plan_stats(const GrowthSnapshot& s,std::vector<Edit>& edits) {
     const auto set=[&](U32 field,U32 id,U32 value){return plan_edit(edits,{0,field,id},0,value,1);};
     for(U32 id=0;id<228;id++){
         for(U32 field:{40u,41u}){const auto before=original_stat({0,field,id}),after=price(s,id,before);if(after!=before && !set(field,id,after))return false;}
-        U32 time=original_stat({0,42,id});const U32 base_time=time;
-        if(rank(s,3) && worker(id))time=std::max(1u,ceiling(time,1,2));
-        if(rank(s,7) && in(id,{106,131,154}))time=std::max(1u,ceiling(time,7,10));
-        const U32 flags=original_stat({0,44,id});
-        if((flags&16u) && ((rank(s,20) && (flags&2u)) || (rank(s,22) && (flags&4u))))time=std::max(1u,ceiling(time,1,2));
-        if(rank(s,117) && in(id,{73,85}))time=std::max(1u,ceiling(time,1,2));
-        if(rank(s,4) && in(id,{109,42,156}))time=72;
+        const U32 flags=original_stat({0,44,id});U32 time=original_stat({0,42,id});const U32 base_time=time;
+        if(rank(s,3) && worker(id))time=std::max(1u,talent_power::discount(worker(id)?3u:in(id,{73,85})?117u:((flags&2u)?20u:22u),time,1,2));
+        if(rank(s,7) && in(id,{106,131,154}))time=std::max(1u,talent_power::discount(7,time,7,10));
+        if((flags&16u) && ((rank(s,20) && (flags&2u)) || (rank(s,22) && (flags&4u))))time=std::max(1u,talent_power::discount(worker(id)?3u:in(id,{73,85})?117u:((flags&2u)?20u:22u),time,1,2));
+        if(rank(s,117) && in(id,{73,85}))time=std::max(1u,talent_power::discount(worker(id)?3u:in(id,{73,85})?117u:((flags&2u)?20u:22u),time,1,2));
+        if(talent_power::enabled&&rank(s,24)&&id==41)time=std::max(1u,ceiling(time,1,2));
+        if(rank(s,4) && in(id,{109,42,156}))time=talent_power::enabled?29u:72u;
         if(time!=base_time && !set(42,id,time))return false;
-        if(rank(s,4) && in(id,{109,42,156}) && !plan_edit(edits,{0,45,id},1,16,1))return false;
+        if(rank(s,4) && in(id,{109,42,156}) && !plan_edit(edits,{0,45,id},1,talent_power::v5(4,16),1))return false;
     }
     return true;
 }
@@ -86,7 +86,7 @@ inline U32 carried(const bw::Unit* u) noexcept {return u->unit_specific.bytes[27
 inline U32 amount(const bw::Unit* u) noexcept {std::uint16_t n=0;std::memcpy(&n,u->unit_specific2.bytes,2);return n;}
 inline void amount(bw::Unit* u,U32 n) noexcept {const auto v=static_cast<std::uint16_t>(std::min(65535u,n));std::memcpy(u->unit_specific2.bytes,&v,2);}
 inline bool enabled() noexcept {return g.active && g.applied && g.game && GetCurrentThreadId()==g.game_thread.load();}
-inline double motion_ratio(bw::Unit* u) noexcept {return own(u) && worker(u->unit_id) && rank(6) ? 1.5 : 1.0;}
+inline double motion_ratio(bw::Unit* u) noexcept {return own(u) && worker(u->unit_id) && rank(6) ? (talent_power::enabled?1.0:1.5) : 1.0;}
 inline QueueCost current_cost(U32 id) noexcept {return {id,owner_stat(player_owner(),{0,40,id}),owner_stat(player_owner(),{0,41,id})};}
 inline void refresh_building(bw::Unit* u,UnitState& s) noexcept {
     if(!(original_stat({0,22,u->unit_id})&1u) || (u->flags&1u)){s.paid_building={};return;}
@@ -149,21 +149,21 @@ struct UnitScope {
         auto u=resolve(who);if(!enabled() || !own(u))return;
         auto game=g.game();
         if(watch && cargo && !carried(u) && !(u->carried_powerup_flags&3u)){
-            if((flags&2u) && std::uint64_t(game->minerals[player_owner()])>=std::uint64_t(minerals)+cargo)credit((rank(0)?2u:0u)+(mule(u)?8u:0u),0);
-            else if((flags&1u) && std::uint64_t(game->gas[player_owner()])>=std::uint64_t(gas)+cargo && rank(1))credit(0,2);
+            if((flags&2u) && std::uint64_t(game->minerals[player_owner()])>=std::uint64_t(minerals)+cargo)credit((rank(0)?talent_power::v5(0,2):0u)+(mule(u)?talent_power::v5(23,8):0u),0);
+            else if((flags&1u) && std::uint64_t(game->gas[player_owner()])>=std::uint64_t(gas)+cargo && rank(1))credit(0,talent_power::v5(1,2));
         }
         auto s=state(u);if(!s || s->last_frame==frame)return;
         // The native step must have advanced the existing job. This prevents
         // free progress on idle/paused/disabled structures or failed orders.
-        if(rank(25) && game->elapsed_seconds>=60 && (game->elapsed_seconds-60)%90<20 && (original_stat({0,22,u->unit_id})&1u) && (u->flags&1u) && !u->lockdown_timer && !u->stasis_timer){
+        if(rank(25) && game->elapsed_seconds>=60 && (game->elapsed_seconds-60)%90<talent_power::v5(25,20) && (original_stat({0,22,u->unit_id})&1u) && (u->flags&1u) && !u->lockdown_timer && !u->stasis_timer){
             auto job=resolve(child);
             if(s->chrono_child.p!=child.p || s->chrono_child.unique!=child.unique){s->chrono_child=child;s->chrono_build_fraction=0;}
             bool progressed=false;
-            if(job && time>job->remaining_build_time && job->remaining_build_time>0){s->chrono_build_fraction+=time-job->remaining_build_time;const auto extra=std::min<U32>(job->remaining_build_time,s->chrono_build_fraction/2);job->remaining_build_time=static_cast<std::uint16_t>(job->remaining_build_time-extra);s->chrono_build_fraction%=2;progressed=true;}
+            if(job && time>job->remaining_build_time && job->remaining_build_time>0){s->chrono_build_fraction+=(time-job->remaining_build_time)*talent_power::halves(263);const auto extra=std::min<U32>(job->remaining_build_time,s->chrono_build_fraction/4);job->remaining_build_time=static_cast<std::uint16_t>(job->remaining_build_time-extra);s->chrono_build_fraction%=4;progressed=true;}
             std::uint16_t after=0;std::memcpy(&after,u->unit_specific.bytes+10,2);
             const U32 job_key=U32(u->order)<<16|U32(u->unit_specific.bytes[12])<<8|u->unit_specific.bytes[13];
             if(s->research_key!=job_key){s->research_key=job_key;s->chrono_research_fraction=0;}
-            if(in(u->order,{75,76}) && research>after && after>0){s->chrono_research_fraction+=research-after;const auto extra=std::min<U32>(after,s->chrono_research_fraction/2);after=static_cast<std::uint16_t>(after-extra);s->chrono_research_fraction%=2;std::memcpy(u->unit_specific.bytes+10,&after,2);progressed=true;}
+            if(in(u->order,{75,76}) && research>after && after>0){s->chrono_research_fraction+=(research-after)*talent_power::halves(263);const auto extra=std::min<U32>(after,s->chrono_research_fraction/4);after=static_cast<std::uint16_t>(after-extra);s->chrono_research_fraction%=4;std::memcpy(u->unit_specific.bytes+10,&after,2);progressed=true;}
             if(progressed)s->last_frame=frame;
         }
     }
@@ -256,7 +256,7 @@ inline void created(bw::Unit* u) {
     if(!enabled() || !valid_unit(u) || u->player!=player_owner() || hallucination(u))return;
     auto s=state(u);if(!s)return;
     refresh_building(u,*s);
-    if(creating_mule){s->mule_expiry=g.game()->elapsed_seconds+45;s->mule_free_supply=true;}
+    if(creating_mule){s->mule_expiry=g.game()->elapsed_seconds+talent_power::v5(23,45);s->mule_free_supply=true;}
 }
 inline void before_kill(bw::Unit* u) {
     if(!enabled() || !valid_unit(u) || u->player!=player_owner() || hallucination(u))return;
@@ -288,16 +288,16 @@ inline void transformed(bw::Unit* u,U32 old_id,U32 supply_before=0xffffffffu) {
     if(old_id!=36 || u->unit_id!=41 || !s->twin_pending || s->twin)return;s->twin=true;s->twin_pending=false;
     creating_twin=true;auto other=spawn(41,u->flingy.position.x+20,u->flingy.position.y,player_owner());creating_twin=false;
     if(other){if(supply_before!=0xffffffffu)supply=supply_before;else supply_adjust(0,-2);auto extra=state(other);if(extra)extra->twin=true;}
-    else {credit(50,0);if(supply_before!=0xffffffffu)supply=supply_before>=2 ? supply_before-2:0;else supply_adjust(0,-2);}
+    else {credit(talent_power::enabled?37u:50u,0);if(supply_before!=0xffffffffu)supply=supply_before>=2 ? supply_before-2:0;else supply_adjust(0,-2);}
 }
 inline void after_snapshot() {
     if(!enabled())return;
     const bool first_snapshot=!snapshot_seen;snapshot_seen=true;
     if(rank(2) && !scaled_resources){
-        living_units([&](bw::Unit* u){if(!resource(u->unit_id))return;auto s=state(u);if(s && !s->resource_scaled){amount(u,std::min(65535u,amount(u)*3));s->resource_scaled=true;}});
+        living_units([&](bw::Unit* u){if(!resource(u->unit_id))return;auto s=state(u);if(s && !s->resource_scaled){amount(u,std::min(65535u,amount(u)*(1+talent_power::v5(2,2))));s->resource_scaled=true;}});
         scaled_resources=true;
     }
-    if(rank(5) && !start_box && first_snapshot){U32 curses=0;for(auto n:g.growth.curse_counts)curses+=n;credit(curses*50,curses*50);start_box=true;}
+    if(rank(5) && !start_box && first_snapshot){U32 curses=0;for(auto n:g.growth.curse_counts)curses+=n;credit(curses*talent_power::v5(5,50),curses*talent_power::v5(5,50));start_box=true;}
     if(rank(23) && !next_mule){const auto second=g.game()->elapsed_seconds;next_mule=second<120 ? 120u:(second/120+1)*120;}
     if(rank(4) && !provided_applied){
         auto game=g.game();living_units([&](bw::Unit* u){if(own(u) && (u->flags&1u) && in(u->unit_id,{109,42,156})){
@@ -334,7 +334,7 @@ inline void step() {
     if(!enabled())return;auto game=g.game();const auto second=game->elapsed_seconds,frame=game->frame_count;
     std::vector<bw::Unit*> hatcheries;std::vector<bw::Unit*> minerals;std::vector<bw::Unit*> depots;std::vector<bw::Unit*> expired;
     living_units([&](bw::Unit* u){
-        if(rank(2) && resource(u->unit_id)){auto s=state(u);if(s && !s->resource_scaled){amount(u,std::min(65535u,amount(u)*3));s->resource_scaled=true;}}
+        if(rank(2) && resource(u->unit_id)){auto s=state(u);if(s && !s->resource_scaled){amount(u,std::min(65535u,amount(u)*(1+talent_power::v5(2,2))));s->resource_scaled=true;}}
         if(in(u->unit_id,{176,177,178}) && amount(u))minerals.push_back(u);
         auto temporary=state(u);if(temporary && temporary->mule_expiry && second>=temporary->mule_expiry)expired.push_back(u);
         if(!own(u))return;
@@ -345,14 +345,14 @@ inline void step() {
     for(auto u:expired){auto s=state(u);if(s)s->mule_expiry=0;if(g.set_hp)g.set_hp(u,0);}
     if(rank(21))for(auto hatch:hatcheries){
         auto s=state(hatch);if(!s)continue;U32 count=0;living_units([&](bw::Unit* u){if(own(u) && u->unit_id==35 && u->related==hatch)++count;});
-        if(count>=6){s->larva_due=0;continue;}
+        if(count>=3+talent_power::v5(21,3)){s->larva_due=0;continue;}
         // Native cap3 remains intact. Below3, speed its verified larva timer;
         // at3..5, continue the same period through the public create API.
         auto& timer=hatch->unit_specific.bytes[14];
         if(count<3){
-            if(!s->larva_seen){timer=static_cast<U8>(ceiling(timer,10,13));s->larva_seen=true;}
+            if(!s->larva_seen){timer=static_cast<U8>(ceiling(timer,talent_power::enabled?4u:10u,talent_power::enabled?7u:13u));s->larva_seen=true;}
             else if(timer==37 && s->last_larva_timer==0){
-                s->larva_fraction+=380;const U32 checks=s->larva_fraction/13;s->larva_fraction%=13;
+                s->larva_fraction+=talent_power::enabled?152u:380u;const U32 denom=talent_power::enabled?7u:13u;const U32 checks=s->larva_fraction/denom;s->larva_fraction%=denom;
                 timer=static_cast<U8>(checks-1);
             }
             s->last_larva_timer=timer;s->larva_due=0;
@@ -361,7 +361,7 @@ inline void step() {
             // Native larva timer37 is evaluated every9 frames (38 passes).
             // 342/1.3 uses fractional carry, rather than an invented234-frame
             // period. New larvae keep the hatchery's native connectedUnit link.
-            const auto schedule=[&](){s->larva_due_fraction+=3420;const U32 interval=s->larva_due_fraction/13;s->larva_due_fraction%=13;s->larva_due=frame+interval;};
+            const auto schedule=[&](){s->larva_due_fraction+=talent_power::enabled?1368u:3420u;const U32 denom=talent_power::enabled?7u:13u;const U32 interval=s->larva_due_fraction/denom;s->larva_due_fraction%=denom;s->larva_due=frame+interval;};
             if(!s->larva_due)schedule();
             if(frame>=s->larva_due){auto larva=spawn(35,hatch->flingy.position.x-70,hatch->flingy.position.y+30,player_owner());if(larva){larva->related=hatch;larva->order_state=0;}schedule();}
         }

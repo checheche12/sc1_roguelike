@@ -238,7 +238,7 @@ inline void rework_feedback_targeting_and_spell_costs(){
 inline void rework_acid_twelve_ground_lifecycle_and_native_hit(){
     using namespace rework_fixture;begin({86,100,106});auto devourer=unit(62,1,100,100,true),target=unit(43,6,120,100,true);target->acid_spore_count=9;std::fill(std::begin(target->acid_spore_timers),std::end(target->acid_spore_timers),U8(150));
     for(U32 i=0;i<4;i++){auto b=bullet(devourer,target,104);{rework_combat_v5::MissileScope scope(b);target->acid_spore_timers[0]=151;}}
-    CHECK(target->acid_spore_count==12);auto acid=rework_combat_v5::acid_state(target);CHECK(rework_combat_v5::extra_acid(*acid)==3);CHECK(target->acid_spore_timers[0]==150);for(auto timer:acid->extra)CHECK(timer==225);
+    CHECK(target->acid_spore_count==12);auto acid=rework_combat_v5::acid_state(target);CHECK(rework_combat_v5::extra_acid(*acid)==3);CHECK(target->acid_spore_timers[0]==150);for(U32 i=0;i<acid->extra.size();i++)CHECK(acid->extra[i]==(i<3?225:0));
     target->player=1;pulse(108);CHECK(target->acid_spore_count==12&&rework_combat_v5::extra_acid(*rework_combat_v5::acid_state(target))==3);
     for(U32 frame=116;frame<=1900;frame+=8)pulse(frame);CHECK(target->acid_spore_count==9&&rework_combat_v5::extra_acid(*rework_combat_v5::acid_state(target))==0);
     target->player=6;auto ground=unit(37,6,125,100);auto b=bullet(devourer,ground,104);b->flingy.position={125,100};{rework_combat_v5::MissileScope scope(b);}CHECK(ground->acid_spore_count==1);CHECK(ground->acid_spore_timers[0]==225);

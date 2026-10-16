@@ -40,7 +40,7 @@ inline Ratio ratio(bw::Unit* u) noexcept {
        u->unit_id>=228 || u->flingy.hitpoints<=0 || u->order==0)return r;
     if(u->player==player_owner())for(const auto& p:frozen::movement_patches)
         if(p.unit_id==u->unit_id && (g.growth.talent_bits[p.bit/32]&(1u<<(p.bit%32)))){
-            r.numerator*=p.numerator;r.denominator*=p.denominator;
+            talent_power::multiply(r.numerator,r.denominator,p.bit,p.numerator,p.denominator);
         }
     if(regular_enemy(u)){
         if(g.growth.curse_counts[3]){r.numerator*=40+3*g.growth.curse_counts[3];r.denominator*=40;}

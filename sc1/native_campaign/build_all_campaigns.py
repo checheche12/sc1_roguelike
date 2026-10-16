@@ -508,12 +508,16 @@ def strengthen(chk,row):
 def mineral_reserved_points(difficulty):
  return [point for origin in difficulty['wave_origins'] for point in origin['cells']]
 
-def assert_original_units_preserved(before,after):
+def assert_original_units_preserved(before,after,mineral_bonus=0):
  """Only mineral/geyser coordinates may change during the mining repair."""
  assert len(before)%36==0 and len(after)%36==0 and len(after)>=len(before)
  moved=[]
  for index in range(len(before)//36):
   a,b=before[index*36:(index+1)*36],after[index*36:(index+1)*36]
+  if mineral_bonus and struct.unpack_from('<H',a,8)[0] in (176,177,178):
+   expected=bytearray(a);valid=struct.unpack_from('<H',a,14)[0];amount=struct.unpack_from('<I',a,20)[0] if valid&16 else 1500
+   struct.pack_into('<H',expected,14,valid|16);struct.pack_into('<I',expected,20,amount+mineral_bonus)
+   a=bytes(expected)
   if a==b:continue
   assert struct.unpack_from('<H',a,8)[0] in (176,177,178,188),('Non-resource moved',index)
   assert a[:4]==b[:4] and a[8:]==b[8:],('Mineral properties changed',index)
@@ -538,19 +542,22 @@ def make_map(raw,row):
  else:difficulty=strengthen(chk,row)
  minerals=resource_layout.apply_layout(chk,row,reserved_points=mineral_reserved_points(difficulty))
  gas=main_base_gas.apply(chk,row,minerals,reserved_points=mineral_reserved_points(difficulty))
+ from sc1.native_campaign import mineral_amount_bonus
+ mineral_amounts=mineral_amount_bonus.apply(chk)
  progression=patch_progression(chk,row)
  chk.setsection('STR ',append_marker(chk.getsection('STR '),row['fingerprint'].encode('ascii')))
  permitted={b'UNIT',b'PUNI',b'UPGR',b'PUPx',b'PTEC',b'PTEx',b'TRIG',b'STR '}
  if row['mission_id']==101:permitted|={b'OWNR',b'SIDE',b'FORC'}
  assert chk.order==original_order
  assert all(chk.sections[k]==v for k,v in original.items() if k not in permitted)
- assert_original_units_preserved(original[b'UNIT'],chk.getsection('UNIT'))
+ assert_original_units_preserved(original[b'UNIT'],chk.getsection('UNIT'),mineral_bonus=500)
  assert strings(chk.getsection('STR '))[:len(strings(original[b'STR ']))]==strings(original[b'STR '])
  rawout=chk.save();assert CHK(rawout).save()==rawout
  report={'mission_id':row['mission_id'],'asset_path':row['asset_path'],'source':row['source'],'source_sha256':row['source_sha256'],'sha256':digest(rawout),'bytes':len(rawout),'chk_version':row['chk_version'],'fingerprint':row['fingerprint'],'owner':row['owner'],'no_production':row['no_production'],'original_section_order_preserved':True,'unchanged_sections':[k.decode('ascii') for k in original if k not in permitted],'original_briefing_wav_locations_terrain_heroes_preserved':True,'original_player_ownership_and_races_preserved':row['mission_id']!=101,'ownership_exception':'T01 existing dedicated P7 wave slot only' if row['mission_id']==101 else None,'progression':progression,'death_counter_audit':counter_audit,'switch_audit':switch_audit,'unlock':settings,'difficulty':difficulty,'native_load_verified':False,'mission_completion_verified':False}
  report['mineral_layout']=minerals
  report['resource_layout']=minerals
  report['main_base_gas']=gas
+ report['mineral_amount_bonus']=mineral_amounts
  return rawout,report
 
 def wave_header(rows):
@@ -587,6 +594,9 @@ def build(output=OUT,receipt=RECEIPT):
  report['mining_layout_audit_source_sha256']=digest(Path(mining_layout_audit.__file__).read_bytes())
  report['resource_depot_guard_source']=str(Path(resource_depot_placement.__file__).resolve())
  report['resource_depot_guard_source_sha256']=digest(Path(resource_depot_placement.__file__).read_bytes())
+ from sc1.native_campaign import mineral_amount_bonus
+ report['mineral_amount_bonus_source']=str(Path(mineral_amount_bonus.__file__).resolve())
+ report['mineral_amount_bonus_source_sha256']=digest(Path(mineral_amount_bonus.__file__).read_bytes())
  report['map_builder_sha256']=digest(Path(__file__).read_bytes())
  dump(receipt,report);return report
 
