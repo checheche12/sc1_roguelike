@@ -21,6 +21,9 @@ ORDINARY_LEGENDARY_PER_10000 = 100
 RARITY_WEIGHTS = {"common": 40, "uncommon": 29, "rare": 25,
                   "epic": 5, "legendary": 1}
 RARITY_ORDER = tuple(RARITY_WEIGHTS)
+RECENT_MANUAL_REWARDS = 3
+RECENT_MANUAL_WEIGHT = 95
+NORMAL_CANDIDATE_WEIGHT = 100
 
 # These are logical ordinals, never scenario IDs. Branch variants therefore
 # receive the same category without creating an additional reward entitlement.
@@ -121,7 +124,8 @@ class Candidate:
 
 
 def draw_candidates(policy: RewardPolicy, catalog, owned, rng, limit: int = 4,
-                    *, midpoint_pending: bool = False) -> tuple[Candidate, ...]:
+                    *, midpoint_pending: bool = False,
+                    recent_manuals=()) -> tuple[Candidate, ...]:
     """Pure offer sampler. Persist its result once; never redraw issued offers.
 
     Common manuals may repeat across rewards, but never within one offer.
@@ -141,6 +145,7 @@ def draw_candidates(policy: RewardPolicy, catalog, owned, rng, limit: int = 4,
     if any(x.category not in ("combat", "military", "economy") for x in catalog):
         raise ValueError("Only military and economy cards belong in reward offers")
     owned = set(owned)
+    recent_manuals = set(recent_manuals)
     pool = [x for x in catalog if x.usable
             and ((x.category == "economy") == (policy.category == "economy"))
             and (x.id not in owned or repeatable(x.rarity, x.category))]
@@ -171,7 +176,21 @@ def draw_candidates(policy: RewardPolicy, catalog, owned, rng, limit: int = 4,
                     break
         if not choices:
             continue
-        choice = choices[rng.randrange(len(choices))]
+        # A displayed common manual has 95% of its normal sampling weight for
+        # three later talent rewards. The rarity roll and owned effects stay
+        # exact. No redraw of stored offers, cumulative penalty or hard cap.
+        weights = [RECENT_MANUAL_WEIGHT if x.id in recent_manuals
+                   and repeatable(x.rarity, x.category)
+                   else NORMAL_CANDIDATE_WEIGHT for x in choices]
+        if len(set(weights)) == 1:
+            choice = choices[rng.randrange(len(choices))]
+        else:
+            roll = rng.randrange(sum(weights))
+            for candidate, weight in zip(choices, weights):
+                if roll < weight:
+                    choice = candidate
+                    break
+                roll -= weight
         result.append(choice)
         pool.remove(choice)
     return tuple(result)

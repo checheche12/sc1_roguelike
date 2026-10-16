@@ -75,7 +75,7 @@ using UnitArray = void (__cdecl*)(bw::Unit**,std::size_t*);
 struct ProjectileSource {bw::Unit* unit=nullptr;U32 id=228,owner=12,unique=0;};
 struct State {
     U32 api_version = 0;
-    std::array<GetDat,2> dat_getters{};
+    std::array<GetDat,3> dat_getters{};
     MutateDat mutate_dat = nullptr;
     ReadVars read_vars = nullptr;
     FreeMemory free_memory = nullptr;
@@ -679,6 +679,7 @@ void note_attack_launch(bw::Unit* u,U32 weapon) noexcept {
     if(original_stat({0,17,u->unit_id})==weapon)t->cooldown[0].launched=true;
     if(original_stat({0,19,u->unit_id})==weapon)t->cooldown[1].launched=true;
 }
+#include "include/enemy_progression.h"
 void apply_unit_motion() {
     if(!g.applied)return;
     const auto step=[&](bw::Unit* u){
@@ -694,7 +695,7 @@ void apply_unit_motion() {
         if(regular_enemy(u) && t->command_until>g.game()->frame_count){speed_num*=6;speed_den*=5;}
         const auto speed_divisor=std::gcd(speed_num,speed_den);speed_num/=speed_divisor;speed_den/=speed_divisor;
         if(u->flingy.top_speed!=t->applied_speed || !t->base_speed)t->base_speed=u->flingy.top_speed;
-        t->applied_speed=static_cast<U32>(std::min<std::uint64_t>(0xffffffffu,(std::uint64_t(t->base_speed)*speed_num+speed_den/2)/speed_den));
+        t->applied_speed=static_cast<U32>(std::min<std::uint64_t>(0xffffffffu,(std::uint64_t(enemy_progression::escort_base(u,t->base_speed))*speed_num+speed_den/2)/speed_den));
         u->flingy.top_speed=t->applied_speed;
         const double rework_speed=rework_combat_v5::speed_ratio(u)*rework_economy_v5::motion_ratio(u)*double(rework_curses::speed_fortieths(u))/40.0;
         if(rework_speed!=1.0){t->applied_speed=static_cast<U32>(std::min<double>(0xffffffffu,double(t->applied_speed)*rework_speed));u->flingy.top_speed=t->applied_speed;}
@@ -1252,7 +1253,7 @@ void restore_baseline() noexcept {
 void abandon_session() noexcept {
     g.survival_hint_shown=false;
     g.campaign_clear_shown=false;
-    rework_energy_ui::reset();rework_economy_ui::reset();rework_shield_ui_v5::reset();rework_waves::reset();rework_combat_v5::reset();rework_economy_v5::reset();rework_cargo_v5::reset();rework_carrier_v5::reset();
+    rework_energy_ui::reset();rework_economy_ui::reset();rework_shield_ui_v5::reset();enemy_progression::reset();rework_waves::reset();rework_combat_v5::reset();rework_economy_v5::reset();rework_cargo_v5::reset();rework_carrier_v5::reset();
     max_hp_cache::reset();
     wave_targeting::reset();
     movement_effects::reset();combat_effects::reset_melee();g.objective_units.clear();
@@ -1391,6 +1392,7 @@ void __cdecl frame() noexcept {
             g.campaign_clear_shown=true;message("축하합니다. 캠페인을 클리어하셨습니다!");
         }
         mirror_handshake();
+        enemy_progression::step(g.protocol.growth_applied() && g.applied && !g.protocol.failed(),!after_dialog,counter(kGoalCounter));
         apply_unit_motion();
         max_hp_cache::publish();
         multi_target::step();
@@ -1424,7 +1426,7 @@ bool bind_api(const samase::PluginApi* api) noexcept {
     // Resolve every init-only factory here. Store only runtime callbacks/data;
     // no runtime path retains or invokes the PluginApi registration object.
     g.api_version=api->version;
-    g.dat_getters={reinterpret_cast<GetDat>(api->extended_dat(0)),reinterpret_cast<GetDat>(api->extended_dat(1))};
+    g.dat_getters={reinterpret_cast<GetDat>(api->extended_dat(0)),reinterpret_cast<GetDat>(api->extended_dat(1)),reinterpret_cast<GetDat>(api->extended_dat(2))};
     g.mutate_dat=api->mutate_dat;g.read_vars=api->read_vars;g.free_memory=api->free_memory;
     g.extended_count=api->extended_arrays(&g.extended);
     g.game=reinterpret_cast<GetGame>(api->game());
@@ -1443,13 +1445,15 @@ bool bind_api(const samase::PluginApi* api) noexcept {
     g.replay=reinterpret_cast<GetFlag>(api->is_replay());
     g.set_hp=function<SetHp>(api,samase::FuncId::UnitSetHp);
     g.damage=function<DamageFn>(api,samase::FuncId::DamageUnit);
+    rework_waves::native_tech_target=function<rework_waves::TechTargetFn>(api,samase::FuncId::CheckTechTargeting);
+    rework_combat_v5::native_tech_target=rework_waves::native_tech_target;
     const auto can_attack=function<multi_target::CanAttackFn>(api,samase::FuncId::CanAttackUnit);
     const auto outside_range=function<multi_target::OutsideRangeFn>(api,samase::FuncId::IsOutsideAttackRange);
     const auto create_bullet=reinterpret_cast<CreateBulletFn>(reinterpret_cast<GenericFn (__cdecl*)()>(api->create_bullet)());
     multi_target::bind(can_attack,outside_range,create_bullet);
     return g.game && g.first_active && g.first_hidden && g.unit_array && g.create && g.finish_pre &&
            g.finish_post && g.order && g.text && g.read_map && g.multiplayer && g.replay &&
-            g.set_hp && g.damage && can_attack && outside_range && create_bullet && g.lone_sprite && g.add_overlay && g.dat_getters[0] && g.dat_getters[1] && (!g.extended_count || g.extended);
+            g.set_hp && g.damage && rework_waves::native_tech_target && can_attack && outside_range && create_bullet && g.lone_sprite && g.add_overlay && g.dat_getters[0] && g.dat_getters[1] && g.dat_getters[2] && (!g.extended_count || g.extended);
 }
 }
 

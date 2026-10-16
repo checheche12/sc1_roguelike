@@ -121,7 +121,26 @@ def curse_tier(mission,phase=2):
     return ('uncommon','rare','epic','legendary')[band]
 
 
-def candidates(catalog,mission,phase,owned,rng):
+def recent_manuals(conn,mission,offer_id):
+    """Read the last three displayed talent rewards in this campaign.
+
+    Unchosen cards count too. Economic/legendary rewards age the window;
+    reconnects, curses and unissued placeholders do not. Existing offer JSON
+    is the durable history, so no migration or saved-choice rewrite is needed.
+    """
+    missions=progression.campaign_missions(mission)
+    placeholders=','.join('?' for _ in missions)
+    rows=conn.execute(f'''SELECT candidates_json FROM growth_offers
+        WHERE kind='talent' AND mission IN ({placeholders})
+          AND candidates_json IS NOT NULL AND offer_id!=?
+        ORDER BY sequence DESC LIMIT ?''',
+        (*missions,offer_id,policy.RECENT_MANUAL_REWARDS)).fetchall()
+    return {item['id'] for row in rows for item in json.loads(row[0])
+            if item.get('repeatable') and item.get('rarity')=='common'
+            and item.get('category') in ('combat','military')}
+
+
+def candidates(catalog,mission,phase,owned,rng,*,recent_manuals=()):
     reward=policy.reward_policy(mission,phase)
     available=[]
     by_id={}
@@ -147,7 +166,7 @@ def candidates(catalog,mission,phase,owned,rng):
         reserve=sorted(item['id'] for item in catalog['talents'] if item.get('rework_revision')==5
                        and item['rarity']=='legendary' and item['id'] not in owned and usable_on(item,midpoint_mission))
         if reserve:available=[x for x in available if x.id not in set(reserve[-4:])]
-    try:draw=policy.draw_candidates(reward,available,owned,rng)
+    try:draw=policy.draw_candidates(reward,available,owned,rng,recent_manuals=recent_manuals)
     except ValueError as exc:raise GrowthError('choice_pool_unavailable',str(exc)) from exc
     if not draw:raise GrowthError('choice_pool_unavailable','현재 단계에 사용 가능한 개편 재능이 없습니다.')
     return [copy.deepcopy(by_id[x.id]) for x in draw]

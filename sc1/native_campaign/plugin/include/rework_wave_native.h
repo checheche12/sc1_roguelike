@@ -39,6 +39,7 @@ inline void transformed(bw::Unit* u,U32 old_id) noexcept {
 }
 }
 namespace rework_waves {
+void reset_spells() noexcept;
 namespace policy=sc1_native::rework_wave;
 inline policy::Timeline timeline;
 inline const policy::Profile* current=nullptr;
@@ -48,7 +49,7 @@ inline U32 last_main_budget=0,reserve_supply=0;
 inline std::array<U32,2> selected{{0,0}};
 inline const sc1_native::campaign_wave_config::Origin* primary=nullptr;
 inline bw::Unit* raid_worker=nullptr;inline U8 raid_worker_unique=0;inline U32 raid_worker_frame=0;inline bool raid_worker_sampled=false;
-inline void reset() noexcept {if(g.units && rework_curses::identities.size()==g.units_count)for(std::size_t i=0;i<g.units_count;i++)rework_curses::forget(&g.units[i]);timeline.reset();current=nullptr;pending_kind=pending_spawn_at=raid_next=support_kills=support_last=reserve_at=unit_ordinal=0;last_main_budget=reserve_supply=0;support_due=spawned_pending=false;selected={0,0};primary=nullptr;raid_worker=nullptr;raid_worker_sampled=false;raid_worker_frame=0;raid_worker_unique=0;rework_curses::identities.clear();}
+inline void reset() noexcept {reset_spells();if(g.units && rework_curses::identities.size()==g.units_count)for(std::size_t i=0;i<g.units_count;i++)rework_curses::forget(&g.units[i]);timeline.reset();current=nullptr;pending_kind=pending_spawn_at=raid_next=support_kills=support_last=reserve_at=unit_ordinal=0;last_main_budget=reserve_supply=0;support_due=spawned_pending=false;selected={0,0};primary=nullptr;raid_worker=nullptr;raid_worker_sampled=false;raid_worker_frame=0;raid_worker_unique=0;rework_curses::identities.clear();}
 inline bool enabled() noexcept {return g.mission && !g.mission->no_production && (current=policy::profile(g.mission->mission_id)) && current->enabled;}
 inline bool usable_home() {
  bool hq=false,worker=false;
@@ -216,27 +217,8 @@ inline void ammunition(bw::Unit* u) {
  const auto child=u->secondary_order_target.unit;
  if(valid_unit(child) && child->player==u->player && child->unit_id==fighter && !(child->flags&1u))child->remaining_build_time=std::min<std::uint16_t>(child->remaining_build_time,1);
 }
-inline void caster_order(bw::Unit* u,rework_curses::Identity& v) {
- if(u->unit_id!=67 && u->unit_id!=79 && u->unit_id!=51 && u->unit_id!=22 && u->unit_id!=71 && u->unit_id!=12 && u->unit_id!=28 && u->unit_id!=29)return;
- if(u->energy<75*256)return;
- if(!g.order || u->lockdown_timer || u->stasis_timer || u->maelstrom_timer || u->spell_cooldown || (u->flags&0x1000u))return;
- const U32 frame=g.game()->frame_count;if(v.last_spell && frame-v.last_spell<72)return;
- if(v.last_scan && frame-v.last_scan<24)return;v.last_scan=frame?frame:1;
- if(!wave_targeting::reorderable(u->order) && u->order!=50 && u->order!=58)return;
- bw::Unit* enemy=nullptr,*friend_unit=nullptr;U32 nearby=0;
- living_units([&](bw::Unit* other){if(other==u || other->flingy.hitpoints<=0 || !(other->flags&1u) || (other->flags&0x44000040u))return;
-  const auto p=other->flingy.position,q=u->flingy.position;const auto d=wave_targeting::distance(p.x,p.y,q.x,q.y);if(d>288ll*288)return;
-  if(other->player==player_owner() && regular_combat_type(other->unit_id) && !protected_objective_unit(other)){++nearby;if(!enemy || other->flingy.hitpoints>enemy->flingy.hitpoints)enemy=other;}
-  if(other->player==u->player && rework_curses::marked(other) && !(original_stat({0,22,other->unit_id})&1u) && !other->matrix_timer && (!friend_unit || other->flingy.hitpoints>friend_unit->flingy.hitpoints))friend_unit=other;
- });
- U32 order=0;bw::Unit* target=nullptr;
- if((u->unit_id==67 || u->unit_id==79 || u->unit_id==51) && u->energy>=75*256 && enemy && nearby>=2){order=142;target=enemy;}
- else if(u->unit_id==22 && u->energy>=100*256 && friend_unit && enemy){order=141;target=friend_unit;}
- else if(u->unit_id==22 && u->energy>=75*256 && enemy && (original_stat({0,22,enemy->unit_id})&0x10000u) && !enemy->irradiate_timer){order=143;target=enemy;}
- else if(u->unit_id==71 && u->energy>=100*256 && enemy && nearby>=3){order=147;target=enemy;}
- else if((u->unit_id==12 || u->unit_id==28 || u->unit_id==29) && u->energy>=150*256 && enemy && enemy->flingy.hitpoints>=150*256){order=113;target=enemy;}
- if(order && target){v.last_spell=frame;const auto p=target->flingy.position;g.order(u,order,p.x,p.y,target,target->unit_id);}
-}
+#include "enemy_spell_runtime.h"
+inline void caster_order(bw::Unit* u,rework_curses::Identity& v) {auto_spell(u,v);}
 inline void release_and_orders() {
  living_units([&](bw::Unit* u){
   if(rework_curses::body(u)!=u)return;

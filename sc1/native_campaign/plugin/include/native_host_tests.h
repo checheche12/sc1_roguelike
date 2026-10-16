@@ -10,9 +10,9 @@ int checks=0;
 #define CHECK(x) do {++checks;if (!(x)) throw std::runtime_error(std::string(__func__)+":"+std::to_string(__LINE__)+": " #x);} while(0)
 bw::Game game{};
 std::array<bw::Unit,1900> units{};
-bw::DatTable dat[2][96]{};
-std::size_t dat_counts[2]={64,64};
-std::array<std::array<std::array<U8,228*4>,64>,2> storage{};
+bw::DatTable dat[3][96]{};
+std::size_t dat_counts[3]={64,64,64};
+std::array<std::array<std::array<U8,228*4>,64>,3> storage{};
 samase::PluginApi api{};
 std::size_t count=0;
 bw::Unit* active=nullptr,*hidden=nullptr;
@@ -36,7 +36,8 @@ bw::Unit* __cdecl get_hidden(){return hidden;}
 void __cdecl get_array(bw::Unit** p,std::size_t* n){*p=units.data();*n=units.size();}
 bw::DatTable* __cdecl dat0(std::size_t* n){++dat_getter_calls;*n=dat_counts[0];return dat[0];}
 bw::DatTable* __cdecl dat1(std::size_t* n){++dat_getter_calls;*n=dat_counts[1];return dat[1];}
-GenericFn __cdecl get_dat(U32 t){++dat_factory_calls;if(!require_init())return nullptr;return t<2 ? reinterpret_cast<GenericFn>(t ? dat1 : dat0) : nullptr;}
+bw::DatTable* __cdecl dat2(std::size_t* n){++dat_getter_calls;*n=dat_counts[2];return dat[2];}
+GenericFn __cdecl get_dat(U32 t){++dat_factory_calls;if(!require_init())return nullptr;return t<3 ? reinterpret_cast<GenericFn>(t==2 ? dat2 : t ? dat1 : dat0) : nullptr;}
 void* __cdecl mutate(U32 t,U32 f){++mutate_calls;return t<2 && f<64 ? &dat[t][f] : nullptr;}
 void __cdecl set_hp(bw::Unit* u,std::int32_t hp){++hps;u->flingy.hitpoints=hp;}
 void __cdecl kill(bw::Unit* u){++kills;u->flingy.hitpoints=0;u->order=0;}
@@ -65,7 +66,8 @@ void __cdecl direct_damage(bw::Unit* u,int amount,bw::Unit*,U32,U32){u->flingy.h
 U32 __cdecl no_attack(bw::Unit*,bw::Unit*,U32){return 0;}
 U32 __cdecl outside_attack_range(bw::Unit*,bw::Unit*){return 1;}
 bw::Bullet* __cdecl no_bullet(U32,int,int,U32,U32,bw::Unit*){return nullptr;}
-GenericFn __cdecl get_function(std::uint16_t id){if(!require_init())return nullptr;if(id==static_cast<std::uint16_t>(samase::FuncId::UnitSetHp))return reinterpret_cast<GenericFn>(set_hp);if(id==static_cast<std::uint16_t>(samase::FuncId::DamageUnit))return reinterpret_cast<GenericFn>(direct_damage);if(id==static_cast<std::uint16_t>(samase::FuncId::CanAttackUnit))return reinterpret_cast<GenericFn>(no_attack);if(id==static_cast<std::uint16_t>(samase::FuncId::IsOutsideAttackRange))return reinterpret_cast<GenericFn>(outside_attack_range);return nullptr;}
+U32 __cdecl allow_tech(bw::Unit*,U32,bw::Unit*,U32,U32,U32,std::uint16_t*){return 1;}
+GenericFn __cdecl get_function(std::uint16_t id){if(!require_init())return nullptr;if(id==static_cast<std::uint16_t>(samase::FuncId::CheckTechTargeting))return reinterpret_cast<GenericFn>(allow_tech);if(id==static_cast<std::uint16_t>(samase::FuncId::UnitSetHp))return reinterpret_cast<GenericFn>(set_hp);if(id==static_cast<std::uint16_t>(samase::FuncId::DamageUnit))return reinterpret_cast<GenericFn>(direct_damage);if(id==static_cast<std::uint16_t>(samase::FuncId::CanAttackUnit))return reinterpret_cast<GenericFn>(no_attack);if(id==static_cast<std::uint16_t>(samase::FuncId::IsOutsideAttackRange))return reinterpret_cast<GenericFn>(outside_attack_range);return nullptr;}
 void __cdecl load_vars(const std::uint16_t*,U8* out,std::size_t n){const bool okay=require_init();for(std::size_t i=0;i<n;i++)out[i]=okay ? 2 : 0;}
 U32 __cdecl register_units(void (__cdecl*)(GenericFn)){return require_init() ? 1u : 0u;}
 U32 __cdecl register_step(GenericFn,U32){return require_init() ? 1u : 0u;}
@@ -80,7 +82,7 @@ void reset() {
     CHECK(late_init_calls==0);init_calls=dat_factory_calls=extended_array_calls=0;
     dat_getter_calls=mutate_calls=read_var_calls=free_calls=0;
     provided_extended=nullptr;provided_extended_count=0;
-    dat_counts[0]=dat_counts[1]=64;
+    dat_counts[0]=dat_counts[1]=dat_counts[2]=64;
     markers.clear();ground_pulses=0;kills=hps=orders=finishes=loaded_calls=0;saved_handle=std::numeric_limits<std::size_t>::max();fail_spawn=false;chk.clear();printed.clear();
     api={};api.version=44;api.extended_dat=get_dat;api.mutate_dat=mutate;api.read_vars=read_vars;
     api.extended_arrays=ext;api.free_memory=free_memory;api.add_overlay_iscript=reinterpret_cast<GenericFn>(factory<overlay>);api.create_lone_sprite=reinterpret_cast<GenericFn>(factory<lone_sprite>);
@@ -91,9 +93,9 @@ void reset() {
     api.is_multiplayer=api.is_replay=factory<zero>;api.get_func=get_function;api.max_func_id=80;
     api.hook_on_first_file_access=reinterpret_cast<GenericFn>(register_first_file);
     api.load_vars=load_vars;api.hook_init_units=register_units;api.hook_step_objects=register_step;api.extend_save=register_save;
-    for(U32 t=0;t<2;t++)for(U32 f=0;f<64;f++)dat[t][f]={storage[t][f].data(),4,228};
-    const char* stock_paths[]={"../managed_dat/arr/units.dat","../managed_dat/arr/weapons.dat"};
-    for(U32 table=0;table<2;table++){
+    for(U32 t=0;t<3;t++)for(U32 f=0;f<64;f++)dat[t][f]={storage[t][f].data(),4,228};
+    const char* stock_paths[]={"../managed_dat/arr/units.dat","../managed_dat/arr/weapons.dat","../support_dat/arr/flingy.dat"};
+    for(U32 table=0;table<3;table++){
         std::ifstream file(stock_paths[table],std::ios::binary);CHECK(file.good());file.seekg(0,std::ios::end);const auto n=file.tellg();
         std::vector<U8> data(static_cast<std::size_t>(n));file.seekg(0);file.read(reinterpret_cast<char*>(data.data()),n);
         for(U32 i=0;i<u32(data.data()+12);i++){
@@ -104,7 +106,7 @@ void reset() {
     }
     for(const auto& e:expected_stats){dat[e.table][e.field].entry_size=e.width;write_entry(&dat[e.table][e.field],e.id,e.before);}
     plugin_init_open=true;const bool bound=bind_api(&api);plugin_init_open=false;CHECK(bound);
-    CHECK(dat_factory_calls==2 && extended_array_calls==1 && late_init_calls==0);
+    CHECK(dat_factory_calls==3 && extended_array_calls==1 && late_init_calls==0);
     g.mission=&campaign_config::kMissions[0];g.campaign_index=2;
     g.active=true;g.applied=false;g.hooks_ready=true;g.game_thread=GetCurrentThreadId();g.pumping=false;
     g.dialog.set_callbacks(dialog_callbacks());
@@ -548,12 +550,12 @@ void wave_host_integration() {
 }
 void api_lifecycle_boundaries() {
     reset();const auto init_count=init_calls;
-    CHECK(init_count==23 && !plugin_init_open);
+    CHECK(init_count==25 && !plugin_init_open);
     // The registration object is not a runtime API. Invalidating it after bind
     // models that boundary, while cached direct callbacks remain executable.
     api={};make_chk();init_units(original);
     CHECK(g.active && g.api_version==44 && read_var_calls==1 && free_calls==1);
-    CHECK(dat_factory_calls==2 && extended_array_calls==1 && late_init_calls==0);
+    CHECK(dat_factory_calls==3 && extended_array_calls==1 && late_init_calls==0);
     auto s=all();s.completed_phase=1;CHECK(apply_snapshot(nullptr,s));
     const auto first_mutations=mutate_calls;CHECK(first_mutations>0 && dat_getter_calls>0);
     s.completed_phase=2;s.curse_counts[1]=2;CHECK(apply_snapshot(nullptr,s));
@@ -568,7 +570,7 @@ void api_lifecycle_boundaries() {
     CHECK(init_calls==init_count && read_var_calls==2 && free_calls==2);
     auto saved=g.dat_getters[0];g.dat_getters[0]=nullptr;
     CHECK(!apply_snapshot(nullptr,all()));CHECK(g.baseline.empty());g.dat_getters[0]=saved;
-    CHECK(table_for({2,8,0},false)==nullptr);
+    CHECK(table_for({3,8,0},false)==nullptr);
     CHECK(late_init_calls==0);
 }
 // Public API44 mutate_dat returns one DatTable descriptor. Its descriptor may
@@ -669,6 +671,8 @@ void real_managed_dat_assets() {
 #include "trampoline_unwind_host_tests.h"
 #include "wave_targeting_host_tests.h"
 #include "rework_wave_host_tests.h"
+#include "enemy_progression_host_tests.h"
+#include "targeting_bridge_host_tests.h"
 #include "rework_cargo_v5_host_tests.h"
 #include "rework_carrier_v5_host_tests.h"
 #include "rework_economy_host_tests.h"
@@ -694,6 +698,8 @@ int main() {
         run_trampoline_unwind_groups();
         run_wave_targeting_groups();
         run_rework_wave_groups();
+        run_enemy_progression_groups();
+        run_targeting_bridge_groups();
         run_rework_cargo_groups();
         run_rework_carrier_groups();
         run_rework_economy_groups();
@@ -706,6 +712,6 @@ int main() {
         run_talent_rank_groups();
         abandon_session();g.baseline.clear();g.game=nullptr;
         CHECK(late_init_calls==0);
-        std::printf("PASS native host integration: %zu groups, %d checks; game process never accessed.\n",87u+std::size(combat_audit::cases)+max_hp_engine_group_count+samase_status_ui_group_count+samase_weapon_ui_group_count+samase_armor_ui_group_count+trampoline_unwind_group_count+wave_targeting_group_count+wave_progression_group_count+talent_rank_group_count+rework_wave_group_count+rework_cargo_group_count+rework_carrier_group_count+rework_economy_group_count+rework_binding_group_count+rework_lighting_v5_group_count+rework_combat_v5_group_count+rework_economy_ui_group_count+rework_shield_ui_v5_group_count,checks);return 0;
+        std::printf("PASS native host integration: %zu groups, %d checks; game process never accessed.\n",87u+std::size(combat_audit::cases)+max_hp_engine_group_count+samase_status_ui_group_count+samase_weapon_ui_group_count+samase_armor_ui_group_count+trampoline_unwind_group_count+wave_targeting_group_count+wave_progression_group_count+talent_rank_group_count+rework_wave_group_count+enemy_progression_group_count+targeting_bridge_group_count+rework_cargo_group_count+rework_carrier_group_count+rework_economy_group_count+rework_binding_group_count+rework_lighting_v5_group_count+rework_combat_v5_group_count+rework_economy_ui_group_count+rework_shield_ui_v5_group_count,checks);return 0;
     } catch(const std::exception& e){std::fprintf(stderr,"FAIL %s reason=%s\n",e.what(),g.apply_failure ? g.apply_failure : "none");return 1;}
 }

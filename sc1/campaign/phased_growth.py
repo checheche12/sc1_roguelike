@@ -225,7 +225,8 @@ def _issue(conn, mission, phase, catalog):
                          (rework_growth.SKIPPED_CURSE,state['revision'],offer['offer_id']))
             return _issue(conn,mission,phase,catalog)
         if kind=='talent':
-            candidates=rework_growth.candidates(catalog,mission,phase,owned,secrets.SystemRandom())
+            candidates=rework_growth.candidates(catalog,mission,phase,owned,secrets.SystemRandom(),
+                recent_manuals=rework_growth.recent_manuals(conn,mission,offer['offer_id']))
             conn.execute('UPDATE growth_offers SET candidates_json=?,offered_revision=? WHERE offer_id=?',
                          (json.dumps(candidates,ensure_ascii=False,sort_keys=True),state['revision'],offer['offer_id']))
             return

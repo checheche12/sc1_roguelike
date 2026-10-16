@@ -202,6 +202,8 @@ inline GetSpritePosition get_sprite_position=nullptr;inline SetSpritePosition se
 using GiveFn=void (__cdecl*)(bw::Unit*,U32);
 using HallucinationFn=void (__cdecl*)(bw::Unit*,U32,U32,bw::Unit*);
 using TechTargetFn=U32 (__cdecl*)(bw::Unit*,U32,bw::Unit*,U32,U32,U32,std::uint16_t*);
+using OrderTargetFn=U32 (__cdecl*)(bw::Unit*,U32,bw::Unit*,U32,U32,std::uint16_t*);
+inline TechTargetFn native_tech_target=nullptr;
 inline GiveFn native_give=nullptr;
 using WriteVars=void (__cdecl*)(const std::uint16_t*,const std::size_t*,std::size_t);
 inline ReadVars script_context_read=nullptr;inline WriteVars script_context_write=nullptr;
@@ -222,7 +224,7 @@ struct ScriptSourceScope {
 };
 inline bw::Unit* active_caster=nullptr;
 inline void __cdecl hallucination_hit_hook(bw::Unit*,U32,U32,bw::Unit*,HallucinationFn) noexcept;
-inline U32 __cdecl tech_target_hook(bw::Unit*,U32,bw::Unit*,U32,U32,U32,std::uint16_t*,TechTargetFn) noexcept;
+inline U32 __cdecl order_target_hook(bw::Unit*,U32,bw::Unit*,U32,U32,std::uint16_t*,OrderTargetFn) noexcept;
 inline U32 __cdecl can_infest_hook(bw::Unit*,UnitValueFn) noexcept;
 struct GeneratedScope {GeneratedScope(){++generated_depth;}~GeneratedScope(){--generated_depth;}};
 inline void hurt(bw::Unit* target,U32 amount,bw::Unit* source=nullptr,U32 owner=12) noexcept {
@@ -268,7 +270,9 @@ inline bool bind_engine(const samase::PluginApi* api) noexcept {
     auto hook=reinterpret_cast<FuncHookRegister>(api->hook_func);
     return hook(static_cast<std::uint16_t>(samase::FuncId::UnitMaxEnergy),reinterpret_cast<std::uintptr_t>(max_energy_hook)) &&
         hook(static_cast<std::uint16_t>(samase::FuncId::HallucinationHit),reinterpret_cast<std::uintptr_t>(hallucination_hit_hook)) &&
-        hook(static_cast<std::uint16_t>(samase::FuncId::CheckTechTargeting),reinterpret_cast<std::uintptr_t>(tech_target_hook)) &&
+        // SAMASE 0.10.28's Func24 hook masks target Unit* to 16 bits. Func25
+        // preserves the pointer. Never register Func24, including pass-through.
+        hook(static_cast<std::uint16_t>(samase::FuncId::CheckOrderTargeting),reinterpret_cast<std::uintptr_t>(order_target_hook)) &&
         hook(static_cast<std::uint16_t>(samase::FuncId::UnitCanBeInfested),reinterpret_cast<std::uintptr_t>(can_infest_hook));
 }
 inline U32 energy_total_cap(bw::Unit* u,UnitState& s) noexcept {
@@ -310,19 +314,21 @@ inline U32 __cdecl can_infest_hook(bw::Unit* target,UnitValueFn original) noexce
     if(!g.active||!g.applied||!own(active_caster)||!rank(85)||!live(target)||target->unit_id!=106||U32(target->flingy.hitpoints)>effective_max_hp(target)*3/4)return original(target);
     const auto hp=target->flingy.hitpoints;target->flingy.hitpoints=std::min(hp,std::int32_t(effective_max_hp(target)/2));const auto result=original(target);target->flingy.hitpoints=hp;return result;
 }
-inline U32 __cdecl tech_target_hook(bw::Unit* caster,U32 tech,bw::Unit* target,U32 fow,U32 x,U32 y,std::uint16_t* error,TechTargetFn original) noexcept {
-    if(!g.active||!g.applied||!own(caster)||!live(target))return original(caster,tech,target,fow,x,y,error);
-    if(state_base==g.units && states.size()==g.units_count && states[std::size_t(caster-g.units)].fade_until>now())return 0;
-    if(tech==1 && rank(63)&&organic(target)&&soldier(target->unit_id)){
-        auto table=table_for({0,22,target->unit_id},false);if(table){const auto flags=read_entry(table,target->unit_id);write_entry(table,target->unit_id,flags|0x40000000u);const auto result=original(caster,tech,target,fow,x,y,error);write_entry(table,target->unit_id,flags);return result;}
+inline U32 __cdecl order_target_hook(bw::Unit* caster,U32 order,bw::Unit* target,U32 x,U32 y,std::uint16_t* error,OrderTargetFn original) noexcept {
+    if(!g.active||!g.applied||!own(caster)||!live(target))return original(caster,order,target,x,y,error);
+    if(state_base==g.units&&states.size()==g.units_count&&states[std::size_t(caster-g.units)].fade_until>now())return 0;
+    if(order==115&&rank(63)&&organic(target)&&soldier(target->unit_id)){
+        auto table=table_for({0,22,target->unit_id},false);if(table){const auto flags=read_entry(table,target->unit_id);write_entry(table,target->unit_id,flags|0x40000000u);const auto result=original(caster,order,target,x,y,error);write_entry(table,target->unit_id,flags);return result;}
     }
-    if(tech==12&&target->unit_id==106&&rank(85)&&U32(target->flingy.hitpoints)<=effective_max_hp(target)*3/4){
-        const auto hp=target->flingy.hitpoints;target->flingy.hitpoints=std::min(hp,std::int32_t(effective_max_hp(target)/2));const auto result=original(caster,tech,target,fow,x,y,error);target->flingy.hitpoints=hp;return result;
+    if(order==27&&target->unit_id==106&&rank(85)&&U32(target->flingy.hitpoints)<=effective_max_hp(target)*3/4){
+        const auto hp=target->flingy.hitpoints;target->flingy.hitpoints=std::min(hp,std::int32_t(effective_max_hp(target)/2));const auto result=original(caster,order,target,x,y,error);target->flingy.hitpoints=hp;return result;
     }
-    if(tech==12&&target->unit_id!=106&&rank(107)&&soldier(target->unit_id)&&is_enemy(target->player)&&!protected_objective_unit(target)&&U32(target->flingy.hitpoints)<=effective_max_hp(target)/4){
-        return original(caster,27,target,fow,x,y,error); // Original Mind Control target immunity contract.
+    if(order==27&&target->unit_id!=106&&rank(107)&&soldier(target->unit_id)&&is_enemy(target->player)&&!protected_objective_unit(target)&&U32(target->flingy.hitpoints)<=effective_max_hp(target)/4){
+        // Direct Func24 lookup has no hook masking. Keep native Mind Control
+        // target immunity rules for the Queen's temporary conversion talent.
+        return native_tech_target?native_tech_target(caster,27,target,228,x,y,error):0;
     }
-    return original(caster,tech,target,fow,x,y,error);
+    return original(caster,order,target,x,y,error);
 }
 inline double speed_ratio(bw::Unit* u);
 inline void restore_motion(bw::Unit* u,UnitState& s) noexcept {

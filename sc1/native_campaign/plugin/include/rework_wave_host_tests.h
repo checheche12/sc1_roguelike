@@ -236,7 +236,8 @@ inline void native_caster_orders_and_original_hero_exclusion(){
  begin(101);rework_waves::timeline.home=true;rework_waves::timeline.active_ticks=600*24;g.current_wave_id=8;
  auto original=add(79,4,1800,1600);original->energy=200*256;const auto before=*original;
  auto caster=rework_waves::create(79,43);CHECK(caster);const auto pos=caster->flingy.position;
- auto a=add(0,player_owner(),pos.x+100,pos.y);a->flags=1;auto b=add(0,player_owner(),pos.x+120,pos.y+20);b->flags=1;
+ auto a=add(0,player_owner(),pos.x+120,pos.y);a->flags=1;auto b=add(0,player_owner(),pos.x+140,pos.y+20);b->flags=1;
+ bw::SpriteScr visible{};visible.visibility_mask=U8(1u<<caster->player);a->flingy.sprite=b->flingy.sprite=&visible;enemy_progression::research(caster->player,19);
  game.frame_count=96;rework_waves::timeline.active_ticks+=4*24;rework_waves::release_and_orders();CHECK(caster->order==142 && rework_curses::identity(caster)->last_spell==96);
  CHECK(std::memcmp(original,&before,sizeof(before))==0);const auto previous=orders;game.frame_count=120;rework_waves::release_and_orders();CHECK(orders==previous);
  // A type reference owned by anybody in the original CHK conservatively

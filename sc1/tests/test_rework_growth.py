@@ -92,6 +92,22 @@ class ReworkGrowthTests(unittest.TestCase):
                     if draw[0]['id'] not in owned:owned.append(draw[0]['id'])
                 if not found:mission=progression.next_missions(mission)[0]
 
+    def test_displayed_unchosen_manuals_reach_next_offer_and_reconnect_is_immutable(self):
+        with patch.object(policy,'rolled_rarity',return_value='common'):
+            state=self.load()
+        displayed={x['id'] for x in state['offer']['candidates']}
+        self.assertEqual(len(displayed),4)
+        first_rows=self.query('SELECT offer_id,candidates_json FROM growth_offers WHERE candidates_json IS NOT NULL')
+        self.store=CampaignStore(self.path,runtime_catalog_path=self.catalog_path)
+        with patch.object(rework_growth,'recent_manuals',side_effect=AssertionError('Existing offer must not redraw')):
+            self.assertEqual(self.load()['offer'],state['offer'])
+        completed=self.finish()
+        with patch.object(policy,'draw_candidates',wraps=policy.draw_candidates) as sampler:
+            self.load(phase=2,nonce=completed['nonce'])
+        self.assertEqual(sampler.call_args.kwargs['recent_manuals'],displayed)
+        for identity,serialized in first_rows:
+            self.assertEqual(self.query('SELECT candidates_json FROM growth_offers WHERE offer_id=?',(identity,)),[(serialized,)])
+
     def test_wire_v2_preserves_high_curse_and_u32_rank(self):
         manual=next(x for x in self.catalog['talents'] if x.get('repeatable'))
         curse=self.catalog['curses'][-1]
@@ -106,7 +122,7 @@ class ReworkGrowthTests(unittest.TestCase):
 
     def test_three_repeat_ranks_restart_and_immutable_checkpoints(self):
         manual=next(x for x in self.catalog['talents'] if x.get('repeatable'))
-        def fixed(catalog,mission,phase,owned,rng):return [manual]
+        def fixed(catalog,mission,phase,owned,rng,**kwargs):return [manual]
         nonce=None;snapshots=[]
         with patch('sc1.campaign.rework_growth.candidates',side_effect=fixed):
             for phase in (1,2,3):

@@ -223,14 +223,15 @@ inline void rework_matrix_reserve_and_energy_overflow(){
     vessel->energy=0;pulse(102);CHECK(!vessel->energy&&!s->energy_reserve);
     target->matrix_timer=0;shield->reserve=1000;pulse(103);CHECK(!shield->reserve);finish();
 }
+inline U32 __cdecl order_targeting(bw::Unit* u,U32 order,bw::Unit* target,U32 x,U32 y,std::uint16_t* error){return rework_fixture::targeting(u,order==115?1:12,target,228,x,y,error);}
 inline void rework_feedback_targeting_and_spell_costs(){
     using namespace rework_fixture;begin({123,15,63,85,38});auto archon=unit(63,1,100,100),enemy=unit(9,6,120,100);auto s=rework_combat_v5::state(enemy);s->energy_reserve=44*256;
     std::int32_t damage=256*256;g.normal_hit=false;{rework_combat_v5::DamageScope scope(enemy,archon,106,1,damage);CHECK(damage==375*256);}CHECK(!s->energy_reserve&&s->mark==172);
     auto ghost=unit(1,1,100,100),organic=unit(37,6,120,100);std::uint16_t error=0;const auto flags=raw_value(0,22,37);
-    CHECK(rework_combat_v5::tech_target_hook(ghost,1,organic,0,0,0,&error,targeting)==1);CHECK(raw_value(0,22,37)==flags);ghost->player=6;CHECK(!rework_combat_v5::tech_target_hook(ghost,1,organic,0,0,0,&error,targeting));
+    CHECK(rework_combat_v5::order_target_hook(ghost,115,organic,0,0,&error,order_targeting)==1);CHECK(raw_value(0,22,37)==flags);ghost->player=6;CHECK(!rework_combat_v5::order_target_hook(ghost,115,organic,0,0,&error,order_targeting));
     auto queen=unit(45,1,100,100),cc=unit(106,6,120,100);cc->flingy.hitpoints=std::int32_t(effective_max_hp(cc)*7/10);const auto hp=cc->flingy.hitpoints;
-    CHECK(rework_combat_v5::tech_target_hook(queen,12,cc,0,0,0,&error,targeting));CHECK(cc->flingy.hitpoints==hp);
-    cc->flingy.hitpoints=std::int32_t(effective_max_hp(cc)*8/10);CHECK(!rework_combat_v5::tech_target_hook(queen,12,cc,0,0,0,&error,targeting));
+    CHECK(rework_combat_v5::order_target_hook(queen,27,cc,0,0,&error,order_targeting));CHECK(cc->flingy.hitpoints==hp);
+    cc->flingy.hitpoints=std::int32_t(effective_max_hp(cc)*8/10);CHECK(!rework_combat_v5::order_target_hook(queen,27,cc,0,0,&error,order_targeting));
     ghost->player=1;ghost->energy=200*256;ghost->order=115;{rework_combat_v5::OrderScope scope(ghost);ghost->energy-=100*256;}CHECK(ghost->energy==130*256);
     {rework_combat_v5::OrderScope scope(ghost);}CHECK(ghost->energy==130*256);finish();
 }
