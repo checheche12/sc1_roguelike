@@ -63,6 +63,7 @@ inline constexpr U8 cost_read_original[4][9]={
     {0x43,0x0f,0xb7,0x8c,0x48,0xe0,0xc4,0xe5,0x00},
     {0x43,0x0f,0xb7,0x84,0x48,0x10,0xc3,0xe5,0x00}};
 inline constexpr U8 unit_id_witness[]={0x45,0x0f,0xb7,0x4e,0x1a};
+inline constexpr U8 category_witness[]={0x41,0x0f,0xb6,0xcf,0x83,0xe9,0x01,0x0f,0x84,0xc0,0x01,0x00,0x00,0x83,0xe9,0x01};
 inline constexpr U8 final_witness[]={0x48,0x8b,0x5d,0xd8,0x48,0x8b,0x45,0xd0};
 inline constexpr U8 relay_unwind[]={1,16,9,0,16,0x42,12,0x02,10,0x02,8,0x02,6,0x02,4,0x02,3,0x02,2,0x02,1,0x02,0,0};
 inline U8* module=nullptr,*code=nullptr;
@@ -80,8 +81,12 @@ inline const bw::Unit* selected() noexcept {
 inline U64 costs(const bw::Unit* unit,U32 id,U32 mineral,U32 gas) noexcept {
     U64 value=0;return read(unit,id,value) ? (value&0xffffffffu):pack(mineral,gas,0);
 }
-inline void __cdecl store_costs(U32 id,U32 mineral,U32 gas) noexcept {
-    if(!module)return;const U64 result=costs(selected(),id,mineral,gas);
+// R15B is the native tooltip category: 1=unit, 2=upgrade, 3=energy,
+// 4=technology, 5=unit without supply. The shared output stores also receive
+// technology prices; never reinterpret their IDs as units.dat indices.
+inline void __cdecl store_costs(U32 id,U32 mineral,U32 gas,U32 category) noexcept {
+    if(!module)return;category&=255u;
+    const U64 result=(category==1 || category==5) ? costs(selected(),id,mineral,gas):pack(mineral,gas,0);
     const std::uint16_t out[2]={std::uint16_t(result),std::uint16_t(result>>16)};
     // These two words are the formatter's own output, not simulation/DAT data.
     std::memcpy(module+output_rva,out,sizeof(out));
@@ -102,7 +107,8 @@ inline bool relocated_read(U8* base,U32 rva,const U8 (&expected)[9],const void* 
     if(captured)std::memcpy(captured,bytes,9);return true;
 }
 inline bool witnesses() noexcept {
-    if(!module || !native_engine_hooks::match(module+0x3ee1f3,unit_id_witness,sizeof(unit_id_witness)) ||
+    if(!module || !native_engine_hooks::match(module+0x3ee026,category_witness,sizeof(category_witness)) ||
+       !native_engine_hooks::match(module+0x3ee1f3,unit_id_witness,sizeof(unit_id_witness)) ||
        !native_engine_hooks::match(module+cost_site+sizeof(cost_original),final_witness,sizeof(final_witness)))return false;
     for(U32 i=0;i<4;i++)if(!native_engine_hooks::match(module+cost_reads[i],read_witnesses[i],9))return false;
     return true;
@@ -130,7 +136,7 @@ inline void emit_relay(U32 index) noexcept {
     // Save all volatile registers and flags. Native supply branches retain
     // their existing R8/R9/RAX inputs, race masks, and two-per-egg multiplier.
     put({0x9c,0x50,0x51,0x52,0x41,0x50,0x41,0x51,0x41,0x52,0x41,0x53,0x48,0x83,0xec,0x28});
-    if(!index)put({0x41,0x89,0xc8,0x89,0xc2,0x41,0x0f,0xb7,0x4e,0x1a});
+    if(!index)put({0x41,0x89,0xc8,0x89,0xc2,0x41,0x0f,0xb7,0x4e,0x1a,0x45,0x89,0xf9});
     else put({0x44,0x89,0xc9});
     put({0x48,0xb8});const auto target=reinterpret_cast<std::uintptr_t>(index ? reinterpret_cast<void*>(supply):reinterpret_cast<void*>(store_costs));
     std::memcpy(out+n,&target,8);n+=8;put({0xff,0xd0});

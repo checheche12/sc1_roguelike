@@ -826,13 +826,14 @@ struct DamageObservationScope {
 #include "include/rework_economy_v5.h"
 #include "include/rework_cargo_v5.h"
 #include "include/rework_carrier_v5.h"
+#include "include/campaign_research.h"
 U32 __cdecl owner_attack_range_hook(bw::Unit* u,U32 id,RangeFn original) noexcept {return rework_combat_v5::attack_range(u,owner_range_hook(u,id,original));}
 U32 __cdecl owner_sight_range_hook(bw::Unit* u,U32 ignore_blind,RangeFn original) noexcept {return rework_combat_v5::sight_range(u,owner_range_hook(u,ignore_blind,original),ignore_blind);}
 void __cdecl owner_unit_hook(bw::Unit* u,UnitFn original) noexcept {
     OwnerDatScope scope(unit_owner(u),unit_owner(u),u);rework_cargo_v5::OrderScope cargo(u);if(!cargo.allow_original())return;rework_economy_v5::UnitScope economy(u);original(u);
 }
 void __cdecl owner_order_hook(bw::Unit* u,UnitFn original) noexcept {
-    HallucinationCreationScope creation(u && u->order==148);rework_carrier_v5::LaunchScope launch(u);rework_combat_v5::OrderScope rework(u,original);if(!rework.handled())owner_unit_hook(u,original);
+    campaign_research::Scope research(u);HallucinationCreationScope creation(u && u->order==148);rework_carrier_v5::LaunchScope launch(u);rework_combat_v5::OrderScope rework(u,original);if(!rework.handled())owner_unit_hook(u,original);
 }
 void __cdecl owner_secondary_hook(bw::Unit* u,UnitFn original) noexcept {rework_carrier_v5::TrainingScope carrier(u);owner_unit_hook(u,original);}
 void __cdecl owner_damage_hook(bw::Unit* u,std::int32_t amount,bw::Unit* attacker,U32 player,U32 show,DamageFn original) noexcept {

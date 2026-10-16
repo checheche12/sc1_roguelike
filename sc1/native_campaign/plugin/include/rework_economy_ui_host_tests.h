@@ -3,7 +3,7 @@
 #include "rework_economy_ui_specs.generated.h"
 // Production publication and the exact executable x64 relays in an owned host.
 namespace host_test {
-inline constexpr std::size_t rework_economy_ui_group_count=4;
+inline constexpr std::size_t rework_economy_ui_group_count=5;
 namespace economy_ui_fixture {
 inline U8* image=nullptr;inline U32 writes=0,reject_write=0;
 inline U32 __cdecl writer(std::size_t address,const U8* bytes,std::size_t length){
@@ -22,6 +22,7 @@ inline void prepare(U32 relocation=0){
     using namespace rework_economy_ui;
     cleanup();image=static_cast<U8*>(VirtualAlloc(nullptr,native_engine_hooks::kImageSize,MEM_COMMIT|MEM_RESERVE,PAGE_READWRITE));CHECK(image);
     std::memcpy(image+0x3ee1f3,rework_economy_ui_specs::production_branch,sizeof(rework_economy_ui_specs::production_branch));
+    std::memcpy(image+0x3ee026,category_witness,sizeof(category_witness));
     std::memcpy(image+cost_site,cost_original,sizeof(cost_original));std::memcpy(image+0x3ee1f3,unit_id_witness,sizeof(unit_id_witness));
     std::memcpy(image+cost_site+sizeof(cost_original),final_witness,sizeof(final_witness));
     for(U32 i=0;i<3;i++){std::memcpy(image+supply_sites[i],supply_original[i],9);const std::int32_t offset=0xe5cc30+relocation;std::memcpy(image+supply_sites[i]+5,&offset,4);}
@@ -35,25 +36,25 @@ inline bool verified(U32 relocation=0){using namespace rework_economy_ui;return 
 inline void selection(bw::Unit* unit){std::memcpy(image+rework_economy_ui::selected_rva,&unit,sizeof(unit));}
 inline U8* executable(const std::vector<U8>& bytes){auto p=static_cast<U8*>(VirtualAlloc(nullptr,4096,MEM_COMMIT|MEM_RESERVE,PAGE_READWRITE));CHECK(p);std::memcpy(p,bytes.data(),bytes.size());DWORD old=0;CHECK(VirtualProtect(p,4096,PAGE_EXECUTE_READ,&old));CHECK(FlushInstructionCache(GetCurrentProcess(),p,bytes.size()));return p;}
 inline void append64(std::vector<U8>& out,std::uintptr_t value){for(U32 i=0;i<8;i++)out.push_back(U8(value>>(i*8)));}
-inline void invoke_cost(U32 id,U32 mineral,U32 gas){
+inline void invoke_cost(U32 id,U32 mineral,U32 gas,U32 category=1){
     // Win64(button*,mineral,gas) -> R14=button,EAX=mineral,ECX=gas.
-    std::vector<U8> bytes={0x41,0x56,0x48,0x83,0xec,0x20,0x49,0x89,0xce,0x89,0xd0,0x44,0x89,0xc1,0x49,0xbb};
+    std::vector<U8> bytes={0x41,0x56,0x41,0x57,0x48,0x83,0xec,0x28,0x45,0x89,0xcf,0x49,0x89,0xce,0x89,0xd0,0x44,0x89,0xc1,0x49,0xbb};
     append64(bytes,reinterpret_cast<std::uintptr_t>(rework_economy_ui::code));
-    for(int b:{0x41,0xff,0xd3,0x48,0x83,0xc4,0x20,0x41,0x5e,0xc3})bytes.push_back(U8(b));
+    for(int b:{0x41,0xff,0xd3,0x48,0x83,0xc4,0x28,0x41,0x5f,0x41,0x5e,0xc3})bytes.push_back(U8(b));
     auto helper=executable(bytes);U8 button[32]{};const auto type=std::uint16_t(id);std::memcpy(button+0x1a,&type,2);
-    reinterpret_cast<void (__cdecl*)(const void*,U32,U32)>(helper)(button,mineral,gas);CHECK(VirtualFree(helper,0,MEM_RELEASE));
+    reinterpret_cast<void (__cdecl*)(const void*,U32,U32,U32)>(helper)(button,mineral,gas,category);CHECK(VirtualFree(helper,0,MEM_RELEASE));
 }
 inline void invoke_native_cost(U32 id,bool with_supply){
     namespace ui=rework_economy_ui;
     // Execute the production formatter's actual global-array read bytes,
     // followed by the installed relay's real stores. No assumed total unit
     // price is fed to the adapter: morph components come from native DAT.
-    std::vector<U8> bytes={0x41,0x56,0x48,0x83,0xec,0x20,0x49,0x89,0xce,0x49,0xb8};append64(bytes,reinterpret_cast<std::uintptr_t>(image));
+    std::vector<U8> bytes={0x41,0x56,0x41,0x57,0x48,0x83,0xec,0x28,0x41,0xbf,0x01,0x00,0x00,0x00,0x49,0x89,0xce,0x49,0xb8};append64(bytes,reinterpret_cast<std::uintptr_t>(image));
     if(with_supply)bytes.insert(bytes.end(),std::begin(ui::unit_id_witness),std::end(ui::unit_id_witness));
     else for(int b:{0x41,0x0f,0xb7,0x46,0x1a})bytes.push_back(U8(b));
     for(U32 i=with_supply ? 2u:0u;i<(with_supply ? 4u:2u);i++)bytes.insert(bytes.end(),ui::read_witnesses[i],ui::read_witnesses[i]+9);
     bytes.push_back(0x49);bytes.push_back(0xbb);append64(bytes,reinterpret_cast<std::uintptr_t>(ui::code));
-    for(int b:{0x41,0xff,0xd3,0x48,0x83,0xc4,0x20,0x41,0x5e,0xc3})bytes.push_back(U8(b));
+    for(int b:{0x41,0xff,0xd3,0x48,0x83,0xc4,0x28,0x41,0x5f,0x41,0x5e,0xc3})bytes.push_back(U8(b));
     auto helper=executable(bytes);U8 button[32]{};const auto type=std::uint16_t(id);std::memcpy(button+0x1a,&type,2);
     reinterpret_cast<void (__cdecl*)(const void*)>(helper)(button);CHECK(VirtualFree(helper,0,MEM_RELEASE));
 }
@@ -65,8 +66,8 @@ inline std::array<std::uint16_t,8> invoke_native_production(U32 id){
     // continuation is replaced with RET in this owned synthetic procedure.
     auto continuation=image+ui::cost_site+14;continuation[0]=0xc3;
     DWORD old=0;CHECK(VirtualProtect(image+0x3ee000,4096,PAGE_EXECUTE_READ,&old));CHECK(FlushInstructionCache(GetCurrentProcess(),image+0x3ee000,4096));
-    std::vector<U8> bytes={0x57,0x41,0x56,0x48,0x83,0xec,0x28,0x49,0x89,0xce,0x49,0xbb};append64(bytes,reinterpret_cast<std::uintptr_t>(image+0x3ee1f3));
-    for(int b:{0x41,0xff,0xd3,0x48,0x83,0xc4,0x28,0x41,0x5e,0x5f,0xc3})bytes.push_back(U8(b));
+    std::vector<U8> bytes={0x57,0x41,0x56,0x41,0x57,0x48,0x83,0xec,0x20,0x41,0xbf,0x01,0x00,0x00,0x00,0x49,0x89,0xce,0x49,0xbb};append64(bytes,reinterpret_cast<std::uintptr_t>(image+0x3ee1f3));
+    for(int b:{0x41,0xff,0xd3,0x48,0x83,0xc4,0x20,0x41,0x5f,0x41,0x5e,0x5f,0xc3})bytes.push_back(U8(b));
     auto helper=executable(bytes);U8 button[32]{};const auto type=std::uint16_t(id);std::memcpy(button+0x1a,&type,2);
     reinterpret_cast<void (__cdecl*)(const void*)>(helper)(button);CHECK(VirtualFree(helper,0,MEM_RELEASE));
     DWORD ignored=0;CHECK(VirtualProtect(image+0x3ee000,4096,old,&ignored));std::memcpy(continuation,ui::final_witness,sizeof(ui::final_witness));
@@ -161,7 +162,24 @@ inline void rework_economy_ui_concurrent_publication_and_fallback(){
     catch(...){stop=true;renderer.join();throw;}
     stop=true;renderer.join();CHECK(!bad);ui::reset();
 }
+inline void rework_economy_ui_nonproduction_prices(){
+    namespace ui=rework_economy_ui;using namespace economy_ui_fixture;
+    reset();auto own=add(135,1,500,500);refresh_units();GrowthSnapshot s{};s.wire_version=2;
+    const U32 discount=238+155;s.talent_bits[discount/32]|=1u<<(discount%32);
+    CHECK(apply_snapshot(nullptr,s));prepare();CHECK(ui::publish(true));selection(own);CHECK(install() && verified());
+    // Execute the real registered x64 relay, with overlapping unit/tech IDs.
+    // Native research/upgrade prices and energy displays must pass unchanged.
+    for(U32 category:{2u,3u,4u,0u,6u})for(U32 id=0;id<61;id++){
+        const U32 mineral=200+id*25,gas=100+id*13;
+        invoke_cost(id,mineral,gas,category);std::uint16_t out[2]{};
+        std::memcpy(out,image+ui::output_rva,4);CHECK(out[0]==mineral && out[1]==gas);
+    }
+    for(U32 category:{1u,5u}){invoke_cost(103,999,888,category);std::uint16_t out[2]{};
+        std::memcpy(out,image+ui::output_rva,4);CHECK(out[0]==40 && out[1]==80);}
+    cleanup();
+}
 inline void run_rework_economy_ui_groups(){
+    rework_economy_ui_nonproduction_prices();
     rework_economy_ui_prices_and_snapshot_epochs();rework_economy_ui_real_relays_and_unwind();
     rework_economy_ui_relocations_and_rejected_witnesses();rework_economy_ui_concurrent_publication_and_fallback();
 }
