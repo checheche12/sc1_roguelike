@@ -135,7 +135,7 @@ def build(*, receipt=RECEIPT, protocol=True):
     before = source_entries()
     manager_before=manager_source_entries()
     catalogs = {name:row['sha256'] for name,row in catalog_pins.items()}
-    flags = ["/nologo", "/std:c++17", "/EHsc", "/MT", "/utf-8", "/W4", "/WX"]
+    flags = ["/nologo", "/std:c++17", "/EHsc", "/MT", "/utf-8", "/W4", "/WX", "/O2"]
     host = OUTPUT / "native_host_tests.exe"
     dll = OUTPUT / "native_plugin.dll"
     commands = []

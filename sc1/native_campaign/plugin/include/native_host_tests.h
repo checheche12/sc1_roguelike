@@ -672,6 +672,7 @@ void real_managed_dat_assets() {
 #include "wave_targeting_host_tests.h"
 #include "rework_wave_host_tests.h"
 #include "enemy_progression_host_tests.h"
+#include "enemy_performance_host_tests.h"
 #include "targeting_bridge_host_tests.h"
 #include "rework_cargo_v5_host_tests.h"
 #include "rework_carrier_v5_host_tests.h"
@@ -686,6 +687,7 @@ void real_managed_dat_assets() {
 int main() {
     using namespace host_test;
     try {
+        char perf_only[8]{};if(GetEnvironmentVariableA("SC1_ENEMY_PERF_ONLY",perf_only,sizeof(perf_only))){run_enemy_performance_groups();return 0;}
         exact_stats_hp_supply();validation_atomicity_and_stacks();ui_lifetime();fingerprint_and_save_scope();
         loaded_save_handle_regression();original_objectives_reminder();
         mailbox_ui_goal_integration();early_goal_orders_remaining_phases();cumulative_snapshots_preserve_live_ratios_and_supply();stage1_growth_keeps_waves_playable();paused_protocol_pump_and_reentrancy();failure_keeps_victory_closed();extended_deaths_fail_closed();dedicated_counter_mirror_contract();extended_completed_phase_milestones();original_goal_completed_counts_and_ack_mirror();wave_host_integration();api_lifecycle_boundaries();dat_mutation_contract_and_diagnostics();real_managed_dat_assets();
@@ -699,6 +701,7 @@ int main() {
         run_wave_targeting_groups();
         run_rework_wave_groups();
         run_enemy_progression_groups();
+        run_enemy_performance_groups();
         run_targeting_bridge_groups();
         run_rework_cargo_groups();
         run_rework_carrier_groups();
@@ -712,6 +715,6 @@ int main() {
         run_talent_rank_groups();
         abandon_session();g.baseline.clear();g.game=nullptr;
         CHECK(late_init_calls==0);
-        std::printf("PASS native host integration: %zu groups, %d checks; game process never accessed.\n",87u+std::size(combat_audit::cases)+max_hp_engine_group_count+samase_status_ui_group_count+samase_weapon_ui_group_count+samase_armor_ui_group_count+trampoline_unwind_group_count+wave_targeting_group_count+wave_progression_group_count+talent_rank_group_count+rework_wave_group_count+enemy_progression_group_count+targeting_bridge_group_count+rework_cargo_group_count+rework_carrier_group_count+rework_economy_group_count+rework_binding_group_count+rework_lighting_v5_group_count+rework_combat_v5_group_count+rework_economy_ui_group_count+rework_shield_ui_v5_group_count,checks);return 0;
+        std::printf("PASS native host integration: %zu groups, %d checks; game process never accessed.\n",87u+std::size(combat_audit::cases)+max_hp_engine_group_count+samase_status_ui_group_count+samase_weapon_ui_group_count+samase_armor_ui_group_count+trampoline_unwind_group_count+wave_targeting_group_count+wave_progression_group_count+talent_rank_group_count+rework_wave_group_count+enemy_progression_group_count+enemy_performance_group_count+targeting_bridge_group_count+rework_cargo_group_count+rework_carrier_group_count+rework_economy_group_count+rework_binding_group_count+rework_lighting_v5_group_count+rework_combat_v5_group_count+rework_economy_ui_group_count+rework_shield_ui_v5_group_count,checks);return 0;
     } catch(const std::exception& e){std::fprintf(stderr,"FAIL %s reason=%s\n",e.what(),g.apply_failure ? g.apply_failure : "none");return 1;}
 }

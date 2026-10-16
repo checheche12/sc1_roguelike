@@ -303,7 +303,13 @@ bool valid_unit(const bw::Unit* u) noexcept {
     return u && g.units && p>=base && (p-base)%sizeof(bw::Unit)==0 &&
            (p-base)/sizeof(bw::Unit)<g.units_count;
 }
+#ifdef SC1_NATIVE_HOST_TEST
+std::uint64_t host_unit_scans=0,host_unit_visits=0;
+#endif
 template<class F> void living_units(F fn) {
+#ifdef SC1_NATIVE_HOST_TEST
+    ++host_unit_scans;
+#endif
     refresh_units();
     std::vector<U8> seen(g.units_count,0);
     for (auto head:{g.first_active,g.first_hidden}) {
@@ -312,6 +318,9 @@ template<class F> void living_units(F fn) {
             std::size_t index=static_cast<std::size_t>(u-g.units);
             if (seen[index]) break;
             seen[index]=1;
+#ifdef SC1_NATIVE_HOST_TEST
+            ++host_unit_visits;
+#endif
             auto next=reinterpret_cast<bw::Unit*>(u->flingy.next);
             if (u->flingy.hitpoints>0 && u->order!=0) fn(u);
             u=next;
@@ -495,8 +504,8 @@ bw::Unit* effect_body(bw::Unit* u) noexcept {
     return valid_unit(main) && main->unit_id==main_id && main->subunit==u && main->player==u->player ? main : nullptr;
 }
 bool regular_combat_type(U32 id) noexcept {
-    for(auto unit:frozen::kRegularCombatUnits)if(unit==id)return true;
-    return false;
+    static constexpr auto allowed=[](){std::array<bool,228> value{};for(auto unit:frozen::kRegularCombatUnits)if(unit<value.size())value[unit]=true;return value;}();
+    return id<allowed.size()&&allowed[id];
 }
 bool regular_enemy(const bw::Unit* u) noexcept {return u && is_enemy(u->player) && regular_combat_type(u->unit_id) && !(u->flags&0x40000000u);}
 bool hallucination(const bw::Unit* u) noexcept {return u && (u->flags&0x40000000u)!=0;}

@@ -220,6 +220,7 @@ inline void ammunition(bw::Unit* u) {
 #include "enemy_spell_runtime.h"
 inline void caster_order(bw::Unit* u,rework_curses::Identity& v) {auto_spell(u,v);}
 inline void release_and_orders() {
+ std::array<bw::Unit*,spell_search::casters_per_frame> due{};
  living_units([&](bw::Unit* u){
   if(rework_curses::body(u)!=u)return;
   if(rework_curses::identities.size()==g.units_count){const auto& raw=rework_curses::identities[static_cast<std::size_t>(u-g.units)];if(raw.wave && raw.unique==u->minor_unique_index && raw.type==u->unit_id && raw.owner!=u->player)rework_curses::forget(u);}
@@ -228,11 +229,17 @@ inline void release_and_orders() {
   ammunition(u);
   if(v->appearance_until && timeline.second()>=v->appearance_until){u->flags=(u->flags&~0x04009000u)|v->saved_flags;v->appearance_until=0;wave_targeting::issue(u);}
   if(v->appearance_until)return;
-  caster_order(u,*v);
+  if(spell_due(u,*v))for(std::size_t i=0;i<due.size();i++){
+   auto other=due[i];auto previous=other?rework_curses::identity(other):nullptr;
+   if(!previous||v->last_scan<previous->last_scan||(v->last_scan==previous->last_scan&&u<other)){
+    for(std::size_t j=due.size()-1;j>i;j--)due[j]=due[j-1];due[i]=u;break;
+   }
+  }
   // Lurkers stop only once they reach an actual hostile target; retain native
   // burrow/weapon execution and never rewrite the original map AI.
   if(u->unit_id==103 && !(u->flags&0x10u) && g.order && (!v->last_scan || g.game()->frame_count-v->last_scan>=24)){v->last_scan=g.game()->frame_count;bool close_target=false;living_units([&](bw::Unit* p){if(p->player==player_owner() && wave_targeting::distance(p->flingy.position.x,p->flingy.position.y,u->flingy.position.x,u->flingy.position.y)<192ll*192)close_target=true;});if(close_target)g.order(u,116,0,0,nullptr,228);}
  });
+ for(auto u:due)if(u)if(auto v=rework_curses::identity(u))caster_order(u,*v);
 }
 inline void tick(bool ready,bool blocked,bool goal) {
  if(!enabled() || goal){if(current || timeline.initialized)reset();return;}
