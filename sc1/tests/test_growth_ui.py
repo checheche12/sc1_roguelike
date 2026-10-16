@@ -101,7 +101,8 @@ class GrowthWindowTests(unittest.TestCase):
         labels = self.inspect_hidden_read_only_dialog()
         for curse in state["curses"]:
             self.assertTrue(any(f"{curse['name']} · {curse['stacks']}중첩" == label for label in labels))
-        self.assertTrue(all(item["name"] in labels for item in state["talents"]))
+        self.assertTrue(all(item["name"] + (f" · {item['stacks']}중첩" if 'stacks' in item else '') in labels
+                            for item in state["talents"]))
         self.assertEqual(len(self.app.store.growth_status()["history"]), 5)
 
     def test_growth_wait_event_directs_selection_to_game(self):

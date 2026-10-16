@@ -34,8 +34,9 @@ def enable(conn, catalog_path=None):
                 if field in new:old[field]=copy.deepcopy(new[field])
             changed=True
     if changed:
-        for field in ('balance_revision','talent_power_halves'):
+        for field in ('balance_revision','talent_power_quarters','economy_talents_scaled'):
             if field in catalog:pinned[field]=copy.deepcopy(catalog[field])
+        if 'talent_power_quarters' in catalog:pinned.pop('talent_power_halves',None)
         validate_catalog(pinned,2)
         conn.execute('UPDATE growth_rework_catalog SET catalog_json=? WHERE id=1',
                      (json.dumps(pinned,ensure_ascii=False,sort_keys=True),))
@@ -53,7 +54,7 @@ def overlay(conn, catalog):
         positions={x[index]:x['id'] for x in result[kind]}
         known={x['id'] for x in result[kind]}
         for item in extra[kind]:
-            if item.get('rework_revision')!=5 and item.get('balance_revision')!=6:continue
+            if item.get('rework_revision')!=5 and item.get('balance_revision') not in (6,7):continue
             if item[index] in positions and positions[item[index]]!=item['id']:
                 raise GrowthError('catalog_incompatible','기존 성장 위치와 개편안 위치가 충돌합니다.')
             if item['id'] not in known:result[kind].append(copy.deepcopy(item))

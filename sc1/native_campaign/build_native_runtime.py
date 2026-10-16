@@ -35,7 +35,7 @@ def validate_catalog_bundle(original,legacy,rework,*,require_implemented=True):
     if (len(legacy['talents']),len(legacy['curses']),len(rework['talents']),len(rework['curses']))!=(238,15,400,50):
         raise ValueError('Release requires legacy238/15 plus revision-five162/35')
     for kind in ('talents','curses'):
-        expected=decorate(copy.deepcopy(legacy)) if rework.get('balance_revision')==6 else legacy
+        expected=decorate(copy.deepcopy(legacy)) if rework.get('balance_revision') in (6,7) else legacy
         old={x['id']:x for x in expected[kind]}
         actual={x['id']:x for x in rework[kind]}
         if any(actual.get(identity)!=item for identity,item in old.items()):
@@ -59,14 +59,14 @@ def validate_catalog_bundle(original,legacy,rework,*,require_implemented=True):
 
 
 def catalog_inputs(*,require_implemented=True):
-    from sc1.campaign.talent_balance import POWER_HALVES
+    from sc1.campaign.talent_balance import power_quarters
     paths={name:ROOT.parent/'campaign'/name for name in CATALOG_NAMES}
     catalogs={name:read_json(path) for name,path in paths.items()}
     contract=validate_catalog_bundle(*(catalogs[name] for name in CATALOG_NAMES),require_implemented=require_implemented)
     rework=catalogs['runtime_talents_v5.json']
     power=(PLUGIN/'include/talent_power.generated.h').read_text(encoding='utf8')
-    actual_power=[int(x) for x in re.search(r'kPowerHalves\[400\]=\{([^}]+)\}',power)[1].split(',')]
-    if actual_power!=[POWER_HALVES[x['rarity']] for x in rework['talents']]:
+    actual_power=[int(x) for x in re.search(r'kPowerQuarters\[400\]=\{([^}]+)\}',power)[1].split(',')]
+    if actual_power!=[power_quarters(x) for x in rework['talents']]:
         raise ValueError('Native talent strength differs from the release catalog')
     frozen=(PLUGIN/'include/frozen_catalog.generated.h').read_text(encoding='utf8')
     ranks=(PLUGIN/'include/rework_catalog.generated.h').read_text(encoding='utf8')

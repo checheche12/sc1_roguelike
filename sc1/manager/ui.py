@@ -22,7 +22,7 @@ from .auto_connect import AutoConnectTarget, publish_request, read_request, requ
 from sc1.bridge.discovery import discover_games
 from sc1.campaign.catalog import ORIGINAL_PROFILE, missions_for_profile
 from sc1.campaign.missions import load_missions, mission_for_id
-from sc1.campaign.display_text import concise_description
+from sc1.campaign.display_text import concise_description, current_owned_descriptions
 
 
 def record_summary(state: dict) -> str:
@@ -340,7 +340,7 @@ class ManagerWindow:
     def show_growth(self):
         store = self.store
         try:
-            current = store.growth_status()
+            current = current_owned_descriptions(store.growth_status(),store.runtime_catalog_path)
         except Exception as exc:
             messagebox.showerror("보유 성장을 읽을 수 없음", str(exc), parent=self.root)
             return
@@ -360,7 +360,7 @@ class ManagerWindow:
         selector.pack(anchor="w",fill="x",pady=(0,8))
         def selected_status():
             cid=next(key for key,label in campaign_labels.items() if label==selected_campaign.get())
-            return store.growth_status_for_campaign(cid)
+            return current_owned_descriptions(store.growth_status_for_campaign(cid),store.runtime_catalog_path)
         hint = tk.StringVar()
         ttk.Label(frame, textvariable=hint, wraplength=650).pack(anchor="w", pady=(0, 10))
         scroll = ttk.Frame(frame)

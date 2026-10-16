@@ -7,18 +7,18 @@ inline bool enabled=false; // Historical mechanism fixtures; QA6 suite opts in.
 #else
 inline constexpr bool enabled=true;
 #endif
-inline U32 halves(U32 bit) noexcept {return enabled&&bit<400 ? kPowerHalves[bit]:2u;}
+inline U32 quarters(U32 bit) noexcept {return enabled&&bit<400 ? kPowerQuarters[bit]:4u;}
 inline U32 amount(U32 bit,std::uint64_t value) noexcept {
-    return U32(std::min<std::uint64_t>(0x7fffffffu,(std::uint64_t(value)*halves(bit)+1)/2));
+    return U32(std::min<std::uint64_t>(0x7fffffffu,(std::uint64_t(value)*quarters(bit)+2)/4));
 }
 inline U32 v5(U32 ordinal,std::uint64_t value) noexcept {return amount(238+ordinal,value);}
 inline double ratio(U32 bit,double value) noexcept {
-    return std::max(0.1,1.0+(value-1.0)*halves(bit)/2.0);
+    return std::max(0.1,1.0+(value-1.0)*quarters(bit)/4.0);
 }
 inline double rate(U32 ordinal,double value) noexcept {return ratio(238+ordinal,value);}
 inline void multiply(std::uint64_t& n,std::uint64_t& d,U32 bit,U32 a,U32 b) noexcept {
     std::uint64_t x=a,y=b;
-    if(enabled){y=std::uint64_t(b)*2;x=std::uint64_t(std::max<std::int64_t>(std::int64_t(y)/10,std::int64_t(y)+(std::int64_t(a)-b)*halves(bit)));}
+    if(enabled){y=std::uint64_t(b)*4;x=std::uint64_t(std::max<std::int64_t>(std::int64_t(y)/10,std::int64_t(y)+(std::int64_t(a)-b)*quarters(bit)));}
     const auto common=std::gcd(x,y);x/=common;y/=common;
     const auto c1=std::gcd(n,y);n/=c1;y/=c1;
     const auto c2=std::gcd(d,x);d/=c2;x/=c2;
@@ -37,7 +37,7 @@ inline bool numeric(Key key) noexcept {
 }
 inline bool legacy_patch(std::vector<Edit>& edits,const frozen::Patch& p) {
     const Key key{p.table,p.field,p.id};
-    if(!enabled)return plan_edit(edits,key,p.op,p.numerator,p.denominator);
+    if(!enabled||(key.table==0&&(key.field==40||key.field==41||key.field==42||key.field==45)))return plan_edit(edits,key,p.op,p.numerator,p.denominator);
     if(!numeric(key)){
         if(!plan_edit(edits,key,p.op,p.numerator,p.denominator))return false;
         // A damage-type conversion is qualitative. Give its weapon a modest

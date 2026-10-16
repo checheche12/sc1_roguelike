@@ -26,21 +26,23 @@ inline void power_common_precision_and_caps(){
     finish();
 }
 inline void power_economy_actual_native_ledgers(){
+    CHECK(talent_power::quarters(264)==7&&talent_power::quarters(238)==4&&talent_power::quarters(15)==4);
+    reset();CHECK(apply_snapshot(nullptr,economy_snapshot({26})));CHECK(owner_stat(1,{0,8,0})==54*256);
     reset();auto s=economy_snapshot({0,1,3,7,24,151,117});CHECK(apply_snapshot(nullptr,s));
-    CHECK(owner_stat(1,{0,40,0})==25);CHECK(owner_stat(1,{0,40,106})==100);
-    CHECK(owner_stat(1,{0,40,41})==75);CHECK(owner_stat(1,{0,42,41})==15);
-    CHECK(owner_stat(1,{0,40,73})==3);CHECK(owner_stat(1,{0,41,0})==0);
+    CHECK(owner_stat(1,{0,40,0})==40);CHECK(owner_stat(1,{0,40,106})==280);
+    CHECK(owner_stat(1,{0,40,41})==100);CHECK(owner_stat(1,{0,42,41})==150);
+    CHECK(owner_stat(1,{0,40,73})==13);CHECK(owner_stat(1,{0,41,0})==0);
     auto worker_=economy_add(7);worker_->order=90;worker_->unit_specific.bytes[27]=8;worker_->carried_powerup_flags=2;
-    game.minerals[1]=0;{rework_economy_v5::UnitScope scope(worker_);economy_return_original(worker_);}CHECK(game.minerals[1]==13);
+    game.minerals[1]=0;{rework_economy_v5::UnitScope scope(worker_);economy_return_original(worker_);}CHECK(game.minerals[1]==10);
     worker_->order=84;worker_->unit_specific.bytes[27]=8;worker_->carried_powerup_flags=1;
-    game.gas[1]=0;{rework_economy_v5::UnitScope scope(worker_);economy_return_original(worker_);}CHECK(game.gas[1]==13);
+    game.gas[1]=0;{rework_economy_v5::UnitScope scope(worker_);economy_return_original(worker_);}CHECK(game.gas[1]==10);
     CHECK(talent_power::discount(3,1,1,2)==1&&talent_power::discount(3,0,1,2)==0);
 }
 inline void power_epic_legendary_projectiles_and_qualitative(){
     using namespace rework_fixture;begin({18,53});auto marine=unit(0,1,100,100),target=unit(37,6,120,100);
-    auto b=bullet(marine,target,0);CHECK(rework_combat_v5::projectiles.at(b).percent==180);
-    CHECK(rework_combat_v5::pending_shots.size()==3);CHECK(rework_combat_v5::pending_shots[0].percent==200);
-    CHECK(rework_combat_v5::pending_shots[1].percent==180&&rework_combat_v5::pending_shots[2].percent==180);finish();
+    auto b=bullet(marine,target,0);CHECK(rework_combat_v5::projectiles.at(b).percent==150);
+    CHECK(rework_combat_v5::pending_shots.size()==3);CHECK(rework_combat_v5::pending_shots[0].percent==125);
+    CHECK(rework_combat_v5::pending_shots[1].percent==150&&rework_combat_v5::pending_shots[2].percent==150);finish();
     begin({19,46});auto ghost=unit(1,1,100,100),enemy=unit(66,6,120,100);enemy->shields=80*256;game.upgrade_level_sc[6][15]=3;
     g.normal_hit=true;std::int32_t amount=100*256;
     {rework_combat_v5::DamageScope hit(enemy,ghost,2,1,amount);CHECK(rework_upgrade_storage::level(6,15)==0);}
@@ -49,22 +51,22 @@ inline void power_epic_legendary_projectiles_and_qualitative(){
     finish();
 }
 inline void power_carrier_cargo_and_legacy_conversion(){
-    using namespace rework_carrier_tests;begin();talent(130);auto c=carrier(14);CHECK(rework_carrier_v5::capacity(c)==14);
-    {rework_carrier_v5::CountMask mask(c,false);CHECK(c->unit_specific.bytes[16]==8);mask.restore();}CHECK(c->unit_specific.bytes[16]==14);
-    game.upgrade_level_sc[1][43]=1;CHECK(rework_carrier_v5::capacity(c)==18);
+    using namespace rework_carrier_tests;begin();talent(130);auto c=carrier(12);CHECK(rework_carrier_v5::capacity(c)==12);
+    {rework_carrier_v5::CountMask mask(c,false);CHECK(c->unit_specific.bytes[16]==8);mask.restore();}CHECK(c->unit_specific.bytes[16]==12);
+    game.upgrade_level_sc[1][43]=1;CHECK(rework_carrier_v5::capacity(c)==16);
     talent(115);auto shuttle=fresh(69);CHECK(rework_cargo_v5::capacity(shuttle)==16);
     reset();GrowthSnapshot s{};s.talent_bits[0]=1u<<5;CHECK(apply_snapshot(nullptr,s));CHECK(owner_stat(1,{1,7,2})==3);CHECK(owner_stat(1,{1,14,2})==13);
 }
-inline void power_acid_seventeen_and_enemy_curses_unchanged(){
+inline void power_acid_fifteen_and_enemy_curses_unchanged(){
     using namespace rework_fixture;begin({86});auto target=unit(43,6,120,100,true);target->acid_spore_count=9;
     for(U32 i=0;i<12;i++)rework_combat_v5::add_spore(target,255,true);
-    CHECK(target->acid_spore_count==17);CHECK(rework_combat_v5::extra_acid(*rework_combat_v5::acid_state(target))==8);finish();
+    CHECK(target->acid_spore_count==15);CHECK(rework_combat_v5::extra_acid(*rework_combat_v5::acid_state(target))==6);finish();
     begin({102});auto caster=unit(46,1,100,100),victim=unit(37,6,120,100);
     victim->flingy.hitpoints=30*256;victim->plague_timer=75;
     rework_combat_v5::attach(102,victim,caster,600,0,75);
     const U32 tick=original_stat({1,14,60})*256/76;
     victim->flingy.hitpoints-=int(tick);--victim->plague_timer;pulse(101);
-    CHECK(victim->flingy.hitpoints==30*256-int(4*tick));
+    CHECK(victim->flingy.hitpoints==30*256-int(talent_power::v5(102,tick)));
     const auto hp=victim->flingy.hitpoints;pulse(102);CHECK(victim->flingy.hitpoints==hp);finish();
     reset();GrowthSnapshot s{};s.curse_counts[1]=1;s.curse_counts[2]=1;CHECK(apply_snapshot(nullptr,s));
     CHECK(owner_stat(6,{1,14,35})==6&&owner_stat(6,{0,8,37})==9856);
@@ -73,7 +75,7 @@ inline void run_talent_power_groups(){
     talent_power::enabled=true;
     power_all_400_and_combined_owner_isolation();power_common_precision_and_caps();
     power_economy_actual_native_ledgers();power_epic_legendary_projectiles_and_qualitative();
-    power_carrier_cargo_and_legacy_conversion();power_acid_seventeen_and_enemy_curses_unchanged();
+    power_carrier_cargo_and_legacy_conversion();power_acid_fifteen_and_enemy_curses_unchanged();
     talent_power::enabled=false;
 }
 }

@@ -126,6 +126,8 @@ _SUMMARIES = {
 }
 def concise_description(item: dict) -> str:
     """Render current/legacy canonical items without mutating their pinned record."""
+    if item.get('rework_revision')==5 or item.get('effect',{}).get('qa_revision'):
+        return str(item.get('description') or '').strip()
     if item.get('offer_family'):
         return str(item.get('description') or '').strip()
     if summary := _SUMMARIES.get(item.get("id")):
@@ -138,3 +140,24 @@ def apply_display_descriptions(catalog: dict) -> None:
     for group in ("talents", "curses"):
         for item in catalog[group]:
             item["description"] = concise_description(item)
+
+
+def current_owned_descriptions(status: dict, catalog_path=None) -> dict:
+    """Project current compatible descriptions without rewriting saved choices."""
+    if status.get('catalog_version') not in (1,2) or not (status.get('talents') or status.get('curses')):
+        return status
+    import copy
+    from .runtime_catalog import load_catalog
+    current=load_catalog(catalog_path,expected_version=status['catalog_version'] if catalog_path else 2)
+    result=dict(status)
+    for kind,index in (('talents','bit_index'),('curses','byte_index')):
+        latest={item['id']:item for item in current[kind]}
+        result[kind]=[]
+        for saved in status[kind]:
+            item=copy.deepcopy(saved);new=latest.get(item['id'])
+            if (new is not None and new[index]==item[index]
+                    and new.get('source_description')==item.get('source_description')
+                    and new.get('effect',{}).get('qa_revision',0)>=item.get('effect',{}).get('qa_revision',0)):
+                item.update(description=new['description'],effect=copy.deepcopy(new['effect']))
+            result[kind].append(item)
+    return result

@@ -86,8 +86,10 @@ class DisplayTextTests(unittest.TestCase):
         header = (HERE.parent/'native_campaign/plugin/include/frozen_catalog.generated.h').read_text(encoding='utf8')
         self.assertIn('{104,3,0,2}', header)
         self.assertIn('{105,12,1,3}', header)
-        self.assertIn('kTalentCount = 238', header)
-        for item in load_catalog()['talents'] + load_catalog()['curses']:
+        self.assertIn('kTalentCount = 400', header)
+        self.assertIn('kLegacyTalentCount = 238', header)
+        catalog=load_catalog(expected_version=2)
+        for item in catalog['talents'] + catalog['curses']:
             self.assertIn(json.dumps(item['description'], ensure_ascii=False), header)
 
 class AddedTalentAndCurseRotationTests(unittest.TestCase):

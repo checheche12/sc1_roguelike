@@ -61,7 +61,7 @@ inline bool plan_stats(const GrowthSnapshot& s,std::vector<Edit>& edits) {
         for(U32 ord:{26u,27u,28u,67u,68u,69u,108u,109u,110u})if(rank(s,ord) && group(ord,id))health=ord+1;
         if(health){const U32 percent=100+talent_power::v5(health-1,20);if(!edit({0,8,id},4,percent,100))return false;if(health>=109 && !edit({0,7,id},4,percent,100))return false;}
         if(soldier(id)){
-            const U32 armor=U32(std::uint64_t(rank(s,ground_type(id) ? 11u : 12u))*talent_power::halves(249)/4u)+(rank(s,32)&&group(32,id) ? talent_power::v5(32,1) : 0u);
+            const U32 armor=U32(std::uint64_t(rank(s,ground_type(id) ? 11u : 12u))*talent_power::quarters(249)/8u)+(rank(s,32)&&group(32,id) ? talent_power::v5(32,1) : 0u);
             if(!plus({0,27,id},armor))return false;
             if(rank(s,13)){const auto value=std::min(11u,original_stat({0,24,id})+talent_power::v5(13,1));if(!edit({0,24,id},0,value))return false;}
         }
@@ -105,16 +105,16 @@ inline U32 infantry_damage_rank(const bw::Unit* unit,U32 weapon) noexcept {
 }
 inline std::int32_t infantry_damage(std::int32_t amount,U32 stacks) noexcept {
     if(amount<=0||!stacks)return amount;
-    const auto factor=20ull+std::uint64_t(stacks)*talent_power::halves(267);
-    if(factor>0x7fffffffull*20/std::uint64_t(amount))return 0x7fffffff;
-    return std::int32_t(std::uint64_t(amount)*factor/20);
+    const auto factor=40ull+std::uint64_t(stacks)*talent_power::quarters(267);
+    if(factor>0x7fffffffull*40/std::uint64_t(amount))return 0x7fffffff;
+    return std::int32_t(std::uint64_t(amount)*factor/40);
 }
 inline U32 infantry_ui_value(const bw::Unit* unit,U32 weapon,U32 value) noexcept {
     const U32 stacks=infantry_damage_rank(unit,weapon);
     if(!value||!stacks)return value;
-    const auto factor=std::uint64_t(stacks)*talent_power::halves(267);
-    if(factor>((0xffffffffull-value)*20)/value)return 0xffffffffu;
-    return value+U32((std::uint64_t(value)*factor+10)/20);
+    const auto factor=std::uint64_t(stacks)*talent_power::quarters(267);
+    if(factor>((0xffffffffull-value)*40)/value)return 0xffffffffu;
+    return value+U32((std::uint64_t(value)*factor+20)/40);
 }
 inline constexpr U32 kNuclearWarningFrames=5u*24u;
 inline bool fixed_nuclear_warning(movement_effects::Image* image) noexcept {
@@ -177,7 +177,7 @@ inline void add_spore(bw::Unit* u,U32 duration,bool extended,bool ground=false) 
     if(!eligible(u)||building(u)||(!air(u)&&!ground))return;auto s=acid_state(u);if(!s)return;
     const U32 extras=extra_acid(*s),base=u->acid_spore_count>=extras ? u->acid_spore_count-extras:0;
     if(base<9){auto slot=std::min_element(std::begin(u->acid_spore_timers),std::end(u->acid_spore_timers));*slot=U8(duration);++u->acid_spore_count;}
-    else if(extended){auto slot=std::min_element(s->extra.begin(),s->extra.begin()+(talent_power::enabled?8:3));if(!*slot)++u->acid_spore_count;*slot=U8(duration);s->due=now()+8;}
+    else if(extended){auto slot=std::min_element(s->extra.begin(),s->extra.begin()+std::min(8u,talent_power::v5(86,3)));if(!*slot)++u->acid_spore_count;*slot=U8(duration);s->due=now()+8;}
     else {auto slot=std::min_element(std::begin(u->acid_spore_timers),std::end(u->acid_spore_timers));*slot=U8(duration);}
 }
 inline UnitState* state(bw::Unit* u) {
@@ -358,7 +358,7 @@ inline void configure_motion(bw::Unit* u,UnitState& s) {
     // forms have no walking animation, so use native flingy acceleration and
     // native ground pathfinding at 1/2 and 1/4 of that movement speed. Unit and
     // turret IDs, sprites, siege range and burrow flags remain authoritative.
-    double speed=(siege ? 512.0 : ((u->flags&0x10000000u) ? 384.0 : 256.0))*(talent_power::enabled ? (siege?2.0:3.0):1.0);
+    double speed=(siege ? 512.0 : ((u->flags&0x10000000u) ? 384.0 : 256.0))*(talent_power::enabled ? (siege?std::min(2.0,talent_power::quarters(293)/4.0):talent_power::quarters(329)/4.0):1.0);
     if(u->ensnare_timer)speed*=0.5;
     speed*=speed_ratio(u);
     u->flags=(u->flags|0x20000u)&~0x80000u;u->flingy.movement_type=0;
@@ -477,7 +477,7 @@ inline void launched(U32 w,bw::Unit* source,bw::Bullet* b) {
     // Suicide weapons may kill and detach their native parent during creation.
     // Layer damage belongs to this witnessed launch, including a dead source.
     if(p.source.owner==player_owner()){
-        if(talent_power::enabled&&rank(106)&&p.source.id==62&&!p.layer)p.percent*=4;
+        if(talent_power::enabled&&rank(106)&&p.source.id==62&&!p.layer)p.percent=talent_power::v5(106,p.percent);
         if(talent_power::enabled&&rank(60)&&p.source.id==13&&p.layer)p.percent=p.percent*150/100;
         if(talent_power::enabled&&rank(97)&&p.source.id==103&&p.layer)p.percent=p.percent*150/100;
         if(rank(58)&&p.source.id==58&&!p.layer)p.percent=p.percent*talent_power::v5(rank(140)&&in(p.source.id,{68,76})?140u:58u,60)/100;
@@ -622,12 +622,12 @@ struct DamageScope {
         previous=current;
         target=to;source=from;w=weapon_id;normal=g.normal_hit&&ordinary_weapon(w);raw=damage;
         if(!g.active||!g.applied||generated_depth||!live(target))return;
-        if(normal&&own(target)&&soldier(target->unit_id)&&((std::uint64_t(rank(ground_type(target->unit_id)?11u:12u))*talent_power::halves(249))%4u)){
+        if(normal&&own(target)&&soldier(target->unit_id)&&((std::uint64_t(rank(ground_type(target->unit_id)?11u:12u))*talent_power::quarters(249))%8u)){
             const U32 type=original_stat({1,7,w}),size=original_stat({0,26,target->unit_id});had_shield=target->shields>=256;
             // Native armor is removed before explosive/concussive size scaling.
             // Apply the odd half-rank at the native HP callback with that same
             // scaling; shield-only hits and Matrix absorption remain native.
-            const U32 fraction=U32((std::uint64_t(rank(ground_type(target->unit_id)?11u:12u))*talent_power::halves(249))%4u)*64u;
+            const U32 fraction=U32((std::uint64_t(rank(ground_type(target->unit_id)?11u:12u))*talent_power::quarters(249))%8u)*32u;
             if(type==3)half_armor_reduction=fraction;
             else if(type==1)half_armor_reduction=size==1?fraction/2:size==2?fraction*3/4:size==3?fraction:0u;
             else if(type==2)half_armor_reduction=size==1?fraction:size==2?fraction/2:size==3?fraction/4:0u;
@@ -836,7 +836,7 @@ struct MissileScope {
             for(const auto& old:persistent)if(old.target.p==u&&old.target.unique==u->minor_unique_index&&in(old.kind,{83,128}))return;
             if(p.weapon==101)u->death_timer=std::uint16_t(std::min(65535u,talent_power::duration(128,u->death_timer,65535)));
             Persist field{};field.kind=p.weapon==59 ? 83u:128u;field.target=identity(u);field.owner=p.source.owner;field.source=p.source;field.x=u->flingy.position.x;field.y=u->flingy.position.y;field.until=now()+u->death_timer;field.due=field.until+1;
-            field.remaining=p.weapon==59 ? (rank(83) ? 80+talent_power::v5(83,40):80u):60+talent_power::v5(128,15);if(p.weapon==59&&rank(103)&&talent_power::enabled)field.remaining=std::max(320u,field.remaining);field.ticks=p.weapon==59 ? field.remaining:40+talent_power::v5(128,10);persistent.push_back(field);
+            field.remaining=p.weapon==59 ? (rank(83) ? 80+talent_power::v5(83,40):80u):60+talent_power::v5(128,15);if(p.weapon==59&&rank(103)&&talent_power::enabled)field.remaining=std::max(talent_power::v5(103,80),field.remaining);field.ticks=p.weapon==59 ? field.remaining:40+talent_power::v5(128,10);persistent.push_back(field);
         });
     }
     void broodlings(){
@@ -921,7 +921,7 @@ struct MissileScope {
                     if(rank(84)&&plagued)u->plague_timer=U8(std::min(255u,talent_power::duration(84,u->plague_timer)));
                     if(rank(102)&&plagued)attach(102,u,source,U32(u->plague_timer)*8,0,u->plague_timer);
                     if(rank(80)&&ensnared)u->ensnare_timer=U8(std::min(255u,talent_power::duration(80,u->ensnare_timer)));
-                    if(rank(63)&&talent_power::enabled&&organic(u)&&u->lockdown_timer>old.lockdown)u->lockdown_timer=U8(std::min(255u,U32(u->lockdown_timer)*4));
+                    if(rank(63)&&talent_power::enabled&&organic(u)&&u->lockdown_timer>old.lockdown)u->lockdown_timer=U8(std::min(255u,talent_power::v5(63,u->lockdown_timer)));
                     if(rank(45)&&u->lockdown_timer>old.lockdown)u->lockdown_timer=U8(std::min(255u,talent_power::duration(45,u->lockdown_timer)));
                     if(rank(124)&&u->maelstrom_timer>old.maelstrom)u->maelstrom_timer=U8(std::min(255u,talent_power::duration(124,u->maelstrom_timer)));
                     if(rank(127)&&u->stasis_timer>old.stasis)u->stasis_timer=U8(std::min(255u,talent_power::duration(127,u->stasis_timer)));
@@ -1124,7 +1124,7 @@ inline void step() {
             const auto distance=dist(u,attack_target);
             if(rank(98)&&in(u->unit_id,{37,54})&&distance>=64u*64u&&distance<=128u*128u&&frame>=s->leap_due){
                 const double length=std::sqrt(double(distance));const double dx=attack_target->flingy.position.x-u->flingy.position.x,dy=attack_target->flingy.position.y-u->flingy.position.y;
-                if(rework_relocation::move(u,attack_target->flingy.position.x-int(std::lround(dx*16/length)),attack_target->flingy.position.y-int(std::lround(dy*16/length)),16)){s->leap_due=frame+U32(192.0/(talent_power::halves(336)/2.0));if(g.order)g.order(u,10,attack_target->flingy.position.x,attack_target->flingy.position.y,attack_target,0);}
+                if(rework_relocation::move(u,attack_target->flingy.position.x-int(std::lround(dx*16/length)),attack_target->flingy.position.y-int(std::lround(dy*16/length)),16)){s->leap_due=frame+U32(192.0/(talent_power::quarters(336)/4.0));if(g.order)g.order(u,10,attack_target->flingy.position.x,attack_target->flingy.position.y,attack_target,0);}
             }
             if(rank(132)&&in(u->unit_id,{65,77})&&distance>=64u*64u&&distance<=160u*160u&&frame>=s->charge_due){s->charge_until=frame+talent_power::v5(132,24);s->charge_due=frame+192;}
         }
@@ -1151,7 +1151,7 @@ inline void step() {
             auto w=weapon(u,layer!=0);if(w>=130)continue;
             auto primary=u->order_target.unit;if(dual&&live(primary)&&air(primary)==(layer!=0)&&multi_target::attack_order(u->order))continue;
             for(auto target:around(u->flingy.position.x,u->flingy.position.y,1024,nullptr,64,true,int(layer)))if(target_ok(u,target,w)){
-                due=frame+fractional_period(u,layer,multi_target::period(u,w),cooldown_ratio(u,w));for(U32 hit=0;hit<multi_target::factor(w);hit++)emit(u,target,w,talent_power::enabled?(movefire&&in(u->unit_id,{2,19})?300u:dual?(rank(65)&&in(u->unit_id,{12,27,28,29,102})?400u:300u):100u):100u,-1,-1,true);
+                due=frame+fractional_period(u,layer,multi_target::period(u,w),cooldown_ratio(u,w));for(U32 hit=0;hit<multi_target::factor(w);hit++)emit(u,target,w,talent_power::enabled?(movefire&&in(u->unit_id,{2,19})?talent_power::v5(54,100):dual?talent_power::v5(rank(65)&&in(u->unit_id,{12,27,28,29,102})?65u:142u,100):100u):100u,-1,-1,true);
                 break;
             }
         }
@@ -1176,7 +1176,7 @@ inline void step() {
                 // Follow the native eight-frame timer transition. A freshly
                 // applied plague or a Restoration reset is not a damage tick.
                 if(U32(target->plague_timer)+1==p.ticks){
-                    if(talent_power::enabled)hurt(target,damage*3,source,p.owner);
+                    if(talent_power::enabled)hurt(target,talent_power::v5(102,damage)-damage,source,p.owner);
                     else if(U32(target->flingy.hitpoints)<=damage)hurt(target,damage,source,p.owner);
                 }
                 p.ticks=target->plague_timer;p.due=frame+1;

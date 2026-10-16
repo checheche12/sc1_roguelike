@@ -65,7 +65,7 @@ struct LaunchScope {
   if(!active || !same(who) || !own(who.p) || !rework_catalog::rank(g.growth,136) || who.p->unit_specific.bytes[17]<=outside || !who.p->order_timer)return;
   if(launches.size()!=g.units_count)launches.assign(g.units_count,{});auto& clock=launches[static_cast<std::size_t>(who.p-g.units)];const auto frame=g.game()->frame_count;
   if(!same(clock.who) || clock.who.p!=who.p)clock={who,0,0,false};if(clock.sampled && clock.last_frame==frame)return;
-  const U32 denominator=talent_power::enabled?5u:3u;const U32 total=U32(who.p->order_timer)*2+clock.carry;who.p->order_timer=U8(std::max(1u,total/denominator));clock.carry=total%denominator;clock.last_frame=frame;clock.sampled=true;
+  const U32 denominator=8+talent_power::quarters(374);const U32 total=U32(who.p->order_timer)*8+clock.carry;who.p->order_timer=U8(std::max(1u,total/denominator));clock.carry=total%denominator;clock.last_frame=frame;clock.sampled=true;
  }
 };
 inline void reset() noexcept {launches.clear();scope_depth=0;}
