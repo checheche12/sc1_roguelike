@@ -1,0 +1,77 @@
+{
+  "schema_version": 1,
+  "created_at_utc": "2026-10-14T16:22:20.740009+00:00",
+  "source": "D:/blizard/StarCraft",
+  "local_only": true,
+  "strict_casc_checks": true,
+  "game_files_modified": false,
+  "game_process_accessed": false,
+  "user_database_accessed": false,
+  "casc_dll_sha256": "8b6f9697ac9d275d31fe065f64cf28003750a0985a3a64c0cd5407664f642027",
+  "files": [
+    {
+      "name": "arr/flingy.dat",
+      "path": "sc1/campaign_sources/raw/arr/flingy.dat",
+      "bytes": 3135,
+      "sha256": "89013fa6d81edad96b68efcfc0bb5342f1c7fa2ef7a0880a71b0169eab13d1ad",
+      "ckey_md5": "6500e0d56b6e1eb1b15acffe51491bef",
+      "inventory_ckey_verified": false
+    },
+    {
+      "name": "arr/sprites.dat",
+      "path": "sc1/campaign_sources/raw/arr/sprites.dat",
+      "bytes": 3229,
+      "sha256": "3e5ea29bf9937558d0a3a302cd85852c220cd126ec049c0da176c77739bb4a71",
+      "ckey_md5": "d8a167a1de2daa2b7e4b4bf2f761ebf1",
+      "inventory_ckey_verified": false
+    },
+    {
+      "name": "arr/images.dat",
+      "path": "sc1/campaign_sources/raw/arr/images.dat",
+      "bytes": 37962,
+      "sha256": "6b6123e2cc6771d96f914fc9bb92d34da17cc3319dc02e2db0cd10b4f3d2efdc",
+      "ckey_md5": "1dfbb0970fc291c7ff2e7ceb2501df57",
+      "inventory_ckey_verified": false
+    },
+    {
+      "name": "arr/upgrades.dat",
+      "path": "sc1/campaign_sources/raw/arr/upgrades.dat",
+      "bytes": 1281,
+      "sha256": "787ff7dff69c0a0bb417ce1aabdcc11fa8b0959f77372b635c4882bdc3adb59b",
+      "ckey_md5": "ca6c9adbde1002c25cae0131e5d7e7e2",
+      "inventory_ckey_verified": false
+    },
+    {
+      "name": "arr/techdata.dat",
+      "path": "sc1/campaign_sources/raw/arr/techdata.dat",
+      "bytes": 836,
+      "sha256": "98f9805ebc8efc707492b7406871298d39d6e94931458aca1f82feaf18a271af",
+      "ckey_md5": "5797c7137a3b382a2c1926fe56b6f4b2",
+      "inventory_ckey_verified": false
+    },
+    {
+      "name": "arr/portdata.dat",
+      "path": "sc1/campaign_sources/raw/arr/portdata.dat",
+      "bytes": 1320,
+      "sha256": "ca864e3153336d072fd3467345c4661aaf7f9362bec7d033e674450c531a0e5e",
+      "ckey_md5": "d523b01b13891a3a1f58d735efe650a1",
+      "inventory_ckey_verified": false
+    },
+    {
+      "name": "arr/mapdata.dat",
+      "path": "sc1/campaign_sources/raw/arr/mapdata.dat",
+      "bytes": 260,
+      "sha256": "06ce3127b9c77739f32ad606637943f022e5d0344afcf1e978494449ace37967",
+      "ckey_md5": "676f097da04ce4f752c0c3d702f16e71",
+      "inventory_ckey_verified": false
+    },
+    {
+      "name": "arr/orders.dat",
+      "path": "sc1/campaign_sources/raw/arr/orders.dat",
+      "bytes": 4158,
+      "sha256": "0b79cc64f1cd8b23c77419bdf1fb39fb91cde1359c1ad9cb73884d5cceb8f7c9",
+      "ckey_md5": "636756510e2374a78bcc5f3cf5b05666",
+      "inventory_ckey_verified": false
+    }
+  ]
+}

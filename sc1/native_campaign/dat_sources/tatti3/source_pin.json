@@ -1,0 +1,36 @@
+{
+  "commit": "eb940dab410e9e197db9634322e91fb67a0b7f0f",
+  "repository": "neivv/tatti3",
+  "sources": [
+    {
+      "path": "sc1/native_campaign/dat_sources/tatti3/datspec.md",
+      "source_url": "https://raw.githubusercontent.com/neivv/tatti3/eb940dab410e9e197db9634322e91fb67a0b7f0f/datspec.md",
+      "sha256": "d7759052a1449ecde81bb9dfad418c405d9eeefe113c72df45290905bf9f63b4"
+    },
+    {
+      "path": "sc1/native_campaign/dat_sources/tatti3/GameData/DatTable.cs",
+      "source_url": "https://raw.githubusercontent.com/neivv/tatti3/eb940dab410e9e197db9634322e91fb67a0b7f0f/GameData/DatTable.cs",
+      "sha256": "1c411b14deb76d36fe0b0d40b9f1de2529c37439f3beb7728b42170aa3d5f2bc"
+    },
+    {
+      "path": "sc1/native_campaign/dat_sources/tatti3/GameData/LegacyDatDecl.cs",
+      "source_url": "https://raw.githubusercontent.com/neivv/tatti3/eb940dab410e9e197db9634322e91fb67a0b7f0f/GameData/LegacyDatDecl.cs",
+      "sha256": "d0e86ec141c8d39076998ba23b2f5ae891d19641ef13a4e7a695257fcf3de616"
+    },
+    {
+      "path": "sc1/native_campaign/dat_sources/tatti3/GameData/GameData.cs",
+      "source_url": "https://raw.githubusercontent.com/neivv/tatti3/eb940dab410e9e197db9634322e91fb67a0b7f0f/GameData/GameData.cs",
+      "sha256": "4b2dfb0618ed32c26d2e4e7682fd8204fb7bdcde347a343f965a680edbe9c5b4"
+    },
+    {
+      "path": "sc1/native_campaign/dat_sources/tatti3/GameData/Firegraft.cs",
+      "source_url": "https://raw.githubusercontent.com/neivv/tatti3/eb940dab410e9e197db9634322e91fb67a0b7f0f/GameData/Firegraft.cs",
+      "sha256": "ff5cb196d50e2111ccbc016a912fcae456d106807b79d511625e45d4e0c15315"
+    },
+    {
+      "path": "sc1/native_campaign/dat_sources/tatti3/Resources/firegraft.fgp",
+      "source_url": "https://raw.githubusercontent.com/neivv/tatti3/eb940dab410e9e197db9634322e91fb67a0b7f0f/Resources/firegraft.fgp",
+      "sha256": "1a64ce14dbb7e947ac3c4ff3e929f7b02bca6f1da2746ec7728d449180177c68"
+    }
+  ]
+}

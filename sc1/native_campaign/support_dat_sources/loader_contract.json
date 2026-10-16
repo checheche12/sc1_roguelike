@@ -1,0 +1,120 @@
+{
+  "schema_version": 1,
+  "loader_sha256": "6b0d6c1016e637ef433f962b9c4b06c091fef81c515ec9bf747158ffab599c3c",
+  "loader_version": "0.10.28-64",
+  "required_loader_dat_names": [
+    "arr/units.dat",
+    "arr/weapons.dat",
+    "arr/flingy.dat",
+    "arr/sprites.dat",
+    "arr/images.dat",
+    "arr/upgrades.dat",
+    "arr/techdata.dat",
+    "arr/portdata.dat",
+    "arr/mapdata.dat",
+    "arr/orders.dat",
+    "arr/buttons.dat"
+  ],
+  "required_file_loop_rva": "0x1582a8",
+  "loop_end_rva": "0x158b3e",
+  "loop_end_offset": 264,
+  "record_bytes": 24,
+  "records": 11,
+  "missing_file_return_rva": "0x158c1a",
+  "header_parser_rva": "0x1599c9",
+  "header_checks": {
+    "magic_rva": "0x159a18",
+    "magic": "Dat+ 0x2b746144",
+    "major": 1,
+    "minor_nonzero": true,
+    "max_fields": 1024
+  },
+  "legacy_file_fallback": false,
+  "sfxdata_required_in_this_loop": false,
+  "external_asset_aliases": false,
+  "requirements_fields": {
+    "units": [
+      [
+        43,
+        64
+      ]
+    ],
+    "upgrades": [
+      [
+        6,
+        16
+      ]
+    ],
+    "techdata": [
+      [
+        4,
+        16
+      ],
+      [
+        5,
+        17
+      ]
+    ],
+    "orders": [
+      [
+        17,
+        32
+      ]
+    ]
+  },
+  "required_buttons": "All99 sets/554 records and all250 unit/group mappings are explicitly supplied by official canonical LoadButtons; no missing-unit-field fallback.",
+  "public_spec": "https://github.com/neivv/tatti3/blob/eb940dab410e9e197db9634322e91fb67a0b7f0f/datspec.md",
+  "public_writer": "https://github.com/neivv/tatti3/blob/eb940dab410e9e197db9634322e91fb67a0b7f0f/GameData/GameData.cs#L533-L552",
+  "native_execution_performed": false,
+  "required_unit_extended_fields": [
+    64,
+    65,
+    66,
+    67,
+    68,
+    69,
+    70,
+    71,
+    72,
+    73,
+    74,
+    75,
+    76,
+    77,
+    78,
+    79,
+    80,
+    81,
+    82,
+    83,
+    84,
+    85
+  ],
+  "unit_wireframe_field_evidence": {
+    "table": 0,
+    "field": 66,
+    "query_rva": "0x198138",
+    "lookup_call_rva": "0x19813d",
+    "null_branch_rva": "0x19814d",
+    "failure_target_rva": "0x19f759",
+    "source_default": "Pinned GameData.cs lines24-48:0x41 mode defaults and0x42 u16 identity IDs."
+  },
+  "support_file_completeness_is_not_full_runtime_compatibility": true,
+  "unit_button_mapping_fallback_required": false,
+  "complete_field_schema": "sc1/native_campaign/support_dat_sources/loader_field_schema.json",
+  "canonical_default_writer": "Pinned unmodified neivv/tatti3 GameData/DatTable commit eb940dab410e9e197db9634322e91fb67a0b7f0f, executed headlessly",
+  "canonical_entry_counts": {
+    "units": 261,
+    "weapons": 131,
+    "flingy": 209,
+    "sprites": 517,
+    "images": 999,
+    "upgrades": 62,
+    "techdata": 45,
+    "portdata": 110,
+    "mapdata": 65,
+    "orders": 189,
+    "buttons": 99
+  },
+  "previous_partial_field_fix_failed": "User exact package log No dat field array for Units41; binaryformatter confirms hexadecimal0x41. Identity0x42 alone was insufficient."
+}

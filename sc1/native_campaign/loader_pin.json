@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "tool": "Samase64",
+  "observed_cli_version": "0.10.28",
+  "publisher": "Neiv; binary distributed by BoneHorror/Nekron in sezam",
+  "not_a_blizzard_tool": true,
+  "source_commit": "bd2368cb2b64bc427d7a7e0f15e58c119cb7ef8a",
+  "source_commit_date": "2026-08-04T19:41:11Z",
+  "url": "https://raw.githubusercontent.com/BoneHorror/sezam/bd2368cb2b64bc427d7a7e0f15e58c119cb7ef8a/bin/samase64.exe",
+  "sha256": "8cc8d84d2c8c533ee048760b13cf49ed369502a821840f6e35ebe537afec668c",
+  "bytes": 2765312,
+  "pe_machine": 34404,
+  "pe_optional_magic": 523,
+  "author_x64_announcement": "https://staredit.net/topic/17430/8/#174",
+  "distribution_provenance": "https://staredit.net/topic/17430/9/#188",
+  "local_filename": "vendor/samase64-0.10.28.exe",
+  "game_executable": "D:/blizard/StarCraft/x86_64/StarCraft.exe",
+  "game_file_version_observed": "1.23.10.13515",
+  "validation": "Downloaded into memory only for SHA256, PE architecture and embedded CLI string inspection; never executed. Exact installed-game compatibility is unverified."
+}

@@ -1,0 +1,28 @@
+test_building_addon_and_lurker_research_constraints_preserved (sc1.tests.test_all_requirements.AllRequirementsTests.test_building_addon_and_lurker_research_constraints_preserved) ... ok
+test_checked_in_overlay_matches_reproducible_bytes (sc1.tests.test_all_requirements.AllRequirementsTests.test_checked_in_overlay_matches_reproducible_bytes) ... ok
+test_every_full_recipe_including_upgrade_branches_is_preserved (sc1.tests.test_all_requirements.AllRequirementsTests.test_every_full_recipe_including_upgrade_branches_is_preserved) ... ok
+test_exact_overlay_and_all_other_fields_unchanged (sc1.tests.test_all_requirements.AllRequirementsTests.test_exact_overlay_and_all_other_fields_unchanged) ... ok
+test_offset_aliases_and_out_of_range_rejected (sc1.tests.test_all_requirements.AllRequirementsTests.test_offset_aliases_and_out_of_range_rejected) ... ok
+test_only_21_known_leading_words_deleted (sc1.tests.test_all_requirements.AllRequirementsTests.test_only_21_known_leading_words_deleted) ... ok
+test_reproducible_outputs_manifest_and_immutable_sources (sc1.tests.test_all_requirements.AllRequirementsTests.test_reproducible_outputs_manifest_and_immutable_sources) ... ok
+test_unknown_source_and_wrong_field_type_fail_closed (sc1.tests.test_all_requirements.AllRequirementsTests.test_unknown_source_and_wrong_field_type_fail_closed) ... ok
+test_all_eleven_outputs_exact_executed_pinned_writer (sc1.tests.test_support_dat.SupportDatTests.test_all_eleven_outputs_exact_executed_pinned_writer) ... ok
+test_all_original_support_values_and_subset_padding (sc1.tests.test_support_dat.SupportDatTests.test_all_original_support_values_and_subset_padding) ... ok
+test_all_stock_buttons_and_explicit_unit_group_mapping (sc1.tests.test_support_dat.SupportDatTests.test_all_stock_buttons_and_explicit_unit_group_mapping) ... ok
+test_derived_managed_original_values_and_unit_requirements (sc1.tests.test_support_dat.SupportDatTests.test_derived_managed_original_values_and_unit_requirements) ... ok
+test_every_declared_field_missing_rejected (sc1.tests.test_support_dat.SupportDatTests.test_every_declared_field_missing_rejected) ... ok
+test_exact_loader_file_and_full_field_closure (sc1.tests.test_support_dat.SupportDatTests.test_exact_loader_file_and_full_field_closure) ... ok
+test_full_default_variable_lists_and_special_unit_defaults (sc1.tests.test_support_dat.SupportDatTests.test_full_default_variable_lists_and_special_unit_defaults) ... ok
+test_read_only_inputs_and_current_generated_receipt (sc1.tests.test_support_dat.SupportDatTests.test_read_only_inputs_and_current_generated_receipt) ... ok
+test_reject_legacy_and_truncated_data (sc1.tests.test_support_dat.SupportDatTests.test_reject_legacy_and_truncated_data) ... ok
+test_requirements_and_two_documented_canonical_order_migrations (sc1.tests.test_support_dat.SupportDatTests.test_requirements_and_two_documented_canonical_order_migrations) ... ok
+test_every_legacy_field_entry_component_and_subset_default (sc1.tests.test_managed_dat.ManagedDatTests.test_every_legacy_field_entry_component_and_subset_default) ... ok
+test_reject_changed_source_length (sc1.tests.test_managed_dat.ManagedDatTests.test_reject_changed_source_length) ... ok
+test_reject_corrupt_descriptors (sc1.tests.test_managed_dat.ManagedDatTests.test_reject_corrupt_descriptors) ... ok
+test_reproducible_encoding_and_source_pins (sc1.tests.test_managed_dat.ManagedDatTests.test_reproducible_encoding_and_source_pins) ... ok
+test_requirements_from_independent_firegraft_decode (sc1.tests.test_managed_dat.ManagedDatTests.test_requirements_from_independent_firegraft_decode) ... ok
+
+----------------------------------------------------------------------
+Ran 23 tests in 0.257s
+
+OK

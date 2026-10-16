@@ -1,0 +1,666 @@
+{
+  "schema_version": 1,
+  "catalog_version": 1,
+  "source_board_revision": 469,
+  "talents": [
+    {
+      "id": "b0b87a48-4e2f-4d83-b1e9-d31ab203442a",
+      "bit_index": 0,
+      "name": "조준경",
+      "effect": {
+        "type": "stat_patches",
+        "patches": [
+          {
+            "table": "weapons",
+            "ids": [
+              0
+            ],
+            "field": "maxRange",
+            "op": "add",
+            "value": 32
+          },
+          {
+            "table": "units",
+            "ids": [
+              0
+            ],
+            "field": "seekRange",
+            "op": "add",
+            "value": 1
+          }
+        ]
+      },
+      "target": "마린",
+      "description": "사정거리 1 증가\n\n현재 구현은 본편 테란1에 적용됩니다.",
+      "source_description": "사정거리 1 증가",
+      "race": "terran",
+      "rarity": "common",
+      "missions": [
+        101
+      ],
+      "implemented": true,
+      "implementation_note": "현재 구현은 본편 테란1에 적용됩니다."
+    },
+    {
+      "id": "9da04c9f-9ddd-4e51-8333-e40eb7fafd1a",
+      "bit_index": 1,
+      "name": "튼튼한 갑옷",
+      "effect": {
+        "type": "stat_patches",
+        "patches": [
+          {
+            "table": "units",
+            "ids": [
+              0
+            ],
+            "field": "maxHp",
+            "op": "add",
+            "value": 2560
+          }
+        ]
+      },
+      "target": "마린",
+      "description": "체력이 10 증가합니다.\n\n현재 구현은 본편 테란1에 적용됩니다.",
+      "source_description": "체력이 10 증가합니다.",
+      "race": "terran",
+      "rarity": "common",
+      "missions": [
+        101
+      ],
+      "implemented": true,
+      "implementation_note": "현재 구현은 본편 테란1에 적용됩니다."
+    },
+    {
+      "id": "11add15f-8880-4db0-9697-91723ffdfd57",
+      "bit_index": 2,
+      "name": "기관단총",
+      "effect": {
+        "type": "stat_patches",
+        "patches": [
+          {
+            "table": "weapons",
+            "ids": [
+              0
+            ],
+            "field": "cooldown",
+            "op": "ratio",
+            "value": [
+              100,
+              130
+            ]
+          }
+        ]
+      },
+      "target": "마린",
+      "description": "공격속도가 30% 빨라집니다.\n\n현재 구현은 본편 테란1에 적용됩니다. 생산·공격 주기는 가장 가까운 정수 프레임으로 반올림하고 최소1프레임을 유지합니다.",
+      "source_description": "공격속도가 30% 빨라집니다.",
+      "race": "terran",
+      "rarity": "uncommon",
+      "missions": [
+        101
+      ],
+      "implemented": true,
+      "implementation_note": "현재 구현은 본편 테란1에 적용됩니다. 생산·공격 주기는 가장 가까운 정수 프레임으로 반올림하고 최소1프레임을 유지합니다."
+    },
+    {
+      "id": "b4a56885-dcef-4fd7-9b1d-1d07fa0cbd5c",
+      "bit_index": 3,
+      "name": "화염갑옷",
+      "effect": {
+        "type": "stat_patches",
+        "patches": [
+          {
+            "table": "units",
+            "ids": [
+              32
+            ],
+            "field": "maxHp",
+            "op": "set",
+            "value": 25600
+          }
+        ]
+      },
+      "target": "파이어뱃",
+      "description": "파이어뱃의 체력이 100으로 증가합니다.\n\n현재 구현은 본편 테란1에 적용됩니다.",
+      "source_description": "파이어뱃의 체력이 100으로 증가합니다.",
+      "race": "terran",
+      "rarity": "rare",
+      "missions": [
+        101
+      ],
+      "implemented": true,
+      "implementation_note": "현재 구현은 본편 테란1에 적용됩니다."
+    },
+    {
+      "id": "3de768b5-3b1c-4aa2-a80f-fa72d5e37a73",
+      "bit_index": 4,
+      "name": "유령이 나타났다!",
+      "effect": {
+        "type": "stat_patches",
+        "patches": [
+          {
+            "table": "units",
+            "ids": [
+              1
+            ],
+            "field": "maxHp",
+            "op": "add",
+            "value": 7680
+          }
+        ]
+      },
+      "target": "고스트",
+      "description": "고스트의 체력 30증가\n\n현재 구현은 본편 테란1에 적용됩니다.",
+      "source_description": "고스트의 체력 30증가",
+      "race": "terran",
+      "rarity": "common",
+      "missions": [
+        101
+      ],
+      "implemented": true,
+      "implementation_note": "현재 구현은 본편 테란1에 적용됩니다."
+    },
+    {
+      "id": "61ca33c4-6b46-45fd-bf48-36e92fc30067",
+      "bit_index": 5,
+      "name": "유령의 저격총",
+      "effect": {
+        "type": "stat_patches",
+        "patches": [
+          {
+            "table": "weapons",
+            "ids": [
+              2
+            ],
+            "field": "damageType",
+            "op": "set",
+            "value": 3
+          }
+        ]
+      },
+      "target": "고스트",
+      "description": "고스트의 공격 타입을 \"일반\" 형태로 변경합니다.\n\n현재 구현은 본편 테란1에 적용됩니다.",
+      "source_description": "고스트의 공격 타입을 \"일반\" 형태로 변경합니다.",
+      "race": "terran",
+      "rarity": "uncommon",
+      "missions": [
+        101
+      ],
+      "implemented": true,
+      "implementation_note": "현재 구현은 본편 테란1에 적용됩니다."
+    },
+    {
+      "id": "bec5aa24-1479-4c55-9de9-ddb843ddc039",
+      "bit_index": 6,
+      "name": "75원짜리가 이게 말이되냐?",
+      "effect": {
+        "type": "stat_patches",
+        "patches": [
+          {
+            "table": "weapons",
+            "ids": [
+              4
+            ],
+            "field": "cooldown",
+            "op": "ratio",
+            "value": [
+              4,
+              5
+            ]
+          }
+        ]
+      },
+      "target": "벌쳐",
+      "description": "벌쳐의 공격 주기 20% 감소\n\n현재 구현은 본편 테란1에 적용됩니다. 생산·공격 주기는 가장 가까운 정수 프레임으로 반올림하고 최소1프레임을 유지합니다.",
+      "source_description": "벌쳐의 공격 주기 20% 감소",
+      "race": "terran",
+      "rarity": "common",
+      "missions": [
+        101
+      ],
+      "implemented": true,
+      "implementation_note": "현재 구현은 본편 테란1에 적용됩니다. 생산·공격 주기는 가장 가까운 정수 프레임으로 반올림하고 최소1프레임을 유지합니다."
+    },
+    {
+      "id": "e52e8e8a-090c-48dd-80d2-03142775c1d4",
+      "bit_index": 7,
+      "name": "싼값에 만드는 벌쳐",
+      "effect": {
+        "type": "stat_patches",
+        "patches": [
+          {
+            "table": "units",
+            "ids": [
+              2
+            ],
+            "field": "mineralCost",
+            "op": "set",
+            "value": 50
+          },
+          {
+            "table": "units",
+            "ids": [
+              2
+            ],
+            "field": "supplyUsed",
+            "op": "set",
+            "value": 2
+          },
+          {
+            "table": "units",
+            "ids": [
+              2
+            ],
+            "field": "maxHp",
+            "op": "set",
+            "value": 12800
+          }
+        ]
+      },
+      "target": "벌쳐",
+      "description": "미네랄이 50이 되고, 인구가 1이 됩니다.\n체력이 50이 됩니다.\n\n현재 구현은 본편 테란1에 적용됩니다.",
+      "source_description": "미네랄이 50이 되고, 인구가 1이 됩니다.\n체력이 50이 됩니다.",
+      "race": "terran",
+      "rarity": "uncommon",
+      "missions": [
+        101
+      ],
+      "implemented": true,
+      "implementation_note": "현재 구현은 본편 테란1에 적용됩니다."
+    },
+    {
+      "id": "8b6431dd-5553-4743-a43f-ef61172b46f6",
+      "bit_index": 8,
+      "name": "일부는 퉁퉁퉁퉁퉁퉁!",
+      "effect": {
+        "type": "stat_patches",
+        "patches": [
+          {
+            "table": "weapons",
+            "ids": [
+              11
+            ],
+            "field": "maxRange",
+            "op": "add",
+            "value": 32
+          },
+          {
+            "table": "units",
+            "ids": [
+              5,
+              6
+            ],
+            "field": "seekRange",
+            "op": "add",
+            "value": 1
+          }
+        ]
+      },
+      "target": "시즈탱크",
+      "description": "탱크 모드의 사정거리 1 증가\n\n현재 구현은 본편 테란1에 적용됩니다.",
+      "source_description": "탱크 모드의 사정거리 1 증가",
+      "race": "terran",
+      "rarity": "common",
+      "missions": [
+        101
+      ],
+      "implemented": true,
+      "implementation_note": "현재 구현은 본편 테란1에 적용됩니다."
+    },
+    {
+      "id": "fde47c79-594b-4731-9669-0df4044da1f4",
+      "bit_index": 9,
+      "name": "일부는 시즈모드 됐고",
+      "effect": {
+        "type": "stat_patches",
+        "patches": [
+          {
+            "table": "weapons",
+            "ids": [
+              27
+            ],
+            "field": "maxRange",
+            "op": "add",
+            "value": 64
+          },
+          {
+            "table": "units",
+            "ids": [
+              30,
+              31
+            ],
+            "field": "seekRange",
+            "op": "add",
+            "value": 2
+          }
+        ]
+      },
+      "target": "시즈탱크",
+      "description": "시즈모드의 사정거리 2 증가\n\n현재 구현은 본편 테란1에 적용됩니다.",
+      "source_description": "시즈모드의 사정거리 2 증가",
+      "race": "terran",
+      "rarity": "rare",
+      "missions": [
+        101
+      ],
+      "implemented": true,
+      "implementation_note": "현재 구현은 본편 테란1에 적용됩니다."
+    },
+    {
+      "id": "911cc0df-8191-49ff-a058-8390ce15e910",
+      "bit_index": 10,
+      "name": "새로운 몸빵 유닛",
+      "effect": {
+        "type": "stat_patches",
+        "patches": [
+          {
+            "table": "units",
+            "ids": [
+              3
+            ],
+            "field": "maxHp",
+            "op": "add",
+            "value": 5120
+          }
+        ]
+      },
+      "target": "골리앗",
+      "description": "체력 20증가\n\n현재 구현은 본편 테란1에 적용됩니다.",
+      "source_description": "체력 20증가",
+      "race": "terran",
+      "rarity": "uncommon",
+      "missions": [
+        101
+      ],
+      "implemented": true,
+      "implementation_note": "현재 구현은 본편 테란1에 적용됩니다."
+    },
+    {
+      "id": "adcf3a4f-948d-4c2e-b184-e48544c7afcf",
+      "bit_index": 11,
+      "name": "레이저포 개선",
+      "effect": {
+        "type": "stat_patches",
+        "patches": [
+          {
+            "table": "weapons",
+            "ids": [
+              15,
+              16
+            ],
+            "field": "maxRange",
+            "op": "add",
+            "value": 64
+          },
+          {
+            "table": "units",
+            "ids": [
+              8
+            ],
+            "field": "seekRange",
+            "op": "add",
+            "value": 2
+          }
+        ]
+      },
+      "target": "레이스",
+      "description": "레이스의 사정거리 2 증가\n\n현재 구현은 본편 테란1에 적용됩니다.",
+      "source_description": "레이스의 사정거리 2 증가",
+      "race": "terran",
+      "rarity": "common",
+      "missions": [
+        101
+      ],
+      "implemented": true,
+      "implementation_note": "현재 구현은 본편 테란1에 적용됩니다."
+    },
+    {
+      "id": "61c98944-9414-47f2-bcdf-6d4ff0ba5598",
+      "bit_index": 12,
+      "name": "종이 비행기 개선 사업",
+      "effect": {
+        "type": "stat_patches",
+        "patches": [
+          {
+            "table": "units",
+            "ids": [
+              8
+            ],
+            "field": "maxHp",
+            "op": "add",
+            "value": 7680
+          }
+        ]
+      },
+      "target": "레이스",
+      "description": "레이스의 체력 30 증가\n\n현재 구현은 본편 테란1에 적용됩니다.",
+      "source_description": "레이스의 체력 30 증가",
+      "race": "terran",
+      "rarity": "common",
+      "missions": [
+        101
+      ],
+      "implemented": true,
+      "implementation_note": "현재 구현은 본편 테란1에 적용됩니다."
+    },
+    {
+      "id": "31e8e8c8-347d-456b-bd0d-cae47f591eb8",
+      "bit_index": 13,
+      "name": "발키리 준비 완료",
+      "effect": {
+        "type": "stat_patches",
+        "patches": [
+          {
+            "table": "weapons",
+            "ids": [
+              103
+            ],
+            "field": "cooldown",
+            "op": "ratio",
+            "value": [
+              4,
+              5
+            ]
+          }
+        ]
+      },
+      "target": "발키리",
+      "description": "발키리의 공격 지연 시간 20% 감소\n\n현재 구현은 본편 테란1에 적용됩니다. 생산·공격 주기는 가장 가까운 정수 프레임으로 반올림하고 최소1프레임을 유지합니다.",
+      "source_description": "발키리의 공격 지연 시간 20% 감소",
+      "race": "terran",
+      "rarity": "common",
+      "missions": [
+        101
+      ],
+      "implemented": true,
+      "implementation_note": "현재 구현은 본편 테란1에 적용됩니다. 생산·공격 주기는 가장 가까운 정수 프레임으로 반올림하고 최소1프레임을 유지합니다."
+    },
+    {
+      "id": "e4565c77-cc6f-43ea-91ee-1448e52cc757",
+      "bit_index": 14,
+      "name": "무기 개선작업",
+      "effect": {
+        "type": "stat_patches",
+        "patches": [
+          {
+            "table": "weapons",
+            "ids": [
+              19,
+              20
+            ],
+            "field": "maxRange",
+            "op": "add",
+            "value": 64
+          },
+          {
+            "table": "units",
+            "ids": [
+              12
+            ],
+            "field": "seekRange",
+            "op": "add",
+            "value": 2
+          }
+        ]
+      },
+      "target": "배틀쿠루져",
+      "description": "사정거리 2증가\n\n현재 구현은 본편 테란1에 적용됩니다.",
+      "source_description": "사정거리 2증가",
+      "race": "terran",
+      "rarity": "common",
+      "missions": [
+        101
+      ],
+      "implemented": true,
+      "implementation_note": "현재 구현은 본편 테란1에 적용됩니다."
+    },
+    {
+      "id": "676ab7d6-96fb-5748-8796-d8570dc554e6",
+      "bit_index": 15,
+      "name": "초고속 인력 충원",
+      "effect": {
+        "type": "stat_patches",
+        "patches": [
+          {
+            "table": "units",
+            "ids": [
+              7
+            ],
+            "field": "timeCost",
+            "op": "ratio",
+            "value": [
+              1,
+              2
+            ]
+          }
+        ]
+      },
+      "target": "SCV, 드론, 프로브",
+      "description": "일꾼의 생산 시간이 50% 감소합니다. 드론의 일꾼 알 부화에도 적용됩니다. 복수 작업조와 함께 적용됩니다.\n\n현재 구현은 본편 테란1에 적용됩니다. 이 지도에서는 SCV에 적용됩니다. 생산·공격 주기는 가장 가까운 정수 프레임으로 반올림하고 최소1프레임을 유지합니다.",
+      "source_description": "일꾼의 생산 시간이 50% 감소합니다. 드론의 일꾼 알 부화에도 적용됩니다. 복수 작업조와 함께 적용됩니다.",
+      "race": "shared",
+      "rarity": "rare",
+      "missions": [
+        101
+      ],
+      "implemented": true,
+      "implementation_note": "현재 구현은 본편 테란1에 적용됩니다. 이 지도에서는 SCV에 적용됩니다. 생산·공격 주기는 가장 가까운 정수 프레임으로 반올림하고 최소1프레임을 유지합니다."
+    },
+    {
+      "id": "7bd974f2-42ce-5442-b22f-6e82fcb8fe51",
+      "bit_index": 16,
+      "name": "작업복 보강",
+      "effect": {
+        "type": "stat_patches",
+        "patches": [
+          {
+            "table": "units",
+            "ids": [
+              7
+            ],
+            "field": "maxHp",
+            "op": "add",
+            "value": 5120
+          }
+        ]
+      },
+      "target": "일꾼",
+      "description": "일꾼의 최대 체력이 20 증가합니다. 프로브는 보호막 대신 체력이 증가합니다.\n\n현재 구현은 본편 테란1에 적용됩니다. 이 지도에서는 SCV에 적용됩니다.",
+      "source_description": "일꾼의 최대 체력이 20 증가합니다. 프로브는 보호막 대신 체력이 증가합니다.",
+      "race": "shared",
+      "rarity": "common",
+      "missions": [
+        101
+      ],
+      "implemented": true,
+      "implementation_note": "현재 구현은 본편 테란1에 적용됩니다. 이 지도에서는 SCV에 적용됩니다."
+    }
+  ],
+  "curses": [
+    {
+      "id": "481876a7-e041-567c-91c0-dbbe5915acaf",
+      "byte_index": 0,
+      "name": "끝없는 증원",
+      "effect": {
+        "type": "wave_count",
+        "numerator_per_stack": 1,
+        "denominator": 4
+      },
+      "target": "적 추가 공세",
+      "description": "적 추가 공세의 병력 수가 기본 공세 편성의 25%만큼 증가합니다. 캠페인 자체의 기본 물량 강화 위에 적용됩니다.\n\n현재 구현은 본편 테란1에 적용됩니다. 중첩당 기본 공세 수 +25%. 병종별 소수 병력은 다음 성공 회차로 이월하며, 생성 불가 회차의 병력 전체는 쌓이지 않습니다. 공세당 저글링 최대72기·히드라 최대18기(합계90기), 동시 추가 병력160기·히드라40기 상한.",
+      "source_description": "적 추가 공세의 병력 수가 기본 공세 편성의 25%만큼 증가합니다. 캠페인 자체의 기본 물량 강화 위에 적용됩니다.",
+      "race": "shared",
+      "rarity": "common",
+      "missions": [
+        101
+      ],
+      "implemented": true,
+      "max_stacks": 255,
+      "implementation_note": "현재 구현은 본편 테란1에 적용됩니다. 중첩당 기본 공세 수 +25%. 병종별 소수 병력은 다음 성공 회차로 이월하며, 생성 불가 회차의 병력 전체는 쌓이지 않습니다. 공세당 저글링 최대72기·히드라 최대18기(합계90기), 동시 추가 병력160기·히드라40기 상한."
+    },
+    {
+      "id": "639d3bf8-b455-5b0d-9954-7695a39eb0e5",
+      "byte_index": 1,
+      "name": "군비 경쟁",
+      "effect": {
+        "type": "enemy_damage",
+        "units": [
+          37,
+          38
+        ],
+        "weapons": [
+          35,
+          38
+        ],
+        "basis_points_per_stack": 750,
+        "rounding": "ceil once after combined stack multiplier"
+      },
+      "target": "적 전투 유닛",
+      "description": "적의 일반 공격 피해가 7.5% 증가합니다.\n\n현재 구현은 본편 테란1에 적용됩니다. 기본 피해 × (1 + 0.075 × 중첩), 마지막에 소수 올림. 1중첩에서 저글링5→6, 히드라10→11.",
+      "source_description": "적의 일반 공격 피해가 7.5% 증가합니다.",
+      "race": "shared",
+      "rarity": "common",
+      "missions": [
+        101
+      ],
+      "implemented": true,
+      "max_stacks": 255,
+      "implementation_note": "현재 구현은 본편 테란1에 적용됩니다. 기본 피해 × (1 + 0.075 × 중첩), 마지막에 소수 올림. 1중첩에서 저글링5→6, 히드라10→11."
+    },
+    {
+      "id": "8704b857-aed8-5888-aac3-bada4065990d",
+      "byte_index": 2,
+      "name": "악마의 생명력",
+      "effect": {
+        "type": "enemy_hp",
+        "units": [
+          37,
+          38
+        ],
+        "basis_points_per_stack": 1000,
+        "rounding": "nearest1/256HP"
+      },
+      "target": "적 전투 유닛",
+      "description": "적 전투 유닛의 최대 체력이 10% 증가합니다.\n\n현재 구현은 본편 테란1에 적용됩니다. 체력은 1/256 단위 반올림. 기존 유닛의 현재 체력 비율을 유지합니다.",
+      "source_description": "적 전투 유닛의 최대 체력이 10% 증가합니다.",
+      "race": "shared",
+      "rarity": "common",
+      "missions": [
+        101
+      ],
+      "implemented": true,
+      "max_stacks": 255,
+      "implementation_note": "현재 구현은 본편 테란1에 적용됩니다. 체력은 1/256 단위 반올림. 기존 유닛의 현재 체력 비율을 유지합니다."
+    }
+  ],
+  "notes": [
+    "maxHp values use1/256HP; ranges use pixels(32=1tile); supplyUsed uses half-supply(2=1displayed).",
+    "ratio patches round once to nearest integer frame, with minimum1.",
+    "Existing unit HP ratio and regular Vulture used-supply difference adjusted once.",
+    "T01 only: regular Terran and enemy Zerg types disjoint; Raynor type19/weapon5 excluded.",
+    "Enemy damage uses original damage times(1+0.075*stacks), ceil once;5->6 and10->11 at1stack.",
+    "Wave fractional quarter-unit remainder carried separately by unit type; skipped waves do not queue whole units."
+  ],
+  "source_snapshot": "sc1/campaign/design_snapshots/r469_20261014_153314_623339/board.json",
+  "implementation_scope": "T01 runtime:17 talents and3 curses supported; official CLI compilation and offline hooks verified; native playtest pending. Live workshop edits do not change frozen campaign effects."
+}

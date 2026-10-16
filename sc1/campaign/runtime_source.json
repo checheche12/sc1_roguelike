@@ -1,0 +1,6 @@
+{
+  "source_revision": 469,
+  "source_snapshot": "sc1/campaign/design_snapshots/r469_20261014_153314_623339/board.json",
+  "database_backup": "sc1/campaign/design_snapshots/r469_20261014_153314_623339/workshop.sqlite",
+  "purpose": "First runtime implementation source; live edits are preserved separately, not applied automatically."
+}

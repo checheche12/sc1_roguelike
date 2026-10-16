@@ -1,0 +1,253 @@
+{
+  "schema_version": 7,
+  "passed": true,
+  "status": "native_spawn_resume_lifetime_fix_offline_verified_live_retest_pending",
+  "cpp_groups": 16,
+  "cpp_assertions": 7401,
+  "constructor_asset_assertions": 108,
+  "assertions_total": 7509,
+  "metadata_regression": {
+    "current_passed": true,
+    "current_assertions": 496,
+    "old_guard_expected_failure": true,
+    "old_guard_exit_code": 1,
+    "old_guard_stderr": "observed native232-capacity/null-data/sized metadata keeps reward menu open\nFAILED: observed native232-capacity/null-data/sized metadata keeps reward menu open",
+    "scope": "Temporary source copy/SDK executable only; actual production source unchanged"
+  },
+  "spawn_lifetime_regression": {
+    "case": "spawn_no_delete",
+    "three_talent_curse_pairs_without_delete": true,
+    "reused_native_address_rebound": true,
+    "all_native_delegates_restored_before_resume": true,
+    "closing_nested_pump_skips_native_widgets": true,
+    "epoch_reset_and_poisoned_widgets_detach_safely": true,
+    "synchronous_delete_and_Run_return_preserved": true,
+    "native_widget_access_after_resume_return": 0
+  },
+  "phase_body_budget": {
+    "distinct_talent_combinations_audited": 2380,
+    "talent_intro_utf8_min": 179,
+    "talent_intro_utf8_max": 253,
+    "curse_intro_utf8": 165,
+    "detail_utf8_conservative_max": 84,
+    "observed_native_capacity": 232,
+    "scope": "Frozen17talents/3curses, same-phase talent-to-curse; selected detail and curse introduction both fit even the smallest first talent intro"
+  },
+  "source_sha256": {
+    "sc1/native_campaign/plugin/dialog_ui.cpp": "69a751c45fb9a38335111d7ce0dc5e33e2105d2126e053c76a820c878f4b3005",
+    "sc1/native_campaign/plugin/dialog_ui.h": "81c4a1261a91d1f54d671ee6a1b8a12f01c5543ae19c96b294750e0929151c2a",
+    "sc1/native_campaign/plugin/include/dialog_x64.h": "4b360aac23b29899e61d694882f17c8954c9f24c291b30c50429396fa52f8900",
+    "sc1/native_campaign/plugin/dialog_ui_tests.cpp": "c5bd19bd050a1b33c2f6474d973d073b13a380adc01f4c243c0bbac595f3db8a",
+    "sc1/native_campaign/dialog_assets/plain_panel_templates.generated.h": "de50d9d16c176f814e6478af304f25b7bf0a99e13cb19b31084885197e9141c4",
+    "sc1/native_campaign/dialog_assets/stock_gamemenu.ui.json": "0c5e31927ba9bca1f688c5e0c68802471a4464198490a5a3d28bbeb3fd6a90dc",
+    "sc1/native_campaign/dialog_assets/stock_gamemenusocial.ui.json": "084e7afdf68afcd527b866e58225105baa2fb8d893bb052c860d626aee7d4262",
+    "sc1/native_campaign/dialog_assets/stock_UISchema.json": "db6b7b4dab6e8a3d310552e873dfd03a904394bed736b632195d34a180cc7d72",
+    "sc1/native_campaign/dialog_assets/plain_gamemenu.ui.json": "62c31d6446ad799f8f9f6a4f81270032b4ef6218a53cdba728d843ad61341320",
+    "sc1/native_campaign/dialog_assets/plain_gamemenusocial.ui.json": "220c5e0bdd808db7f24b0cae52cc5ca9d1c07dc3a98f51e6d1b0d6464f3059d2"
+  },
+  "source_unchanged_during_verification": true,
+  "synthetic_executable_sha256": "8f0e0a9c5cb8c4a130864a889c807cd2277cb023f5c881b60c74930ac140e160",
+  "compiler": "MSVC x64 /std:c++17 /W4 /WX /O2 /utf-8, no warning workaround",
+  "reproduce": "python -B sc1/native_campaign/dialog_assets/verify_dialog_ui.py",
+  "custom_json_override": true,
+  "custom_menu_json": true,
+  "native_upper_text_control": true,
+  "choice_number_buttons": true,
+  "file_read_hooks_registered": 2,
+  "game_string_allocations": 0,
+  "deployed_ui_assets": [],
+  "embedded_template_source": "sc1/native_campaign/dialog_assets/plain_panel_templates.generated.h",
+  "source_asset_mirrors": [
+    "stock_gamemenu.ui.json",
+    "stock_gamemenusocial.ui.json",
+    "stock_UISchema.json",
+    "plain_gamemenu.ui.json",
+    "plain_gamemenusocial.ui.json"
+  ],
+  "actual_game_accessed": false,
+  "user_database_accessed": false,
+  "installed_assets_modified": false,
+  "extra_deployed_ui_asset_required": false,
+  "frozen_information": {
+    "talents": 17,
+    "curses": 3,
+    "maximum_full_utf8_bytes": 77,
+    "text_control_id": -1,
+    "text_control_type": "CTEXT",
+    "button_explanation_controls": [],
+    "native_body": "Meaningful stage/instruction plus current candidate names and rarities supplied to native JSON constructor. Full selected name/rarity/effect copied into that original native allocation; insufficient capacity blocks confirmation.",
+    "number_buttons": [
+      1,
+      2,
+      3,
+      5
+    ],
+    "explicit_confirmation_id": -3,
+    "capacity_semantics": "payload bytes plus separate NUL; original data/capacity/ownership remain native"
+  },
+  "verified": [
+    "Exact API44 void file-prefix registration and Run/Spawn/ProcessEvents79/LayoutDrawText signatures",
+    "Only title content/rectangle, number-button rectangles and confirm rectangle differ from read-only stock GameMenu/Social assets",
+    "Original root style/size, child IDs/order/types/flags and non-title localization keys retained",
+    "Native schema type/flag enums, positive rectangles, body and number/confirm bounds; embedded source exactly matches validated template mirrors",
+    "Pending validated same-thread session replaces only the two original menu filenames; no-offer/inactive/foreign/other-file/already-modal reads preserve original file and out-size",
+    "Meaningful full current candidate names/rarities/instruction in each generated JSON are longer than corresponding full details; no space padding",
+    "Documented MTL process-heap allocation used only for file payload; no game string allocator, constructor replay, post-init type or Surface change",
+    "Actual synthetic native CTEXT buffer contains complete full name/rarity/effect without renderer dependence",
+    "Explanation buttons6/8/9 and unused native actions remain hidden; lower choices contain short ASCII numbers only",
+    "Insufficient native body storage or stale stock title geometry cannot submit and dismisses through original Resume",
+    "Post-constructor storage geometry/capacity and actual full_write result logged on UI thread",
+    "Actual232-byte capacity/null image data/248x208 native metadata regression stays open, displays full talent/curse bodies and closes only after snapshot",
+    "Temporary-copy old guard fails the same native metadata regression; partial/undersized or nonempty zero metadata remains rejected",
+    "Original constructor and handlers finish before binding; every area/flag restores before original Resume/init/delete",
+    "Only explicit matching confirmation submits; preview changes no durable record and waiting ACK blocks duplicate selection",
+    "Spawn Resume restores every root/child delegate and layout before original-3, then drops only owned menu state even without root delete1",
+    "Three no-delete Spawn pairs reopen at the same native address; global epoch reset plus poisoned returned widgets remains safe",
+    "Closing nested ProcessEvents polls protocol without native bind/refresh/repeated Resume; Run detaches on original loop return",
+    "Three checkpoint pairs, legacy compatibility, deferred publication close, stock modal arrival, automatic HUD same-thread lifecycle and nested paused polling",
+    "Renderer immutable snapshots, exact/owned-prefix matching, unchanged original8args/result, suffix lifetime, foreign thread without native/API/report access",
+    "Bounded renderer atomics sampled once by UI owner; unknown offsets and unrelated input retain original drawing"
+  ],
+  "not_verified": [
+    "Literal UTF8 content is retained rather than treated as a missing localization key by the actual native constructor; schema permits display strings but no exact engine fallback implementation was found",
+    "Actual CTEXT long text line wrapping and clean appearance after accepting the observed sized/null metadata",
+    "Native initialization may draw original extra buttons before the post-construction binding hides them",
+    "Actual localized native BwString capacity is sufficient after native GameMenu initialization; capacity/full_write diagnostics have not run live for this candidate",
+    "Actual48px numeric button skin and current child activation dispatch",
+    "GameMenu LayoutDrawText exact/reserved-prefix alias on the live build; full native body copying no longer depends on it",
+    "Post-ProcessEvents is not a published Run construction completion guarantee; guarded native init/list/callback validation remains a candidate boundary",
+    "Exact cause of the previous execute-AV at0xfffffffbfffffffb"
+  ],
+  "latest_live_observation": {
+    "build": "04cd9842c8d7c16d7825d1c07facf2ddaeea11aadf0059fcbe9b1fc829930e9c",
+    "source": "Root inspected actual GameMenu screenshot; this UI agent accessed no game process or inputs.",
+    "automatic_popup_observed": true,
+    "actual_screenshot_observed": true,
+    "visual_pass": false,
+    "symptoms": [
+      "CTEXT title began correctly",
+      "PUSHBUTTON explanation/candidate labels lost their first Korean glyph and were truncated",
+      "Backed-title fallback had button borders"
+    ],
+    "candidate_response": "Remove all button explanation rows; declare a real large CTEXT before native construction; display only ASCII numbers on choice buttons.",
+    "new_candidate_live_visual_verified": false
+  },
+  "previous_model_limit": "Synthetic JSON/menu tests missed a native constructor crash and exact-pointer renderer tests missed04cd visual failure. Current success proves offline contracts, not live appearance.",
+  "runtime_layout": {
+    "root_minimum": [
+      264,
+      288
+    ],
+    "root_size_changed": false,
+    "constructor_body_xywh": [
+      8,
+      8,
+      248,
+      208
+    ],
+    "body_rectangle_inclusive": [
+      8,
+      8,
+      255,
+      215
+    ],
+    "body_surface_guard": "At least248x208 metadata regardless of image.data, or null/zero metadata. No image.data dereference, allocation, resize or ownership change.",
+    "candidate_ids": [
+      1,
+      2,
+      3,
+      5
+    ],
+    "candidate_x": [
+      20,
+      76,
+      132,
+      188
+    ],
+    "candidate_y": 220,
+    "candidate_size": [
+      48,
+      28
+    ],
+    "confirm_id": -3,
+    "confirm_xywh": [
+      20,
+      252,
+      224,
+      28
+    ],
+    "unused_hidden_ids": [
+      4,
+      6,
+      7,
+      8,
+      9
+    ],
+    "post_constructor_rectangle_changes": 0,
+    "post_constructor_type_or_surface_changes": 0,
+    "plugin_surface_allocations": 0,
+    "new_widget_ids_or_types": 0,
+    "restore_before": [
+      "native Resume",
+      "native init0/init7",
+      "native delete1"
+    ]
+  },
+  "file_payload_contract": {
+    "scope": "Validated active pending owner-thread offer, menu not open, native Run depth0; only rez/gamemenu.ui.json and rez/gamemenusocial.ui.json",
+    "ownership": "HeapAlloc(GetProcessHeap(),0,payload_length), exact bytes/out_size; published MTL file-hook pattern. Native parser owns resulting widget/string/Surface memory independently.",
+    "unknown_or_unowned": "Return null with original out_size unchanged",
+    "literal_limit": "Native UTF8 literal/localization resolution remains live-unverified; no guessed native allocation fallback"
+  },
+  "latest_runtime_failure": {
+    "log_backup": "sc1/backups/popup_disappears_20261015_020907/sc1_native.log",
+    "observed_at_local": [
+      "2026-10-15 02:04:33",
+      "2026-10-15 02:05:22",
+      "2026-10-15 02:05:29",
+      "2026-10-15 02:05:42"
+    ],
+    "native_ctext": {
+      "capacity": 232,
+      "length": 232,
+      "rect": [
+        8,
+        8,
+        255,
+        215
+      ],
+      "metadata": [
+        248,
+        208
+      ],
+      "data_null": true
+    },
+    "cause": "Old arrange_menu falsely required width/height0 whenever image.data was null. It rejected the native descriptor before any body write; the generic text-capacity message hid that layout failure.",
+    "fix": "Accept the observed native sized/null descriptor without modifying any native metadata; keep exact constructor rectangles and minimum valid dimensions.",
+    "new_candidate_live_verified": false
+  },
+  "spawn_lifetime_boundary": {
+    "source_issue": "Previously Spawn menu_ cleared only on hooked root delete1 or owned Run return. A native close lacking those callbacks could retain open=true and block later phase gates.",
+    "live_status": "44f2 phase1 talent/curse and DAT snapshot succeeded. Live menu/closing fields were unavailable after the user closed the game; actual residue was not directly observed.",
+    "log_backup": "sc1/backups/phase_milestone_20261015_023204/sc1_native.log",
+    "fix": "Restore original delegates/layout while live, activate original-3, then compare captured menu and captured owned menu_epoch using own fields only. Spawn detaches on return; Run keeps original-loop return lifetime.",
+    "independent_core_issue": "Root owns completed-unit count extended-array8 fix; it independently blocked the phase milestone and is outside this UI component."
+  },
+  "render_contract": {
+    "registration": "API44 hook_layout_draw_text only during plugin initialization",
+    "key": "Immutable native string.data and one-byte reserved-prefix body address for owned WS_HOTKEY controls",
+    "hotkey_prefix": "ASCII blank in original short numeric/confirmation allocation; exact replacement retains blank, offset1 begins at content",
+    "body": "Actual full native CTEXT bytes are the primary display; immutable fulltext substitution is auxiliary",
+    "text_lifetime": "Atomic shared snapshots, TLS returned lease and immutable interned strings until DLL destruction",
+    "return": "Original pointer returned verbatim including continuation suffix",
+    "fallback": "Other addresses preserve all8args/result without text/native pointer reads",
+    "render_thread_game_or_ui_api_calls": 0,
+    "native_string_descriptor_replaced": false,
+    "renderer_match_logging": true,
+    "diagnostics": "Atomic calls/exact/hotkey_offset/near_miss and first offset/scalars; one owner-thread log per popup after1000ms",
+    "raw_pointer_logging": false,
+    "live_match_verified": false
+  },
+  "integration_receipt": "sc1/native_campaign/plugin/dialog_protocol_verification.json",
+  "research_receipt": "sc1/campaign/ingame_native_dialog_research.json"
+}

@@ -1,0 +1,4 @@
+OpenSSL 3.0.13
+Copyright 1998-2024 The OpenSSL Project Authors. All Rights Reserved.
+https://github.com/openssl/openssl/tree/openssl-3.0.13
+License: Apache License 2.0; included in OpenSSL-3.0.13-LICENSE.txt
