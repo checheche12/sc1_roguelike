@@ -1,7 +1,7 @@
 #pragma once
 // Production economy adapters against owned synthetic units and real DAT assets.
 namespace host_test {
-inline constexpr std::size_t rework_economy_group_count=8;
+inline constexpr std::size_t rework_economy_group_count=9;
 inline GrowthSnapshot economy_snapshot(std::initializer_list<U32> ordinals,U32 phase=1){
     GrowthSnapshot s{};s.wire_version=2;s.completed_phase=phase;
     for(U32 ordinal:ordinals){const U32 bit=238+ordinal;s.talent_bits[bit/32]|=1u<<(bit%32);}return s;
@@ -10,6 +10,7 @@ inline bw::Unit* economy_add(U32 id,U32 owner=1,int x=500,int y=500){auto u=add(
 inline bw::Unit* __cdecl economy_create_supply(U32 id,int x,int y,U32 owner,const U8* skins){
     auto u=create(id,x,y,owner,skins);if(u && id==7)game.supplies[1].used[owner]+=raw_value(0,46,id);
     if(u && id==41)game.supplies[0].used[owner]+=raw_value(0,46,id);
+    if(u && id==64)game.supplies[2].used[owner]+=raw_value(0,46,id);
     if(u)std::fill(std::begin(u->build_queue),std::end(u->build_queue),std::uint16_t(228));return u;
 }
 inline void __cdecl economy_return_original(bw::Unit* u){
@@ -198,7 +199,29 @@ inline void economy_larva_cap_and_chrono_actual_progress(){
     for(U32 frame=10;frame<14;frame++){game.frame_count=frame;rework_economy_v5::UnitScope progress(factory);std::memcpy(&research,factory->unit_specific.bytes+10,2);--research;std::memcpy(factory->unit_specific.bytes+10,&research,2);}
     std::memcpy(&research,factory->unit_specific.bytes+10,2);CHECK(research==94);
 }
+inline void economy_starting_grant_once_and_retry(){
+    for(U32 race:{0u,1u,2u}){
+        reset();CHECK(apply_snapshot(nullptr,economy_snapshot({})));g.create=economy_create_supply;
+        const U32 depot_id=race==0?131u:race==2?154u:106u,worker_id=race==0?41u:race==2?64u:7u;
+        auto base=economy_add(depot_id,player_owner(),1000,1000);base->flags=1;
+        auto mineral=economy_add(176,11,1200,1000);rework_economy_v5::amount(mineral,1500);
+        game.minerals[player_owner()]=200;game.gas[player_owner()]=100;
+        game.frame_count=47;rework_economy_v5::step();CHECK(!rework_economy_v5::starting_bonus_credited);
+        game.frame_count=48;fail_spawn=true;rework_economy_v5::step();CHECK(rework_economy_v5::starting_bonus_credited&&rework_economy_v5::starting_workers==0);
+        CHECK(game.minerals[player_owner()]==700&&game.gas[player_owner()]==600);
+        fail_spawn=false;game.frame_count=72;rework_economy_v5::step();CHECK(rework_economy_v5::starting_workers==4);
+        CHECK(game.supplies[race].used[player_owner()]==8&&game.supplies[race].provided[player_owner()]==8);
+        U32 workers=0;living_units([&](bw::Unit* u){if(u->unit_id==worker_id&&u->player==player_owner()){++workers;CHECK(u->order==85);}});CHECK(workers==4);
+        const auto made=count;game.frame_count=240;rework_economy_v5::step();CHECK(count==made&&game.minerals[player_owner()]==700);
+        CHECK(apply_snapshot(nullptr,economy_snapshot({},2)));rework_economy_v5::step();CHECK(count==made&&game.gas[player_owner()]==600);
+    }
+    reset();CHECK(apply_snapshot(nullptr,economy_snapshot({})));game.frame_count=240;rework_economy_v5::step();CHECK(!rework_economy_v5::starting_bonus_credited);
+    for(const auto& m:campaign_config::kMissions)if(m.no_production){g.mission=&m;break;}
+    auto base=economy_add(106);base->flags=1;auto mineral=economy_add(176,11,700,500);rework_economy_v5::amount(mineral,1500);
+    rework_economy_v5::step();CHECK(!rework_economy_v5::starting_bonus_credited&&rework_economy_v5::starting_workers==0);
+}
 inline void run_rework_economy_groups(){
+    economy_starting_grant_once_and_retry();
     economy_discount_components_and_rounding();economy_times_supply_and_owner_isolation();economy_resources_and_start_only_box();
     economy_successful_resource_returns_only();economy_actual_paid_cancellation_and_duplicate_queue();economy_mule_lifetime_orders_supply_and_return();
     economy_twin_drone_supply_cancel_and_failed_second();economy_larva_cap_and_chrono_actual_progress();

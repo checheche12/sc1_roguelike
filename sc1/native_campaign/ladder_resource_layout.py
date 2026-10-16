@@ -14,7 +14,7 @@ try:
 except ImportError:
     import resource_layout as rules
 
-VERSION = 'joint_ladder_arcs_flanking_gas_v1'
+VERSION = 'joint_ladder_arcs_nearest_legal_v2'
 
 
 def formations(count, gas_count, anchor, direction, tangent_shift=0):
@@ -23,7 +23,8 @@ def formations(count, gas_count, anchor, direction, tangent_shift=0):
     vertical = bool(dx)
     rows = 1 if count <= 12 else 2 if count <= 24 else 3
     lengths = [count // rows + (row < count % rows) for row in range(rows)]
-    distances = (288, 256, 320, 352) if vertical else (256, 224, 288, 320)
+    minimum = 192 if vertical else 160
+    distances = range(minimum, 353 if vertical else 321, 32)
     for distance in distances:
         for depth in (64, 96):
             minerals = []
@@ -34,7 +35,7 @@ def formations(count, gas_count, anchor, direction, tangent_shift=0):
                 tangents += [inner + i * step for i in range(size - left)]
                 outer = max(map(abs, tangents), default=1)
                 for tangent in tangents:
-                    normal = distance + row * (128 if vertical else 96) - round(depth * (abs(tangent) / outer) ** 2 / 32) * 32
+                    normal = max(minimum, distance + row * (128 if vertical else 96) - round(depth * (abs(tangent) / outer) ** 2 / 32) * 32)
                     x = ax + dx * normal if vertical else ax + tangent + tangent_shift
                     y = ay + tangent + tangent_shift if vertical else ay + dy * normal
                     # A half-grid anchor must translate every row uniformly.
@@ -110,53 +111,63 @@ def refine(chk, info, original, fields, anchors, clear_depots, worker_walk, army
         failures = defaultdict(int)
         moving = indices + gases
         accepted = False
+        choices = []
         for direction in directions:
             along = centroid[1]-center[1] if direction[0] else centroid[0]-center[0]
             preferred = max(-192,min(192,round(along/64)*64))
             shifts = list(dict.fromkeys((0,preferred,-64,64,-128,128,-192,192)))
-            for minerals, gas_points, shape in chain.from_iterable(formations(len(indices), len(gases), anchor, direction, shift) for shift in shifts):
-                chosen = rules._assignment([info[i][:2] for i in indices], minerals)
-                gas_choice = rules._assignment([info[i][:2] for i in gases], gas_points) if gases else ([],0)
-                if chosen is None or gas_choice is None:
-                    continue
-                points = chosen[0] + gas_choice[0]
-                if any(math.dist(original[i][:2], p) > rules.MAX_DISPLACEMENT for i,p in zip(moving, points)):
-                    continue
-                if not _geometry(info, moving, points, raw_walk, boxes, reserved, buildable, chk, failures):
-                    continue
-                candidate = list(info)
-                for i,p in zip(moving, points):candidate[i] = (*p, *info[i][2:])
-                if any(not rules._resource_clear(p, candidate) for p in clear_depots):
-                    failures['depot_rebuild'] += 1;continue
-                if not rules._critical_membership(chk, info, candidate, moving, critical_locations):
-                    failures['scripted_resource_location'] += 1;continue
-                proofs = []
-                for field in fields:
-                    axis = shape['direction'] if field in own_fields else field['direction']
-                    okay, proof = rules._access(candidate, field['unit_indices'], field['anchor'], axis,
-                                                worker_walk, boxes, virtual_anchors=anchors)
-                    if not okay:break
-                    proofs.append(proof)
-                else:
-                    okay = True
-                if not okay:
-                    failures['worker_front_access'] += 1;continue
-                if not rules._army_route_ok(info, candidate, moving, army_walk, boxes, army_cache):
-                    failures['army_route'] += 1;continue
-                gas_state = rules._gas_state(candidate, anchors, worker_walk, boxes)
-                if not known_gas <= set(gas_state):
-                    failures['gas_return_route'] += 1;continue
-                if any(i not in gas_state or tuple(gas_state[i]['anchor']['center']) != center for i in gases):
-                    failures['gas_different_base'] += 1;continue
-                for field,proof in zip(fields,proofs):field['front_access'] = proof
-                for field in own_fields:
-                    field.update(status='functional_ladder_arc', **shape)
-                    field['changed'] = any(original[i][:2] != candidate[i][:2] for i in field['unit_indices'])
-                info = candidate;known_gas = set(gas_state)
-                report.update(status='joint_ladder_arc', mineral_positions=[list(info[i][:2]) for i in indices],
-                              gas_positions=[list(info[i][:2]) for i in gases], **shape)
-                accepted = True;break
-            if accepted:break
+            choices.extend(chain.from_iterable(formations(len(indices), len(gases), anchor, direction, shift) for shift in shifts))
+        # Compare actual worker travel distance across every orientation before
+        # preferring the original side or a decorative arc.
+        choices.sort(key=lambda choice: (sum(math.dist(p, center) for p in choice[0]),
+                                         choice[2]['direction'] != list(primary),
+                                         choice[2]['normal_distance_pixels']))
+        for minerals, gas_points, shape in choices:
+            chosen = rules._assignment([info[i][:2] for i in indices], minerals)
+            gas_choice = rules._assignment([info[i][:2] for i in gases], gas_points) if gases else ([],0)
+            if chosen is None or gas_choice is None:
+                continue
+            points = chosen[0] + gas_choice[0]
+            if any(math.dist(original[i][:2], p) > rules.MAX_DISPLACEMENT for i,p in zip(moving, points)):
+                continue
+            if not _geometry(info, moving, points, raw_walk, boxes, reserved, buildable, chk, failures):
+                continue
+            candidate = list(info)
+            for i,p in zip(moving, points):candidate[i] = (*p, *info[i][2:])
+            if any(sum(math.dist(candidate[i][:2], center) for i in field['unit_indices']) >
+                   sum(math.dist(info[i][:2], center) for i in field['unit_indices']) + 0.001
+                   for field in own_fields):
+                failures['longer_mining_route'] += 1;continue
+            if any(not rules._resource_clear(p, candidate) for p in clear_depots):
+                failures['depot_rebuild'] += 1;continue
+            if not rules._critical_membership(chk, info, candidate, moving, critical_locations):
+                failures['scripted_resource_location'] += 1;continue
+            proofs = []
+            for field in fields:
+                axis = shape['direction'] if field in own_fields else field['direction']
+                okay, proof = rules._access(candidate, field['unit_indices'], field['anchor'], axis,
+                                            worker_walk, boxes, virtual_anchors=anchors)
+                if not okay:break
+                proofs.append(proof)
+            else:
+                okay = True
+            if not okay:
+                failures['worker_front_access'] += 1;continue
+            if not rules._army_route_ok(info, candidate, moving, army_walk, boxes, army_cache):
+                failures['army_route'] += 1;continue
+            gas_state = rules._gas_state(candidate, anchors, worker_walk, boxes)
+            if not known_gas <= set(gas_state):
+                failures['gas_return_route'] += 1;continue
+            if any(i not in gas_state or tuple(gas_state[i]['anchor']['center']) != center for i in gases):
+                failures['gas_different_base'] += 1;continue
+            for field,proof in zip(fields,proofs):field['front_access'] = proof
+            for field in own_fields:
+                field.update(status='functional_ladder_arc', **shape)
+                field['changed'] = any(original[i][:2] != candidate[i][:2] for i in field['unit_indices'])
+            info = candidate;known_gas = set(gas_state)
+            report.update(status='joint_ladder_arc', mineral_positions=[list(info[i][:2]) for i in indices],
+                          gas_positions=[list(info[i][:2]) for i in gases], **shape)
+            accepted = True;break
         report['reasons'] = dict(failures)
         if not accepted:report['reason'] = 'terrain_occupancy_or_access_constraints'
     return info, reports

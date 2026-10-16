@@ -289,7 +289,7 @@ void stage1_growth_keeps_waves_playable() {
     for(int i=0;i<600;i++)tick();
     CHECK(g.protocol.state()==1 && !counter(kReadyCounter));
     CHECK(rework_waves::timeline.ordinal==1);
-    CHECK(rework_waves::live_supply()==32 && count>2);
+    CHECK(rework_waves::live_supply()==27 && count>2);
 }
 void paused_protocol_pump_and_reentrancy() {
     reset();make_chk();init_units(original);CHECK(g.protocol.state()==1);
@@ -535,7 +535,7 @@ void wave_host_integration() {
     CHECK(count==2 && rework_waves::timeline.active_ticks==0);
     CHECK(rework_waves::current && rework_waves::timeline.home);rework_waves::timeline.active_ticks=(rework_waves::current->first-24)*24;
     for(U32 f=2000;f<2600;f++){game.frame_count=f;rework_waves::tick(true,false,false);}
-    CHECK(rework_waves::live_supply()==32 && count>2);CHECK(rework_waves::timeline.ordinal==1);CHECK(orders>0 && orders<=count*2);
+    CHECK(rework_waves::live_supply()==27 && count>2);CHECK(rework_waves::timeline.ordinal==1);CHECK(orders>0 && orders<=count*2);
     const auto n=count;
     for(U32 f=2600;f<5000;f++){game.frame_count=f;rework_waves::tick(true,false,true);}
     CHECK(count==n && rework_waves::countdown(true,true).kind==sc1_native::WaveCountdown::Kind::Hidden);

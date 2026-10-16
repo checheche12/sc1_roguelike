@@ -49,12 +49,18 @@ struct CommandScope {
  }
  ~CommandScope(){if(active)cargo.after_commands();}
 };
+inline bool transport_lifecycle(const bw::Unit* carrier) noexcept {
+ // Only these transports use the paged cargo windows. A bunker shares the
+ // passenger links, but the native death path ejects its occupants alive.
+ // Do not require positive HP: lethal damage may already have set it to zero.
+ return valid_unit(carrier) && (carrier->unit_id==11 || carrier->unit_id==42 || carrier->unit_id==57 || carrier->unit_id==69);
+}
 template<class Callback> inline void before_death(bw::Unit* carrier,Callback callback) {
- if(!g.active || !bind() || lifecycle_depth || !cargo.count(carrier))return;
+ if(!g.active || !transport_lifecycle(carrier) || !bind() || lifecycle_depth || !cargo.count(carrier))return;
  ++lifecycle_depth;cargo.for_each_passenger(carrier,[&](bw::Unit* p){callback(p);});cargo.hide_window(carrier);--lifecycle_depth;
 }
 template<class Callback> inline void before_give(bw::Unit* carrier,U32 next_owner,Callback callback) {
- if(!g.active || !valid_unit(carrier) || next_owner==carrier->player || !bind() || lifecycle_depth || !cargo.count(carrier))return;
+ if(!g.active || !transport_lifecycle(carrier) || next_owner==carrier->player || !bind() || lifecycle_depth || !cargo.count(carrier))return;
  ++lifecycle_depth;cargo.for_each_passenger(carrier,[&](bw::Unit* p){callback(p,next_owner);});cargo.hide_window(carrier);--lifecycle_depth;
 }
 inline void step() noexcept {if(g.active && bind())cargo.refresh();}

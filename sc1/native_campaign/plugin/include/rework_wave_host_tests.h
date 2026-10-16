@@ -3,12 +3,14 @@ namespace host_test {
 namespace rework_wave_tests {
 namespace p=sc1_native::rework_wave;
 inline void qa_stack_counts_and_wave_budgets(){
+ CHECK(p::reduced_amount(0)==0&&p::reduced_amount(1)==1&&p::reduced_amount(20)==17&&p::reduced_amount(32)==27&&p::reduced_amount(40)==34&&p::reduced_amount(128)==109);
  CHECK(p::normal_budget(0)==32&&p::normal_budget(1)==40&&p::normal_budget(12)==128&&p::normal_budget(100)==128);
  const U32 wanted[]={0,2,6,12,20,30,42,56};for(U32 i=0;i<std::size(wanted);i++)CHECK(p::raid_count(i)==wanted[i]);
  CHECK(p::raid_count(4,3)==29);CHECK(p::reserve_budget(40,1)==20&&p::reserve_budget(40,2)==40&&p::reserve_budget(40,3)==60&&p::reserve_budget(128,255)==480);
 }
 inline void begin(U32 mission=106){wave_target_tests::begin(mission);g.applied=true;g.growth={};g.growth.wire_version=2;rework_waves::reset();CHECK(rework_waves::enabled());}
 inline void advance_second(U32 second){game.frame_count=second*24;game.elapsed_seconds=second;rework_waves::tick(true,false,false);wave_targeting::step(true,false);}
+inline bool marching(bw::Unit* u){return u->order==(wave_targeting::detector(u)?6u:14u);}
 inline void all_missions_actual_adapter_departures(){
  U32 audited=0;
  for(const auto& profile:p::kProfiles){if(!profile.enabled)continue;begin(profile.mission);
@@ -19,18 +21,19 @@ inline void all_missions_actual_adapter_departures(){
   auto worker=add(worker_id,player_owner(),origin->target.x+32,origin->target.y);worker->flags=1;
   const auto baseline=count;const auto first=std::max(profile.first,profile.base_grace);
   for(U32 second=0;second<first-4;second++){advance_second(second);CHECK(count==baseline);}
-  advance_second(first-4);CHECK(count>baseline);const auto first_count=count-baseline;CHECK(rework_waves::live_supply()<=32&&rework_waves::live_supply()>=30);
+  advance_second(first-4);CHECK(count>baseline);const auto first_count=count-baseline;
+  CHECK(rework_waves::live_supply()<=27&&rework_waves::live_supply()>=24);
   for(std::size_t i=baseline;i<count;i++){CHECK(rework_curses::appearing(&units[i]));CHECK(units[i].order==23);}
   for(U32 second=first-3;second<=first;second++)advance_second(second);
   CHECK(rework_waves::timeline.ordinal==1&&rework_waves::timeline.next==first+profile.interval);
-  for(std::size_t i=baseline;i<count;i++){CHECK(!rework_curses::appearing(&units[i]));CHECK(units[i].order==14);CHECK(units[i].order_target.x==hq->flingy.position.x&&units[i].order_target.y==hq->flingy.position.y);
+  for(std::size_t i=baseline;i<count;i++){CHECK(!rework_curses::appearing(&units[i]));CHECK(marching(&units[i]));if(!wave_targeting::detector(&units[i]))CHECK(units[i].order_target.x==hq->flingy.position.x&&units[i].order_target.y==hq->flingy.position.y);
    // A real engine moves the departed army. Free its origin cells before the
    // second warning, keeping that army alive for shared supply accounting.
    units[i].flingy.position={std::int16_t(origin->target.x+64),std::int16_t(origin->target.y+64)};}
   const auto after_first=count;
   for(U32 second=first+1;second<=first+profile.interval;second++)advance_second(second);
-  CHECK(rework_waves::timeline.ordinal==2&&count>after_first);CHECK(rework_waves::live_supply()<=72&&rework_waves::live_supply()>=68);
-  for(std::size_t i=after_first;i<count;i++)CHECK(!rework_curses::appearing(&units[i])&&units[i].order==14);
+  CHECK(rework_waves::timeline.ordinal==2&&count>after_first);CHECK(rework_waves::live_supply()<=61&&rework_waves::live_supply()>=56);
+  for(std::size_t i=after_first;i<count;i++)CHECK(!rework_curses::appearing(&units[i])&&marching(&units[i]));
   std::printf("AUDIT mission=%u first=%u interval=%u first_units=%zu repeat_units=%zu half_supply=%u attack_orders=ok\n",profile.mission,first,profile.interval,first_count,count-after_first,rework_waves::live_supply());++audited;
  }
  CHECK(audited>0);
@@ -58,8 +61,8 @@ inline void resource_and_neutral_origin_guards(){
 inline void larger_raids_reserves_and_uncommon_stacks(){
  begin(101);rework_waves::timeline.home=true;rework_waves::timeline.active_ticks=600*24;g.current_wave_id=10;
  auto worker=add(7,player_owner(),1000,1700);worker->flags=1;add(176,11,960,1700);
- CHECK(rework_waves::count_spawn(43,p::raid_count(4),15)==20);CHECK(rework_waves::live_supply()==80);
- U32 mutas=0;living_units([&](bw::Unit* u){if(u->unit_id==43&&rework_curses::marked(u)){++mutas;CHECK(wave_targeting::distance(u->flingy.position.x,u->flingy.position.y,1000,1700)<384ll*384);CHECK(rework_curses::raid_target(u)==worker);}});CHECK(mutas==20);
+ CHECK(rework_waves::count_spawn(43,p::reduced_amount(p::raid_count(4)),15)==17);CHECK(rework_waves::live_supply()==68);
+ U32 mutas=0;living_units([&](bw::Unit* u){if(u->unit_id==43&&rework_curses::marked(u)){++mutas;CHECK(wave_targeting::distance(u->flingy.position.x,u->flingy.position.y,1000,1700)<384ll*384);CHECK(rework_curses::raid_target(u)==worker);}});CHECK(mutas==17);
  living_units([&](bw::Unit* u){if(u->unit_id==43&&rework_curses::marked(u)){wave_targeting::issue(u);CHECK(u->order==23);}});
  rework_waves::timeline.active_ticks+=4*24;rework_waves::release_and_orders();
  living_units([&](bw::Unit* u){if(u->unit_id==43&&rework_curses::marked(u))CHECK(u->order==14&&u->order_target.x==1000&&u->order_target.y==1700);});
@@ -67,7 +70,7 @@ inline void larger_raids_reserves_and_uncommon_stacks(){
   begin(101);g.growth.curse_counts[slot]=static_cast<U8>(stacks);g.growth.curse_counts[16]=2;g.current_wave_id=10;
   rework_waves::primary=rework_waves::choose_origin(true);CHECK(rework_waves::primary);rework_waves::timeline.home=true;rework_waves::timeline.active_ticks=300*24;
   const auto& roster=p::kRosters[slot-24];CHECK(rework_waves::timeline.eligible(*rework_waves::current,roster,rework_waves::capabilities()));
-  const auto initial=count;rework_waves::roster(roster);CHECK(count-initial==p::scaled_count(roster.units[0].count*stacks,2));
+  const auto initial=count;rework_waves::roster(roster);CHECK(count-initial==p::reduced_amount(p::scaled_count(roster.units[0].count*stacks,2)));
  }
  begin(101);const auto origin=rework_waves::choose_origin(true);CHECK(origin);
  auto hq=add(106,player_owner(),origin->target.x,origin->target.y);hq->flags=1;add(7,player_owner(),origin->target.x+32,origin->target.y)->flags=1;
@@ -85,9 +88,9 @@ inline void larger_raids_reserves_and_uncommon_stacks(){
  for(U32 second=second_departure+1;second<second_departure+15;second++)advance_second(second);
  CHECK(rework_waves::pending_kind==4);U32 supply=0;std::array<bool,228> types{};
  living_units([&](bw::Unit* u){const auto v=rework_curses::identity(u);if(v&&v->slot==24){CHECK(rework_curses::appearing(u));supply+=wave_supply(u->unit_id);types[u->unit_id]=true;}});
- CHECK(supply>=38&&supply<=40);CHECK(std::count(types.begin(),types.end(),true)>1);
+ CHECK(supply>=31&&supply<=34);CHECK(std::count(types.begin(),types.end(),true)>1);
  advance_second(second_departure+15);CHECK(!rework_waves::pending_kind);
- living_units([&](bw::Unit* u){const auto v=rework_curses::identity(u);if(v&&v->slot==24)CHECK(!rework_curses::appearing(u)&&u->order==14);});
+ living_units([&](bw::Unit* u){const auto v=rework_curses::identity(u);if(v&&v->slot==24)CHECK(!rework_curses::appearing(u)&&marching(u));});
 }
 inline void profile_binding_and_readiness(){
  static_assert(std::size(p::kProfiles)==std::size(campaign_config::kMissions),"all original profiles are bound");
@@ -101,6 +104,39 @@ inline void profile_binding_and_readiness(){
  for(U32 f=1418*24;f<=1500*24;f+=24)t.advance(profile,f,true,true,true);CHECK(t.second()==1417 && t.countdown(profile)==24);
  t.advance(profile,1501*24,true,false,false);CHECK(!t.next && !t.departure_at);
  t.advance(profile,1502*24,true,false,true);CHECK(t.next==t.second()+240);
+}
+inline void reduced_auxiliary_dispatch(){
+ for(U32 kind:{2u,3u}){
+  begin(101);const auto origin=rework_waves::choose_origin(true);CHECK(origin);
+  add(106,player_owner(),origin->target.x,origin->target.y)->flags=1;
+  add(7,player_owner(),origin->target.x+32,origin->target.y)->flags=1;
+  add(0,player_owner(),origin->target.x+64,origin->target.y)->flags=1;
+  g.growth.curse_counts[20]=3;g.growth.curse_counts[15]=4;g.current_wave_id=10;
+  rework_waves::timeline.home=true;rework_waves::timeline.active_ticks=600*24;
+  rework_waves::timeline.next=900;rework_waves::timeline.departure_at=604;
+  rework_waves::pending_kind=kind;rework_waves::pending_spawn_at=600;
+  rework_waves::primary=kind==3?rework_waves::raid_owner():rework_waves::choose_origin(true);
+  const auto before=count;advance_second(0);CHECK(count>before&&rework_waves::spawned_pending);
+  const auto supply=rework_waves::live_supply();
+  if(kind==2)CHECK(supply>=24&&supply<=27); // 32 half-supply -> 27, once.
+  else {CHECK(count-before==18&&supply==69);U32 mutas=0,detectors=0;for(std::size_t i=before;i<count;i++){if(units[i].unit_id==43)++mutas;if(wave_targeting::detector(&units[i]))++detectors;}CHECK(mutas==17&&detectors==1);}
+ }
+}
+inline void detectors_cover_their_own_army(){
+ for(U32 race:{0u,1u,2u}){
+  begin(101);const auto origin=rework_waves::choose_origin(true);CHECK(origin);auto own_origin=*origin;own_origin.race=race;rework_waves::primary=&own_origin;
+  add(106,player_owner(),origin->target.x,origin->target.y)->flags=1;
+  auto original=add(37,origin->owner,origin->target.x-96,origin->target.y);const auto untouched=*original;
+  rework_waves::timeline.home=true;rework_waves::timeline.active_ticks=600*24;g.current_wave_id=55;
+  const auto before=count;rework_waves::normal_units(40);bw::Unit* detector=nullptr;U32 detectors=0;
+  for(std::size_t i=before;i<count;i++)if(wave_targeting::detector(&units[i])){detector=&units[i];++detectors;}
+  CHECK(detectors==1&&detector->unit_id==p::detector(race));CHECK(original_stat({0,22,detector->unit_id})&0x8000u);
+  CHECK(rework_waves::live_supply()<=34);CHECK(rework_waves::add_detector()==detector);
+  rework_waves::timeline.active_ticks=604*24;game.frame_count=96;rework_waves::release_and_orders();CHECK(detector->order==6);
+  bool follows_army=false;for(std::size_t i=before;i<count;i++)if(!wave_targeting::detector(&units[i])){auto p=units[i].flingy.position;if(detector->order_target.x==p.x&&detector->order_target.y==p.y)follows_army=true;units[i].flingy.hitpoints=0;}
+  CHECK(follows_army&&std::memcmp(original,&untouched,sizeof(untouched))==0);
+  const auto issued_before=wave_target_tests::issued.size();game.frame_count=192;detector->order=3;wave_targeting::issue(detector);CHECK(wave_target_tests::issued.size()==issued_before);
+ }
 }
 inline void first_eligible_then_relative_cadence(){
  const p::Profile profile{1,true,true,300,120,180,480,600,720,360,480,600,0};
@@ -146,7 +182,7 @@ inline void exact_rare_and_hero_rosters(){
   begin(chosen->mission);auto detector=add(9,player_owner(),500,500);detector->flags=1;auto aa=add(0,player_owner(),550,500);aa->flags=1;
   rework_waves::timeline.home=true;rework_waves::timeline.active_ticks=900*24;rework_waves::timeline.ordinal=6;g.current_wave_id=55;
   rework_waves::primary=rework_waves::choose_origin(true);CHECK(rework_waves::primary);g.growth.curse_counts[r.slot]=1;
-  const auto before=count;rework_waves::roster(r);CHECK(count>before);U32 expected=0;for(auto member:r.units)expected+=member.count;
+  const auto before=count;rework_waves::roster(r);CHECK(count>before);U32 expected=0;for(auto member:r.units)expected+=member.hero?member.count:p::reduced_amount(member.count);
   CHECK(count-before==expected);for(std::size_t i=before;i<count;i++)CHECK(is_enemy(units[i].player) && rework_curses::marked(&units[i]));
   const auto once=count;rework_waves::roster(r);CHECK(count==once); // live hero forbids duplicate roster
  }
@@ -210,9 +246,11 @@ inline void native_caster_orders_and_original_hero_exclusion(){
  const auto initial=count;rework_waves::roster(hyperion);CHECK(count==initial);
 }
 }
-inline constexpr std::size_t rework_wave_group_count=15;
+inline constexpr std::size_t rework_wave_group_count=17;
 inline void run_rework_wave_groups(){
  rework_wave_tests::qa_stack_counts_and_wave_budgets();
+ rework_wave_tests::reduced_auxiliary_dispatch();
+ rework_wave_tests::detectors_cover_their_own_army();
  rework_wave_tests::resource_and_neutral_origin_guards();
  rework_wave_tests::all_missions_actual_adapter_departures();rework_wave_tests::occupied_cells_and_original_assault_clock();rework_wave_tests::larger_raids_reserves_and_uncommon_stacks();
  rework_wave_tests::profile_binding_and_readiness();rework_wave_tests::first_eligible_then_relative_cadence();

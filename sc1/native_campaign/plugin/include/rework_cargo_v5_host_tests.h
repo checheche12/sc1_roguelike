@@ -17,7 +17,7 @@ inline void __cdecl board(bw::Unit* passenger){
  const U32 native_capacity=raw_value(0,48,carrier->unit_id);CHECK(native_capacity<=8);
  if(empty==8 || used+rework_cargo_v5::space(passenger)>native_capacity)return;
  const auto id=rework_cargo_v5::cargo.identity(passenger);carrier->loaded_units[empty]=static_cast<std::uint16_t>(id);carrier->scr_carried_unit_high_bits=static_cast<std::uint16_t>((carrier->scr_carried_unit_high_bits&~(3u<<(empty*2)))|((id>>16)<<(empty*2)));
- passenger->flags|=0x40u;passenger->related=carrier;passenger->order=2;
+ passenger->flags|=carrier->unit_id==125 ? 0x60u : 0x40u;passenger->related=carrier;passenger->order=2;
 }
 inline bw::Unit* enter(bw::Unit* c,U32 id=0){auto p=fresh(id,c->player);p->order=92;p->order_target.unit=c;owner_unit_hook(p,board);return p;}
 inline void __cdecl unload(bw::Unit* carrier){
@@ -31,10 +31,13 @@ inline void __cdecl single_unload(const void* data,U32 length,U32){
 }
 inline void __cdecl native_kill(bw::Unit* u){
  ++death_calls[static_cast<std::size_t>(u-units.data())];if(transport_id(u->unit_id)){const auto w=packed(u);for(U32 i=0;i<8;i++)if(auto p=rework_cargo_v5::cargo.resolve(::sc1::sight_cargo::unpack_slot(w,i)))owner_kill_hook(p,native_kill);}
+ // The native bunker death path ejects its passengers. The production hook
+ // must leave both their lives and the original packed handles intact.
+ if(u->unit_id==125){const auto w=packed(u);for(U32 i=0;i<8;i++)if(auto p=rework_cargo_v5::cargo.resolve(::sc1::sight_cargo::unpack_slot(w,i))){p->related=nullptr;p->flags&=~0x60u;p->order=2;}std::memset(u->loaded_units,0,sizeof(u->loaded_units));u->scr_carried_unit_high_bits=0;}
  u->flingy.hitpoints=0;u->order=0;u->order_state=1;u->related=nullptr;u->flags&=~0x40u;
 }
 inline void __cdecl native_give(bw::Unit* u,U32 owner){
- ++give_calls[static_cast<std::size_t>(u-units.data())];if(transport_id(u->unit_id)){const auto w=packed(u);for(U32 i=0;i<8;i++)if(auto p=rework_cargo_v5::cargo.resolve(::sc1::sight_cargo::unpack_slot(w,i)))owner_give_hook(p,owner,native_give);}
+ ++give_calls[static_cast<std::size_t>(u-units.data())];if(transport_id(u->unit_id) || u->unit_id==125){const auto w=packed(u);for(U32 i=0;i<8;i++)if(auto p=rework_cargo_v5::cargo.resolve(::sc1::sight_cargo::unpack_slot(w,i)))owner_give_hook(p,owner,native_give);}
  u->player=static_cast<U8>(owner);
 }
 inline void capacities_and_owner_tech_gate(){
@@ -82,7 +85,24 @@ inline void native_extended_transport_research_gate(){
  levels[24*12+1]=0;game.upgrade_level_sc[1][24]=1;CHECK(rework_cargo_v5::capacity(c)==8);auto ordinary=fresh(42);CHECK(!(enter(ordinary)->flags&0x40u));
  array.end=array.pointer+24*12+1;CHECK(rework_cargo_v5::capacity(ordinary)==8 && !rework_upgrade_storage::slot(1,24));g.extended=nullptr;g.extended_count=0;
 }
+inline void bunker_death_preserves_native_ejection(){
+ for(U32 owner:{1u,6u})for(U32 passengers:{1u,4u})for(bool lethal:{false,true}){
+  begin();auto bunker=fresh(125,owner);std::array<bw::Unit*,4> inside{};
+  for(U32 i=0;i<passengers;i++){inside[i]=enter(bunker,i%2 ? 32u : 0u);CHECK((inside[i]->flags&0x60u)==0x60u);}
+  CHECK(rework_cargo_v5::cargo.count(bunker)==passengers);
+  if(lethal)bunker->flingy.hitpoints=0;
+  owner_kill_hook(bunker,native_kill);CHECK(death_calls[0]==1 && bunker->order==0);
+  for(U32 i=0;i<passengers;i++){auto p=inside[i];CHECK(death_calls[p-units.data()]==0);CHECK(p->flingy.hitpoints==10000 && p->order!=0);CHECK(!p->related && !(p->flags&0x60u) && p->player==owner);}
+ }
 }
-inline constexpr std::size_t rework_cargo_group_count=6;
-inline void run_rework_cargo_groups(){rework_cargo_tests::capacities_and_owner_tech_gate();rework_cargo_tests::sixteen_board_full_unload_and_mixed_overflow();rework_cargo_tests::command_single_unload_and_generation_safe_pages();rework_cargo_tests::death_give_exact_once_and_overflow_recovery();rework_cargo_tests::legacy_twelve_and_two_passenger_layouts();rework_cargo_tests::native_extended_transport_research_gate();}
+inline void bunker_give_preserves_native_manifest(){
+ begin();auto bunker=fresh(125);for(U32 i=0;i<4;i++)enter(bunker);const auto before=packed(bunker);
+ owner_give_hook(bunker,2,native_give);const auto after=packed(bunker);
+ CHECK(before.low==after.low && before.high==after.high && give_calls[0]==1);
+ for(U32 i=1;i<=4;i++)CHECK(give_calls[i]==1 && units[i].player==2 && units[i].related==bunker && (units[i].flags&0x60u)==0x60u);
+ owner_kill_hook(bunker,native_kill);for(U32 i=1;i<=4;i++)CHECK(death_calls[i]==0 && units[i].order!=0 && !units[i].related);
+}
+}
+inline constexpr std::size_t rework_cargo_group_count=8;
+inline void run_rework_cargo_groups(){rework_cargo_tests::capacities_and_owner_tech_gate();rework_cargo_tests::sixteen_board_full_unload_and_mixed_overflow();rework_cargo_tests::command_single_unload_and_generation_safe_pages();rework_cargo_tests::death_give_exact_once_and_overflow_recovery();rework_cargo_tests::legacy_twelve_and_two_passenger_layouts();rework_cargo_tests::native_extended_transport_research_gate();rework_cargo_tests::bunker_death_preserves_native_ejection();rework_cargo_tests::bunker_give_preserves_native_manifest();}
 }

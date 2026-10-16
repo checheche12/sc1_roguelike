@@ -29,7 +29,7 @@ GEYSER = 188
 MOVABLE_RESOURCES = MINERALS | {GEYSER}
 HEADQUARTERS = geometry.HEADQUARTERS
 MAX_DISPLACEMENT = 768
-ALGORITHM_VERSION = "functional_resource_ladder_v3_joint_arc_gas"
+ALGORITHM_VERSION = "functional_resource_ladder_v4_nearest_legal"
 WORKER_DIAMETER = 24
 # Reviewed source expansion sites supplement the regular cardinal search at a
 # diagonal cliff-side field. They still pass every construction/access guard.
@@ -367,9 +367,11 @@ def _formations(points, anchor):
         along = cy if vertical else cx
         anchor_along = ay if vertical else ax
         along = min(anchor_along + 256, max(anchor_along - 256, along))
-        base_distance = abs(cx - ax) if vertical else abs(cy - ay)
-        minimum = 224 if vertical else 192
-        distances = sorted(range(minimum, 481, 32), key=lambda d: (abs(d - base_distance), d))
+        # Stock depot/resource exclusion permits centers 192px to the sides
+        # and 160px above/below. Search outward from that legal minimum,
+        # rather than preserving the original field's excessive distance.
+        minimum = 192 if vertical else 160
+        distances = range(minimum, 481, 32)
         for rows in row_options:
             lengths = [n // rows + (i < n % rows) for i in range(rows)]
             for distance in distances:

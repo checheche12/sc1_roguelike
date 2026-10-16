@@ -61,6 +61,8 @@ inline std::vector<UnitState> states;
 inline bw::Unit* state_base=nullptr;
 inline bool start_box=false,scaled_resources=false,provided_applied=false,creating_mule=false,creating_twin=false,snapshot_seen=false;
 inline U32 next_mule=0;
+inline bool starting_bonus_credited=false;
+inline U32 starting_workers=0,starting_retry=0;
 inline UnitState* state(bw::Unit* u) {
     if(!valid_unit(u))return nullptr;
     if(state_base!=g.units || states.size()!=g.units_count){states.assign(g.units_count,{});state_base=g.units;}
@@ -303,6 +305,31 @@ inline void after_snapshot() {
         }});provided_applied=true;
     }
 }
+inline void starting_bonus(const std::vector<bw::Unit*>& depots) {
+    auto game=g.game();if(!g.mission || g.mission->no_production || game->frame_count<48 || starting_workers>=4 || game->frame_count<starting_retry)return;
+    bw::Unit* base=nullptr;
+    for(auto candidate:depots){auto mineral=nearest_mineral(candidate);if(!(candidate->flags&4u) && mineral && distance(candidate,mineral)<=768u*768u){base=candidate;break;}}
+    if(!base)return;
+    const U32 race=base->unit_id==106?1u:base->unit_id==154?2u:0u;
+    const U32 id=race==1?7u:race==2?64u:41u;
+    if(!starting_bonus_credited){credit(500,500);starting_bonus_credited=true;
+        // Preserve the original free supply after adding the four workers.
+        auto& provided=game->supplies[race].provided[player_owner()];provided=U32(std::min<std::uint64_t>(0xffffffffu,std::uint64_t(provided)+8));
+        message("시작 지원: 광물 500, 가스 500, 추가 일꾼 4기.");
+    }
+    starting_retry=game->frame_count+24;
+    for(int radius=128;radius<=320 && starting_workers<4;radius+=32)for(int dy=-radius;dy<=radius && starting_workers<4;dy+=32)for(int dx=-radius;dx<=radius && starting_workers<4;dx+=32){
+        if(std::max(std::abs(dx),std::abs(dy))!=radius)continue;
+        const int x=int(base->flingy.position.x)+dx,y=int(base->flingy.position.y)+dy;
+        bool occupied=false;living_units([&](bw::Unit* other){if(original_stat({0,22,other->unit_id})&4u)return;
+            const auto p=other->flingy.position;const auto ox=std::int64_t(x)-p.x,oy=std::int64_t(y)-p.y;
+            const int clearance=(original_stat({0,22,other->unit_id})&1u)?112:40;
+            if(ox*ox+oy*oy<std::int64_t(clearance)*clearance)occupied=true;
+        });
+        if(occupied)continue;auto u=spawn(id,x,y,player_owner());if(!u)continue;++starting_workers;
+        if(auto mineral=nearest_mineral(u);mineral && g.order)g.order(u,85,mineral->flingy.position.x,mineral->flingy.position.y,mineral,0);
+    }
+}
 inline void step() {
     if(!enabled())return;auto game=g.game();const auto second=game->elapsed_seconds,frame=game->frame_count;
     std::vector<bw::Unit*> hatcheries;std::vector<bw::Unit*> minerals;std::vector<bw::Unit*> depots;std::vector<bw::Unit*> expired;
@@ -314,6 +341,7 @@ inline void step() {
         if(depot(u->unit_id) && (u->flags&1u))depots.push_back(u);
         if(in(u->unit_id,{131,132,133}) && (u->flags&1u))hatcheries.push_back(u);
     });
+    starting_bonus(depots);
     for(auto u:expired){auto s=state(u);if(s)s->mule_expiry=0;if(g.set_hp)g.set_hp(u,0);}
     if(rank(21))for(auto hatch:hatcheries){
         auto s=state(hatch);if(!s)continue;U32 count=0;living_units([&](bw::Unit* u){if(own(u) && u->unit_id==35 && u->related==hatch)++count;});
@@ -349,5 +377,5 @@ inline void step() {
         }}
     }
 }
-inline void reset() noexcept {states.clear();state_base=nullptr;start_box=scaled_resources=provided_applied=creating_mule=creating_twin=snapshot_seen=false;next_mule=0;active_command_scope=nullptr;}
+inline void reset() noexcept {states.clear();state_base=nullptr;start_box=scaled_resources=provided_applied=creating_mule=creating_twin=snapshot_seen=false;next_mule=0;starting_bonus_credited=false;starting_workers=starting_retry=0;active_command_scope=nullptr;}
 }

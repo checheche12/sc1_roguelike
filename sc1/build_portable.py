@@ -92,11 +92,20 @@ def build(output, manifest_path=None):
         if source.suffix.lower() in (".dll",".pyd") and not source.name.startswith(("_test","_ctypes_test")):
             copy(source,runtime/"DLLs"/source.name)
     ignored={"site-packages","test","tests","__pycache__","idlelib","ensurepip"}
-    with zipfile.ZipFile(runtime/"python311.zip","w",zipfile.ZIP_DEFLATED,compresslevel=6) as archive:
-        for source in sorted((source_runtime/"Lib").rglob("*")):
-            relative=source.relative_to(source_runtime/"Lib")
-            if source.is_file() and not any(p in ignored for p in relative.parts) and source.suffix not in (".pyc",".pyo"):
-                archive.write(source,relative.as_posix())
+    bundled_stdlib=source_runtime/"python311.zip"
+    if not (source_runtime/"Lib").is_dir() and bundled_stdlib.is_file():
+        # Rebuild the native launcher from source even when the build itself
+        # runs on our portable Python instead of a system Python installation.
+        with zipfile.ZipFile(bundled_stdlib) as archive:
+            if 'encodings/__init__.py' not in archive.namelist() or archive.testzip() is not None:
+                raise ValueError('Bundled Python standard library is incomplete')
+        copy(bundled_stdlib,runtime/"python311.zip")
+    else:
+        with zipfile.ZipFile(runtime/"python311.zip","w",zipfile.ZIP_DEFLATED,compresslevel=6) as archive:
+            for source in sorted((source_runtime/"Lib").rglob("*")):
+                relative=source.relative_to(source_runtime/"Lib")
+                if source.is_file() and not any(p in ignored for p in relative.parts) and source.suffix not in (".pyc",".pyo"):
+                    archive.write(source,relative.as_posix())
     shutil.copytree(source_runtime/"tcl",runtime/"tcl",ignore=shutil.ignore_patterns("demos","msgs"))
     (runtime/"python311._pth").write_text("python311.zip\nDLLs\n.\n..\n",encoding="ascii")
     # Runtime source closure is explicit; no user record/workshop/cache is copied.

@@ -40,6 +40,10 @@ inline constexpr Roster kRosters[]={
  {Skies,3,3,AntiAir,100,100,{{{80,1,true},{56,1,true},{70,4},{44,3}}}},
  {ThreeHeroes,3,3,GroundPath,100,100,{{{23,1,true},{48,1,true},{78,1,true},{3,4},{38,6},{66,4}}}},
 };
+// Apply once to the final army size, after curse stacking. Round to the nearest
+// unit/half-supply so small groups remain usable and zero stays zero.
+inline constexpr U32 reduced_amount(U32 amount) noexcept {return U32((std::uint64_t(amount)*85u+50u)/100u);}
+inline constexpr U32 detector(U32 race) noexcept {return race==0?42u:race==2?84u:9u;}
 inline U32 scaled_count(U32 amount,U32 stacks) noexcept {return amount*(100u+15u*std::min(stacks,3u))/100u;}
 inline constexpr U32 normal_budget(U32 ordinal) noexcept {return 32u+8u*std::min(ordinal,12u);}
 inline U32 raid_count(U32 stacks,U32 reinforcements=0) noexcept {stacks=std::min(stacks,255u);return scaled_count(stacks*(stacks+1u),reinforcements);}

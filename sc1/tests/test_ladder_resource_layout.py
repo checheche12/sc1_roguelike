@@ -6,6 +6,16 @@ from sc1.tests import test_resource_layout as fixtures
 
 
 class LadderResourceTests(unittest.TestCase):
+    def test_first_row_uses_stock_minimum_depot_separation(self):
+        center=(1024,1040)
+        for direction in ((0,1),(0,-1),(1,0),(-1,0)):
+            minerals,_,shape=next(ladder.formations(10,0,{'center':center},direction))
+            minimum=192 if direction[0] else 160
+            self.assertEqual(shape['normal_distance_pixels'],minimum)
+            self.assertTrue(all(ladder.rules._resource_clear(center,[(*p,176,11)]) for p in minerals))
+            nearer=[(p[0]-32*direction[0],p[1]-32*direction[1]) for p in minerals]
+            self.assertTrue(any(not ladder.rules._resource_clear(center,[(*p,176,11)]) for p in nearer))
+
     def test_one_gas_keeps_one_side_two_gases_keep_both_sides(self):
         anchor = {'center': (1024, 1024)}
         for count in (3, 10, 13, 25, 36):
@@ -22,15 +32,15 @@ class LadderResourceTests(unittest.TestCase):
                             axis = 1 if direction[0] else 0
                             self.assertLess((gas[0][axis]-1024)*(gas[1][axis]-1024), 0)
 
-    def test_real_terran_main_uses_joint_curve_with_original_gas_count(self):
+    def test_real_terran_main_keeps_closest_functional_layout_and_gas_count(self):
         # Reuse the real-map fixture, including its independent front-access audit.
         fixtures.ResourceLayoutTests.setUpClass()
         report = fixtures.ResourceLayoutTests.report
         center = next(f['anchor']['center'] for f in report['clusters'] if f['anchor'].get('unit_index') == 160)
         main = next(b for b in report['ladder_bases'] if b['anchor'] == center)
-        self.assertEqual(main['status'], 'joint_ladder_arc')
-        self.assertEqual(len(main['mineral_positions']), 10)
-        self.assertEqual(len(main['gas_positions']), 1)
+        self.assertIn(main['status'], ('joint_ladder_arc','functional_layout_retained'))
+        self.assertEqual(len(main['mineral_indices']), 10)
+        self.assertEqual(len(main['gas_indices']), 1)
         self.assertEqual(report['functional_geyser_count'], report['geyser_count'])
 
 

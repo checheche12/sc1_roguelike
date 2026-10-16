@@ -51,7 +51,7 @@ inline void audit_all_installed_scenarios() {
   if(!first_units){std::printf("MAP_FAIL mission=%u reason=zero_first units=%zu ordinal=%u\n",fixture.mission,first_units,rework_waves::timeline.ordinal);continue;}
   CHECK(rework_waves::timeline.ordinal==1);U32 first_supply=0;
   for(std::size_t i=original_count;i<count;i++){
-   auto u=&units[i];CHECK(is_enemy(u->player)&&rework_curses::marked(u)&&!rework_curses::appearing(u)&&u->order==14);
+   auto u=&units[i];CHECK(is_enemy(u->player)&&rework_curses::marked(u)&&!rework_curses::appearing(u)&&u->order==(wave_targeting::detector(u)?6u:14u));
    if(air)CHECK(original_stat({0,22,u->unit_id})&4u);first_supply+=wave_supply(u->unit_id);
    // Engine movement is outside a host test. Remove departed fixture units
    // from origin occupancy by moving to the actual current player target.
@@ -61,7 +61,7 @@ inline void audit_all_installed_scenarios() {
   for(U32 t=0;t<profile->interval;t++,now++)simulate_second(now);
   const auto repeat_units=count-after_first;
   if(!repeat_units){std::printf("MAP_FAIL mission=%u reason=zero_repeat\n",fixture.mission);continue;}
-  CHECK(rework_waves::timeline.ordinal==2);for(std::size_t i=after_first;i<count;i++)CHECK(is_enemy(units[i].player)&&rework_curses::marked(&units[i])&&!rework_curses::appearing(&units[i])&&units[i].order==14);
+  CHECK(rework_waves::timeline.ordinal==2);for(std::size_t i=after_first;i<count;i++)CHECK(is_enemy(units[i].player)&&rework_curses::marked(&units[i])&&!rework_curses::appearing(&units[i])&&units[i].order==(wave_targeting::detector(&units[i])?6u:14u));
   std::printf("MAP_AUDIT mission=%u disabled=0 placed=%u normalized_home=%u air=%u first_units=%zu repeat_units=%zu first_half_supply=%u\n",fixture.mission,fixture.count,normalized?1:0,air?1:0,first_units,repeat_units,first_supply);++pass;
  }
  CHECK(pass==55&&disabled==8&&air_only==5);

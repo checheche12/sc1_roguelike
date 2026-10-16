@@ -39,7 +39,7 @@ def derive():
         first=360 if row['no_production'] else 240
         mode='disabled' if row['no_production'] else 'defense' if row['mission_id'] in DEFENSE else 'starting_base' if own_hq else 'build_or_rescue_base'
         profiles.append(dict(mission_id=row['mission_id'],label=row['label'],enabled=not row['no_production'],mode=mode,
-          starting_headquarters=own_hq,normal_first_seconds=first,normal_interval_seconds=120 if row['no_production'] else 90,
+          starting_headquarters=own_hq,normal_first_seconds=first,normal_interval_seconds=120,
           new_base_grace_seconds=60 if row['mission_id']==101 else 240 if not own_hq else 180,
           rare_unlock_seconds=600 if row['mission_id'] in DEFENSE else 540 if not own_hq else 480,
           epic_unlock_seconds=720 if row['mission_id'] in DEFENSE else 660 if not own_hq else 600,
@@ -53,7 +53,7 @@ def derive():
 def build():
     rows=derive()
     record={'schema_version':5,'source':'original CHK metadata + latest user timing overrides','profile_count':len(rows),
-      'policy':'No-production disables every added wave and timer. Normal first departure240sec, then90sec interval, with readiness-relative grace for reclaimed/new HQ. First eligible wave includes an unlocked roster; later cadence is relative to its last delivered normal wave. No catch-up.',
+      'policy':'No-production disables every added wave and timer. Normal first departure240sec, then120sec interval, with readiness-relative grace for reclaimed/new HQ. First eligible wave includes an unlocked roster; later cadence is relative to its last delivered normal wave. No catch-up.',
       'cutscene_guard':'Simulation-frame clock and modal guard; scripted original assault guard uses nearby unmarked hostile combatants.',
       'hero_guard':'Conservative exclusion on any placed or original trigger-referenced hero type, independent of owner. Original hero DAT/triggers remain untouched.',
       'profiles':rows}

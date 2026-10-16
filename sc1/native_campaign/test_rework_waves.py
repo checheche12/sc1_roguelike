@@ -15,7 +15,7 @@ class Profiles(unittest.TestCase):
   for p in rows:
    self.assertEqual(p['normal_first_seconds'],240 if p['enabled'] else 360);self.assertIn(p['rare_unlock_seconds'],range(480,601));self.assertIn(p['epic_unlock_seconds'],range(600,721));self.assertIn(p['legendary_unlock_seconds'],range(720,841))
    self.assertEqual((p['warning_seconds'],p['appearance_seconds']),(20,4))
-   self.assertEqual(p['normal_interval_seconds'],90 if p['enabled'] else 120)
+   self.assertEqual(p['normal_interval_seconds'],120)
    if p['mode']=='disabled':self.assertFalse(p['enabled'])
  def test_hero_collision_guards_are_per_map_and_owner_independent(self):
   rows=derive();self.assertGreater(sum(len(p['blocked_hero_curse_slots']) for p in rows),0)

@@ -122,12 +122,12 @@ inline bw::Unit* finish_created(bw::Unit* u,U32 slot,U32 hp,U32 attack,int x,int
  if(original_stat({0,22,u->unit_id})&0x200000u)u->energy=std::max<std::uint16_t>(u->energy,200*256);
  ground_pulse(x,y,u->player,367);role_marker(u,0,-24,379);max_hp_cache::publish_unit(u);++unit_ordinal;return u;
 }
-inline bw::Unit* create(U32 id,U32 slot,U32 hp=100,U32 attack=100,bool alternate=false) {
+inline bw::Unit* create(U32 id,U32 slot,U32 hp=100,U32 attack=100,bool alternate=false,U32 required_owner=12) {
  if(!enabled() || live_supply()+std::max(1u,original_stat({0,46,id}))>480)return nullptr;
  // Explicit user exception: only worker-raid Mutalisks appear directly at the
  // mining line. Other waves retain the512px allied clearance at real origins.
- if(id==43&&slot==policy::Raid){
-  const auto owner=raid_owner();auto worker=mining_worker_target();if(!owner||!worker)return nullptr;const auto center=worker->flingy.position;
+ if(slot==policy::Raid&&(id==43 || id==9 || id==42 || id==84)){
+  const auto owner=raid_owner();auto worker=mining_worker_target();if(!owner||!worker||(required_owner<12&&owner->owner!=required_owner))return nullptr;const auto center=worker->flingy.position;
   for(int radius=64;radius<=384;radius+=32)for(int dy=-radius;dy<=radius;dy+=32)for(int dx=-radius;dx<=radius;dx+=32){
    if(std::max(std::abs(dx),std::abs(dy))!=radius)continue;const int x=int(center.x)+dx,y=int(center.y)+dy;
    if(x<16||y<16||x>=int(g.mission->width*32)-16||y>=int(g.mission->height*32)-16||!clear_cell(x,y,true))continue;
@@ -137,6 +137,7 @@ inline bw::Unit* create(U32 id,U32 slot,U32 hp=100,U32 attack=100,bool alternate
  const bool ground=!(original_stat({0,22,id})&4u);auto preferred=choose_origin(ground,alternate);if(!preferred && alternate)preferred=choose_origin(ground);if(!preferred)return nullptr;
  for(U32 pass=0;pass<2;pass++)for(const auto& candidate:sc1_native::campaign_wave_config::kOrigins){
  const auto origin=&candidate;if((pass==0)!=(origin==preferred) || !origin_safe(*origin))continue;
+ if(required_owner<12&&origin->owner!=required_owner)continue;
  const bool only_air=sc1_native::wave_progression::air_only_unit(static_cast<std::uint16_t>(origin->unit1)) && sc1_native::wave_progression::air_only_unit(static_cast<std::uint16_t>(origin->unit2));if(ground && only_air)continue;
  for(U32 i=0;i<origin->cell_count;i++){
   const auto p=origin->cells[(i+unit_ordinal)%origin->cell_count];if(!clear_cell(p.x,p.y))continue;
@@ -147,12 +148,30 @@ inline bw::Unit* create(U32 id,U32 slot,U32 hp=100,U32 attack=100,bool alternate
 }
 inline U32 infantry(U32 race) noexcept {return race==0?37u:race==2?65u:0u;}
 inline U32 count_spawn(U32 id,U32 count,U32 slot,U32 hp=100,U32 attack=100,bool alternate=false) {U32 done=0;for(U32 i=0;i<count && i<480;i++){if(!create(id,slot,hp,attack,alternate))break;++done;}return done;}
+inline bw::Unit* add_detector(U32 slot=0) {
+ bw::Unit* present=nullptr;bw::Unit* leader=nullptr;living_units([&](bw::Unit* u){auto t=existing_track(u);if(t && t->wave_id==g.current_wave_id && wave_targeting::marked(u)){if(wave_targeting::detector(u))present=u;else if(!leader)leader=u;}});
+ if(present)return present;
+ if(!leader)return nullptr;
+ U32 race=primary?primary->race:g.mission->race;
+ if(!primary)for(const auto& origin:sc1_native::campaign_wave_config::kOrigins)if(origin.mission_id==g.mission->mission_id&&origin.owner==leader->player){race=origin.race;break;}
+ return create(policy::detector(race),slot,100,100,false,leader->player);
+}
 inline void normal_units(U32 half_supply,U32 slot=0) {
+ // Main waves, death support and reserves share this one reduction. Keep the
+ // stored main/reserve budgets unscaled to avoid reducing reserves twice.
+ half_supply=policy::reduced_amount(half_supply);
  const U32 race=primary?primary->race:g.mission->race;U32 used=0;
+ const U32 detection_cost=std::max(1u,original_stat({0,46,policy::detector(race)}));
+ if(half_supply<=detection_cost)return;
+ // Reserve a real cell for detection before the combat units fill an origin.
+ // Mixed-owner fallback origins must not strand the detector without a cell.
+ auto detection=create(policy::detector(race),slot,100,100,false,primary?primary->owner:12u);
+ if(detection)half_supply-=detection_cost;
  const bool air_only=primary&&sc1_native::wave_progression::air_only_unit(static_cast<std::uint16_t>(primary->unit1))&&sc1_native::wave_progression::air_only_unit(static_cast<std::uint16_t>(primary->unit2));
  for(U32 i=0;i<480 && used<half_supply;i++){
   const auto pick=sc1_native::wave_progression::select(race,air_only,timeline.second(),timeline.ordinal,i,half_supply-used,wave_supply);if(!pick.valid)break;
   if(!create(pick.unit_id,slot))break;used+=pick.supply;}
+ if(used && !detection)add_detector(slot);
 }
 inline void roster(const policy::Roster& r) {
  if(!timeline.eligible(*current,r,capabilities()) || live_hero(r.slot))return;
@@ -169,6 +188,7 @@ inline void roster(const policy::Roster& r) {
   // higher-grade special rosters is capped. Ordinary escorts scale;
   // heroes and the explicitly fixed special-unit counts never do.
   if(!m.hero && (i>0 || !r.grade))m.count=policy::scaled_count(m.count,rework_curses::count(16));
+  if(!m.hero)m.count=policy::reduced_amount(m.count);
   const bool boosted=r.slot==policy::Hunters?m.unit==38:(r.slot==policy::Vanguard || r.slot==policy::Catastrophe)?i==0:true;
   created+=count_spawn(m.unit,m.count,r.slot,boosted?r.hp_percent:100,boosted?r.attack_percent:100,r.slot==policy::Flank);
  }
@@ -250,8 +270,9 @@ inline void tick(bool ready,bool blocked,bool goal) {
   spawned_pending=true;
   if(pending_kind==1){last_main_budget=policy::scaled_count(policy::normal_budget(timeline.ordinal),rework_curses::count(16));normal_units(last_main_budget);for(auto slot:selected)if(slot)for(const auto& r:policy::kRosters)if(r.slot==slot)roster(r);}
   else if(pending_kind==2)normal_units(16+8*(std::min(3u,rework_curses::count(20))-1));
-  else if(pending_kind==3)count_spawn(43,policy::raid_count(rework_curses::count(15),rework_curses::count(16)),15);
+  else if(pending_kind==3)count_spawn(43,policy::reduced_amount(policy::raid_count(rework_curses::count(15),rework_curses::count(16))),15);
   else normal_units(reserve_supply,24);
+  if(unit_ordinal)add_detector(pending_kind==3?policy::Raid:pending_kind==4?policy::Reserve:0u);
   log_event("V5 added wave created kind=%u units=%u live_half_supply=%u active_second=%u",pending_kind,unit_ordinal,live_supply(),timeline.second());
  }
  if(pending_kind && timeline.second()>=timeline.departure_at){const auto kind=pending_kind;pending_kind=0;timeline.warning_at=timeline.departure_at=0;if(kind==1){timeline.finished(*current);if(rework_curses::count(24) && timeline.ordinal>=2){reserve_at=timeline.second()+15;reserve_supply=policy::reserve_budget(last_main_budget,rework_curses::count(24));}}primary=nullptr;}
