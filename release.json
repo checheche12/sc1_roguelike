@@ -1,0 +1,40 @@
+{
+  "version": "v2026.10.16-qa5",
+  "file": "SC1_Roguelike_20261016_QA5.zip",
+  "sha256": "b876c3d12056182afb7e7c8048966fe7997c7305f672c3854ff99a572625331d",
+  "bytes": 24506803,
+  "runtime_source_commit": "ed08ca2fb25f8382745e7dc62aea73c7343f4c4e",
+  "native_dll_sha256": "f449b433750d3c0e97d1347166a1a6dcf442964ca9e7e21fca38a1608fefef01",
+  "native_dll_compiled_from_source": true,
+  "launcher_compiled_from_source": true,
+  "native_host_groups": 243,
+  "native_host_checks": 804740,
+  "synthetic_performance_before": {
+    "units": 1600,
+    "casters": 32,
+    "global_scans": 25121,
+    "unit_visits": 40193600,
+    "milliseconds": 1344.669
+  },
+  "synthetic_performance_after_Od": {
+    "units": 1600,
+    "casters": 32,
+    "global_scans": 2,
+    "unit_visits": 88032,
+    "milliseconds": 3.155
+  },
+  "synthetic_performance_after_O2": {
+    "units": 1600,
+    "casters": 32,
+    "global_scans": 2,
+    "unit_visits": 88032,
+    "milliseconds": 0.985
+  },
+  "production_compiler_optimization": "/O2",
+  "performance_measurement_scope": "Peak one-frame caster planning; work is bounded and spread across frames. Not live game FPS.",
+  "map_count": 63,
+  "map_outputs_unchanged_from_qa4": true,
+  "actual_game_reproduction_after_fix": false,
+  "game_started": false,
+  "created_at_utc": "2026-10-16T10:12:42.636609+00:00"
+}
