@@ -1,0 +1,18 @@
+{
+  "version": "v2026.10.16-qa3",
+  "file": "SC1_Roguelike_20261016_QA3.zip",
+  "sha256": "2c56bbd33778149547c31c84a6a0f26e180dd1727bcdcd2c8c3d365ba8e62cdd",
+  "bytes": 24519099,
+  "runtime_source_commit": "5af967b91e95529e0e0edcaa2ab5269e0ba5fde0",
+  "native_dll_sha256": "d73e8bb3bd7f4f5e806edc6b57bb0dfbf0c06d2c52b66eab189aa811189bc857",
+  "native_dll_compiled_from_source": true,
+  "launcher_compiled_from_source": true,
+  "native_host_groups": 240,
+  "native_host_checks": 802627,
+  "python_tests": 68,
+  "map_count": 63,
+  "map_outputs_unchanged_from_qa2": true,
+  "crash_pointer_truncation_reproduced_and_fixed_offline": true,
+  "actual_game_reproduction_after_fix": false,
+  "created_at_utc": "2026-10-16T08:47:54.594130+00:00"
+}
