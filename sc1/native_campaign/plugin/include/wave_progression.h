@@ -57,12 +57,13 @@ inline constexpr Pool kAir[3][3]={
 using SupplyLookup=U32(*)(UnitId);
 struct Selection{UnitId unit_id=0;U32 supply=0;bool valid=false;};
 inline Selection select(U32 race,bool air_only,U32 elapsed_seconds,U32 wave_ordinal,U32 successful_unit_ordinal,
-    U32 remaining_half_supply,SupplyLookup lookup=nullptr) noexcept {
+    U32 remaining_half_supply,SupplyLookup lookup=nullptr,bool allow_air=true) noexcept {
     if(race>Protoss || !remaining_half_supply)return {};
     const auto& pool=air_only?kAir[race][tier(elapsed_seconds)]:kGround[race][tier(elapsed_seconds)][wave_ordinal%4];
     const auto offset=(successful_unit_ordinal+wave_ordinal/4)%pool.size();
     for(std::size_t step=0;step<pool.size();step++){
         const auto id=pool[(offset+step)%pool.size()];
+        if(!allow_air&&air_only_unit(id))continue;
         // The first successful unit must hit ground. Pure air-to-air units can
         // join only after that unit exists; failed spawns do not advance this.
         if(!successful_unit_ordinal && anti_air_only(id))continue;

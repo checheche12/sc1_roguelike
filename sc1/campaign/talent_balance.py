@@ -4,10 +4,12 @@ import copy
 import json
 from pathlib import Path
 
-REVISION = 2026101607
+REVISION = 2026101609
+UNIT_LEGENDARIES = frozenset((61,62,63,64,65,66,102,103,104,105,106,107,144,145,146,147,148,149))
 POWER_QUARTERS = dict(common=6, uncommon=7, rare=8, epic=10, legendary=10)
 
 def power_quarters(item):
+    if item.get("rework_revision")==5 and item.get("effect_ordinal") in UNIT_LEGENDARIES:return 16
     patches=item.get('effect',{}).get('patches',[])
     resource_only=bool(patches) and not item.get('effect',{}).get('movement') and all(
         p['table']=='units' and p['field'] in ('mineralCost','gasCost','timeCost','supplyProvided','supplyUsed') for p in patches)
@@ -79,15 +81,21 @@ DESCRIPTIONS = {
  142:'스카우트가 지상·공중을 동시에 공격합니다. 추가 공격층의 피해는 250%입니다.',
 }
 
+DESCRIPTIONS.update({56: '골리앗이 서로 다른 적 최대 3기를 동시에 공격합니다. 각 대상에게 원래 피해를 줍니다.', 61: '이레디에이트 피해 3배, 효과 반경 4타일. 감염된 적이 죽으면 4타일 안 생체 적 최대 5기에 전염되며, 최초 시전부터 최대 5단계까지 이어집니다. 전염마다 온전한 지속시간을 받으며 같은 시전의 중복 감염은 없습니다. 원래 아군 피해도 유지됩니다.', 62: 'EMP가 보호막·에너지가 없는 적에게도 체력 피해 200을 줍니다. 제거한 보호막·에너지의 100%를 추가 피해로 주며 대상당 최대 600. EMP 반경은 기본의 2배가 됩니다.', 63: '락다운이 생체 전투 유닛에도 적용되며, 생체 대상 지속 시간이 최대 4배가 됩니다. 시전 성공 시 주 대상의 3타일 안 다른 적 전투 유닛 최대 2기도 추가 봉쇄합니다.', 64: '야마토가 주변의 다른 적 최대 2기에도 200% 피해를 줍니다. 에너지는 한 번만 사용합니다.', 65: '배틀크루저가 지상·공중을 동시에 공격합니다. 추가 공격층의 피해는 400%입니다.', 66: '메딕이 주 치료 대상의 4타일 안 생체 아군 최대 8기를 원래 치료 속도의 200%로 추가 치료합니다. 공중 생체 아군도 치료하며 총 에너지 소모는 2배입니다.', 102: '플레이그가 적을 죽일 수 있으며 체력 피해가 4배가 됩니다. 아군 피해도 유지됩니다.', 103: '다크 스웜이 아군 공중 유닛도 보호하며 보호 범위가 최소 10타일로 늘어납니다. 마법·광역 예외는 유지됩니다.', 104: '퀸의 스폰 브루들링이 총 18기를 만듭니다. 브루들링의 최대 체력·공격력도 2배가 됩니다. 증식 브루들링과 합쳐도 총 18기입니다.', 105: '뮤탈이 쐐기벌레를 2발씩 쏩니다. 각 발은 240% 피해를 주며 따로 튕깁니다.', 106: '디바우러가 지상 적도 공격합니다. 지상 피해 400%, 공중 피해 200%이며 산성 포자도 적용됩니다.', 107: '퀸이 인페스트로 체력 50% 이하인 적 전투 유닛을 120초간 조종합니다. 성공하면 4타일 안 조건을 만족하는 다른 적 1기도 추가 지배합니다. 에너지 150.', 144: '하이 템플러의 스톰 피해 +100%, 반경 +200%. 서로 다른 스톰의 피해가 같은 지점에서 최대 13개 겹칩니다.', 145: '아비터가 리콜한 뒤 48초간 소환문을 남깁니다. 2초마다 같은 출발지 4타일 안의 아군을 같은 도착지로 소환합니다.', 146: '다크 아콘이 마인드 컨트롤한 적의 4타일 안 다른 적 최대 4기도 지배합니다. 추가 대상 인구는 주 대상 이하입니다.', 147: '하이 템플러가 만든 환영의 일반 공격이 원래 피해의 100%를 실제 피해로 줍니다.', 148: '인터셉터가 주변의 다른 적 4기도 공격합니다. 각 대상에게 원래 피해를 줍니다.', 149: '아비터의 스테이시스가 끝나면 갇혔던 적에게 보호막 피해 400과 체력 피해 300 + 최대 체력의 25%를 줍니다.'})
+
+DESCRIPTIONS[72]='뮤탈리스크의 공격력 +6, 다른 저그 공중 전투 유닛의 공격력 +3. 해당 유닛들의 공격 간격이 4.5% 줄어듭니다. 반복해서 고를 수 있습니다.'
+
+DESCRIPTIONS[70]='저글링·브루들링의 공격력 중첩당 +1.5(중첩 합계를 정수 반올림), 울트라리스크의 공격력 중첩당 +6. 해당 유닛들의 공격 간격이 중첩당 4.5% 줄어듭니다. 반복해서 고를 수 있습니다.'
+
 def decorate(catalog):
-    catalog['balance_revision']=7
+    catalog['balance_revision']=9
     catalog.pop('talent_power_halves',None)
     catalog['talent_power_quarters']=POWER_QUARTERS.copy()
     catalog['economy_talents_scaled']=False
     for item in catalog['talents']:
-        if item.get('balance_revision')==7:continue
+        if item.get('balance_revision')==9:continue
         original=item['description'];q=power_quarters(item)
-        item['balance_revision']=7
+        item['balance_revision']=9
         item['pre_balance_description']=original
         item['pre_balance_effect']=copy.deepcopy(item['effect'])
         item['effect'].update(qa_revision=REVISION,benefit_power_quarters=q)
@@ -113,7 +121,7 @@ def decorate(catalog):
 
 def historical(item):
     result=copy.deepcopy(item)
-    if result.pop('balance_revision',None) in (6,7):
+    if result.pop('balance_revision',None) in (6,7,9):
         result['description']=result.pop('pre_balance_description')
         result['effect']=result.pop('pre_balance_effect')
     return result

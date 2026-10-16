@@ -50,6 +50,24 @@ inline bool spell_due(bw::Unit* u,const rework_curses::Identity& v) noexcept {
  default:return false;
  }
 }
+inline void spell_launched(bw::Unit* unit,U32 weapon) noexcept {
+ if(weapon!=30||!g.game)return;auto u=const_cast<bw::Unit*>(rework_curses::body(unit));auto v=rework_curses::identity(u);
+ if(v&&v->cast_order==113){v->cast_launched=true;v->cast_fired=g.game()->frame_count;}
+}
+inline void resume_yamato(bw::Unit* u,rework_curses::Identity& v){
+ if(v.cast_order!=113||!rework_curses::marked(u)||!g.order)return;
+ const U32 frame=g.game()->frame_count;
+ if(u->lockdown_timer||u->stasis_timer||u->maelstrom_timer)return;
+ const bool still_casting=u->order==113||u->order==114;
+ if(still_casting){
+  // Do not interrupt charging. A witnessed Yamato projectile has already
+  // committed energy/effect; only its missing return-to-orders is recovered.
+  if(!v.cast_launched||frame-v.cast_fired<48)return;
+ }else if(!wave_targeting::reorderable(u->order)){v.cast_order=0;return;}
+ wave_targeting::refresh();if(!wave_targeting::target.valid)return;
+ v.cast_order=0;g.order(u,kAttackMove,U32(wave_targeting::target.x),U32(wave_targeting::target.y),nullptr,228);
+ if(auto t=existing_track(u)){t->wave_ordered=true;t->wave_order_frame=frame;}
+}
 inline void auto_spell(bw::Unit* u,rework_curses::Identity& v) {
  if(!spell_due(u,v))return;
  const U32 frame=g.game()->frame_count;v.last_scan=frame?frame:1;
@@ -116,17 +134,17 @@ inline void auto_spell(bw::Unit* u,rework_curses::Identity& v) {
    bool ranged_enemy=false;const auto p=t->flingy.position;spell_search::nearby(p.x,p.y,192,[&](bw::Unit* e){if(spell_candidate(u,e,false)&&ground(e)&&original_stat({0,17,e->unit_id})<130)ranged_enemy=true;return !ranged_enemy;});return ranged_enemy;},true);
   if(u->energy<100*256)pick(16,145,0,true,false,1,[](bw::Unit* t){auto tag=rework_curses::identity(t);return t->unit_id==37&&rework_curses::marked(t)&&tag&&!tag->elite;});break;
  case 63:
-  pick(29,180,50,false,false,1,[](bw::Unit* t){return t->energy>=75*256;});
-  pick(31,182,100,false,true,3,[&](bw::Unit* t){return organic(t)&&!t->maelstrom_timer;});
-  pick(27,178,150,false,false,1,[](bw::Unit* t){return t->flingy.hitpoints>=200*256;});break;
- case 60:pick(25,177,125,false,true,3,ground);break;
+  pick(29,184,50,false,false,1,[](bw::Unit* t){return t->energy>=75*256;});
+  pick(31,186,100,false,true,3,[&](bw::Unit* t){return organic(t)&&!t->maelstrom_timer;});
+  pick(27,182,150,false,false,1,[](bw::Unit* t){return t->flingy.hitpoints>=200*256;});break;
+ case 60:pick(25,181,125,false,true,3,ground);break;
  case 34:
-  pick(24,176,50,true,false,1,[](bw::Unit* t){return t->lockdown_timer||t->irradiate_timer||t->plague_timer||t->ensnare_timer||t->is_blind;});
-  pick(30,181,75,false,false,1,[](bw::Unit* t){return !t->is_blind&&((original_stat({0,22,t->unit_id})&0x8000u)||t->energy>=75*256);});break;
+  pick(24,180,50,true,false,1,[](bw::Unit* t){return t->lockdown_timer||t->irradiate_timer||t->plague_timer||t->ensnare_timer||t->is_blind;});
+  pick(30,185,75,false,false,1,[](bw::Unit* t){return !t->is_blind&&((original_stat({0,22,t->unit_id})&0x8000u)||t->energy>=75*256);});break;
  default:return;
  }
  if(!choice)return;
- const auto p=choice->flingy.position;v.last_spell=frame?frame:1;
+ const auto p=choice->flingy.position;v.last_spell=frame?frame:1;v.cast_order=chosen_order;v.cast_begin=frame;v.cast_fired=0;v.cast_launched=false;
  auto& reservation=spell_reservations[spell_cursor++%spell_reservations.size()];
  reservation={chosen_tech,frame+(chosen_area||chosen_tech==14?144u:72u),u->player,p.x,p.y,choice,choice->minor_unique_index};
  g.order(u,chosen_order,U32(p.x),U32(p.y),choice,choice->unit_id);

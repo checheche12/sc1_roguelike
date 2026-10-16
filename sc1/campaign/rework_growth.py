@@ -54,7 +54,7 @@ def overlay(conn, catalog):
         positions={x[index]:x['id'] for x in result[kind]}
         known={x['id'] for x in result[kind]}
         for item in extra[kind]:
-            if item.get('rework_revision')!=5 and item.get('balance_revision') not in (6,7):continue
+            if item.get('rework_revision')!=5 and item.get('balance_revision') not in (6,7,9):continue
             if item[index] in positions and positions[item[index]]!=item['id']:
                 raise GrowthError('catalog_incompatible','기존 성장 위치와 개편안 위치가 충돌합니다.')
             if item['id'] not in known:result[kind].append(copy.deepcopy(item))

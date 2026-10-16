@@ -18,6 +18,8 @@ struct MeleeFrame {
 };
 inline MeleeFrame melee_frames[32];
 inline U32 melee_depth=0,overflow_depth=0,weapon_depth=0;
+inline U32 damage_player=12;
+struct DamageOwner {U32 previous;explicit DamageOwner(U32 player):previous(damage_player){damage_player=player;}~DamageOwner(){damage_player=previous;}};
 inline bool verified_engine_hook=false;
 inline WeaponDamageFn original_weapon_damage=nullptr;
 // Optional rework adapter brackets exactly one native armor/shield split.
@@ -73,7 +75,7 @@ inline std::int32_t percentage(std::int32_t amount,U32 numerator,U32 denominator
     return static_cast<std::int32_t>(std::min<std::uint64_t>(0x7fffffffu,(std::uint64_t(amount)*numerator+denominator-1)/denominator));
 }
 inline void weapon_damage(bw::Unit* target,std::int32_t damage,U8 weapon,U32 divisor,U8 direction,bw::Unit* attacker,U32 player,WeaponDamageFn original) noexcept {
-    if(!original)return;
+    if(!original)return;DamageOwner owner(player);
     if(!active_session()){original(target,damage,weapon,divisor,direction,attacker,player);return;}
     const HitContext saved;
     auto source=g.bullet_hit_context ? verified_projectile_source(g.hit_identity) : melee_source();

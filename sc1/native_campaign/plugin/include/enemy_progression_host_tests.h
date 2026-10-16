@@ -56,8 +56,8 @@ inline void __cdecl give(bw::Unit* u,U32 owner){u->player=U8(owner);}
 inline void overlord_escort_speed_and_identity_restoration(){
  begin();auto original=add(42,4,1800,1600);original->flingy.top_speed=213;
  auto escort=add(42,4,1800,1700);escort->flingy.top_speed=213;rework_waves::finish_created(escort,0,100,100,1800,1700);
- apply_unit_motion();CHECK(escort->flingy.top_speed==1707&&original->flingy.top_speed==213);for(U32 i=0;i<20;i++)apply_unit_motion();CHECK(escort->flingy.top_speed==1707&&existing_track(escort)->base_speed==213);
- escort->ensnare_timer=1;apply_unit_motion();CHECK(escort->flingy.top_speed==853);escort->ensnare_timer=0;
+ apply_unit_motion();CHECK(escort->flingy.top_speed==213&&original->flingy.top_speed==213);for(U32 i=0;i<20;i++)apply_unit_motion();CHECK(escort->flingy.top_speed==213&&existing_track(escort)->base_speed==213);
+ escort->ensnare_timer=1;apply_unit_motion();CHECK(escort->flingy.top_speed==213);escort->ensnare_timer=0;
  owner_give_hook(escort,player_owner(),give);CHECK(escort->flingy.top_speed==213&&!rework_curses::marked(escort));apply_unit_motion();CHECK(escort->flingy.top_speed==213);
  auto recycled=add(42,4,1700,1600);recycled->flingy.top_speed=213;rework_waves::finish_created(recycled,0,100,100,1700,1600);++recycled->minor_unique_index;CHECK(ep::escort_base(recycled,213)==213);
 }
@@ -77,7 +77,7 @@ inline void research_energy_visibility_native_guards(){
 }
 inline void all_spell_roles_use_real_order_numbers(){
  struct Case{U32 unit,tech,order,victim;};
- for(const auto& c:std::array<Case,10>{{{67,19,142,0},{9,7,143,0},{71,22,147,0},{12,8,113,0},{1,1,115,5},{45,13,121,0},{46,15,144,0},{63,29,180,9},{60,25,177,0},{34,30,181,9}}}){
+ for(const auto& c:std::array<Case,12>{{{67,19,142,0},{9,7,143,0},{71,22,147,0},{12,8,113,0},{1,1,115,5},{45,13,121,0},{46,15,144,0},{63,29,184,9},{60,25,181,0},{34,30,185,9},{63,31,186,0},{63,27,182,12}}}){
   begin();ep::research(4,c.tech);auto u=caster(c.unit);auto a=target(c.victim,1940,1600,200);target(c.victim,1960,1620);target(c.victim,1940,1640);a->energy=100*256;
   rework_waves::auto_spell(u,*rework_curses::identity(u));CHECK(u->order==c.order&&u->order_target.unit==a&&u->energy==200*256);
  }
@@ -97,7 +97,7 @@ inline void support_spells_consume_and_native_target_denial(){
  begin();ep::research(4,14);auto defiler=caster(46);auto front=ally(37);target();rework_waves::auto_spell(defiler,*rework_curses::identity(defiler));CHECK(defiler->order==119&&defiler->order_target.unit==front);
  begin();ep::research(4,16);defiler=caster(46);defiler->energy=50*256;auto original=add(37,4,1870,1600);original->flags=1;auto food=ally(37);rework_waves::auto_spell(defiler,*rework_curses::identity(defiler));CHECK(defiler->order==145&&defiler->order_target.unit==food&&original->flingy.hitpoints>0);
  begin();ep::research(4,6);auto vessel=caster(9);front=ally(5);target();rework_waves::auto_spell(vessel,*rework_curses::identity(vessel));CHECK(vessel->order==141&&vessel->order_target.unit==front);
- begin();ep::research(4,24);auto medic=caster(34);front=ally(5);front->lockdown_timer=10;rework_waves::auto_spell(medic,*rework_curses::identity(medic));CHECK(medic->order==176&&medic->order_target.unit==front);
+ begin();ep::research(4,24);auto medic=caster(34);front=ally(5);front->lockdown_timer=10;rework_waves::auto_spell(medic,*rework_curses::identity(medic));CHECK(medic->order==180&&medic->order_target.unit==front);
  begin();ep::research(4,2);vessel=caster(9);auto templar=target(67);templar->energy=100*256;rework_waves::auto_spell(vessel,*rework_curses::identity(vessel));CHECK(vessel->order==122);
  begin();ep::research(4,27);auto archon=caster(63);target(12,1940,1600,250);rework_waves::native_tech_target=deny;rework_waves::auto_spell(archon,*rework_curses::identity(archon));CHECK(archon->order==14);rework_waves::native_tech_target=allow_tech;
 }

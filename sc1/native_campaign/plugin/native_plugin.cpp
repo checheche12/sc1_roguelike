@@ -43,6 +43,8 @@ constexpr U32 kOwner = 1, kCounterOwner = 11; // kOwner is retained only for the
 constexpr U32 kRouteCounter = 223, kMiddleCounter = 224;
 constexpr U32 kReadyCounter = 225, kGoalCounter = 226, kAckCounter = 227;
 constexpr U32 kAttackMove = 14;
+namespace rework_waves {inline void spell_launched(bw::Unit*,U32) noexcept;}
+namespace enemy_detection {inline void note(bw::Unit*,bw::Unit*) noexcept;inline void reset() noexcept;inline void step(bool,bool,bool);}
 struct Key { U32 table, field, id; };
 struct Edit { Key key; bw::DatTable* table; U32 before, after; };
 struct OwnerEdit {Key key;bw::DatTable* table;U32 original,friendly,enemy;};
@@ -849,6 +851,7 @@ void __cdecl owner_damage_hook(bw::Unit* u,std::int32_t amount,bw::Unit* attacke
     }
     amount=rework_combat_v5::post_armor_damage(u,amount);
     const auto hp=u ? u->flingy.hitpoints : 0;original(u,amount,attacker,player,show);
+    if(u&&u->flingy.hitpoints<hp)enemy_detection::note(u,attacking_body);
     auto source=g.bullet_hit_context ? verified_projectile_source(g.hit_identity) : effect_body(attacker ? attacker : g.hit_source);
     if(g.normal_hit && g.growth.curse_counts[11] && regular_enemy(source) && u && u!=source && u->player==player_owner() && hp>0){
         const auto actual=std::max(0,hp-std::max(0,u->flingy.hitpoints));
@@ -901,6 +904,7 @@ bw::Bullet* __cdecl owner_bullet_create_hook(U32 id,int x,int y,U32 player,U32 d
                 g.bullet_sources[bullet]={source,source->unit_id,source->player,source->minor_unique_index};
         }catch(...){g.bullet_elites.erase(bullet);g.bullet_bonuses.erase(bullet);g.bullet_sources.erase(bullet);}
     }
+    if(bullet)rework_waves::spell_launched(parent,id);
     try{multi_target::launched(id,parent,bullet);}
     catch(...){multi_target::reset();log_event("Multi-target allocation failed after primary; additional attacks skipped.");}
     try{rework_combat_v5::launched(id,parent,bullet);}catch(...){rework_combat_v5::reset();log_event("Revision5 projectile allocation failed; primary retained.");}
@@ -1127,6 +1131,7 @@ void campaign_waves(U32 second,bool ready,bool goal) {
     }
 }
 #include "include/rework_wave_native.h"
+#include "include/enemy_detection.h"
 void regenerate_waves(U32 second) {
     if(g.applied)update_diversity();
     if(!g.applied || second==g.last_regen_second)return;g.last_regen_second=second;
@@ -1269,7 +1274,7 @@ void abandon_session() noexcept {
     g.campaign_clear_shown=false;
     rework_energy_ui::reset();rework_economy_ui::reset();rework_shield_ui_v5::reset();enemy_progression::reset();rework_waves::reset();rework_combat_v5::reset();rework_economy_v5::reset();rework_cargo_v5::reset();rework_carrier_v5::reset();
     max_hp_cache::reset();
-    wave_targeting::reset();
+    wave_targeting::reset();enemy_detection::reset();
     movement_effects::reset();combat_effects::reset_melee();g.objective_units.clear();
     multi_target::reset();progress_dialog={};
     // Clear only our dialog state; choice UI owns no game units.
@@ -1407,6 +1412,7 @@ void __cdecl frame() noexcept {
         }
         mirror_handshake();
         enemy_progression::step(g.protocol.growth_applied() && g.applied && !g.protocol.failed(),!after_dialog,counter(kGoalCounter));
+        enemy_detection::step(g.protocol.growth_applied()&&g.applied&&!g.protocol.failed(),!after_dialog,counter(kGoalCounter));
         apply_unit_motion();
         max_hp_cache::publish();
         multi_target::step();

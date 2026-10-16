@@ -19,6 +19,7 @@ inline void all_missions_actual_adapter_departures(){
   const U32 hq_id=g.mission->race==0?131u:g.mission->race==2?154u:106u,worker_id=g.mission->race==0?41u:g.mission->race==2?64u:7u;
   auto hq=add(hq_id,player_owner(),origin->target.x,origin->target.y);hq->flags=1;
   auto worker=add(worker_id,player_owner(),origin->target.x+32,origin->target.y);worker->flags=1;
+  auto aa=add(0,player_owner(),origin->target.x+64,origin->target.y);aa->flags=1;
   const auto baseline=count;const auto first=std::max(profile.first,profile.base_grace);
   for(U32 second=0;second<first-4;second++){advance_second(second);CHECK(count==baseline);}
   advance_second(first-4);CHECK(count>baseline);const auto first_count=count-baseline;

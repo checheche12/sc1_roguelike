@@ -72,12 +72,7 @@ inline void refresh_motion(bw::Unit* u) noexcept {
  u->flingy.top_speed=s;u->flingy.acceleration=std::uint16_t(std::min(65535u,a));u->flingy.turn_speed=U8(std::min(255u,t));
  if(auto tracked=existing_track(u)){tracked->base_speed=s;tracked->applied_speed=s;}
 }
-inline U32 escort_base(const bw::Unit* u,U32 native_speed) noexcept {
- // Only added-wave Overlords receive the Mutalisk escort pace. Keep the
- // original native value in UnitTrack, so give/morph/reset can restore it.
- if(!u||u->unit_id!=42||!rework_curses::marked(u))return native_speed;
- return std::max(native_speed,u->ensnare_timer?853u:1707u);
-}
+inline U32 escort_base(const bw::Unit*,U32 native_speed) noexcept {return native_speed;}
 inline void step(bool ready,bool blocked,bool goal) {
  auto game=g.game?g.game():nullptr;if(!game||!g.active||!g.applied||!g.mission)return;
  const auto frame=game->frame_count;if(!initialized){initialized=true;last_frame=frame;}
@@ -87,13 +82,14 @@ inline void step(bool ready,bool blocked,bool goal) {
  const auto now=second();
  if(now!=last_second){
   last_second=now;const U32 level=now>=840?3u:now>=600?2u:now>=360?1u:0u;
+  bool combat_changed=false,special_changed=false;
   if(level)for(U32 owner=0;owner<8;owner++)if(is_enemy(owner)){
-   for(U32 id=0;id<16;id++)upgrade(owner,id,level);
-   for(const auto& unlock:upgrades)if(now>=unlock.minute*60)upgrade(owner,unlock.id,1);
-   for(const auto& unlock:technologies)if(now>=unlock.minute*60)research(owner,unlock.id);
+   for(U32 id=0;id<16;id++){combat_changed|=rework_upgrade_storage::level(owner,id)<level;upgrade(owner,id,level);}
+   for(const auto& unlock:upgrades)if(now>=unlock.minute*60){special_changed|=rework_upgrade_storage::level(owner,unlock.id)<1;upgrade(owner,unlock.id,1);}
+   for(const auto& unlock:technologies)if(now>=unlock.minute*60){special_changed|=!researched(owner,unlock.id);research(owner,unlock.id);}
   }
   const U32 stage=now<360?0:std::min(6u,(now-360)/120+1);
-  if(stage>announced){announced=stage;log_event("Enemy technology stage=%u active_seconds=%u",stage,now);message("적의 공방업과 특수 기술이 한 단계 강화되었습니다.");}
+  if(stage>announced){announced=stage;log_event("Enemy technology stage=%u active_seconds=%u",stage,now);if(combat_changed)message("적의 공방 업그레이드가 완료되었습니다.");if(special_changed)message("적의 특수 기술 중 일부가 강화되었습니다.");}
  }
  living_units([](bw::Unit* u){refresh_motion(u);});
 }

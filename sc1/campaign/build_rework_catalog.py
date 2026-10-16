@@ -143,7 +143,7 @@ def build(coverage=None):
             contract['new_talents' if kind=='talent' else 'new_curses'].append(copy.deepcopy(item))
     from .talent_balance import decorate, generate_header
     decorate(catalog)
-    contract['balance_revision']=7
+    contract['balance_revision']=9
     contract['new_talents']=copy.deepcopy(catalog['talents'][238:])
     generate_header(catalog, ROOT)
     contract['rank_slots_used']=rank_slot

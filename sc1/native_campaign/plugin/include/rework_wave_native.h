@@ -3,7 +3,7 @@
 // All state is keyed by native slot + unique byte + owner + type, never type alone.
 // Include rework_wave_profiles.generated.h at global scope before this header.
 namespace rework_curses {
-struct Identity {U8 unique=0,owner=12;std::uint16_t type=228;U32 wave=0,slot=0,hp=100,attack=100,appearance_until=0,saved_flags=0,last_spell=0,last_scan=0;bool elite=false,barrier=false;};
+struct Identity {U8 unique=0,owner=12;std::uint16_t type=228;U32 wave=0,slot=0,hp=100,attack=100,appearance_until=0,saved_flags=0,last_spell=0,last_scan=0;U32 cast_order=0,cast_begin=0,cast_fired=0;bool cast_launched=false;bool elite=false,barrier=false;};
 inline std::vector<Identity> identities;
 inline const bw::Unit* body(const bw::Unit* u) noexcept {
  if(!valid_unit(u))return nullptr;U32 main=228;
@@ -61,7 +61,8 @@ inline U32 capabilities() {
  U32 value=0;for(const auto& origin:sc1_native::campaign_wave_config::kOrigins)if(g.mission && origin.mission_id==g.mission->mission_id && origin_safe(origin)){
   const bool only_air=sc1_native::wave_progression::air_only_unit(static_cast<std::uint16_t>(origin.unit1)) && sc1_native::wave_progression::air_only_unit(static_cast<std::uint16_t>(origin.unit2));if(!only_air)value|=policy::GroundPath;}
  living_units([&](bw::Unit* u){if(u->player!=player_owner() || !(u->flags&1u) || u->flingy.hitpoints<=0)return;
-  const auto flags=original_stat({0,22,u->unit_id});if(original_stat({0,19,u->unit_id})<130)value|=policy::AntiAir;if(flags&0x8000u)value|=policy::Detection;});
+  const auto flags=original_stat({0,22,u->unit_id});auto gun=effect_body(u);if(valid_unit(gun)&&valid_unit(gun->subunit)&&gun->subunit->subunit==gun)gun=gun->subunit;
+  if((u->flags&1u)&&!(u->flags&(0x40u|0x40000000u))&&(owner_stat(u->player,{0,19,u->unit_id})<130||(valid_unit(gun)&&owner_stat(u->player,{0,19,gun->unit_id})<130)))value|=policy::AntiAir;if(flags&0x8000u)value|=policy::Detection;});
  return value;
 }
 inline bool major_original_assault() {
@@ -161,7 +162,8 @@ inline void normal_units(U32 half_supply,U32 slot=0) {
  // Main waves, death support and reserves share this one reduction. Keep the
  // stored main/reserve budgets unscaled to avoid reducing reserves twice.
  half_supply=policy::reduced_amount(half_supply);
- const U32 race=primary?primary->race:g.mission->race;U32 used=0;
+ const U32 race=primary?primary->race:g.mission->race;U32 used=0;const bool anti_air=(capabilities()&policy::AntiAir)!=0;
+ if(!anti_air&&primary&&sc1_native::wave_progression::air_only_unit(std::uint16_t(primary->unit1))&&sc1_native::wave_progression::air_only_unit(std::uint16_t(primary->unit2)))return;
  const U32 detection_cost=std::max(1u,original_stat({0,46,policy::detector(race)}));
  if(half_supply<=detection_cost)return;
  // Reserve a real cell for detection before the combat units fill an origin.
@@ -170,7 +172,7 @@ inline void normal_units(U32 half_supply,U32 slot=0) {
  if(detection)half_supply-=detection_cost;
  const bool air_only=primary&&sc1_native::wave_progression::air_only_unit(static_cast<std::uint16_t>(primary->unit1))&&sc1_native::wave_progression::air_only_unit(static_cast<std::uint16_t>(primary->unit2));
  for(U32 i=0;i<480 && used<half_supply;i++){
-  const auto pick=sc1_native::wave_progression::select(race,air_only,timeline.second(),timeline.ordinal,i,half_supply-used,wave_supply);if(!pick.valid)break;
+  const auto pick=sc1_native::wave_progression::select(race,air_only,timeline.second(),timeline.ordinal,i,half_supply-used,wave_supply,anti_air);if(!pick.valid)break;
   if(!create(pick.unit_id,slot))break;used+=pick.supply;}
  if(used && !detection)add_detector(slot);
 }
@@ -184,6 +186,7 @@ inline void roster(const policy::Roster& r) {
   if(r.slot==policy::Flank)m.unit=static_cast<std::uint16_t>(primary->race==0?37:primary->race==2?65:2);
   if(r.slot==policy::Vanguard){if(!i)m.unit=static_cast<std::uint16_t>(primary->race==0?39:primary->race==2?68:5);else m.unit=static_cast<std::uint16_t>(infantry(primary->race));}
   if(r.slot==policy::Catastrophe){if(!i)m.unit=static_cast<std::uint16_t>(primary->race==0?39:primary->race==2?68:12);else m.unit=static_cast<std::uint16_t>(infantry(primary->race));}
+  if(sc1_native::wave_progression::air_only_unit(m.unit)&&!(capabilities()&policy::AntiAir))continue;
   if(r.slot==policy::Rear || r.slot==policy::Heavy || r.slot==policy::Flank)m.count=policy::stacked_count(m.count,rework_curses::count(r.slot));
   // All ordinary low-grade reinforcements scale; only the first member of
   // higher-grade special rosters is capped. Ordinary escorts scale;
@@ -228,7 +231,7 @@ inline void release_and_orders() {
   if(!is_enemy(u->player)){rework_curses::forget(u);return;}
   ammunition(u);
   if(v->appearance_until && timeline.second()>=v->appearance_until){u->flags=(u->flags&~0x04009000u)|v->saved_flags;v->appearance_until=0;wave_targeting::issue(u);}
-  if(v->appearance_until)return;
+  if(v->appearance_until)return;resume_yamato(u,*v);
   if(spell_due(u,*v))for(std::size_t i=0;i<due.size();i++){
    auto other=due[i];auto previous=other?rework_curses::identity(other):nullptr;
    if(!previous||v->last_scan<previous->last_scan||(v->last_scan==previous->last_scan&&u<other)){

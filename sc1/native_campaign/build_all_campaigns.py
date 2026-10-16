@@ -18,6 +18,7 @@ import mineral_layout
 import resource_layout
 import ladder_resource_layout
 import main_base_gas
+import addon_placement
 import mining_layout_audit
 import resource_depot_placement
 SOURCE_ROOT=SC1/'campaign_sources/raw'
@@ -588,6 +589,8 @@ def build(output=OUT,receipt=RECEIPT):
  report['resource_layout_source_sha256']=digest(Path(resource_layout.__file__).read_bytes())
  report['ladder_resource_layout_source']=str(Path(ladder_resource_layout.__file__).resolve())
  report['ladder_resource_layout_source_sha256']=digest(Path(ladder_resource_layout.__file__).read_bytes())
+ report['addon_placement_source']=str(Path(addon_placement.__file__).resolve())
+ report['addon_placement_source_sha256']=digest(Path(addon_placement.__file__).read_bytes())
  report['main_base_gas_source']=str(Path(main_base_gas.__file__).resolve())
  report['main_base_gas_source_sha256']=digest(Path(main_base_gas.__file__).read_bytes())
  report['mining_layout_audit_source']=str(Path(mining_layout_audit.__file__).resolve())

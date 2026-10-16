@@ -23,7 +23,7 @@ from sc1.native_campaign import resource_layout
 from sc1.native_campaign import ladder_resource_layout
 from sc1.native_campaign import mining_layout_audit
 from sc1.native_campaign import resource_depot_placement
-from sc1.native_campaign import main_base_gas, mineral_amount_bonus
+from sc1.native_campaign import main_base_gas, mineral_amount_bonus, addon_placement
 from sc1.campaign.missions import load_missions
 
 DEFAULT_MAP_RECEIPT = ROOT / "all_campaign_maps_evidence.json"
@@ -131,6 +131,9 @@ def validate_maps(receipt_path):
     ladder_path, _ = legacy.checked_file(receipt['ladder_resource_layout_source'], receipt['ladder_resource_layout_source_sha256'])
     if ladder_path != Path(ladder_resource_layout.__file__).resolve():
         raise ValueError('Unexpected joint mineral/gas layout implementation')
+    addon_path, _ = legacy.checked_file(receipt['addon_placement_source'], receipt['addon_placement_source_sha256'])
+    if addon_path != Path(addon_placement.__file__).resolve():
+        raise ValueError('Unexpected addon landing guard implementation')
     gas_path, _ = legacy.checked_file(receipt['main_base_gas_source'], receipt['main_base_gas_source_sha256'])
     if gas_path != Path(main_base_gas.__file__).resolve():
         raise ValueError('Unexpected main-base gas implementation')
@@ -240,6 +243,8 @@ def inputs(map_receipt, dll_receipt):
                   ladder_resource_layout_source_sha256=maps['ladder_resource_layout_source_sha256'],
                   mineral_amount_bonus_source=maps['mineral_amount_bonus_source'],
                   mineral_amount_bonus_source_sha256=maps['mineral_amount_bonus_source_sha256'],
+                  addon_placement_source=maps['addon_placement_source'],
+                  addon_placement_source_sha256=maps['addon_placement_source_sha256'],
                   main_base_gas_source=maps['main_base_gas_source'],
                   main_base_gas_source_sha256=maps['main_base_gas_source_sha256'],
                   mining_layout_audit_source=maps["mining_layout_audit_source"],

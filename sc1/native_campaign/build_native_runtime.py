@@ -35,7 +35,7 @@ def validate_catalog_bundle(original,legacy,rework,*,require_implemented=True):
     if (len(legacy['talents']),len(legacy['curses']),len(rework['talents']),len(rework['curses']))!=(238,15,400,50):
         raise ValueError('Release requires legacy238/15 plus revision-five162/35')
     for kind in ('talents','curses'):
-        expected=decorate(copy.deepcopy(legacy)) if rework.get('balance_revision') in (6,7) else legacy
+        expected=decorate(copy.deepcopy(legacy)) if rework.get('balance_revision') in (6,7,9) else legacy
         old={x['id']:x for x in expected[kind]}
         actual={x['id']:x for x in rework[kind]}
         if any(actual.get(identity)!=item for identity,item in old.items()):
