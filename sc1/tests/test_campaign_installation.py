@@ -1,4 +1,8 @@
 """Installer tests: workspace fake installations, mocked processes and launches."""
+import ctypes
+import os
+import threading
+import time
 import hashlib
 import json
 from pathlib import Path
@@ -46,7 +50,7 @@ class RealSealedPackageTests(unittest.TestCase):
 
 class CampaignInstallationTests(unittest.TestCase):
     def setUp(self):
-        self.temp = tempfile.TemporaryDirectory(dir=app.WORKSPACE / "analysis", prefix="installer_test_")
+        self.temp = tempfile.TemporaryDirectory(prefix="sc1-inst-")
         self.root = Path(self.temp.name).resolve(); self.native = self.root / "native"; self.native.mkdir()
         self.game = self.root / "game"; (self.game / "x86_64").mkdir(parents=True)
         self.exe = self.game / "x86_64/StarCraft.exe"; self.exe.write_bytes(pe())
@@ -58,7 +62,7 @@ class CampaignInstallationTests(unittest.TestCase):
         self.package = self.root / "package"; self.package.mkdir()
         self.manifest_path = self.package / "manifest.json"
         self.manifest = {"mode": "native_all_campaigns", "schema_version": 3, "scenario_count": 63, "loader_sha256": self.pin["sha256"],
-                         "inputs": {"manager_sources": [{"path": self.manager.relative_to(app.WORKSPACE).as_posix(), "sha256": app._sha(self.manager.read_bytes())}]},
+                         "inputs": {"manager_sources": [{"path": self.manager.relative_to(self.root).as_posix(), "sha256": app._sha(self.manager.read_bytes())}]},
                          "missions": [], "files": []}
         for m in load_missions():
             raw = ("mission " + str(m["mission_id"])).encode()
@@ -70,7 +74,7 @@ class CampaignInstallationTests(unittest.TestCase):
         self.add_file("overlay/samase/native_plugin.dll", pe())
         self.add_file("overlay/samase/plugins", b"samase/native_plugin.dll\n")
         self.write_manifest()
-        self.patches = [patch.object(app, "PIN_PATH", self.pin_path), patch.object(app, "NATIVE", self.native),
+        self.patches = [patch.object(app, "WORKSPACE", self.root), patch.object(app, "PIN_PATH", self.pin_path), patch.object(app, "NATIVE", self.native),
                         patch.object(app, "_file_version", return_value=self.pin["game_file_version_observed"]),
                         patch.object(app, "_running_game_processes", return_value=[])]
         for item in self.patches: item.start()
@@ -139,6 +143,78 @@ class CampaignInstallationTests(unittest.TestCase):
         self.assertFalse((self.game / app.INSTALL_NAME).exists())
         self.assertFalse(list(self.game.glob(".SC1CampaignGrowth.staging.*")))
         self.assertFalse(list(self.game.glob("*.lock")))
+
+    @staticmethod
+    def sharing_error(code=32):
+        error=OSError('fixture sharing violation');error.winerror=code;return error
+
+    def test_transient_directory_lock_retries_without_overwriting_active_files(self):
+        self.install();target=self.game/app.INSTALL_NAME;before=(target/'manifest.json').read_bytes();rename=Path.rename;attempts=[]
+        def locked(source,destination):
+            if source==target:
+                attempts.append(source)
+                if len(attempts)<3:raise self.sharing_error()
+            return rename(source,destination)
+        with patch.object(Path,'rename',locked),patch.object(app.time,'sleep') as pause:
+            result=self.install()
+        self.assertEqual(len(attempts),3);self.assertEqual(pause.call_count,2)
+        backup=Path(json.loads((target/'installation.json').read_text())['previous_backup'])
+        self.assertEqual((backup/'manifest.json').read_bytes(),before);self.assertTrue(result['backup_available'])
+
+    def test_persistent_directory_lock_keeps_old_patch_and_cleans_staging(self):
+        self.install();target=self.game/app.INSTALL_NAME;before=(target/'manifest.json').read_bytes();rename=Path.rename
+        def locked(source,destination):
+            if source==target:raise self.sharing_error()
+            return rename(source,destination)
+        with patch.object(Path,'rename',locked),patch.object(app.time,'sleep') as pause:
+            with self.assertRaises(app.InstallationError) as error:self.install()
+        self.assertEqual(error.exception.code,'files_in_use');self.assertIn('관리자도 종료',str(error.exception));self.assertEqual(pause.call_count,9)
+        self.assertEqual((target/'manifest.json').read_bytes(),before)
+        self.assertFalse(list(self.game.glob('.SC1CampaignGrowth.staging.*')));self.assertFalse(list(self.game.glob('*.lock')))
+
+    def test_staging_lock_rolls_back_verified_old_directory(self):
+        self.install();target=self.game/app.INSTALL_NAME;before=(target/'manifest.json').read_bytes();rename=Path.rename
+        def locked(source,destination):
+            if '.staging.' in source.name:raise self.sharing_error(33)
+            return rename(source,destination)
+        with patch.object(Path,'rename',locked),patch.object(app.time,'sleep'):
+            with self.assertRaises(app.InstallationError):self.install()
+        self.assertEqual((target/'manifest.json').read_bytes(),before)
+        self.assertEqual(app.inspect_installation(self.game)['status'],'installed')
+
+    def test_game_appearing_during_retry_prevents_directory_swap(self):
+        self.install();target=self.game/app.INSTALL_NAME;before=(target/'manifest.json').read_bytes();rename=Path.rename
+        def locked(source,destination):
+            if source==target:raise self.sharing_error()
+            return rename(source,destination)
+        with patch.object(Path,'rename',locked),patch.object(app.time,'sleep'),patch.object(app,'_running_game_processes',side_effect=[[],[],[],[123]]):
+            with self.assertRaises(app.InstallationError) as error:self.install()
+        self.assertEqual(error.exception.code,'game_running');self.assertEqual((target/'manifest.json').read_bytes(),before)
+
+    def test_non_sharing_error_is_not_retried_or_misreported(self):
+        self.install();target=self.game/app.INSTALL_NAME;rename=Path.rename
+        def denied(source,destination):
+            if source==target:raise self.sharing_error(5)
+            return rename(source,destination)
+        with patch.object(Path,'rename',denied),patch.object(app.time,'sleep') as pause:
+            with self.assertRaises(OSError) as error:self.install()
+        self.assertEqual(error.exception.winerror,5);pause.assert_not_called()
+
+    @unittest.skipUnless(os.name=='nt','Requires a real Windows directory handle')
+    def test_real_windows_directory_handle_is_retried_after_release(self):
+        self.install();target=self.game/app.INSTALL_NAME
+        kernel=ctypes.WinDLL('kernel32',use_last_error=True)
+        kernel.CreateFileW.argtypes=[ctypes.c_wchar_p,ctypes.c_uint32,ctypes.c_uint32,ctypes.c_void_p,ctypes.c_uint32,ctypes.c_uint32,ctypes.c_void_p]
+        kernel.CreateFileW.restype=ctypes.c_void_p;kernel.CloseHandle.argtypes=[ctypes.c_void_p]
+        handle=kernel.CreateFileW(str(target),1,3,None,3,0x02000000,None)
+        if handle==ctypes.c_void_p(-1).value:raise ctypes.WinError(ctypes.get_last_error())
+        released=threading.Event()
+        def release():
+            time.sleep(0.3);kernel.CloseHandle(handle);released.set()
+        worker=threading.Thread(target=release);worker.start()
+        try:result=self.install()
+        finally:worker.join(5)
+        self.assertTrue(released.is_set());self.assertEqual(result['status'],'installed')
 
     def test_failed_atomic_update_recovers_previous_install(self):
         self.install(); target = self.game / app.INSTALL_NAME; before = (target / "manifest.json").read_bytes()

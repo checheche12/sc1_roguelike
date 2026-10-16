@@ -121,11 +121,12 @@ class Candidate:
     rarity: str
     category: str = "military"
     usable: bool = True
+    repeatable: bool | None = None
 
 
 def draw_candidates(policy: RewardPolicy, catalog, owned, rng, limit: int = 4,
                     *, midpoint_pending: bool = False,
-                    recent_manuals=()) -> tuple[Candidate, ...]:
+                    recent_manuals=(), exhausted_fallback=False) -> tuple[Candidate, ...]:
     """Pure offer sampler. Persist its result once; never redraw issued offers.
 
     Common manuals may repeat across rewards, but never within one offer.
@@ -148,7 +149,7 @@ def draw_candidates(policy: RewardPolicy, catalog, owned, rng, limit: int = 4,
     recent_manuals = set(recent_manuals)
     pool = [x for x in catalog if x.usable
             and ((x.category == "economy") == (policy.category == "economy"))
-            and (x.id not in owned or repeatable(x.rarity, x.category))]
+            and (x.id not in owned or (repeatable(x.rarity, x.category) if x.repeatable is None else x.repeatable))]
     if policy.guaranteed_legendary:
         legends = [x for x in pool if x.rarity == "legendary" and x.id not in owned]
         if not legends:
@@ -193,6 +194,11 @@ def draw_candidates(policy: RewardPolicy, catalog, owned, rng, limit: int = 4,
                 roll -= weight
         result.append(choice)
         pool.remove(choice)
+    if not result and exhausted_fallback:
+        # QA10 capped pools need one reachable entitlement when every rolled
+        # tier is exhausted. Never promote the remaining slots of a nonempty
+        # normal offer. Midpoint-reserved legends were removed above.
+        for _ in range(min(limit,len(pool))):result.append(pool.pop(rng.randrange(len(pool))))
     return tuple(result)
 
 

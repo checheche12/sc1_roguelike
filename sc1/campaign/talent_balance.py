@@ -4,7 +4,7 @@ import copy
 import json
 from pathlib import Path
 
-REVISION = 2026101609
+REVISION = 2026101610
 UNIT_LEGENDARIES = frozenset((61,62,63,64,65,66,102,103,104,105,106,107,144,145,146,147,148,149))
 POWER_QUARTERS = dict(common=6, uncommon=7, rare=8, epic=10, legendary=10)
 
@@ -87,6 +87,19 @@ DESCRIPTIONS[72]='뮤탈리스크의 공격력 +6, 다른 저그 공중 전투 �
 
 DESCRIPTIONS[70]='저글링·브루들링의 공격력 중첩당 +1.5(중첩 합계를 정수 반올림), 울트라리스크의 공격력 중첩당 +6. 해당 유닛들의 공격 간격이 중첩당 4.5% 줄어듭니다. 반복해서 고를 수 있습니다.'
 
+DESCRIPTIONS[89]='잠복 후 3초간 공격하거나 맞지 않으면 초당 최대 체력의 6%를 추가 회복합니다.'
+
+DESCRIPTIONS.update({
+ 8:'아군 지상 전투 유닛의 일반 공격 피해 +15%, 이동 속도 +4.5%. 중첩당 적용되며 최대 4회 선택할 수 있습니다.',
+ 9:'아군 공중 전투 유닛의 일반 공격 피해 +15%, 이동 속도 +4.5%. 중첩당 적용되며 최대 4회 선택할 수 있습니다.',
+ 29:'마린·파이어뱃·고스트의 공격력 중첩당 +15%, 공격 간격 -4.5%. 파이어뱃은 일반 공격으로 받는 피해도 중첩당 10% 줄어듭니다. 최대 4회.',
+ 30:'중첩당 벌처 공격력 +4.5, 전차 모드 +6, 공성 모드 +12, 골리앗 +3. 공격 간격 -4.5%. 소수점 공격력은 중첩 합계를 반올림하며 최대 4회.',
+ 31:'중첩당 배틀크루저 공격력 +6, 다른 테란 공중 전투 유닛 +3. 공격 간격 -4.5%. 최대 4회.',
+ 70:'중첩당 저글링·브루들링 공격력 +1.5, 울트라리스크 +6, 감염된 테란 +60. 공격 간격 -4.5%, 일반 공격으로 받는 피해 -10%. 소수점 공격력은 중첩 합계를 반올림하며 최대 4회.',
+ 111:'중첩당 질럿 공격력 +1.5, 드라군 +3, 다크 템플러·아콘 +6, 리버·스캐럽 +15. 공격 간격 -4.5%. 질럿·다크 템플러는 일반 공격으로 받는 피해도 중첩당 10% 줄어듭니다. 공격력 합계 반올림, 최대 4회.',
+ 91:'러커가 잠복한 상태에서 우클릭 이동과 어택땅(A+지점)을 할 수 있습니다. 이동 속도는 기본의 62.5%이며 이동 중에는 공격하지 않습니다.',
+})
+
 def decorate(catalog):
     catalog['balance_revision']=9
     catalog.pop('talent_power_halves',None)
@@ -104,6 +117,8 @@ def decorate(catalog):
             text=original
             for a,b in REPLACEMENTS.get(ordinal,[]):text=text.replace(a,b)
             item['description']=original if q==4 else DESCRIPTIONS.get(ordinal,text)
+            if item.get('max_rank')==4 and ordinal not in (8,9,29,30,31,70,111):
+                item['description']=item['description'].replace('반복해서 고를 수 있습니다.','')+' 중첩당 적용, 최대 4회 선택할 수 있습니다.'
             if ordinal in (11,12):item['effect']['armor_per_rank']=0.75
             if ordinal==29:item['effect']['weapon_damage_percent_per_rank']=15
             if ordinal==51:item['effect']['armor_mark_frames']=300

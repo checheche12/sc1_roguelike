@@ -2,7 +2,7 @@
 from __future__ import annotations
 import copy
 import json
-from . import progression, talent_campaign_policy as policy
+from . import progression, talent_campaign_policy as policy, rank_policy
 from .runtime_catalog import GrowthError, load_catalog, validate_catalog, encode_growth
 
 SKIPPED_CURSE='__no_future_added_waves__'
@@ -30,7 +30,7 @@ def enable(conn, catalog_path=None):
             # Correct future display/mechanics metadata only. Issued offers,
             # frozen input text, indices, ranks and completed checkpoints stay.
             old.update(description=new['description'],effect=copy.deepcopy(new['effect']))
-            for field in ('balance_revision','pre_balance_description','pre_balance_effect'):
+            for field in ('balance_revision','pre_balance_description','pre_balance_effect','repeatable','rank_slot','max_rank'):
                 if field in new:old[field]=copy.deepcopy(new[field])
             changed=True
     if changed:
@@ -62,7 +62,7 @@ def overlay(conn, catalog):
                 existing=next(x for x in result[kind] if x['id']==item['id'])
                 if existing.get('source_description')==item.get('source_description'):
                     existing.update(description=item['description'],effect=copy.deepcopy(item['effect']))
-                    for field in ('balance_revision','pre_balance_description','pre_balance_effect'):
+                    for field in ('balance_revision','pre_balance_description','pre_balance_effect','repeatable','rank_slot','max_rank'):
                         if field in item:existing[field]=copy.deepcopy(item[field])
     result.update(catalog_version=2,rework_revision=5,policy_revision=5)
     return validate_catalog(result,2)
@@ -96,6 +96,8 @@ def acquire(conn,mission,catalog,owned,identity):
         raise GrowthError('duplicate_talent','이미 보유한 재능입니다.')
     if item.get('repeatable'):
         values=ranks(conn,mission)
+        if rank_policy.exhausted(item,owned,values):
+            raise GrowthError('talent_rank_limit','이 재능은 최대 4회까지 선택할 수 있습니다.')
         values[identity]=values.get(identity,1 if identity in owned else 0)+1
         save_ranks(conn,mission,values)
     if identity not in owned:owned.append(identity)
@@ -147,7 +149,7 @@ def recent_manuals(conn,mission,offer_id):
             and item.get('category') in ('combat','military')}
 
 
-def candidates(catalog,mission,phase,owned,rng,*,recent_manuals=()):
+def candidates(catalog,mission,phase,owned,rng,*,recent_manuals=(),rank_counts=None):
     reward=policy.reward_policy(mission,phase)
     available=[]
     by_id={}
@@ -159,12 +161,14 @@ def candidates(catalog,mission,phase,owned,rng,*,recent_manuals=()):
         targets=set(item.get('target_units',()))
         available=set(metadata.get('available_unit_ids',metadata.get('starting_unit_ids',())))
         return progression.item_eligible(item,identity,'talent') and (not targets or bool(targets&available))
+    rank_counts=rank_counts or {}
     for item in catalog['talents']:
+        if rank_policy.exhausted(item,owned,rank_counts):continue
         if item.get('rework_revision')!=5 or not progression.item_eligible(item,mission,'talent'):continue
         # Every legendary choice must be usable on this mission. Native coverage can
         # provide exact mission eligibility for technologies/target availability.
         usable=usable_on(item,mission)
-        available.append(policy.Candidate(item['id'],item['rarity'],item['category'],usable))
+        available.append(policy.Candidate(item['id'],item['rarity'],item['category'],usable,item.get('repeatable',False)))
         by_id[item['id']]=item
     midpoint=policy.legendary_ordinal(mission)
     pending=midpoint is not None and entry['ordinal']<midpoint
@@ -173,7 +177,7 @@ def candidates(catalog,mission,phase,owned,rng,*,recent_manuals=()):
         reserve=sorted(item['id'] for item in catalog['talents'] if item.get('rework_revision')==5
                        and item['rarity']=='legendary' and item['id'] not in owned and usable_on(item,midpoint_mission))
         if reserve:available=[x for x in available if x.id not in set(reserve[-4:])]
-    try:draw=policy.draw_candidates(reward,available,owned,rng,recent_manuals=recent_manuals)
+    try:draw=policy.draw_candidates(reward,available,owned,rng,recent_manuals=recent_manuals,exhausted_fallback=True)
     except ValueError as exc:raise GrowthError('choice_pool_unavailable',str(exc)) from exc
     if not draw:raise GrowthError('choice_pool_unavailable','현재 단계에 사용 가능한 개편 재능이 없습니다.')
     return [copy.deepcopy(by_id[x.id]) for x in draw]

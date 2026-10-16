@@ -275,7 +275,11 @@ bool MailboxProtocol::accept_snapshot(const std::uint32_t (&words)[96]) noexcept
         for(std::size_t ordinal=0;ordinal<rework_catalog::kTalentCount;++ordinal){
             const auto slot=rework_catalog::kRankSlots[ordinal];if(slot<0)continue;
             const auto bit=rework_catalog::kTalentBase+ordinal;
-            if((((words[12+bit/32]>>(bit%32))&1u)!=0)!=(words[44+slot]!=0))return false;
+            const bool owned=((words[12+bit/32]>>(bit%32))&1u)!=0;
+            const bool ranked=words[44+slot]!=0;
+            // Slots12..20 were unique health bits before QA10. A frozen old
+            // snapshot legitimately has its bit set and an unused zero rank.
+            if((ranked&&!owned)||(slot<12&&owned&&!ranked))return false;
         }
     }
     if (!any_nonce(words + 4)) { fail(MailboxError::InvalidNonce); return true; }
@@ -296,7 +300,8 @@ bool MailboxProtocol::accept_snapshot(const std::uint32_t (&words)[96]) noexcept
                 || snapshot.curse_counts[index] < snapshot_.curse_counts[index]) return false;
         }
         for(std::size_t index=0;index<curse_limit;++index)if(snapshot.curse_counts[index]<snapshot_.curse_counts[index])return false;
-        for(std::size_t index=0;index<32;++index)if(snapshot.talent_ranks[index]<snapshot_.talent_ranks[index])return false;
+        for(std::uint32_t ordinal=0;ordinal<rework_catalog::kTalentCount;++ordinal)
+            if(rework_catalog::rank(snapshot,ordinal)<rework_catalog::rank(snapshot_,ordinal))return false;
     }
     bool success = false;
     try { success = callbacks_.apply_snapshot(callbacks_.context, snapshot); } catch (...) {}
@@ -720,11 +725,25 @@ void rework_v2_extended_snapshot_and_single_offer() {
     r[28+49/4]|=3u<<((49%4)*8);
     f.send(r);CHECK(f.protocol.ready() && m[19]==2);
     CHECK(f.host.snapshot.wire_version==2 && f.host.snapshot.talent_ranks[0]==19);
-    CHECK(f.host.snapshot.curse_counts[49]==3 && rework_catalog::rank(f.host.snapshot,8)==19);
+    CHECK(f.host.snapshot.curse_counts[49]==3 && rework_catalog::rank(f.host.snapshot,8)==4);
     CHECK(f.protocol.request_phase(2));
-    r=f.load();r[10]=0x50480202;r[12+bit/32]|=1u<<(bit%32);r[44]=18;
+    r=f.load();r[10]=0x50480202;r[12+bit/32]|=1u<<(bit%32);r[44]=3;
     r[28+49/4]|=3u<<((49%4)*8);f.send(r);
     CHECK(f.protocol.failed() && f.host.applies==1);
+}
+
+void qa10_health_bit_fallback_and_capped_phase_transition() {
+    Fixture f(true,2);auto r=f.load();r[10]=0x50480101;
+    const auto manual=rework_catalog::kTalentBase+8,health=rework_catalog::kTalentBase+26;
+    r[12+manual/32]|=1u<<(manual%32);r[44]=19;
+    r[12+health/32]|=1u<<(health%32);f.send(r);
+    CHECK(f.protocol.ready()&&f.host.snapshot.talent_ranks[12]==0);
+    CHECK(rework_catalog::rank(f.host.snapshot,26)==1&&rework_catalog::rank(f.host.snapshot,8)==4);
+    CHECK(f.protocol.request_phase(2));r=f.load();r[10]=0x50480202;
+    r[12+manual/32]|=1u<<(manual%32);r[44]=4;
+    r[12+health/32]|=1u<<(health%32);r[44+12]=2;f.send(r);
+    CHECK(f.protocol.ready()&&f.host.applies==2);
+    CHECK(rework_catalog::rank(f.host.snapshot,26)==2&&rework_catalog::rank(f.host.snapshot,8)==4);
 }
 
 void rework_v2_rejects_rank_bit_mismatch_and_reserved_payload() {
@@ -969,7 +988,7 @@ int main(int argc, char** argv) {
             reset_quarantines_old_mailbox_and_rejects_old_ack,
             destruction_never_calls_host_but_explicit_shutdown_does, slots_and_request_ownership,
             unsupported_mission_and_corrupt_request_fail_closed, maximum_supported_snapshot_is_valid,
-            rework_v2_extended_snapshot_and_single_offer,rework_v2_rejects_rank_bit_mismatch_and_reserved_payload
+            rework_v2_extended_snapshot_and_single_offer,qa10_health_bit_fallback_and_capped_phase_transition,rework_v2_rejects_rank_bit_mismatch_and_reserved_payload
         };
         for (const auto& test : tests) test();
         std::cout << "{\"cpp_tests\":" << tests.size() << ",\"passed\":true,\"game_accessed\":false,\"database_accessed\":false}\n";

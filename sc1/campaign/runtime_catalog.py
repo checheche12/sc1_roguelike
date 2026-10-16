@@ -56,9 +56,11 @@ def validate_catalog(value: dict, expected_version: int | None = None) -> dict:
                 raise GrowthError("invalid_catalog", "재능 종족이 잘못되었습니다.")
             if item.get('repeatable'):
                 slot=item.get('rank_slot')
-                if (expected_version!=2 or kind!='talents' or item.get('rarity')!='common'
+                if (expected_version!=2 or kind!='talents' or (item.get('rarity')!='common' and item.get('effect_ordinal') not in (26,27,28,67,68,69,108,109,110))
                         or type(slot) is not int or not 0<=slot<32 or slot in rank_slots):
                     raise GrowthError('invalid_catalog','반복 교범의 영구 중첩 위치가 잘못되었습니다.')
+                if 'max_rank' in item and (type(item['max_rank']) is not int or item['max_rank']!=4):
+                    raise GrowthError('invalid_catalog','전투 재능의 중첩 한도가 잘못되었습니다.')
                 rank_slots.add(slot)
             effect = item.get("effect", {})
             if not isinstance(effect, dict):
@@ -130,7 +132,7 @@ def encode_growth(catalog: dict, talents: list[str], curses: dict[str, int], ran
             count=ranks.get(identity,1)
             if type(count) is not int or not 1<=count<=0xFFFFFFFF:
                 raise GrowthError('invalid_growth','교범 중첩은 양의 32비트 정수여야 합니다.')
-            words[33+known_talents[identity]['rank_slot']]=count
+            words[33+known_talents[identity]['rank_slot']]=min(count,known_talents[identity].get('max_rank',0xffffffff))
     if any(identity not in owned or not known_talents[identity].get('repeatable') for identity in ranks):
         raise GrowthError('invalid_growth','보유하지 않은 교범 중첩입니다.')
     for identity, count in curses.items():

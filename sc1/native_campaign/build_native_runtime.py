@@ -46,13 +46,13 @@ def validate_catalog_bundle(original,legacy,rework,*,require_implemented=True):
     curses=[x for x in rework['curses'] if x.get('rework_revision')==5]
     if ([x['bit_index'] for x in talents]!=list(range(238,400))
             or [x['byte_index'] for x in curses]!=list(range(15,50))
-            or len([x for x in talents if x.get('repeatable')])!=12):
+            or len([x for x in talents if x.get('repeatable')])!=21):
         raise ValueError('Revision-five wire indices or manual rank layout differ')
     if require_implemented and any(not x['implemented'] for x in talents+curses):
         raise ValueError('Pending native effects cannot be published as a complete revision-five release')
     return dict(growth_protocol='PHC1 v2',growth_wire_version=2,legacy_wire_versions=[1],
                 mailbox_words=128,snapshot_words=65,talent_bit_capacity=512,curse_byte_capacity=64,
-                manual_rank_words=32,manual_rank_slots_used=12,policy_revision=5,
+                manual_rank_words=32,manual_rank_slots_used=21,policy_revision=5,
                 legacy_talents=238,legacy_curses=15,new_talents=162,new_curses=35,
                 implemented_talents=sum(x['implemented'] for x in rework['talents']),
                 implemented_curses=sum(x['implemented'] for x in rework['curses']))

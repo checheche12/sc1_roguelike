@@ -159,5 +159,8 @@ def current_owned_descriptions(status: dict, catalog_path=None) -> dict:
                     and new.get('source_description')==item.get('source_description')
                     and new.get('effect',{}).get('qa_revision',0)>=item.get('effect',{}).get('qa_revision',0)):
                 item.update(description=new['description'],effect=copy.deepcopy(new['effect']))
+                for field in ('repeatable','rank_slot','max_rank'):
+                    if field in new:item[field]=new[field]
+                if item.get('repeatable'):item['stacks']=min(item.get('stacks',1),item.get('max_rank',0xffffffff))
             result[kind].append(item)
     return result

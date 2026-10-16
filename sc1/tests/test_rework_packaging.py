@@ -24,7 +24,7 @@ class ReworkPackagingTests(unittest.TestCase):
     def test_layout_extends_both_historical_catalogs(self):
         contract=native.validate_catalog_bundle(self.original,self.legacy,self.rework)
         self.assertEqual((contract['implemented_talents'],contract['implemented_curses']),(400,50))
-        self.assertEqual((contract['mailbox_words'],contract['snapshot_words'],contract['manual_rank_slots_used']),(128,65,12))
+        self.assertEqual((contract['mailbox_words'],contract['snapshot_words'],contract['manual_rank_slots_used']),(128,65,21))
         self.assertEqual(contract['legacy_wire_versions'],[1])
 
     def test_pending_effect_or_rewritten_old_meaning_cannot_publish(self):

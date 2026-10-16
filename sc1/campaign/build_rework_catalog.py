@@ -93,7 +93,8 @@ def build(coverage=None):
     catalog.update(catalog_version=2, policy_revision=5, design_revision=board['revision'],
                    design_sha256=hashlib.sha256(SOURCE.read_bytes()).hexdigest(),
                    wire_version=2, rework_revision=5, native_coverage=receipt)
-    rank_slot = 0
+    from .rank_policy import MAX_RANK, RANK_SLOTS
+    rank_slot = len(RANK_SLOTS)
     contract = dict(schema_version=1, policy_revision=5, wire_version=2,
                     source=str(SOURCE.relative_to(ROOT)).replace('\\','/'), source_sha256=catalog['design_sha256'],
                     legacy_talents=238,legacy_curses=15, new_talents=[],new_curses=[],
@@ -102,7 +103,7 @@ def build(coverage=None):
     for kind, items, start, index_key in [('talent',talents,238,'bit_index'),('curse',curses,15,'byte_index')]:
         for ordinal, raw in enumerate(items):
             item = copy.deepcopy(raw)
-            repeatable = kind == 'talent' and item['rarity'] == 'common' and item['category'] == 'combat'
+            repeatable = kind == 'talent' and ordinal in RANK_SLOTS
             item.update({index_key:start+ordinal,'implemented':item['id'] in supported,
                          'native_status':'implemented' if item['id'] in supported else 'pending_mechanism',
                          'source_description':item['description'],'rework_revision':5,'effect_ordinal':ordinal,
@@ -116,8 +117,8 @@ def build(coverage=None):
                                 if (kind == 'curse' or item['race'] in ('shared',row['race']))
                                 and (allowed is None or row['mission_id'] in allowed)]
             if repeatable:
-                item['rank_slot']=rank_slot
-                rank_slot+=1
+                item['rank_slot']=RANK_SLOTS[ordinal]
+                item['max_rank']=MAX_RANK
             if kind=='curse':
                 # Explicit stacks survive; finite roster cards can recur across
                 # the campaign without exhausting the three-candidate tier.
@@ -156,8 +157,8 @@ def build(coverage=None):
            'inline constexpr int kRankSlots[162]={'+','.join(map(str,rank_slots))+'};',
            'template<class Snapshot> inline std::uint32_t rank(const Snapshot& s,std::uint32_t ordinal) noexcept {',
            ' if(ordinal>=kTalentCount)return 0; const auto slot=kRankSlots[ordinal];',
-           ' if(slot>=0)return s.talent_ranks[slot]; const auto bit=kTalentBase+ordinal;',
-           ' return (s.talent_bits[bit/32]>>(bit%32))&1u; }',
+           ' const auto bit=kTalentBase+ordinal; const auto owned=(s.talent_bits[bit/32]>>(bit%32))&1u;',
+           ' if(slot>=0){const auto n=s.talent_ranks[slot];return n ? (n>4u?4u:n):owned;} return owned; }',
            'inline constexpr const char* kTalentSourceIds[162]={'+','.join(json.dumps(x['id']) for x in contract['new_talents'])+'};',
            'inline constexpr const char* kCurseSourceIds[35]={'+','.join(json.dumps(x['id']) for x in contract['new_curses'])+'};','}']
     HEADER.write_text('\n'.join(lines)+'\n',encoding='utf8')

@@ -29,7 +29,7 @@
             "value": 1
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "target": "마린",
@@ -132,7 +132,7 @@
             "value": 2560
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "target": "마린",
@@ -220,7 +220,7 @@
             ]
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 7
       },
       "target": "마린",
@@ -311,7 +311,7 @@
             "value": 25600
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 8
       },
       "target": "파이어뱃",
@@ -396,7 +396,7 @@
             "value": 7680
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "target": "고스트",
@@ -481,7 +481,7 @@
             "value": 3
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 7
       },
       "target": "고스트",
@@ -569,7 +569,7 @@
             ]
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "target": "벌쳐",
@@ -678,7 +678,7 @@
             "value": 12800
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 7
       },
       "target": "벌쳐",
@@ -809,7 +809,7 @@
             "value": 1
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "target": "시즈탱크",
@@ -925,7 +925,7 @@
             "value": 2
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 8
       },
       "target": "시즈탱크",
@@ -1031,7 +1031,7 @@
             "value": 5120
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 7
       },
       "target": "골리앗",
@@ -1126,7 +1126,7 @@
             "value": 2
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "target": "레이스",
@@ -1231,7 +1231,7 @@
             "value": 7680
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "target": "레이스",
@@ -1319,7 +1319,7 @@
             ]
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "target": "발키리",
@@ -1420,7 +1420,7 @@
             "value": 2
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "target": "배틀쿠루져",
@@ -1530,7 +1530,7 @@
             ]
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 4
       },
       "target": "SCV, 드론, 프로브",
@@ -1671,7 +1671,7 @@
             "value": 5120
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "target": "일꾼",
@@ -1833,7 +1833,7 @@
             "denominator": 100
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "requirements": {
@@ -1903,7 +1903,7 @@
             "denominator": 100
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "requirements": {
@@ -1973,7 +1973,7 @@
             "denominator": 100
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "requirements": {
@@ -2043,7 +2043,7 @@
             "denominator": 100
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "requirements": {
@@ -2116,7 +2116,7 @@
             "value": 1
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "requirements": {
@@ -2192,7 +2192,7 @@
             "value": 2
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "requirements": {
@@ -2268,7 +2268,7 @@
             "value": 5120
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "requirements": {
@@ -2341,7 +2341,7 @@
             "denominator": 100
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "requirements": {
@@ -2414,7 +2414,7 @@
             "value": 3
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "requirements": {
@@ -2491,7 +2491,7 @@
             "value": 1
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "requirements": {
@@ -2567,7 +2567,7 @@
             "value": 10240
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "requirements": {
@@ -2643,7 +2643,7 @@
             "value": 10240
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "requirements": {
@@ -2719,7 +2719,7 @@
             "value": 10240
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "requirements": {
@@ -2804,7 +2804,7 @@
             "value": 1
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "requirements": {
@@ -2889,7 +2889,7 @@
             "value": 4
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 7
       },
       "requirements": {
@@ -2992,7 +2992,7 @@
             ]
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 7
       },
       "requirements": {
@@ -3095,7 +3095,7 @@
             "value": 2
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 7
       },
       "requirements": {
@@ -3177,7 +3177,7 @@
             "value": 2560
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "requirements": {
@@ -3262,7 +3262,7 @@
             ]
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 7
       },
       "requirements": {
@@ -3356,7 +3356,7 @@
             "value": 1
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "requirements": {
@@ -3447,7 +3447,7 @@
             "value": 5120
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "requirements": {
@@ -3538,7 +3538,7 @@
             "value": 1
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 7
       },
       "requirements": {
@@ -3629,7 +3629,7 @@
             "value": 25600
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "requirements": {
@@ -3711,7 +3711,7 @@
             "value": 2
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 7
       },
       "requirements": {
@@ -3793,7 +3793,7 @@
             "value": 5120
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "requirements": {
@@ -3884,7 +3884,7 @@
             "value": 1
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "requirements": {
@@ -3975,7 +3975,7 @@
             "value": 12800
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "requirements": {
@@ -4060,7 +4060,7 @@
             ]
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 7
       },
       "requirements": {
@@ -4142,7 +4142,7 @@
             "denominator": 100
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "requirements": {
@@ -4224,7 +4224,7 @@
             ]
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 7
       },
       "requirements": {
@@ -4309,7 +4309,7 @@
             "value": 12800
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "requirements": {
@@ -4388,7 +4388,7 @@
             "denominator": 100
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "requirements": {
@@ -4467,7 +4467,7 @@
             "value": 1
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "requirements": {
@@ -4549,7 +4549,7 @@
             "value": 1
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "requirements": {
@@ -4631,7 +4631,7 @@
             "value": 2
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "requirements": {
@@ -4710,7 +4710,7 @@
             "denominator": 100
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "requirements": {
@@ -4789,7 +4789,7 @@
             "value": 7680
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "requirements": {
@@ -4871,7 +4871,7 @@
             "value": 4
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "requirements": {
@@ -4950,7 +4950,7 @@
             "denominator": 100
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "requirements": {
@@ -5032,7 +5032,7 @@
             ]
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 4
       },
       "requirements": {
@@ -5117,7 +5117,7 @@
             "value": 1
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "requirements": {
@@ -5199,7 +5199,7 @@
             "value": 2
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "requirements": {
@@ -5281,7 +5281,7 @@
             "value": 7680
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "requirements": {
@@ -5360,7 +5360,7 @@
             "denominator": 100
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "requirements": {
@@ -5439,7 +5439,7 @@
             "value": 1
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "requirements": {
@@ -5521,7 +5521,7 @@
             "value": 2560
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "requirements": {
@@ -5603,7 +5603,7 @@
             "value": 7680
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "requirements": {
@@ -5685,7 +5685,7 @@
             "value": 6400
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "requirements": {
@@ -5770,7 +5770,7 @@
             ]
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 4
       },
       "requirements": {
@@ -5855,7 +5855,7 @@
             "value": 7680
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "requirements": {
@@ -5940,7 +5940,7 @@
             ]
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 7
       },
       "requirements": {
@@ -6052,7 +6052,7 @@
             ]
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 7
       },
       "requirements": {
@@ -6155,7 +6155,7 @@
             "value": 20
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "requirements": {
@@ -6234,7 +6234,7 @@
             ]
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 7
       },
       "requirements": {
@@ -6313,7 +6313,7 @@
             "value": 5120
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "requirements": {
@@ -6398,7 +6398,7 @@
             "value": 1
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "requirements": {
@@ -6480,7 +6480,7 @@
             "denominator": 100
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "requirements": {
@@ -6553,7 +6553,7 @@
             "value": 100
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "requirements": {
@@ -6638,7 +6638,7 @@
             "value": 1
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 7
       },
       "requirements": {
@@ -6720,7 +6720,7 @@
             "denominator": 100
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "requirements": {
@@ -6793,7 +6793,7 @@
             "value": 4
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 7
       },
       "requirements": {
@@ -6869,7 +6869,7 @@
             "value": 10240
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "requirements": {
@@ -6948,7 +6948,7 @@
             ]
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 4
       },
       "requirements": {
@@ -7024,7 +7024,7 @@
             "denominator": 100
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "requirements": {
@@ -7097,7 +7097,7 @@
             "value": 2
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 7
       },
       "requirements": {
@@ -7173,7 +7173,7 @@
             "value": 8
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "requirements": {
@@ -7246,7 +7246,7 @@
             "denominator": 100
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 7
       },
       "requirements": {
@@ -7322,7 +7322,7 @@
             ]
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 4
       },
       "requirements": {
@@ -7401,7 +7401,7 @@
             "value": 5120
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "requirements": {
@@ -7477,7 +7477,7 @@
             "value": 1
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "requirements": {
@@ -7553,7 +7553,7 @@
             "value": 30
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "requirements": {
@@ -7629,7 +7629,7 @@
             "value": 3
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "requirements": {
@@ -7705,7 +7705,7 @@
             "value": 5120
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "requirements": {
@@ -7778,7 +7778,7 @@
             "denominator": 100
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "requirements": {
@@ -7851,7 +7851,7 @@
             "value": 5120
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "requirements": {
@@ -7927,7 +7927,7 @@
             "value": 30
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "requirements": {
@@ -8003,7 +8003,7 @@
             "value": 50
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "requirements": {
@@ -8079,7 +8079,7 @@
             "value": 10240
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "requirements": {
@@ -8155,7 +8155,7 @@
             "value": 1
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "requirements": {
@@ -8231,7 +8231,7 @@
             "value": 20
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "requirements": {
@@ -8307,7 +8307,7 @@
             "value": 40
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "requirements": {
@@ -8383,7 +8383,7 @@
             "value": 1
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "requirements": {
@@ -8459,7 +8459,7 @@
             "value": 15360
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "requirements": {
@@ -8535,7 +8535,7 @@
             "value": 10240
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "requirements": {
@@ -8621,7 +8621,7 @@
             "value": 1
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 7
       },
       "requirements": {
@@ -8716,7 +8716,7 @@
             "value": 1
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 7
       },
       "requirements": {
@@ -8810,7 +8810,7 @@
             "value": 20
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 7
       },
       "requirements": {
@@ -8889,7 +8889,7 @@
         "max_targets": 2,
         "full_weapon_damage": true,
         "recursive_secondary_attacks": false,
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 8
       },
       "requirements": {
@@ -8953,7 +8953,7 @@
         "max_targets": 3,
         "full_weapon_damage": true,
         "recursive_secondary_attacks": false,
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 10
       },
       "requirements": {
@@ -9022,7 +9022,7 @@
             ]
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "missions": [
@@ -9129,7 +9129,7 @@
             ]
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 7
       },
       "missions": [
@@ -9224,7 +9224,7 @@
             "value": 2560
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 8
       },
       "missions": [
@@ -9322,7 +9322,7 @@
             "value": 1
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "missions": [
@@ -9430,7 +9430,7 @@
             "denominator": 100
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 7
       },
       "missions": [
@@ -9538,7 +9538,7 @@
             "value": 1
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 8
       },
       "missions": [
@@ -9634,7 +9634,7 @@
             "value": 1
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "missions": [
@@ -9729,7 +9729,7 @@
             ]
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 7
       },
       "missions": [
@@ -9851,7 +9851,7 @@
             ]
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 8
       },
       "missions": [
@@ -9970,7 +9970,7 @@
             "value": 5120
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "missions": [
@@ -10060,7 +10060,7 @@
             "denominator": 100
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 7
       },
       "missions": [
@@ -10153,7 +10153,7 @@
             ]
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 8
       },
       "missions": [
@@ -10251,7 +10251,7 @@
             "value": 3840
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "missions": [
@@ -10344,7 +10344,7 @@
             "denominator": 100
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 7
       },
       "missions": [
@@ -10443,7 +10443,7 @@
             "value": 1
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 8
       },
       "missions": [
@@ -10560,7 +10560,7 @@
             "value": 1
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "missions": [
@@ -10667,7 +10667,7 @@
             "denominator": 100
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 7
       },
       "missions": [
@@ -10774,7 +10774,7 @@
             "value": 1
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 8
       },
       "missions": [
@@ -10880,7 +10880,7 @@
             "value": 2
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "missions": [
@@ -10971,7 +10971,7 @@
             "denominator": 100
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 7
       },
       "missions": [
@@ -11057,7 +11057,7 @@
         "max_targets": 2,
         "full_weapon_damage": true,
         "recursive_secondary_attacks": false,
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 8
       },
       "missions": [
@@ -11155,7 +11155,7 @@
             "value": 5120
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "missions": [
@@ -11255,7 +11255,7 @@
             "denominator": 100
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 7
       },
       "missions": [
@@ -11349,7 +11349,7 @@
             "value": 5120
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 8
       },
       "missions": [
@@ -11448,7 +11448,7 @@
             "value": 6400
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "missions": [
@@ -11579,7 +11579,7 @@
             ]
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 7
       },
       "missions": [
@@ -11707,7 +11707,7 @@
             "value": 1
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 8
       },
       "missions": [
@@ -11807,7 +11807,7 @@
             "denominator": 100
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "missions": [
@@ -11908,7 +11908,7 @@
             "value": 3
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 7
       },
       "missions": [
@@ -11997,7 +11997,7 @@
         "max_targets": 3,
         "full_weapon_damage": true,
         "recursive_secondary_attacks": false,
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 8
       },
       "missions": [
@@ -12083,7 +12083,7 @@
             "denominator": 100
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "missions": [
@@ -12173,7 +12173,7 @@
             "value": 1
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 7
       },
       "missions": [
@@ -12263,7 +12263,7 @@
             "denominator": 100
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 8
       },
       "missions": [
@@ -12351,7 +12351,7 @@
             "denominator": 100
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "missions": [
@@ -12439,7 +12439,7 @@
             "denominator": 100
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 7
       },
       "missions": [
@@ -12532,7 +12532,7 @@
             ]
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 8
       },
       "missions": [
@@ -12625,7 +12625,7 @@
             "denominator": 100
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "missions": [
@@ -12730,7 +12730,7 @@
             ]
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 7
       },
       "missions": [
@@ -12840,7 +12840,7 @@
             ]
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 8
       },
       "missions": [
@@ -12933,7 +12933,7 @@
             "denominator": 100
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "missions": [
@@ -13032,7 +13032,7 @@
             "value": 1280
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 7
       },
       "missions": [
@@ -13136,7 +13136,7 @@
             ]
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 8
       },
       "missions": [
@@ -13239,7 +13239,7 @@
             "value": 1
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "missions": [
@@ -13340,7 +13340,7 @@
             "value": 1
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 7
       },
       "missions": [
@@ -13444,7 +13444,7 @@
             "denominator": 100
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 8
       },
       "missions": [
@@ -13555,7 +13555,7 @@
             "value": 1
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "missions": [
@@ -13660,7 +13660,7 @@
             "denominator": 100
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 7
       },
       "missions": [
@@ -13759,7 +13759,7 @@
             ]
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 8
       },
       "missions": [
@@ -13869,7 +13869,7 @@
             "value": 5120
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "missions": [
@@ -13974,7 +13974,7 @@
             "denominator": 100
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 7
       },
       "missions": [
@@ -14073,7 +14073,7 @@
             "value": 1
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 8
       },
       "missions": [
@@ -14174,7 +14174,7 @@
             "value": 1
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "missions": [
@@ -14270,7 +14270,7 @@
             "denominator": 100
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 7
       },
       "missions": [
@@ -14369,7 +14369,7 @@
             ]
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 8
       },
       "missions": [
@@ -14470,7 +14470,7 @@
             "value": 1
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "missions": [
@@ -14566,7 +14566,7 @@
             "denominator": 100
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 7
       },
       "missions": [
@@ -14665,7 +14665,7 @@
             ]
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 8
       },
       "missions": [
@@ -14773,7 +14773,7 @@
             "denominator": 100
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "missions": [
@@ -14881,7 +14881,7 @@
             ]
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 7
       },
       "missions": [
@@ -14982,7 +14982,7 @@
             "value": 1
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 8
       },
       "missions": [
@@ -15083,7 +15083,7 @@
             ]
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "missions": [
@@ -15191,7 +15191,7 @@
             "denominator": 100
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 7
       },
       "missions": [
@@ -15296,7 +15296,7 @@
             "value": 1
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 8
       },
       "missions": [
@@ -15392,7 +15392,7 @@
             "denominator": 100
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "missions": [
@@ -15491,7 +15491,7 @@
             ]
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 7
       },
       "missions": [
@@ -15592,7 +15592,7 @@
             "value": 2560
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 8
       },
       "missions": [
@@ -15688,7 +15688,7 @@
             "denominator": 100
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "missions": [
@@ -15784,7 +15784,7 @@
             "value": 1
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 7
       },
       "missions": [
@@ -15883,7 +15883,7 @@
             "denominator": 100
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 8
       },
       "missions": [
@@ -15980,7 +15980,7 @@
             "denominator": 100
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "missions": [
@@ -16103,7 +16103,7 @@
             "value": 3840
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 7
       },
       "missions": [
@@ -16226,7 +16226,7 @@
             "denominator": 100
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 8
       },
       "missions": [
@@ -16320,7 +16320,7 @@
             "denominator": 100
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "missions": [
@@ -16416,7 +16416,7 @@
             "value": 1
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 7
       },
       "missions": [
@@ -16517,7 +16517,7 @@
             ]
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 8
       },
       "missions": [
@@ -16616,7 +16616,7 @@
             "denominator": 100
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "missions": [
@@ -16712,7 +16712,7 @@
             "value": 1
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 7
       },
       "missions": [
@@ -16813,7 +16813,7 @@
             ]
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 8
       },
       "missions": [
@@ -16914,7 +16914,7 @@
             "value": 15
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "missions": [
@@ -17009,7 +17009,7 @@
             ]
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 7
       },
       "missions": [
@@ -17102,7 +17102,7 @@
             "denominator": 100
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 8
       },
       "missions": [
@@ -17201,7 +17201,7 @@
             "value": 20
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "missions": [
@@ -17302,7 +17302,7 @@
             "value": 3840
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 7
       },
       "missions": [
@@ -17397,7 +17397,7 @@
             "value": 1
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 8
       },
       "missions": [
@@ -17490,7 +17490,7 @@
             "denominator": 100
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "missions": [
@@ -17580,7 +17580,7 @@
             "value": 3840
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 7
       },
       "missions": [
@@ -17675,7 +17675,7 @@
             "value": 1
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 8
       },
       "missions": [
@@ -17770,7 +17770,7 @@
             "value": 2
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "missions": [
@@ -17869,7 +17869,7 @@
             "denominator": 100
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 7
       },
       "missions": [
@@ -17971,7 +17971,7 @@
             ]
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 8
       },
       "missions": [
@@ -18064,7 +18064,7 @@
             "denominator": 100
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "missions": [
@@ -18154,7 +18154,7 @@
             "value": 7680
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 7
       },
       "missions": [
@@ -18244,7 +18244,7 @@
             "denominator": 100
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 8
       },
       "missions": [
@@ -18338,7 +18338,7 @@
             ]
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "missions": [
@@ -18432,7 +18432,7 @@
             "denominator": 100
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 7
       },
       "missions": [
@@ -18550,7 +18550,7 @@
             "value": 1
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 8
       },
       "missions": [
@@ -18667,7 +18667,7 @@
             "denominator": 100
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "missions": [
@@ -18757,7 +18757,7 @@
             "value": 2560
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 7
       },
       "missions": [
@@ -18847,7 +18847,7 @@
             "denominator": 100
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 8
       },
       "missions": [
@@ -18935,7 +18935,7 @@
             "denominator": 100
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "missions": [
@@ -19035,7 +19035,7 @@
             "value": 25
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 7
       },
       "missions": [
@@ -19140,7 +19140,7 @@
             ]
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 8
       },
       "missions": [
@@ -19239,7 +19239,7 @@
             ]
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "missions": [
@@ -19334,7 +19334,7 @@
             "value": 15
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 7
       },
       "missions": [
@@ -19427,7 +19427,7 @@
             "value": 40
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 8
       },
       "missions": [
@@ -19528,7 +19528,7 @@
             "value": 20
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "missions": [
@@ -19630,7 +19630,7 @@
             "denominator": 100
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 7
       },
       "missions": [
@@ -19723,7 +19723,7 @@
             "value": 1
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 8
       },
       "missions": [
@@ -19813,7 +19813,7 @@
             "denominator": 100
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "missions": [
@@ -19903,7 +19903,7 @@
             "value": 1
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 7
       },
       "missions": [
@@ -19998,7 +19998,7 @@
             ]
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 8
       },
       "missions": [
@@ -20091,7 +20091,7 @@
             "denominator": 100
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "missions": [
@@ -20181,7 +20181,7 @@
             "value": 1
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 7
       },
       "missions": [
@@ -20271,7 +20271,7 @@
             "denominator": 100
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 8
       },
       "missions": [
@@ -20359,7 +20359,7 @@
             "denominator": 100
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "missions": [
@@ -20449,7 +20449,7 @@
             "value": 1
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 7
       },
       "missions": [
@@ -20550,7 +20550,7 @@
             "value": 7680
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 8
       },
       "missions": [
@@ -20810,7 +20810,7 @@
             "value": 1280
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "requirements": {
@@ -21083,7 +21083,7 @@
             "value": 1280
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 7
       },
       "requirements": {
@@ -21356,7 +21356,7 @@
             "value": 1280
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 8
       },
       "requirements": {
@@ -21620,7 +21620,7 @@
             "value": 1
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "requirements": {
@@ -21875,7 +21875,7 @@
             "value": 1
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 7
       },
       "requirements": {
@@ -22130,7 +22130,7 @@
             "value": 1
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 8
       },
       "requirements": {
@@ -22595,7 +22595,7 @@
             "denominator": 100
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "requirements": {
@@ -23270,7 +23270,7 @@
             "denominator": 100
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 7
       },
       "requirements": {
@@ -23945,7 +23945,7 @@
             "denominator": 100
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 8
       },
       "requirements": {
@@ -24419,7 +24419,7 @@
             "value": 1
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "requirements": {
@@ -24692,7 +24692,7 @@
             "value": 1
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 7
       },
       "requirements": {
@@ -24965,7 +24965,7 @@
             "value": 1
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 8
       },
       "requirements": {
@@ -25232,7 +25232,7 @@
             ]
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "requirements": {
@@ -25493,7 +25493,7 @@
             ]
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 7
       },
       "requirements": {
@@ -25754,7 +25754,7 @@
             ]
           }
         ],
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 8
       },
       "requirements": {
@@ -25853,7 +25853,7 @@
         "type": "rework_v5",
         "ordinal": 0,
         "source_id": "33987315-82f2-5eb7-bc92-621765bf9041",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 4
       },
       "target_units": [
@@ -25956,7 +25956,7 @@
         "type": "rework_v5",
         "ordinal": 1,
         "source_id": "59ab0ba1-8ead-52ab-ab19-aed17bfceca6",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 4
       },
       "target_units": [
@@ -26059,7 +26059,7 @@
         "type": "rework_v5",
         "ordinal": 2,
         "source_id": "fc2c0ddf-e8ff-59c3-bacf-e0698d11c07e",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 4
       },
       "target_units": [
@@ -26166,7 +26166,7 @@
         "type": "rework_v5",
         "ordinal": 3,
         "source_id": "1aa7b04c-5e5d-56db-844f-30d620c5b6da",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 4
       },
       "target_units": [
@@ -26269,7 +26269,7 @@
         "type": "rework_v5",
         "ordinal": 4,
         "source_id": "bc5b8776-409f-582b-a36b-6b0271bf46b4",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 4
       },
       "target_units": [
@@ -26372,7 +26372,7 @@
         "type": "rework_v5",
         "ordinal": 5,
         "source_id": "e490f090-f385-5961-93b9-76fdece67f52",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 4
       },
       "target_units": [],
@@ -26471,7 +26471,7 @@
         "type": "rework_v5",
         "ordinal": 6,
         "source_id": "f2722f1b-2962-5d8e-bb50-37c9d4f5d515",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 4
       },
       "target_units": [
@@ -26574,7 +26574,7 @@
         "type": "rework_v5",
         "ordinal": 7,
         "source_id": "e66e3da3-d595-51a1-9a1f-ae9cace5aa1b",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 4
       },
       "target_units": [
@@ -26654,7 +26654,7 @@
       "id": "de79fac2-8158-5994-88f2-6a5cb8464fb7",
       "name": "행군 교범",
       "target": "아군 지상 병력·영웅",
-      "description": "아군 지상 병력과 영웅의 이동 속도 +4.5%. 반복해서 고를 수 있습니다.",
+      "description": "아군 지상 전투 유닛의 일반 공격 피해 +15%, 이동 속도 +4.5%. 중첩당 적용되며 최대 4회 선택할 수 있습니다.",
       "trigger": "",
       "numbers": "선택 횟수 제한 없음. 같은 창에서는 동일 재능 1개만 표시. 공격주기 = 원래 주기 × 0.97^중첩 수(해당 교범에만 적용). 엔진 최소 1틱, 매 단계 원본에서 다시 계산.",
       "notes": "일반 병력 교범은 보유 후에도 재등장합니다. 공격력·방어력은 중첩당 수치를 합산하고, 이동 속도는 원래 속도 × (1 + 0.03 × 중첩 수)로 계산합니다. 일꾼·건물·탄약은 제외하며, 인터셉터는 함대 교범의 공격력만 캐리어를 통해 1회 상속합니다. 지상/공중 분류는 겹치지 않습니다. 자폭·튀김의 타격 수와 마법 피해는 늘리지 않습니다. 기존 발급 선택과 과거 기록은 재해석하지 않습니다.",
@@ -26677,7 +26677,7 @@
         "type": "rework_v5",
         "ordinal": 8,
         "source_id": "de79fac2-8158-5994-88f2-6a5cb8464fb7",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "target_units": [
@@ -26802,6 +26802,7 @@
         611
       ],
       "rank_slot": 0,
+      "max_rank": 4,
       "balance_revision": 9,
       "pre_balance_description": "아군 지상 병력과 영웅의 이동 속도 +3%. 반복해서 고를 수 있습니다.",
       "pre_balance_effect": {
@@ -26814,7 +26815,7 @@
       "id": "7d62562c-179b-57b1-ad35-a60fb60b0054",
       "name": "편대 기동 교범",
       "target": "아군 공중 병력·영웅",
-      "description": "아군 공중 병력과 영웅의 이동 속도 +4.5%. 반복해서 고를 수 있습니다.",
+      "description": "아군 공중 전투 유닛의 일반 공격 피해 +15%, 이동 속도 +4.5%. 중첩당 적용되며 최대 4회 선택할 수 있습니다.",
       "trigger": "",
       "numbers": "선택 횟수 제한 없음. 같은 창에서는 동일 재능 1개만 표시. 공격주기 = 원래 주기 × 0.97^중첩 수(해당 교범에만 적용). 엔진 최소 1틱, 매 단계 원본에서 다시 계산.",
       "notes": "일반 병력 교범은 보유 후에도 재등장합니다. 공격력·방어력은 중첩당 수치를 합산하고, 이동 속도는 원래 속도 × (1 + 0.03 × 중첩 수)로 계산합니다. 일꾼·건물·탄약은 제외하며, 인터셉터는 함대 교범의 공격력만 캐리어를 통해 1회 상속합니다. 지상/공중 분류는 겹치지 않습니다. 자폭·튀김의 타격 수와 마법 피해는 늘리지 않습니다. 기존 발급 선택과 과거 기록은 재해석하지 않습니다.",
@@ -26837,7 +26838,7 @@
         "type": "rework_v5",
         "ordinal": 9,
         "source_id": "7d62562c-179b-57b1-ad35-a60fb60b0054",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "target_units": [
@@ -26944,6 +26945,7 @@
         611
       ],
       "rank_slot": 1,
+      "max_rank": 4,
       "balance_revision": 9,
       "pre_balance_description": "아군 공중 병력과 영웅의 이동 속도 +3%. 반복해서 고를 수 있습니다.",
       "pre_balance_effect": {
@@ -26979,7 +26981,7 @@
         "type": "rework_v5",
         "ordinal": 10,
         "source_id": "4c0772ea-8024-592e-88dd-afc2871f8659",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 7
       },
       "target_units": [
@@ -27109,7 +27111,7 @@
       "id": "1ec96c5e-bd7f-5b05-a4e2-1707b863f061",
       "name": "전열 방호 교범",
       "target": "아군 지상 병력·영웅",
-      "description": "아군 지상 병력과 영웅의 방어력 +0.75. 반복해서 고를 수 있습니다.",
+      "description": "아군 지상 병력과 영웅의 방어력 +0.75.  중첩당 적용, 최대 4회 선택할 수 있습니다.",
       "trigger": "",
       "numbers": "선택 횟수 제한 없음. 같은 창에서는 동일 재능 1개만 표시. 공격주기 = 원래 주기 × 0.97^중첩 수(해당 교범에만 적용). 엔진 최소 1틱, 매 단계 원본에서 다시 계산.",
       "notes": "일반 병력 교범은 보유 후에도 재등장합니다. 공격력·방어력은 중첩당 수치를 합산하고, 이동 속도는 원래 속도 × (1 + 0.03 × 중첩 수)로 계산합니다. 일꾼·건물·탄약은 제외하며, 인터셉터는 함대 교범의 공격력만 캐리어를 통해 1회 상속합니다. 지상/공중 분류는 겹치지 않습니다. 자폭·튀김의 타격 수와 마법 피해는 늘리지 않습니다. 기존 발급 선택과 과거 기록은 재해석하지 않습니다.",
@@ -27133,7 +27135,7 @@
         "ordinal": 11,
         "source_id": "1ec96c5e-bd7f-5b05-a4e2-1707b863f061",
         "armor_per_rank": 0.75,
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "target_units": [
@@ -27258,6 +27260,7 @@
         611
       ],
       "rank_slot": 2,
+      "max_rank": 4,
       "balance_revision": 9,
       "pre_balance_description": "아군 지상 병력과 영웅의 방어력 +0.5. 반복해서 고를 수 있습니다.",
       "pre_balance_effect": {
@@ -27272,7 +27275,7 @@
       "id": "12dda10f-da28-5df4-9a3b-5f8d1aa30d81",
       "name": "공중 방호 교범",
       "target": "아군 공중 병력·영웅",
-      "description": "아군 공중 병력과 영웅의 방어력 +0.75. 반복해서 고를 수 있습니다.",
+      "description": "아군 공중 병력과 영웅의 방어력 +0.75.  중첩당 적용, 최대 4회 선택할 수 있습니다.",
       "trigger": "",
       "numbers": "선택 횟수 제한 없음. 같은 창에서는 동일 재능 1개만 표시. 공격주기 = 원래 주기 × 0.97^중첩 수(해당 교범에만 적용). 엔진 최소 1틱, 매 단계 원본에서 다시 계산.",
       "notes": "일반 병력 교범은 보유 후에도 재등장합니다. 공격력·방어력은 중첩당 수치를 합산하고, 이동 속도는 원래 속도 × (1 + 0.03 × 중첩 수)로 계산합니다. 일꾼·건물·탄약은 제외하며, 인터셉터는 함대 교범의 공격력만 캐리어를 통해 1회 상속합니다. 지상/공중 분류는 겹치지 않습니다. 자폭·튀김의 타격 수와 마법 피해는 늘리지 않습니다. 기존 발급 선택과 과거 기록은 재해석하지 않습니다.",
@@ -27296,7 +27299,7 @@
         "ordinal": 12,
         "source_id": "12dda10f-da28-5df4-9a3b-5f8d1aa30d81",
         "armor_per_rank": 0.75,
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "target_units": [
@@ -27403,6 +27406,7 @@
         611
       ],
       "rank_slot": 3,
+      "max_rank": 4,
       "balance_revision": 9,
       "pre_balance_description": "아군 공중 병력과 영웅의 방어력 +0.5. 반복해서 고를 수 있습니다.",
       "pre_balance_effect": {
@@ -27440,7 +27444,7 @@
         "type": "rework_v5",
         "ordinal": 13,
         "source_id": "4738ccb5-2100-51a3-a11f-1b1c978d7ba9",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 7
       },
       "target_units": [
@@ -27632,7 +27636,7 @@
         "type": "rework_v5",
         "ordinal": 14,
         "source_id": "bbf067dc-0ced-5875-a519-2c0443580c8d",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 10
       },
       "target_units": [
@@ -27824,7 +27828,7 @@
         "type": "rework_v5",
         "ordinal": 15,
         "source_id": "aeb3f3a6-c83e-55a9-8e70-4b1632bf872c",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 10
       },
       "target_units": [
@@ -27956,7 +27960,7 @@
         "type": "rework_v5",
         "ordinal": 16,
         "source_id": "8c053349-58dc-58c6-b5d1-246640408969",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 10
       },
       "target_units": [
@@ -28141,7 +28145,7 @@
         "type": "rework_v5",
         "ordinal": 17,
         "source_id": "d2726c34-7c9d-582c-821b-4acb7edf87c7",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 10
       },
       "target_units": [
@@ -28300,7 +28304,7 @@
         "type": "rework_v5",
         "ordinal": 18,
         "source_id": "ccf515a4-0372-5837-b7af-423472b39fb6",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 10
       },
       "target_units": [
@@ -28485,7 +28489,7 @@
         "type": "rework_v5",
         "ordinal": 19,
         "source_id": "372acb49-fc11-5127-b203-cd452953cd4c",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 10
       },
       "target_units": [
@@ -28670,7 +28674,7 @@
         "type": "rework_v5",
         "ordinal": 20,
         "source_id": "9f7709e0-52ab-5b4d-ba21-ca84e04c3c8d",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 4
       },
       "target_units": [
@@ -28732,7 +28736,7 @@
         "type": "rework_v5",
         "ordinal": 21,
         "source_id": "a488dc12-cfa7-5d1a-ab36-2407d415b662",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 4
       },
       "target_units": [
@@ -28804,7 +28808,7 @@
         "type": "rework_v5",
         "ordinal": 22,
         "source_id": "93a63632-1508-577b-b7e6-cc3fc3e2ef54",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 4
       },
       "target_units": [
@@ -28865,7 +28869,7 @@
         "type": "rework_v5",
         "ordinal": 23,
         "source_id": "00aaef8d-4f01-527f-8f16-2fbdcda13482",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 4
       },
       "target_units": [
@@ -28928,7 +28932,7 @@
         "type": "rework_v5",
         "ordinal": 24,
         "source_id": "c4203198-4af8-5b55-a109-4e4ae14e6c60",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 4
       },
       "target_units": [
@@ -29000,7 +29004,7 @@
         "type": "rework_v5",
         "ordinal": 25,
         "source_id": "5e964160-8e5f-55f1-b235-87c82069fd91",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 4
       },
       "target_units": [
@@ -29038,7 +29042,7 @@
       "id": "39983934-eff0-5a0f-870c-41a6c6013969",
       "name": "생체 전열 강화",
       "target": "테란 지상 생체 병력·영웅",
-      "description": "테란 지상 생체 병력과 영웅의 최대 체력 +35%. 일꾼은 제외됩니다.",
+      "description": "테란 지상 생체 병력과 영웅의 최대 체력 +35%. 일꾼은 제외됩니다. 중첩당 적용, 최대 4회 선택할 수 있습니다.",
       "trigger": "",
       "numbers": "",
       "notes": "현재 체력은 증가분만큼 자동 회복하지 않음.",
@@ -29056,12 +29060,12 @@
       "source_description": "테란 지상 생체 병력·영웅: 최대 체력 20% 증가. 일꾼·기계·공중 제외.",
       "rework_revision": 5,
       "effect_ordinal": 26,
-      "repeatable": false,
+      "repeatable": true,
       "effect": {
         "type": "rework_v5",
         "ordinal": 26,
         "source_id": "39983934-eff0-5a0f-870c-41a6c6013969",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 7
       },
       "target_units": [
@@ -29100,6 +29104,8 @@
         507,
         508
       ],
+      "rank_slot": 12,
+      "max_rank": 4,
       "balance_revision": 9,
       "pre_balance_description": "테란 지상 생체 병력과 영웅의 최대 체력 +20%. 일꾼은 제외됩니다.",
       "pre_balance_effect": {
@@ -29112,7 +29118,7 @@
       "id": "12d58417-b192-5873-8c39-d801578d78a0",
       "name": "기갑 차체 강화",
       "target": "테란 지상 기계 병력·영웅",
-      "description": "테란 지상 기계 병력과 영웅의 최대 체력 +35%. 전차·공성 모드 모두 적용됩니다.",
+      "description": "테란 지상 기계 병력과 영웅의 최대 체력 +35%. 전차·공성 모드 모두 적용됩니다. 중첩당 적용, 최대 4회 선택할 수 있습니다.",
       "trigger": "",
       "numbers": "",
       "notes": "일꾼·보조 포탑·공중 제외.",
@@ -29130,12 +29136,12 @@
       "source_description": "테란 지상 기계 병력·영웅: 최대 체력 20% 증가. 전차 모드 공통.",
       "rework_revision": 5,
       "effect_ordinal": 27,
-      "repeatable": false,
+      "repeatable": true,
       "effect": {
         "type": "rework_v5",
         "ordinal": 27,
         "source_id": "12d58417-b192-5873-8c39-d801578d78a0",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 7
       },
       "target_units": [
@@ -29178,6 +29184,8 @@
         507,
         508
       ],
+      "rank_slot": 13,
+      "max_rank": 4,
       "balance_revision": 9,
       "pre_balance_description": "테란 지상 기계 병력과 영웅의 최대 체력 +20%. 전차·공성 모드 모두 적용됩니다.",
       "pre_balance_effect": {
@@ -29190,7 +29198,7 @@
       "id": "a7a4b88b-99dd-5c73-880f-83bc6fbe59bc",
       "name": "비행 동체 강화",
       "target": "테란 공중 병력·영웅",
-      "description": "테란 공중 병력과 영웅의 최대 체력 +35%. 과학선·드롭십도 포함됩니다.",
+      "description": "테란 공중 병력과 영웅의 최대 체력 +35%. 과학선·드롭십도 포함됩니다. 중첩당 적용, 최대 4회 선택할 수 있습니다.",
       "trigger": "",
       "numbers": "",
       "notes": "지상 기계 체력과 겹치지 않음.",
@@ -29208,12 +29216,12 @@
       "source_description": "테란 공중 병력·영웅: 최대 체력 20% 증가. 과학선·수송선 포함.",
       "rework_revision": 5,
       "effect_ordinal": 28,
-      "repeatable": false,
+      "repeatable": true,
       "effect": {
         "type": "rework_v5",
         "ordinal": 28,
         "source_id": "a7a4b88b-99dd-5c73-880f-83bc6fbe59bc",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 7
       },
       "target_units": [
@@ -29253,6 +29261,8 @@
         507,
         508
       ],
+      "rank_slot": 14,
+      "max_rank": 4,
       "balance_revision": 9,
       "pre_balance_description": "테란 공중 병력과 영웅의 최대 체력 +20%. 과학선·드롭십도 포함됩니다.",
       "pre_balance_effect": {
@@ -29265,7 +29275,7 @@
       "id": "2550fdb4-cace-5c0a-bc97-bfc04e0c0f33",
       "name": "보병 화력 교범",
       "target": "마린·파이어뱃·고스트",
-      "description": "마린·파이어뱃·고스트의 공격력 +15%, 공격 간격 -4.5%. 반복해서 고를 수 있습니다.",
+      "description": "마린·파이어뱃·고스트의 공격력 중첩당 +15%, 공격 간격 -4.5%. 파이어뱃은 일반 공격으로 받는 피해도 중첩당 10% 줄어듭니다. 최대 4회.",
       "trigger": "",
       "numbers": "선택 횟수 제한 없음. 같은 창에서는 동일 재능 1개만 표시. 공격주기 = 원래 주기 × 0.97^중첩 수(해당 교범에만 적용). 엔진 최소 1틱, 매 단계 원본에서 다시 계산.",
       "notes": "일반 병력 교범은 보유 후에도 재등장합니다. 공격력·방어력은 중첩당 수치를 합산하고, 이동 속도는 원래 속도 × (1 + 0.03 × 중첩 수)로 계산합니다. 일꾼·건물·탄약은 제외하며, 인터셉터는 함대 교범의 공격력만 캐리어를 통해 1회 상속합니다. 지상/공중 분류는 겹치지 않습니다. 자폭·튀김의 타격 수와 마법 피해는 늘리지 않습니다. 기존 발급 선택과 과거 기록은 재해석하지 않습니다.",
@@ -29290,7 +29300,7 @@
         "source_id": "2550fdb4-cace-5c0a-bc97-bfc04e0c0f33",
         "weapon_damage_percent_per_rank": 15,
         "weapon_damage_stacking": "additive",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "target_units": [
@@ -29329,6 +29339,7 @@
         508
       ],
       "rank_slot": 4,
+      "max_rank": 4,
       "balance_revision": 9,
       "pre_balance_description": "마린·파이어뱃·고스트의 공격력 +10%, 공격 간격 -3%. 반복해서 고를 수 있습니다.",
       "pre_balance_effect": {
@@ -29344,7 +29355,7 @@
       "id": "281b533c-9236-5d60-8e77-19a04f9f3c50",
       "name": "기갑 화력 교범",
       "target": "벌처·골리앗·전차",
-      "description": "벌처·골리앗·전차의 공격력 +3, 공격 간격 -4.5%. 반복해서 고를 수 있습니다.",
+      "description": "중첩당 벌처 공격력 +4.5, 전차 모드 +6, 공성 모드 +12, 골리앗 +3. 공격 간격 -4.5%. 소수점 공격력은 중첩 합계를 반올림하며 최대 4회.",
       "trigger": "",
       "numbers": "선택 횟수 제한 없음. 같은 창에서는 동일 재능 1개만 표시. 공격주기 = 원래 주기 × 0.97^중첩 수(해당 교범에만 적용). 엔진 최소 1틱, 매 단계 원본에서 다시 계산.",
       "notes": "일반 병력 교범은 보유 후에도 재등장합니다. 공격력·방어력은 중첩당 수치를 합산하고, 이동 속도는 원래 속도 × (1 + 0.03 × 중첩 수)로 계산합니다. 일꾼·건물·탄약은 제외하며, 인터셉터는 함대 교범의 공격력만 캐리어를 통해 1회 상속합니다. 지상/공중 분류는 겹치지 않습니다. 자폭·튀김의 타격 수와 마법 피해는 늘리지 않습니다. 기존 발급 선택과 과거 기록은 재해석하지 않습니다.",
@@ -29367,7 +29378,7 @@
         "type": "rework_v5",
         "ordinal": 30,
         "source_id": "281b533c-9236-5d60-8e77-19a04f9f3c50",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "target_units": [
@@ -29411,6 +29422,7 @@
         508
       ],
       "rank_slot": 5,
+      "max_rank": 4,
       "balance_revision": 9,
       "pre_balance_description": "벌처·골리앗·전차의 공격력 +2, 공격 간격 -3%. 반복해서 고를 수 있습니다.",
       "pre_balance_effect": {
@@ -29423,7 +29435,7 @@
       "id": "caaf0c3c-9317-52dc-ad95-df4ce66c1dc0",
       "name": "항공 화력 교범",
       "target": "테란 공격 항공기",
-      "description": "테란 공격 항공기의 공격력 +3, 공격 간격 -4.5%. 반복해서 고를 수 있습니다.",
+      "description": "중첩당 배틀크루저 공격력 +6, 다른 테란 공중 전투 유닛 +3. 공격 간격 -4.5%. 최대 4회.",
       "trigger": "",
       "numbers": "선택 횟수 제한 없음. 같은 창에서는 동일 재능 1개만 표시. 공격주기 = 원래 주기 × 0.97^중첩 수(해당 교범에만 적용). 엔진 최소 1틱, 매 단계 원본에서 다시 계산.",
       "notes": "일반 병력 교범은 보유 후에도 재등장합니다. 공격력·방어력은 중첩당 수치를 합산하고, 이동 속도는 원래 속도 × (1 + 0.03 × 중첩 수)로 계산합니다. 일꾼·건물·탄약은 제외하며, 인터셉터는 함대 교범의 공격력만 캐리어를 통해 1회 상속합니다. 지상/공중 분류는 겹치지 않습니다. 자폭·튀김의 타격 수와 마법 피해는 늘리지 않습니다. 기존 발급 선택과 과거 기록은 재해석하지 않습니다.",
@@ -29446,7 +29458,7 @@
         "type": "rework_v5",
         "ordinal": 31,
         "source_id": "caaf0c3c-9317-52dc-ad95-df4ce66c1dc0",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "target_units": [
@@ -29484,6 +29496,7 @@
         508
       ],
       "rank_slot": 6,
+      "max_rank": 4,
       "balance_revision": 9,
       "pre_balance_description": "테란 공격 항공기의 공격력 +2, 공격 간격 -3%. 반복해서 고를 수 있습니다.",
       "pre_balance_effect": {
@@ -29519,7 +29532,7 @@
         "type": "rework_v5",
         "ordinal": 32,
         "source_id": "002f4cf7-508d-548b-9f5e-f03ea7e142a3",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 7
       },
       "target_units": [
@@ -29593,7 +29606,7 @@
         "type": "rework_v5",
         "ordinal": 33,
         "source_id": "0e858d2c-c892-569f-bfb7-340b4ee27918",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 8
       },
       "target_units": [
@@ -29658,7 +29671,7 @@
         "type": "rework_v5",
         "ordinal": 34,
         "source_id": "764a2cb4-20c3-582e-80eb-dd1fc755050a",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 8
       },
       "target_units": [
@@ -29734,7 +29747,7 @@
         "type": "rework_v5",
         "ordinal": 35,
         "source_id": "2cf35144-3f8f-543b-873a-fff282d37407",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 8
       },
       "target_units": [
@@ -29805,7 +29818,7 @@
         "type": "rework_v5",
         "ordinal": 36,
         "source_id": "221f97e2-ecb4-5c36-92e6-77b8ecbd015d",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 8
       },
       "target_units": [
@@ -29877,7 +29890,7 @@
         "type": "rework_v5",
         "ordinal": 37,
         "source_id": "edda0d79-69ca-5ed2-ab17-175eb0506277",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 8
       },
       "target_units": [
@@ -29949,7 +29962,7 @@
         "type": "rework_v5",
         "ordinal": 38,
         "source_id": "c6b8243c-9044-5ea3-a22e-ec30219af91e",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 8
       },
       "target_units": [
@@ -30021,7 +30034,7 @@
         "type": "rework_v5",
         "ordinal": 39,
         "source_id": "1ef00fe8-eb60-576b-94a7-7e983af2dc77",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 8
       },
       "target_units": [
@@ -30089,7 +30102,7 @@
         "type": "rework_v5",
         "ordinal": 40,
         "source_id": "f6637256-f704-56db-a42b-e813ec9ebbe8",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 8
       },
       "target_units": [
@@ -30154,7 +30167,7 @@
         "type": "rework_v5",
         "ordinal": 41,
         "source_id": "ca27f6d0-8741-5968-a96b-5e258d458f88",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 10
       },
       "target_units": [
@@ -30219,7 +30232,7 @@
         "type": "rework_v5",
         "ordinal": 42,
         "source_id": "dd72e6d0-ba79-5571-a218-e1064b0a7aa3",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 8
       },
       "target_units": [
@@ -30285,7 +30298,7 @@
         "type": "rework_v5",
         "ordinal": 43,
         "source_id": "210863fb-b83e-53d8-beeb-91721a8ea4f6",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 8
       },
       "target_units": [
@@ -30351,7 +30364,7 @@
         "type": "rework_v5",
         "ordinal": 44,
         "source_id": "9836eb1c-7acf-58e1-9ebc-0a90983deceb",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 8
       },
       "target_units": [
@@ -30417,7 +30430,7 @@
         "type": "rework_v5",
         "ordinal": 45,
         "source_id": "2d51c78a-b4ca-5532-9c49-b495a5816f75",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 8
       },
       "target_units": [
@@ -30487,7 +30500,7 @@
         "ordinal": 46,
         "source_id": "93f1cae8-5d40-5c23-b27f-4c5939d77a5a",
         "nuclear_warning_frames": 120,
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 8
       },
       "target_units": [
@@ -30559,7 +30572,7 @@
         "type": "rework_v5",
         "ordinal": 47,
         "source_id": "93d7201b-f0e9-5e54-87d5-28ffa9da3519",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 8
       },
       "target_units": [
@@ -30626,7 +30639,7 @@
         "type": "rework_v5",
         "ordinal": 48,
         "source_id": "01f9fd83-d1a5-5db7-bdc4-c7a2181e6bb3",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 8
       },
       "target_units": [
@@ -30704,7 +30717,7 @@
         "type": "rework_v5",
         "ordinal": 49,
         "source_id": "13e89b70-3b8d-50d4-92f5-2b64f90ba503",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 10
       },
       "target_units": [
@@ -30773,7 +30786,7 @@
         "type": "rework_v5",
         "ordinal": 50,
         "source_id": "67ef7498-8c62-5ff4-b063-cfc8ddaff1d5",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 10
       },
       "target_units": [
@@ -30842,7 +30855,7 @@
         "marked_armor": 0,
         "include_armor_upgrades": true,
         "include_shield_armor": true,
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 10
       },
       "target_units": [
@@ -30916,7 +30929,7 @@
         "type": "rework_v5",
         "ordinal": 52,
         "source_id": "32417e61-ac3d-5dac-b993-67a924c82829",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 10
       },
       "target_units": [
@@ -30982,7 +30995,7 @@
         "type": "rework_v5",
         "ordinal": 53,
         "source_id": "a6e806d8-2677-5c80-b35c-a6629160aeb8",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 10
       },
       "target_units": [
@@ -31048,7 +31061,7 @@
         "type": "rework_v5",
         "ordinal": 54,
         "source_id": "3e935eb6-53f2-5bf6-8c13-f3f0ea60c7fc",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 10
       },
       "target_units": [
@@ -31114,7 +31127,7 @@
         "type": "rework_v5",
         "ordinal": 55,
         "source_id": "eb354299-5c88-5171-bb4a-cfc53a9fae8e",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 10
       },
       "target_units": [
@@ -31180,7 +31193,7 @@
         "type": "rework_v5",
         "ordinal": 56,
         "source_id": "2b78f9df-7b32-5b8d-9bf2-2000c5084a13",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 10
       },
       "target_units": [
@@ -31248,7 +31261,7 @@
         "type": "rework_v5",
         "ordinal": 57,
         "source_id": "e6f8092d-895b-5c09-bb7d-68e30c4ac72f",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 10
       },
       "target_units": [
@@ -31313,7 +31326,7 @@
         "type": "rework_v5",
         "ordinal": 58,
         "source_id": "484803cb-9456-57c1-a263-c8cfcd7a8fa1",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 10
       },
       "target_units": [
@@ -31378,7 +31391,7 @@
         "type": "rework_v5",
         "ordinal": 59,
         "source_id": "6c589723-954e-5cb8-abd5-529cf9ad1b91",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 10
       },
       "target_units": [
@@ -31444,7 +31457,7 @@
         "type": "rework_v5",
         "ordinal": 60,
         "source_id": "19d1a884-1eea-5c77-906f-8941cde82c77",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 10
       },
       "target_units": [
@@ -31509,7 +31522,7 @@
         "type": "rework_v5",
         "ordinal": 61,
         "source_id": "a8b767de-c945-5116-8e5d-a8e8c8478b5b",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 16
       },
       "target_units": [
@@ -31575,7 +31588,7 @@
         "type": "rework_v5",
         "ordinal": 62,
         "source_id": "d9088172-b4d8-5fdc-a845-667e36e1681e",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 16
       },
       "target_units": [
@@ -31641,7 +31654,7 @@
         "type": "rework_v5",
         "ordinal": 63,
         "source_id": "dee1eebb-31d8-526f-b895-9785e0f2f5b0",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 16
       },
       "target_units": [
@@ -31710,7 +31723,7 @@
         "type": "rework_v5",
         "ordinal": 64,
         "source_id": "b8a603b2-ca89-5cf0-bdab-f5b7549480e4",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 16
       },
       "target_units": [
@@ -31779,7 +31792,7 @@
         "type": "rework_v5",
         "ordinal": 65,
         "source_id": "e2575cd1-1d24-5048-addd-b0eccccbccd9",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 16
       },
       "target_units": [
@@ -31848,7 +31861,7 @@
         "type": "rework_v5",
         "ordinal": 66,
         "source_id": "4042391d-cef3-5321-9cf9-2bfa33ec067c",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 16
       },
       "target_units": [
@@ -31890,7 +31903,7 @@
       "id": "8339d38d-2b37-56c8-a5e3-98d88ba0b146",
       "name": "돌격 군체 갑각",
       "target": "저글링·울트라리스크·브루들링·감염된 테란·동일 유형 영웅",
-      "description": "저글링·울트라·브루들링·감염된 테란과 같은 계열 영웅의 최대 체력 +35%.",
+      "description": "저글링·울트라·브루들링·감염된 테란과 같은 계열 영웅의 최대 체력 +35%. 중첩당 적용, 최대 4회 선택할 수 있습니다.",
       "trigger": "",
       "numbers": "",
       "notes": "일꾼·공중·원거리·지원 제외.",
@@ -31908,12 +31921,12 @@
       "source_description": "저글링·울트라리스크·브루들링·감염된 테란과 동일 유형 아군 영웅: 최대 체력 20% 증가.",
       "rework_revision": 5,
       "effect_ordinal": 67,
-      "repeatable": false,
+      "repeatable": true,
       "effect": {
         "type": "rework_v5",
         "ordinal": 67,
         "source_id": "8339d38d-2b37-56c8-a5e3-98d88ba0b146",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 7
       },
       "target_units": [
@@ -31955,6 +31968,8 @@
         609,
         610
       ],
+      "rank_slot": 15,
+      "max_rank": 4,
       "balance_revision": 9,
       "pre_balance_description": "저글링·울트라·브루들링·감염된 테란과 같은 계열 영웅의 최대 체력 +20%.",
       "pre_balance_effect": {
@@ -31967,7 +31982,7 @@
       "id": "c6944d6f-83df-58e1-b9a9-ecd8e2da96a0",
       "name": "가시·지원 군체 갑각",
       "target": "히드라리스크·러커·디파일러·동일 유형 영웅",
-      "description": "히드라·러커·디파일러와 같은 계열 영웅의 최대 체력 +35%.",
+      "description": "히드라·러커·디파일러와 같은 계열 영웅의 최대 체력 +35%. 중첩당 적용, 최대 4회 선택할 수 있습니다.",
       "trigger": "",
       "numbers": "",
       "notes": "디파일러 전용 지상 지원 갑각을 이 카드로 통합합니다. 저글링·울트라리스크·브루들링·감염된 테란은 돌격 군체, 퀸·오버로드 등 모든 공중 병력은 비행 군체에만 포함하여 중복 적용하지 않습니다.",
@@ -31985,12 +32000,12 @@
       "source_description": "히드라리스크·러커·디파일러와 동일 유형 아군 영웅: 최대 체력 20% 증가.",
       "rework_revision": 5,
       "effect_ordinal": 68,
-      "repeatable": false,
+      "repeatable": true,
       "effect": {
         "type": "rework_v5",
         "ordinal": 68,
         "source_id": "c6944d6f-83df-58e1-b9a9-ecd8e2da96a0",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 7
       },
       "target_units": [
@@ -32030,6 +32045,8 @@
         609,
         610
       ],
+      "rank_slot": 16,
+      "max_rank": 4,
       "balance_revision": 9,
       "pre_balance_description": "히드라·러커·디파일러와 같은 계열 영웅의 최대 체력 +20%.",
       "pre_balance_effect": {
@@ -32042,7 +32059,7 @@
       "id": "0acfc640-2141-5dbb-aef3-59b6d96fd8b6",
       "name": "비행 군체 외피",
       "target": "저그 공중 병력·영웅",
-      "description": "저그 공중 병력과 영웅의 최대 체력 +35%. 퀸·오버로드도 포함됩니다.",
+      "description": "저그 공중 병력과 영웅의 최대 체력 +35%. 퀸·오버로드도 포함됩니다. 중첩당 적용, 최대 4회 선택할 수 있습니다.",
       "trigger": "",
       "numbers": "",
       "notes": "모든 공중 병력은 이 카드에만 포함됩니다. 퀸·오버로드 포함, 지상 갑각 카드와 겹치지 않습니다.",
@@ -32060,12 +32077,12 @@
       "source_description": "저그 공중 병력·영웅: 최대 체력 20% 증가. 퀸·오버로드 포함.",
       "rework_revision": 5,
       "effect_ordinal": 69,
-      "repeatable": false,
+      "repeatable": true,
       "effect": {
         "type": "rework_v5",
         "ordinal": 69,
         "source_id": "0acfc640-2141-5dbb-aef3-59b6d96fd8b6",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 7
       },
       "target_units": [
@@ -32110,6 +32127,8 @@
         609,
         610
       ],
+      "rank_slot": 17,
+      "max_rank": 4,
       "balance_revision": 9,
       "pre_balance_description": "저그 공중 병력과 영웅의 최대 체력 +20%. 퀸·오버로드도 포함됩니다.",
       "pre_balance_effect": {
@@ -32122,7 +32141,7 @@
       "id": "369d47f3-7d0b-5f3e-9dc5-9831dee8b9b6",
       "name": "돌격 화력 교범",
       "target": "저그 지상 근접",
-      "description": "저글링·브루들링의 공격력 중첩당 +1.5(중첩 합계를 정수 반올림), 울트라리스크의 공격력 중첩당 +6. 해당 유닛들의 공격 간격이 중첩당 4.5% 줄어듭니다. 반복해서 고를 수 있습니다.",
+      "description": "중첩당 저글링·브루들링 공격력 +1.5, 울트라리스크 +6, 감염된 테란 +60. 공격 간격 -4.5%, 일반 공격으로 받는 피해 -10%. 소수점 공격력은 중첩 합계를 반올림하며 최대 4회.",
       "trigger": "",
       "numbers": "선택 횟수 제한 없음. 같은 창에서는 동일 재능 1개만 표시. 공격주기 = 원래 주기 × 0.97^중첩 수(해당 교범에만 적용). 엔진 최소 1틱, 매 단계 원본에서 다시 계산.",
       "notes": "일반 병력 교범은 보유 후에도 재등장합니다. 공격력·방어력은 중첩당 수치를 합산하고, 이동 속도는 원래 속도 × (1 + 0.03 × 중첩 수)로 계산합니다. 일꾼·건물·탄약은 제외하며, 인터셉터는 함대 교범의 공격력만 캐리어를 통해 1회 상속합니다. 지상/공중 분류는 겹치지 않습니다. 자폭·튀김의 타격 수와 마법 피해는 늘리지 않습니다. 기존 발급 선택과 과거 기록은 재해석하지 않습니다.",
@@ -32145,7 +32164,7 @@
         "type": "rework_v5",
         "ordinal": 70,
         "source_id": "369d47f3-7d0b-5f3e-9dc5-9831dee8b9b6",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "target_units": [
@@ -32153,6 +32172,7 @@
         39,
         40,
         48,
+        50,
         54
       ],
       "requirements": {
@@ -32186,6 +32206,7 @@
         610
       ],
       "rank_slot": 7,
+      "max_rank": 4,
       "balance_revision": 9,
       "pre_balance_description": "저글링·울트라·브루들링의 공격력 +1, 공격 간격 -3%. 반복해서 고를 수 있습니다.",
       "pre_balance_effect": {
@@ -32198,7 +32219,7 @@
       "id": "62db7732-c1df-5422-ac36-76749a24b5ef",
       "name": "가시 화력 교범",
       "target": "히드라·러커",
-      "description": "히드라·러커의 공격력 +3, 공격 간격 -4.5%. 반복해서 고를 수 있습니다.",
+      "description": "히드라·러커의 공격력 +3, 공격 간격 -4.5%.  중첩당 적용, 최대 4회 선택할 수 있습니다.",
       "trigger": "",
       "numbers": "선택 횟수 제한 없음. 같은 창에서는 동일 재능 1개만 표시. 공격주기 = 원래 주기 × 0.97^중첩 수(해당 교범에만 적용). 엔진 최소 1틱, 매 단계 원본에서 다시 계산.",
       "notes": "일반 병력 교범은 보유 후에도 재등장합니다. 공격력·방어력은 중첩당 수치를 합산하고, 이동 속도는 원래 속도 × (1 + 0.03 × 중첩 수)로 계산합니다. 일꾼·건물·탄약은 제외하며, 인터셉터는 함대 교범의 공격력만 캐리어를 통해 1회 상속합니다. 지상/공중 분류는 겹치지 않습니다. 자폭·튀김의 타격 수와 마법 피해는 늘리지 않습니다. 기존 발급 선택과 과거 기록은 재해석하지 않습니다.",
@@ -32221,7 +32242,7 @@
         "type": "rework_v5",
         "ordinal": 71,
         "source_id": "62db7732-c1df-5422-ac36-76749a24b5ef",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "target_units": [
@@ -32260,6 +32281,7 @@
         610
       ],
       "rank_slot": 8,
+      "max_rank": 4,
       "balance_revision": 9,
       "pre_balance_description": "히드라·러커의 공격력 +2, 공격 간격 -3%. 반복해서 고를 수 있습니다.",
       "pre_balance_effect": {
@@ -32272,7 +32294,7 @@
       "id": "16cf5d07-b1b7-5697-a7c3-220a82bbad55",
       "name": "비행 군체 화력 교범",
       "target": "뮤탈·가디언·디바우러·스커지",
-      "description": "뮤탈리스크의 공격력 +6, 다른 저그 공중 전투 유닛의 공격력 +3. 해당 유닛들의 공격 간격이 4.5% 줄어듭니다. 반복해서 고를 수 있습니다.",
+      "description": "뮤탈리스크의 공격력 +6, 다른 저그 공중 전투 유닛의 공격력 +3. 해당 유닛들의 공격 간격이 4.5% 줄어듭니다.  중첩당 적용, 최대 4회 선택할 수 있습니다.",
       "trigger": "",
       "numbers": "선택 횟수 제한 없음. 같은 창에서는 동일 재능 1개만 표시. 공격주기 = 원래 주기 × 0.97^중첩 수(해당 교범에만 적용). 엔진 최소 1틱, 매 단계 원본에서 다시 계산.",
       "notes": "일반 병력 교범은 보유 후에도 재등장합니다. 공격력·방어력은 중첩당 수치를 합산하고, 이동 속도는 원래 속도 × (1 + 0.03 × 중첩 수)로 계산합니다. 일꾼·건물·탄약은 제외하며, 인터셉터는 함대 교범의 공격력만 캐리어를 통해 1회 상속합니다. 지상/공중 분류는 겹치지 않습니다. 자폭·튀김의 타격 수와 마법 피해는 늘리지 않습니다. 기존 발급 선택과 과거 기록은 재해석하지 않습니다.",
@@ -32295,7 +32317,7 @@
         "type": "rework_v5",
         "ordinal": 72,
         "source_id": "16cf5d07-b1b7-5697-a7c3-220a82bbad55",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "target_units": [
@@ -32337,6 +32359,7 @@
         610
       ],
       "rank_slot": 9,
+      "max_rank": 4,
       "balance_revision": 9,
       "pre_balance_description": "뮤탈·가디언·디바우러·스커지의 공격력 +2. 반복해서 고를 수 있습니다.",
       "pre_balance_effect": {
@@ -32372,7 +32395,7 @@
         "type": "rework_v5",
         "ordinal": 73,
         "source_id": "26f82c37-e396-57e9-b3c2-4a37fe44ca10",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 8
       },
       "target_units": [
@@ -32455,7 +32478,7 @@
         "type": "rework_v5",
         "ordinal": 74,
         "source_id": "cf9d7028-0a05-5bdc-ba77-ababbaf03c09",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 8
       },
       "target_units": [
@@ -32527,7 +32550,7 @@
         "type": "rework_v5",
         "ordinal": 75,
         "source_id": "7c46a79c-240e-5f99-bf29-84ab7ac0fd48",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 8
       },
       "target_units": [
@@ -32610,7 +32633,7 @@
         "type": "rework_v5",
         "ordinal": 76,
         "source_id": "b5521a38-81d0-5f52-9b4e-1b8454831afa",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 8
       },
       "target_units": [
@@ -32684,7 +32707,7 @@
         "type": "rework_v5",
         "ordinal": 77,
         "source_id": "121291d9-885f-5d13-84b4-297c6a6ebeb9",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 8
       },
       "target_units": [
@@ -32758,7 +32781,7 @@
         "type": "rework_v5",
         "ordinal": 78,
         "source_id": "5c56df06-a27f-553d-8053-029c25101e4b",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 8
       },
       "target_units": [
@@ -32832,7 +32855,7 @@
         "type": "rework_v5",
         "ordinal": 79,
         "source_id": "abb905f3-6a0d-5d50-8312-03949ab51042",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 8
       },
       "target_units": [
@@ -32904,7 +32927,7 @@
         "type": "rework_v5",
         "ordinal": 80,
         "source_id": "10cc66bc-17ac-5728-8d91-d181509f5382",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 8
       },
       "target_units": [
@@ -32976,7 +32999,7 @@
         "type": "rework_v5",
         "ordinal": 81,
         "source_id": "722052dd-797c-545c-baa1-3d848dee8cd8",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 8
       },
       "target_units": [
@@ -33048,7 +33071,7 @@
         "type": "rework_v5",
         "ordinal": 82,
         "source_id": "2883c2a0-bf37-5d93-a894-7e5c7bfa9b46",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 8
       },
       "target_units": [
@@ -33120,7 +33143,7 @@
         "type": "rework_v5",
         "ordinal": 83,
         "source_id": "d5990802-46fc-50ce-88a4-9acd03cdff55",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 8
       },
       "target_units": [
@@ -33192,7 +33215,7 @@
         "type": "rework_v5",
         "ordinal": 84,
         "source_id": "d0ebe78b-5792-519e-b7cb-dc20a6f0a3f2",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 8
       },
       "target_units": [
@@ -33264,7 +33287,7 @@
         "type": "rework_v5",
         "ordinal": 85,
         "source_id": "0092e1dd-7b0d-5974-9145-b2713cd19dee",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 8
       },
       "target_units": [
@@ -33336,7 +33359,7 @@
         "type": "rework_v5",
         "ordinal": 86,
         "source_id": "525c2040-51f1-5484-a045-8bf7229f4b0b",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 8
       },
       "target_units": [
@@ -33407,7 +33430,7 @@
         "type": "rework_v5",
         "ordinal": 87,
         "source_id": "08d42ee8-1774-5ca7-961d-97e1af65a55d",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 8
       },
       "target_units": [
@@ -33478,7 +33501,7 @@
         "type": "rework_v5",
         "ordinal": 88,
         "source_id": "21df927a-6938-5f2e-97d1-e3e08b6f4302",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 8
       },
       "target_units": [
@@ -33527,7 +33550,7 @@
       "id": "75260dd5-debb-5089-9456-ee7cf86d0a4d",
       "name": "잠복 재생",
       "target": "잠복 가능한 저그 병력",
-      "description": "잠복 후 3초간 공격하거나 맞지 않으면 초당 최대 체력의 2%를 추가 회복합니다.",
+      "description": "잠복 후 3초간 공격하거나 맞지 않으면 초당 최대 체력의 6%를 추가 회복합니다.",
       "trigger": "",
       "numbers": "",
       "notes": "",
@@ -33550,7 +33573,7 @@
         "type": "rework_v5",
         "ordinal": 89,
         "source_id": "75260dd5-debb-5089-9456-ee7cf86d0a4d",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 8
       },
       "target_units": [
@@ -33633,7 +33656,7 @@
         "type": "rework_v5",
         "ordinal": 90,
         "source_id": "b63d7b59-66e3-5f61-86ea-a7e81d3000e8",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 10
       },
       "target_units": [
@@ -33682,7 +33705,7 @@
       "id": "cc95053a-6171-50d5-bb9c-4cfd4daabf75",
       "name": "잠행 이동",
       "target": "러커",
-      "description": "러커가 잠복한 채 원래 속도의 62.5%로 이동합니다. 이동 중에는 공격하지 않습니다.",
+      "description": "러커가 잠복한 상태에서 우클릭 이동과 어택땅(A+지점)을 할 수 있습니다. 이동 속도는 기본의 62.5%이며 이동 중에는 공격하지 않습니다.",
       "trigger": "",
       "numbers": "",
       "notes": "개편 효과 제안: 잠복 상태로 원래 지상 이동 속도의 25% 이동. 이동 중 공격 불가, 정지 0.5초 후 가시 재개.",
@@ -33705,7 +33728,7 @@
         "type": "rework_v5",
         "ordinal": 91,
         "source_id": "cc95053a-6171-50d5-bb9c-4cfd4daabf75",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 10
       },
       "target_units": [
@@ -33776,7 +33799,7 @@
         "type": "rework_v5",
         "ordinal": 92,
         "source_id": "26515758-366b-5bd0-98d2-30714ab37f58",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 10
       },
       "target_units": [
@@ -33848,7 +33871,7 @@
         "type": "rework_v5",
         "ordinal": 93,
         "source_id": "30b5884f-a399-56cb-858b-483d5c8d27d4",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 10
       },
       "target_units": [
@@ -33920,7 +33943,7 @@
         "type": "rework_v5",
         "ordinal": 94,
         "source_id": "567537fb-ab08-5c9f-a427-26d2f77becfb",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 10
       },
       "target_units": [
@@ -33992,7 +34015,7 @@
         "type": "rework_v5",
         "ordinal": 95,
         "source_id": "e3c62acb-9064-59af-b392-7caa09ea918c",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 10
       },
       "target_units": [
@@ -34063,7 +34086,7 @@
         "type": "rework_v5",
         "ordinal": 96,
         "source_id": "ca756d48-4004-5862-bd36-d66e7fa51c7f",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 10
       },
       "target_units": [
@@ -34134,7 +34157,7 @@
         "type": "rework_v5",
         "ordinal": 97,
         "source_id": "eb164112-2629-5cb2-950e-2204c2e3be44",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 10
       },
       "target_units": [
@@ -34205,7 +34228,7 @@
         "type": "rework_v5",
         "ordinal": 98,
         "source_id": "a9e0bf57-ae95-514f-8ecd-e8a2b3eb89a1",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 10
       },
       "target_units": [
@@ -34277,7 +34300,7 @@
         "type": "rework_v5",
         "ordinal": 99,
         "source_id": "32fec2f1-00ec-5078-97cb-ba0f7bf7dec3",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 10
       },
       "target_units": [
@@ -34349,7 +34372,7 @@
         "type": "rework_v5",
         "ordinal": 100,
         "source_id": "f83289ec-9c66-589f-96c3-1f9e57f775dd",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 10
       },
       "target_units": [
@@ -34420,7 +34443,7 @@
         "type": "rework_v5",
         "ordinal": 101,
         "source_id": "a03fb17f-d104-5b7a-a37a-ebd60309ecc6",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 10
       },
       "target_units": [
@@ -34493,7 +34516,7 @@
         "type": "rework_v5",
         "ordinal": 102,
         "source_id": "07e45846-21f6-55ec-bcaf-6dde8c3e4919",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 16
       },
       "target_units": [
@@ -34565,7 +34588,7 @@
         "type": "rework_v5",
         "ordinal": 103,
         "source_id": "c2629f66-3675-5912-a0c0-171c6dddddac",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 16
       },
       "target_units": [
@@ -34637,7 +34660,7 @@
         "type": "rework_v5",
         "ordinal": 104,
         "source_id": "1e9dba99-6b7c-5d98-b71f-0e1aa412cfa1",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 16
       },
       "target_units": [
@@ -34709,7 +34732,7 @@
         "type": "rework_v5",
         "ordinal": 105,
         "source_id": "051c93bb-ca5d-5a11-8728-e640cad23f20",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 16
       },
       "target_units": [
@@ -34781,7 +34804,7 @@
         "type": "rework_v5",
         "ordinal": 106,
         "source_id": "c4785029-f1e2-5f2c-b59a-6e2f3dcca705",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 16
       },
       "target_units": [
@@ -34852,7 +34875,7 @@
         "type": "rework_v5",
         "ordinal": 107,
         "source_id": "b1da8423-1b19-55c8-8771-f979597efb1b",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 16
       },
       "target_units": [
@@ -34901,7 +34924,7 @@
       "id": "f98413ba-abcb-51f0-87cd-0855115d04ea",
       "name": "전사 생명력",
       "target": "프로토스 지상 생체·에너지 병력",
-      "description": "프로토스 지상 생체·에너지 병력의 최대 체력·보호막 +35%. 질럿·템플러·아콘 계열.",
+      "description": "프로토스 지상 생체·에너지 병력의 최대 체력·보호막 +35%. 질럿·템플러·아콘 계열. 중첩당 적용, 최대 4회 선택할 수 있습니다.",
       "trigger": "",
       "numbers": "",
       "notes": "아콘·다크 아콘도 이 전사 계열에 포함. 기계·공중·일꾼 제외.",
@@ -34919,12 +34942,12 @@
       "source_description": "프로토스 지상 생체·에너지 병력: 최대 체력·보호막 각각 20% 증가. 질럿·템플러·아콘.",
       "rework_revision": 5,
       "effect_ordinal": 108,
-      "repeatable": false,
+      "repeatable": true,
       "effect": {
         "type": "rework_v5",
         "ordinal": 108,
         "source_id": "f98413ba-abcb-51f0-87cd-0855115d04ea",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 7
       },
       "target_units": [
@@ -34964,6 +34987,8 @@
         408,
         611
       ],
+      "rank_slot": 18,
+      "max_rank": 4,
       "balance_revision": 9,
       "pre_balance_description": "프로토스 지상 생체·에너지 병력의 최대 체력·보호막 +20%. 질럿·템플러·아콘 계열.",
       "pre_balance_effect": {
@@ -34976,7 +35001,7 @@
       "id": "1295a6ab-05cb-5760-ba2c-830e661e0a5c",
       "name": "지상 기체 강화",
       "target": "프로토스 지상 기계 병력",
-      "description": "프로토스 지상 기계 병력의 최대 체력·보호막 +35%. 드라군·리버 계열.",
+      "description": "프로토스 지상 기계 병력의 최대 체력·보호막 +35%. 드라군·리버 계열. 중첩당 적용, 최대 4회 선택할 수 있습니다.",
       "trigger": "",
       "numbers": "",
       "notes": "공중 관측선·셔틀 등 제외.",
@@ -34994,12 +35019,12 @@
       "source_description": "프로토스 지상 기계 병력: 최대 체력·보호막 각각 20% 증가. 드라군·리버.",
       "rework_revision": 5,
       "effect_ordinal": 109,
-      "repeatable": false,
+      "repeatable": true,
       "effect": {
         "type": "rework_v5",
         "ordinal": 109,
         "source_id": "1295a6ab-05cb-5760-ba2c-830e661e0a5c",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 7
       },
       "target_units": [
@@ -35032,6 +35057,8 @@
         408,
         611
       ],
+      "rank_slot": 19,
+      "max_rank": 4,
       "balance_revision": 9,
       "pre_balance_description": "프로토스 지상 기계 병력의 최대 체력·보호막 +20%. 드라군·리버 계열.",
       "pre_balance_effect": {
@@ -35044,7 +35071,7 @@
       "id": "6e8a9b64-74d6-573f-a944-94a9c5e0d0bd",
       "name": "함대 동체 강화",
       "target": "프로토스 공중 병력·영웅",
-      "description": "프로토스 공중 병력과 영웅의 최대 체력·보호막 +35%.",
+      "description": "프로토스 공중 병력과 영웅의 최대 체력·보호막 +35%. 중첩당 적용, 최대 4회 선택할 수 있습니다.",
       "trigger": "",
       "numbers": "",
       "notes": "인터셉터 탄약 제외.",
@@ -35062,12 +35089,12 @@
       "source_description": "프로토스 공중 병력·영웅: 최대 체력·보호막 각각 20% 증가. 셔틀·옵저버·아비터 포함.",
       "rework_revision": 5,
       "effect_ordinal": 110,
-      "repeatable": false,
+      "repeatable": true,
       "effect": {
         "type": "rework_v5",
         "ordinal": 110,
         "source_id": "6e8a9b64-74d6-573f-a944-94a9c5e0d0bd",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 7
       },
       "target_units": [
@@ -35108,6 +35135,8 @@
         408,
         611
       ],
+      "rank_slot": 20,
+      "max_rank": 4,
       "balance_revision": 9,
       "pre_balance_description": "프로토스 공중 병력과 영웅의 최대 체력·보호막 +20%.",
       "pre_balance_effect": {
@@ -35120,7 +35149,7 @@
       "id": "023f3a37-8713-59a6-8b1c-0a7909529a1c",
       "name": "기사단 화력 교범",
       "target": "프로토스 일반 지상 전투 병력",
-      "description": "질럿·드라군·다크 템플러·아콘·리버의 공격력 +1.5 (정수 반올림), 공격 간격 -4.5%. 반복해서 고를 수 있습니다.",
+      "description": "중첩당 질럿 공격력 +1.5, 드라군 +3, 다크 템플러·아콘 +6, 리버·스캐럽 +15. 공격 간격 -4.5%. 질럿·다크 템플러는 일반 공격으로 받는 피해도 중첩당 10% 줄어듭니다. 공격력 합계 반올림, 최대 4회.",
       "trigger": "",
       "numbers": "선택 횟수 제한 없음. 같은 창에서는 동일 재능 1개만 표시. 공격주기 = 원래 주기 × 0.97^중첩 수(해당 교범에만 적용). 엔진 최소 1틱, 매 단계 원본에서 다시 계산.",
       "notes": "일반 병력 교범은 보유 후에도 재등장합니다. 공격력·방어력은 중첩당 수치를 합산하고, 이동 속도는 원래 속도 × (1 + 0.03 × 중첩 수)로 계산합니다. 일꾼·건물·탄약은 제외하며, 인터셉터는 함대 교범의 공격력만 캐리어를 통해 1회 상속합니다. 지상/공중 분류는 겹치지 않습니다. 자폭·튀김의 타격 수와 마법 피해는 늘리지 않습니다. 기존 발급 선택과 과거 기록은 재해석하지 않습니다.",
@@ -35143,7 +35172,7 @@
         "type": "rework_v5",
         "ordinal": 111,
         "source_id": "023f3a37-8713-59a6-8b1c-0a7909529a1c",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "target_units": [
@@ -35185,6 +35214,7 @@
         611
       ],
       "rank_slot": 10,
+      "max_rank": 4,
       "balance_revision": 9,
       "pre_balance_description": "질럿·드라군·다크 템플러·아콘·리버의 공격력 +1, 공격 간격 -3%. 반복해서 고를 수 있습니다.",
       "pre_balance_effect": {
@@ -35197,7 +35227,7 @@
       "id": "a217d71f-2e7d-5655-a8ca-3f2e7e0acbca",
       "name": "함대 화력 교범",
       "target": "프로토스 공격 항공기",
-      "description": "프로토스 공격 항공기와 인터셉터의 공격력 +3. 반복해서 고를 수 있습니다.",
+      "description": "프로토스 공격 항공기와 인터셉터의 공격력 +3.  중첩당 적용, 최대 4회 선택할 수 있습니다.",
       "trigger": "",
       "numbers": "선택 횟수 제한 없음. 같은 창에서는 동일 재능 1개만 표시. 공격주기 = 원래 주기 × 0.97^중첩 수(해당 교범에만 적용). 엔진 최소 1틱, 매 단계 원본에서 다시 계산.",
       "notes": "일반 병력 교범은 보유 후에도 재등장합니다. 공격력·방어력은 중첩당 수치를 합산하고, 이동 속도는 원래 속도 × (1 + 0.03 × 중첩 수)로 계산합니다. 일꾼·건물·탄약은 제외하며, 인터셉터는 함대 교범의 공격력만 캐리어를 통해 1회 상속합니다. 지상/공중 분류는 겹치지 않습니다. 자폭·튀김의 타격 수와 마법 피해는 늘리지 않습니다. 기존 발급 선택과 과거 기록은 재해석하지 않습니다.",
@@ -35220,7 +35250,7 @@
         "type": "rework_v5",
         "ordinal": 112,
         "source_id": "a217d71f-2e7d-5655-a8ca-3f2e7e0acbca",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 6
       },
       "target_units": [
@@ -35258,6 +35288,7 @@
         611
       ],
       "rank_slot": 11,
+      "max_rank": 4,
       "balance_revision": 9,
       "pre_balance_description": "프로토스 공격 항공기와 인터셉터의 공격력 +2. 반복해서 고를 수 있습니다.",
       "pre_balance_effect": {
@@ -35293,7 +35324,7 @@
         "type": "rework_v5",
         "ordinal": 113,
         "source_id": "b1767caa-63a3-5a03-839a-683b1f78520a",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 7
       },
       "target_units": [
@@ -35384,7 +35415,7 @@
         "type": "rework_v5",
         "ordinal": 114,
         "source_id": "d84de79a-e0b0-535e-8024-204646bbf4b8",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 8
       },
       "target_units": [
@@ -35475,7 +35506,7 @@
         "type": "rework_v5",
         "ordinal": 115,
         "source_id": "95731e09-a96a-5723-a329-ef3a8bdda706",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 8
       },
       "target_units": [
@@ -35540,7 +35571,7 @@
         "type": "rework_v5",
         "ordinal": 116,
         "source_id": "c98e62be-d225-5f09-8917-42868647f5a0",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 8
       },
       "target_units": [
@@ -35605,7 +35636,7 @@
         "type": "rework_v5",
         "ordinal": 117,
         "source_id": "445755c6-36b9-570b-969a-6c6d45ab560f",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 4
       },
       "target_units": [
@@ -35667,7 +35698,7 @@
         "type": "rework_v5",
         "ordinal": 118,
         "source_id": "10be23c9-95d7-5410-ac9f-bb7212ed43fc",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 8
       },
       "target_units": [
@@ -35739,7 +35770,7 @@
         "type": "rework_v5",
         "ordinal": 119,
         "source_id": "4b8f7505-c8b3-5f04-91e3-81d4e52de653",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 8
       },
       "target_units": [
@@ -35811,7 +35842,7 @@
         "type": "rework_v5",
         "ordinal": 120,
         "source_id": "6eeb42b3-804e-5c96-91e1-3bb9d497c6cc",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 8
       },
       "target_units": [
@@ -35883,7 +35914,7 @@
         "type": "rework_v5",
         "ordinal": 121,
         "source_id": "a09286a4-1d9d-5b01-bdac-509361da8e18",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 8
       },
       "target_units": [
@@ -35949,7 +35980,7 @@
         "type": "rework_v5",
         "ordinal": 122,
         "source_id": "45807d4f-cf85-5ddf-9842-26cfcefd5042",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 8
       },
       "target_units": [
@@ -36015,7 +36046,7 @@
         "type": "rework_v5",
         "ordinal": 123,
         "source_id": "660502e8-e9da-530f-bbaa-b6c9754bb74b",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 8
       },
       "target_units": [
@@ -36080,7 +36111,7 @@
         "type": "rework_v5",
         "ordinal": 124,
         "source_id": "ac9a68f0-9370-5682-b6bf-2fac35b7f755",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 8
       },
       "target_units": [
@@ -36145,7 +36176,7 @@
         "type": "rework_v5",
         "ordinal": 125,
         "source_id": "ddb01db1-f765-5556-911b-0cd335ff441d",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 8
       },
       "target_units": [
@@ -36210,7 +36241,7 @@
         "type": "rework_v5",
         "ordinal": 126,
         "source_id": "d5d38c06-dd88-5e98-8e8d-27fecb900346",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 8
       },
       "target_units": [
@@ -36276,7 +36307,7 @@
         "type": "rework_v5",
         "ordinal": 127,
         "source_id": "8a4cb489-6634-59eb-a23d-e1ceaa267fe6",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 8
       },
       "target_units": [
@@ -36342,7 +36373,7 @@
         "type": "rework_v5",
         "ordinal": 128,
         "source_id": "75635ec4-c3f1-5337-80cd-6fc4f69aeb3f",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 8
       },
       "target_units": [
@@ -36408,7 +36439,7 @@
         "type": "rework_v5",
         "ordinal": 129,
         "source_id": "2a79955b-a51c-51f9-b330-040df65d0783",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 8
       },
       "target_units": [
@@ -36474,7 +36505,7 @@
         "type": "rework_v5",
         "ordinal": 130,
         "source_id": "f52833ba-5dad-5430-8ed7-6d2cf38d7290",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 8
       },
       "target_units": [
@@ -36540,7 +36571,7 @@
         "type": "rework_v5",
         "ordinal": 131,
         "source_id": "37a85a67-c58f-545c-a380-7d027a40f554",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 8
       },
       "target_units": [
@@ -36606,7 +36637,7 @@
         "type": "rework_v5",
         "ordinal": 132,
         "source_id": "a29090c6-3260-5477-ae42-d044a220a522",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 10
       },
       "target_units": [
@@ -36672,7 +36703,7 @@
         "type": "rework_v5",
         "ordinal": 133,
         "source_id": "39b4214d-0092-5543-aaa7-64fb08df1d3e",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 10
       },
       "target_units": [
@@ -36738,7 +36769,7 @@
         "type": "rework_v5",
         "ordinal": 134,
         "source_id": "02f86356-150e-574e-a7ab-55d2345a480a",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 10
       },
       "target_units": [
@@ -36805,7 +36836,7 @@
         "type": "rework_v5",
         "ordinal": 135,
         "source_id": "c2bf0dea-c215-549e-ace2-a03b9ce8b83a",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 10
       },
       "target_units": [
@@ -36871,7 +36902,7 @@
         "type": "rework_v5",
         "ordinal": 136,
         "source_id": "afec03a0-460d-503a-872f-dd2f7a7afb79",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 10
       },
       "target_units": [
@@ -36938,7 +36969,7 @@
         "type": "rework_v5",
         "ordinal": 137,
         "source_id": "b481fcc3-cc2a-5319-adf8-bef0e10b6abd",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 10
       },
       "target_units": [
@@ -37004,7 +37035,7 @@
         "type": "rework_v5",
         "ordinal": 138,
         "source_id": "8c38fecf-9607-59d3-b750-78666a048004",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 10
       },
       "target_units": [
@@ -37071,7 +37102,7 @@
         "type": "rework_v5",
         "ordinal": 139,
         "source_id": "edc6957f-823f-5a29-bcaf-d7e67565d19b",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 10
       },
       "target_units": [
@@ -37137,7 +37168,7 @@
         "type": "rework_v5",
         "ordinal": 140,
         "source_id": "8168843b-7c24-50d3-86c3-4a13ef8b0b9b",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 10
       },
       "target_units": [
@@ -37203,7 +37234,7 @@
         "type": "rework_v5",
         "ordinal": 141,
         "source_id": "80b2b8c1-e93a-5a4e-b5b9-272c031fc75e",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 10
       },
       "target_units": [
@@ -37270,7 +37301,7 @@
         "type": "rework_v5",
         "ordinal": 142,
         "source_id": "a16010ef-35d5-5f94-a64f-319e00102b66",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 10
       },
       "target_units": [
@@ -37337,7 +37368,7 @@
         "type": "rework_v5",
         "ordinal": 143,
         "source_id": "65382db3-0f00-582e-ac8b-63ceb20197b0",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 10
       },
       "target_units": [
@@ -37403,7 +37434,7 @@
         "type": "rework_v5",
         "ordinal": 144,
         "source_id": "a5677a0d-735e-5c07-aa45-c03e7a0f73b4",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 16
       },
       "target_units": [
@@ -37469,7 +37500,7 @@
         "type": "rework_v5",
         "ordinal": 145,
         "source_id": "ff1bb721-2dc7-5e9b-bb37-35a9b77a4e5f",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 16
       },
       "target_units": [
@@ -37535,7 +37566,7 @@
         "type": "rework_v5",
         "ordinal": 146,
         "source_id": "3bca39ce-0e6b-587c-ae4a-9facdeee2785",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 16
       },
       "target_units": [
@@ -37600,7 +37631,7 @@
         "type": "rework_v5",
         "ordinal": 147,
         "source_id": "ba21859d-8553-5b1c-ae55-810bd624c699",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 16
       },
       "target_units": [
@@ -37666,7 +37697,7 @@
         "type": "rework_v5",
         "ordinal": 148,
         "source_id": "e021408c-a180-5275-9f8b-1792e28b2524",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 16
       },
       "target_units": [
@@ -37731,7 +37762,7 @@
         "type": "rework_v5",
         "ordinal": 149,
         "source_id": "64af92bd-7322-535c-96ff-543a767818ad",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 16
       },
       "target_units": [
@@ -37797,7 +37828,7 @@
         "type": "rework_v5",
         "ordinal": 150,
         "source_id": "5bdb025f-f544-54f4-b00a-b9f9754f29e1",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 7
       },
       "target_units": [
@@ -37917,7 +37948,7 @@
         "type": "rework_v5",
         "ordinal": 151,
         "source_id": "a658caec-4220-56e3-9889-2316879eaf04",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 4
       },
       "target_units": [
@@ -37982,7 +38013,7 @@
         "type": "rework_v5",
         "ordinal": 152,
         "source_id": "9b76c05b-4852-57f1-bb46-b2a407bc2fc2",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 4
       },
       "target_units": [
@@ -38046,7 +38077,7 @@
         "type": "rework_v5",
         "ordinal": 153,
         "source_id": "ed7dc56a-5a05-54b3-9587-33b53b9462c1",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 4
       },
       "target_units": [
@@ -38112,7 +38143,7 @@
         "type": "rework_v5",
         "ordinal": 154,
         "source_id": "8fccca14-90a3-54c6-b681-7b0c5ed307b8",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 4
       },
       "target_units": [
@@ -38183,7 +38214,7 @@
         "type": "rework_v5",
         "ordinal": 155,
         "source_id": "8a8ad5b0-d4a9-5df7-851a-1ce7886fc176",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 4
       },
       "target_units": [
@@ -38254,7 +38285,7 @@
         "type": "rework_v5",
         "ordinal": 156,
         "source_id": "836e670b-e909-5c58-8bb0-e4e3af70b142",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 4
       },
       "target_units": [
@@ -38325,7 +38356,7 @@
         "type": "rework_v5",
         "ordinal": 157,
         "source_id": "5ec00495-8218-5c6c-9580-2ab4bf35a601",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 4
       },
       "target_units": [
@@ -38398,7 +38429,7 @@
         "type": "rework_v5",
         "ordinal": 158,
         "source_id": "e678465b-249f-5431-b778-95ff34fbff56",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 4
       },
       "target_units": [
@@ -38461,7 +38492,7 @@
         "type": "rework_v5",
         "ordinal": 159,
         "source_id": "18831683-b900-570f-b2ea-92b93321cd36",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 4
       },
       "target_units": [
@@ -38523,7 +38554,7 @@
         "type": "rework_v5",
         "ordinal": 160,
         "source_id": "3e5f0fa1-e055-5e5a-b2b7-57c939efe61b",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 4
       },
       "target_units": [
@@ -38589,7 +38620,7 @@
         "type": "rework_v5",
         "ordinal": 161,
         "source_id": "5076f56c-71f0-5b72-99c2-ca663cf98549",
-        "qa_revision": 2026101609,
+        "qa_revision": 2026101610,
         "benefit_power_quarters": 10
       },
       "target_units": [
@@ -46303,6 +46334,7 @@
           39,
           40,
           48,
+          50,
           54
         ],
         "mechanism": "deduplicated native weapon+rank and Q32 carried0.97^rank cooldown",

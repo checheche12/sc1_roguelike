@@ -109,13 +109,15 @@ class ReworkGrowthTests(unittest.TestCase):
         for identity,serialized in first_rows:
             self.assertEqual(self.query('SELECT candidates_json FROM growth_offers WHERE offer_id=?',(identity,)),[(serialized,)])
 
-    def test_wire_v2_preserves_high_curse_and_u32_rank(self):
+    def test_wire_v2_caps_new_exports_preserves_high_curse_and_old_u32_rank(self):
         manual=next(x for x in self.catalog['talents'] if x.get('repeatable'))
         curse=self.catalog['curses'][-1]
         words=encode_growth(self.catalog,[manual['id']],{curse['id']:7},{manual['id']:100000})
-        self.assertEqual((len(words),words[0],words[33+manual['rank_slot']]),(65,2,100000))
+        self.assertEqual((len(words),words[0],words[33+manual['rank_slot']]),(65,2,4))
         self.assertEqual(words[17+49//4]>>(8*(49%4))&255,7)
         self.assertEqual(validate_growth_words(words),words)
+        historical=words.copy();historical[33+manual['rank_slot']]=100000
+        self.assertEqual(validate_growth_words(historical),historical)
         old=encode_growth(load_catalog(),[load_catalog()['talents'][0]['id']],{})
         converted=upgrade_growth_words(old)
         self.assertEqual(converted[1:21],old[1:21]);self.assertEqual(len(converted),65)

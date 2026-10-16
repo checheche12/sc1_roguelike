@@ -545,7 +545,10 @@ def make_map(raw,row):
  gas=main_base_gas.apply(chk,row,minerals,reserved_points=mineral_reserved_points(difficulty))
  from sc1.native_campaign import mineral_amount_bonus
  mineral_amounts=mineral_amount_bonus.apply(chk)
+ from sc1.native_campaign import campaign_objectives
+ objective_correction=campaign_objectives.apply(chk,row)
  progression=patch_progression(chk,row)
+ progression['objective_correction']=objective_correction
  chk.setsection('STR ',append_marker(chk.getsection('STR '),row['fingerprint'].encode('ascii')))
  permitted={b'UNIT',b'PUNI',b'UPGR',b'PUPx',b'PTEC',b'PTEx',b'TRIG',b'STR '}
  if row['mission_id']==101:permitted|={b'OWNR',b'SIDE',b'FORC'}
@@ -575,6 +578,8 @@ def wave_header(rows):
 def build(output=OUT,receipt=RECEIPT):
  output,receipt=Path(output),Path(receipt)
  assert output.resolve().is_relative_to(SC1.resolve()) and receipt.resolve().is_relative_to(SC1.resolve())
+ from sc1.native_campaign import campaign_objectives
+ (ROOT/'plugin/include/campaign_visibility.generated.h').write_text(campaign_objectives.header(),encoding='utf8')
  rows=generate_metadata();reports=[]
  for row in rows:
   source=Path(row['source']);raw,report=make_map(source.read_bytes(),row)

@@ -970,11 +970,18 @@ void __cdecl owner_commands_hook(const void* data,U32 len,U32 replay,CommandFn o
     // CommandUser is a scalar read_vars value; never dereference it. This covers
     // resource and supply checks before a training/morph order reaches a unit.
     const auto id=static_cast<std::uint16_t>(samase::VarId::CommandUser);std::size_t player=12;
-    if(g.active)g.read_vars(&id,&player,1);OwnerDatScope scope(static_cast<U32>(player),static_cast<U32>(player));rework_economy_v5::CommandScope economy(static_cast<U32>(player),data,len);rework_combat_v5::CommandScope combat(static_cast<U32>(player));rework_cargo_v5::CommandScope cargo(data,len);rework_carrier_v5::CommandScope carrier(static_cast<U32>(player),data,len);original(data,len,replay);
+    if(g.active)g.read_vars(&id,&player,1);OwnerDatScope scope(static_cast<U32>(player),static_cast<U32>(player));rework_economy_v5::CommandScope economy(static_cast<U32>(player),data,len);rework_combat_v5::CommandScope combat(static_cast<U32>(player),false);rework_cargo_v5::CommandScope cargo(data,len);rework_carrier_v5::CommandScope carrier(static_cast<U32>(player),data,len);original(data,len,replay);
+}
+using GuiFn=void (__cdecl*)(void*);
+void __cdecl owner_rclick_hook(void* event,GuiFn original) noexcept {
+    // Right-click chooses the default order BEFORE ProcessCommands. Native
+    // burrowed-Lurker predicates reject movement at both boundaries.
+    if(g.active&&g.applied){rework_combat_v5::CommandScope combat(player_owner(),true,false);original(event);}
+    else original(event);
 }
 bool register_owner_hooks(const samase::PluginApi* api) noexcept {
     if(!api->hook_func || !api->hook_step_order || !api->hook_step_order_hidden ||
-       !api->hook_step_secondary_order || !api->hook_create_unit || !api->hook_create_bullet || !api->hook_process_commands)return false;
+       !api->hook_step_secondary_order || !api->hook_create_unit || !api->hook_create_bullet || !api->hook_process_commands || !api->hook_game_screen_rclick)return false;
     const auto command=static_cast<std::uint16_t>(samase::VarId::CommandUser);U8 support=0;api->load_vars(&command,&support,1);if(support<2)return false;
     auto hook=reinterpret_cast<FuncHookRegister>(api->hook_func);
     const auto bind=[&](samase::FuncId id,auto callback){return hook(static_cast<std::uint16_t>(id),reinterpret_cast<std::uintptr_t>(callback))!=0;};
@@ -983,10 +990,12 @@ bool register_owner_hooks(const samase::PluginApi* api) noexcept {
        !reinterpret_cast<UnitHookRegister>(api->hook_step_secondary_order)(owner_secondary_hook))return false;
     using CreateRegister=U32 (__cdecl*)(bw::Unit* (__cdecl*)(U32,int,int,U32,const U8*,CreateUnit));
     using BulletRegister=U32 (__cdecl*)(bw::Bullet* (__cdecl*)(U32,int,int,U32,U32,bw::Unit*,CreateBulletFn));
+    using RclickRegister=U32 (__cdecl*)(void (__cdecl*)(void*,GuiFn));
     using CommandRegister=U32 (__cdecl*)(void (__cdecl*)(const void*,U32,U32,CommandFn));
     return reinterpret_cast<CreateRegister>(api->hook_create_unit)(owner_create_hook) &&
         reinterpret_cast<BulletRegister>(api->hook_create_bullet)(owner_bullet_create_hook) &&
         reinterpret_cast<CommandRegister>(api->hook_process_commands)(owner_commands_hook) &&
+        reinterpret_cast<RclickRegister>(api->hook_game_screen_rclick)(owner_rclick_hook) &&
         bind(samase::FuncId::UnitSetHp,owner_hp_hook) &&
         bind(samase::FuncId::KillUnit,owner_kill_hook) &&
         bind(samase::FuncId::TransformUnit,owner_transform_hook) &&
@@ -1372,6 +1381,7 @@ void protocol_pump(void*) noexcept {
         original_objectives_status(game,playable);
     } catch (...) {set_counter(kReadyCounter,0);set_counter(kAckCounter,0);abandon_session();message("본편 플러그인 기록 오류. 캠페인 기록 연결을 중단했습니다.");}
 }
+#include "include/campaign_visibility.h"
 void __cdecl frame() noexcept {
     if (GetCurrentThreadId()!=g.game_thread.load() || !g.active || g.pumping) return;
     try {
@@ -1379,6 +1389,7 @@ void __cdecl frame() noexcept {
         if (g.last_frame==game->frame_count) return;
         g.last_frame=game->frame_count;
         if (!g.mission || game->campaign_mission!=g.campaign_index || g.multiplayer() || g.replay()) {abandon_session();return;}
+        campaign_visibility::step();
         update_original_goal();protocol_pump(nullptr);
         if (!g.active) return;
         g.dialog.pump(GetTickCount64());
@@ -1547,6 +1558,7 @@ extern "C" __declspec(dllexport) void __cdecl samase_plugin_init(const samase::P
     }
     if(!rework_shield_ui_v5::bind(api)){log_event("Shield armor display registration failed: stage=%s",rework_shield_ui_v5::last_error);visible_failure(L"보호막 방어력 표시를 연결하지 못했습니다. sc1_native.log를 확인하세요.");return;}
     if (!register_owner_hooks(api)) {visible_failure(L"성장 효과의 소유자 분리 기능을 등록하지 못했습니다. 플러그인을 활성화하지 않습니다.");return;}
+    if(!rework_combat_v5::bind_motion_commands(api)){visible_failure(L"잠복 이동 명령을 연결하지 못했습니다. sc1_native.log를 확인하세요.");return;}
     if(!rework_economy_v5::bind_commands(api)){visible_failure(L"생산 비용 기능을 연결하지 못했습니다. sc1_native.log를 확인하세요.");return;}
     if (!movement_effects::bind(api,combat_effects::melee_enter,combat_effects::melee_leave)) {
         visible_failure(L"이동·근접 공격 효과 연결에 실패했습니다. 플러그인을 활성화하지 않습니다.");return;

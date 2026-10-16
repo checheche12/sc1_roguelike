@@ -207,6 +207,24 @@ def _issue(conn, mission, phase, catalog):
         conn.execute('UPDATE growth_offers SET selected_id=?,selected_revision=?,selected_at=CURRENT_TIMESTAMP WHERE offer_id=?',
                      (rework_growth.SKIPPED_FINAL,state['revision'],offer['offer_id']))
         return _issue(conn,mission,phase,catalog)
+    if offer["candidates_json"] is not None and rework_growth.enabled(catalog) and offer['kind']=='talent':
+        # Only pending, entirely exhausted pre-cap offers can be reissued. Keep
+        # the exact original JSON and UUID in additive history; selected offers
+        # and immutable snapshots never enter this branch.
+        from .rank_policy import exhausted
+        owned=growth._json(state['talents_json']);counts=rework_growth.ranks(conn,mission)
+        by_id={x['id']:x for x in catalog['talents']}
+        saved=growth._json(offer['candidates_json'])
+        if saved and all(exhausted(by_id[x['id']],owned,counts) for x in saved):
+            conn.execute('CREATE TABLE IF NOT EXISTS growth_offer_cap_history (offer_id TEXT PRIMARY KEY,candidates_json TEXT NOT NULL,offered_revision INTEGER)')
+            conn.execute('INSERT OR IGNORE INTO growth_offer_cap_history VALUES (?,?,?)',
+                         (offer['offer_id'],offer['candidates_json'],offer['offered_revision']))
+            replacement=str(uuid.uuid4())
+            conn.execute('PRAGMA defer_foreign_keys=ON')
+            conn.execute('UPDATE growth_offers SET offer_id=?,candidates_json=NULL,offered_revision=NULL WHERE offer_id=?',
+                         (replacement,offer['offer_id']))
+            conn.execute('UPDATE growth_phase_offers SET offer_id=? WHERE offer_id=?',(replacement,offer['offer_id']))
+            offer=_current(conn,mission,phase)
     if offer["candidates_json"] is not None:
         # Preserve C1 UUID and exact candidate order. Only a newly activated
         # pending offer's CAS revision follows intervening phase selections.
@@ -226,7 +244,8 @@ def _issue(conn, mission, phase, catalog):
             return _issue(conn,mission,phase,catalog)
         if kind=='talent':
             candidates=rework_growth.candidates(catalog,mission,phase,owned,secrets.SystemRandom(),
-                recent_manuals=rework_growth.recent_manuals(conn,mission,offer['offer_id']))
+                recent_manuals=rework_growth.recent_manuals(conn,mission,offer['offer_id']),
+                rank_counts=rework_growth.ranks(conn,mission))
             conn.execute('UPDATE growth_offers SET candidates_json=?,offered_revision=? WHERE offer_id=?',
                          (json.dumps(candidates,ensure_ascii=False,sort_keys=True),state['revision'],offer['offer_id']))
             return

@@ -311,7 +311,7 @@ def status(conn, mission=INITIAL_MISSION):
             "catalog_version": catalog["catalog_version"],
             "offer": _offer(current) if current and current["candidates_json"] and mode == "choosing" else None,
             "pending": pending, "upcoming": upcoming, "history": history,
-            "talents": [{**item,"stacks":rework_growth.ranks(conn,mission).get(item['id'],1)} for item in catalog["talents"] if item["id"] in owned],
+            "talents": [{**item,"stacks":min(rework_growth.ranks(conn,mission).get(item['id'],1),item.get('max_rank',0xffffffff))} for item in catalog["talents"] if item["id"] in owned],
             "curses": [{**item, "stacks": stacks[item["id"]]} for item in catalog["curses"] if stacks.get(item["id"], 0)],
             "growth_words": validate_growth_words(_json(frozen["words_json"])) if frozen else current_words}
 

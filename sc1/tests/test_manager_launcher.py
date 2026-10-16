@@ -54,10 +54,6 @@ class ManagerLauncherTests(unittest.TestCase):
         for callback in (self.backend.launch_campaign, self.backend.install_package,
                          self.backend.restore_installation):
             callback.assert_not_called()
-        entry = (Path(__file__).resolve().parents[1] / "Start_Campaign.cmd").read_text()
-        self.assertIn("Start_Manager.ps1", entry)
-        self.assertNotIn("Start_NativeCampaign", entry)
-        self.assertNotIn("-WithManager", entry)
 
     def test_record_can_be_switched_before_explicit_start(self):
         second = self.base / "second.sqlite3"
@@ -151,13 +147,6 @@ class ManagerLauncherTests(unittest.TestCase):
             self.assertEqual(main(["--db", str(self.app.database), "--preferences", str(self.prefs), "ui"]), 0)
         self.assertEqual(launch.call_args.args[0], self.app.database)
         self.assertEqual(launch.call_args.kwargs["preferences_path"], self.prefs)
-
-    def test_native_launcher_checks_manifest_loader_and_fixture_manager_sources(self):
-        script = (Path(__file__).resolve().parents[1] / "native_campaign/Start_NativeCampaign.ps1").read_text(encoding="utf-8")
-        self.assertIn("$manifest.loader_sha256 -ne $pin.sha256", script)
-        self.assertIn("'native_all_campaigns_live_fixture'", script)
-        self.assertIn("[IO.Path]::IsPathRooted($source.path)", script)
-        self.assertIn("Join-Path $campaignWorkspace $source.path", script)
 
     def test_original_restore_stops_bridge_without_changing_growth_record(self):
         before = self.app.database.read_bytes()

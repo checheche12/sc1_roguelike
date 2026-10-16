@@ -289,6 +289,30 @@ def inspect_installation(game_path):
     return result
 
 
+def _rename_managed(source, destination, game=None):
+    """Retry only Windows sharing/lock violations, without closing other apps.
+
+    Renames remain atomic. A failed rename never authorizes an in-place copy
+    or deletion of the active deployment. Rollback calls omit the game guard
+    so an interrupted update can still put the verified old folder back.
+    """
+    for attempt in range(10):
+        if game is not None:
+            _not_running(game)
+        try:
+            return source.rename(destination)
+        except OSError as error:
+            if getattr(error, 'winerror', None) not in (32, 33):
+                raise
+            if attempt == 9:
+                raise InstallationError('files_in_use',
+                    '다른 프로그램이 캠페인 패치 폴더를 사용하고 있어 교체하지 못했습니다. '
+                    '스타크래프트·Samase와 해당 폴더를 열어 둔 탐색기·터미널을 닫아 주세요. '
+                    '캠페인 관리자도 종료 후 다시 실행하여 설치해 주세요. '
+                    '계속되면 Windows를 재시작한 뒤 설치해 주세요. 기존 패치 파일은 삭제하지 않았습니다.') from error
+            time.sleep(0.2)
+
+
 def install_package(game_path, manifest_path=None):
     game = _game(game_path); _not_running(game)
     package = _package(manifest_path)
@@ -315,12 +339,12 @@ def install_package(game_path, manifest_path=None):
                 _fail("game_changed", "설치 도중 게임 파일이 변경되어 중단했습니다.")
             if old:
                 _installed(target, manager=False)
-                target.rename(backup)
+                _rename_managed(target, backup, game)
             try:
-                staging.rename(target)
+                _rename_managed(staging, target, game)
             except BaseException:
                 if backup and backup.exists() and not target.exists():
-                    backup.rename(target)
+                    _rename_managed(backup, target)
                 raise
         finally:
             # Only the freshly created, resolved staging child may be removed.
@@ -339,11 +363,11 @@ def restore_installation(game_path):
             _fail("no_backup", "복원할 이전 패치 버전이 없습니다.")
         _installed(backup, manager=False); _not_running(game)
         retained = game["root"] / ("." + INSTALL_NAME + ".replaced." + uuid.uuid4().hex)
-        target.rename(retained)
+        _rename_managed(target, retained, game)
         try:
-            backup.rename(target)
+            _rename_managed(backup, target, game)
         except BaseException:
-            retained.rename(target)
+            _rename_managed(retained, target)
             raise
     return {"status": "restored", "message": "이전 패치 버전으로 복원했습니다.", "install_root": str(target),
             "manifest": str(target / "manifest.json"), "executable": str(game["executable"]), "retained_previous_install": str(retained)}
@@ -374,7 +398,7 @@ def restore_original_campaign(game_path):
         _installed(target, manager=False)
         # Same-parent rename is atomic. Original game files and the managed
         # receipt are unchanged, and no recursive deletion occurs.
-        target.rename(retained)
+        _rename_managed(target, retained, game)
     return {"status": "original", "mode": "original", "auto_connect": False,
             "message": "원본 캠페인으로 되돌렸습니다. 성장 기록은 유지되며, 패치 파일은 보관했습니다. 다시 사용하려면 패치 설치를 누르세요.",
             "executable": str(game["executable"]), "install_root": str(target),
