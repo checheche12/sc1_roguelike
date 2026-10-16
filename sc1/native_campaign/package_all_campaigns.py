@@ -23,6 +23,7 @@ from sc1.native_campaign import resource_layout
 from sc1.native_campaign import ladder_resource_layout
 from sc1.native_campaign import mining_layout_audit
 from sc1.native_campaign import resource_depot_placement
+from sc1.native_campaign import main_base_gas
 from sc1.campaign.missions import load_missions
 
 DEFAULT_MAP_RECEIPT = ROOT / "all_campaign_maps_evidence.json"
@@ -95,7 +96,9 @@ def verify_mineral_layout(source_chk, output_chk, mission, row):
     baseline = CHK(source_chk.save())
     for tag in ("OWNR", "SIDE", "FORC"):
         baseline.setsection(tag, output_chk.getsection(tag))
-    baseline.setsection("UNIT", original_units + output_units[len(original_units):])
+    additions = len((row.get("main_base_gas") or {}).get("added", [])) * 36
+    resource_output_units = output_units[:-additions] if additions else output_units
+    baseline.setsection("UNIT", original_units + resource_output_units[len(original_units):])
     if mission["mission_id"] == 101:
         plain_raw, _, _ = map_builder.make_plain_chk(source_chk.save())
         plain = CHK(plain_raw)
@@ -103,8 +106,12 @@ def verify_mineral_layout(source_chk, output_chk, mission, row):
             baseline.setsection(tag, plain.getsection(tag))
     expected_report = resource_layout.apply_layout(
         baseline, mission, reserved_points=map_builder.mineral_reserved_points(row["difficulty"]))
-    if baseline.getsection("UNIT") != output_units or expected_report != row.get("mineral_layout"):
+    if baseline.getsection("UNIT") != resource_output_units or expected_report != row.get("mineral_layout"):
         raise ValueError("Resource layout differs from the exact constrained transformation")
+    expected_gas = main_base_gas.apply(baseline, mission, expected_report,
+        reserved_points=map_builder.mineral_reserved_points(row["difficulty"]))
+    if baseline.getsection("UNIT") != output_units or expected_gas != row.get("main_base_gas"):
+        raise ValueError("Main-base gas differs from the exact constrained transformation")
 
 
 def validate_maps(receipt_path):
@@ -121,6 +128,9 @@ def validate_maps(receipt_path):
     ladder_path, _ = legacy.checked_file(receipt['ladder_resource_layout_source'], receipt['ladder_resource_layout_source_sha256'])
     if ladder_path != Path(ladder_resource_layout.__file__).resolve():
         raise ValueError('Unexpected joint mineral/gas layout implementation')
+    gas_path, _ = legacy.checked_file(receipt['main_base_gas_source'], receipt['main_base_gas_source_sha256'])
+    if gas_path != Path(main_base_gas.__file__).resolve():
+        raise ValueError('Unexpected main-base gas implementation')
     audit_path, _ = legacy.checked_file(receipt["mining_layout_audit_source"], receipt["mining_layout_audit_source_sha256"])
     if audit_path != Path(mining_layout_audit.__file__).resolve():
         raise ValueError("Unexpected mining layout auditor")
@@ -222,6 +232,8 @@ def inputs(map_receipt, dll_receipt):
                   resource_layout_source_sha256=maps["resource_layout_source_sha256"],
                   ladder_resource_layout_source=maps['ladder_resource_layout_source'],
                   ladder_resource_layout_source_sha256=maps['ladder_resource_layout_source_sha256'],
+                  main_base_gas_source=maps['main_base_gas_source'],
+                  main_base_gas_source_sha256=maps['main_base_gas_source_sha256'],
                   mining_layout_audit_source=maps["mining_layout_audit_source"],
                   mining_layout_audit_source_sha256=maps["mining_layout_audit_source_sha256"],
                   resource_depot_guard_source=maps["resource_depot_guard_source"],

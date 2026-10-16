@@ -17,6 +17,7 @@ from build_plain_chk import CHK,strings,digest,make_plain_chk
 import mineral_layout
 import resource_layout
 import ladder_resource_layout
+import main_base_gas
 import mining_layout_audit
 import resource_depot_placement
 SOURCE_ROOT=SC1/'campaign_sources/raw'
@@ -536,6 +537,7 @@ def make_map(raw,row):
   temp=CHK(raw);difficulty=strengthen(temp,row);difficulty['static_added']=len(chk.getsection('UNIT'))//36-len(original[b'UNIT'])//36;difficulty['t01_static_source']='Existing inspected build_plain_chk.apply_difficulty (46 zerglings + 1 geyser)';difficulty['static_reinforcements']=t01_config['static_reinforcements']
  else:difficulty=strengthen(chk,row)
  minerals=resource_layout.apply_layout(chk,row,reserved_points=mineral_reserved_points(difficulty))
+ gas=main_base_gas.apply(chk,row,minerals,reserved_points=mineral_reserved_points(difficulty))
  progression=patch_progression(chk,row)
  chk.setsection('STR ',append_marker(chk.getsection('STR '),row['fingerprint'].encode('ascii')))
  permitted={b'UNIT',b'PUNI',b'UPGR',b'PUPx',b'PTEC',b'PTEx',b'TRIG',b'STR '}
@@ -548,6 +550,7 @@ def make_map(raw,row):
  report={'mission_id':row['mission_id'],'asset_path':row['asset_path'],'source':row['source'],'source_sha256':row['source_sha256'],'sha256':digest(rawout),'bytes':len(rawout),'chk_version':row['chk_version'],'fingerprint':row['fingerprint'],'owner':row['owner'],'no_production':row['no_production'],'original_section_order_preserved':True,'unchanged_sections':[k.decode('ascii') for k in original if k not in permitted],'original_briefing_wav_locations_terrain_heroes_preserved':True,'original_player_ownership_and_races_preserved':row['mission_id']!=101,'ownership_exception':'T01 existing dedicated P7 wave slot only' if row['mission_id']==101 else None,'progression':progression,'death_counter_audit':counter_audit,'switch_audit':switch_audit,'unlock':settings,'difficulty':difficulty,'native_load_verified':False,'mission_completion_verified':False}
  report['mineral_layout']=minerals
  report['resource_layout']=minerals
+ report['main_base_gas']=gas
  return rawout,report
 
 def wave_header(rows):
@@ -578,6 +581,8 @@ def build(output=OUT,receipt=RECEIPT):
  report['resource_layout_source_sha256']=digest(Path(resource_layout.__file__).read_bytes())
  report['ladder_resource_layout_source']=str(Path(ladder_resource_layout.__file__).resolve())
  report['ladder_resource_layout_source_sha256']=digest(Path(ladder_resource_layout.__file__).read_bytes())
+ report['main_base_gas_source']=str(Path(main_base_gas.__file__).resolve())
+ report['main_base_gas_source_sha256']=digest(Path(main_base_gas.__file__).read_bytes())
  report['mining_layout_audit_source']=str(Path(mining_layout_audit.__file__).resolve())
  report['mining_layout_audit_source_sha256']=digest(Path(mining_layout_audit.__file__).read_bytes())
  report['resource_depot_guard_source']=str(Path(resource_depot_placement.__file__).resolve())
