@@ -54,9 +54,9 @@ QA_EFFECTS = {
     FLANK_ID: ('두 공세마다 벌처·저글링·질럿 중 기동대 8기가 다른 길로 옵니다. 중첩마다 8기씩 늘고 증원량 증가도 적용됩니다.',
                {'units_per_stack': 8, 'first_normal_wave_eligible': True},
                'race-matched flank8per stack via alternate safe origin; reinforcement scaling; first normal wave then2-wave cadence'),
-    REAR_ID: ('두 번째 공세부터 두 공세마다 보병 8기 추가. 20분부터 12기이며 중첩과 증원량 증가가 적용됩니다.',
-              {'units_per_stack': 8, 'late_units_per_stack': 12, 'late_seconds': 1200},
-              'race-matched rear8per stack then12after1200sec; reinforcement scaling; starts second main wave'),
+    REAR_ID: ('두 번째 공세부터 매 공세에 보병 편성이 추가될 수 있습니다. 기본 10기, 20분부터 15기이며 중첩과 증원량 증가가 적용됩니다.',
+              {'units_per_stack': 12, 'late_units_per_stack': 18, 'late_seconds': 1200, 'base_delivered_units': 10, 'late_delivered_units': 15, 'wave_cadence': 1, 'shared_special_roster_limit': 2},
+              'race-matched rear12per stack then18at1200sec departure; global85percent gives10/15 at one stack; reinforcement scaling; eligible each wave from second; shared2-special selection retained'),
     RAYNOR_ID: ('두 공세마다 적 레이너(마린) 2기·마린 20기·메딕 4기가 옵니다.',
                 {'roster': [{'unit': 20, 'count': 2, 'hero': True}, {'unit': 0, 'count': 20}, {'unit': 34, 'count': 4}]},
                 'rare Raynor roster doubled2heroes20marines4medics; hero count fixed; ordinary escort reinforcement scaling retained'),
@@ -84,6 +84,9 @@ def build(coverage=None):
             records = metadata.setdefault('coverage_receipts', [])
             if COMBAT_QA_RECORD not in records:
                 records.append(COMBAT_QA_RECORD)
+            if identity == REAR_ID:
+                record = 'analysis/mission_balance_qa14_20261017/verification.json'
+                if record not in records:records.append(record)
     supported = set(receipt.get('implemented_ids', ()))
     display_path=ROOT/'analysis/runtime_rework_20261016/display_copy.json'
     display=json.loads(display_path.read_text(encoding='utf8')) if display_path.is_file() else {}

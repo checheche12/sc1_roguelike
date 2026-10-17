@@ -79,7 +79,7 @@ def safe_asset(name):
     return path.as_posix()
 
 
-def verify_mineral_layout(source_chk, output_chk, mission, row):
+def _verify_base_resource_layout(source_chk, output_chk, mission, row):
     """Replay the constrained edit; a receipt cannot authorize arbitrary units."""
     if row.get("resource_layout") != row.get("mineral_layout"):
         raise ValueError("Resource layout report and its compatibility copy differ")
@@ -117,6 +117,21 @@ def verify_mineral_layout(source_chk, output_chk, mission, row):
         raise ValueError("Main-base gas differs from the exact constrained transformation")
 
 
+def verify_mineral_layout(source_chk, output_chk, mission, row):
+    from . import mission_balance
+    report = row.get('mission_balance')
+    if not report:raise ValueError('Mission-specific balance proof missing')
+    baseline = CHK(output_chk.save())
+    try:
+        mission_balance.undo(baseline, report)
+        _verify_base_resource_layout(source_chk, baseline, mission, row)
+        expected = mission_balance.apply(baseline, mission, row['difficulty'])
+        if expected != report or baseline.save() != output_chk.save():
+            raise ValueError('Mission balance differs from deterministic replay')
+    except AssertionError as error:
+        raise ValueError('Invalid mission-specific unit transformation') from error
+
+
 def validate_maps(receipt_path):
     receipt_path = legacy.owned_file(receipt_path)
     receipt = legacy.read_json(receipt_path)
@@ -146,6 +161,9 @@ def validate_maps(receipt_path):
     guard_path, _ = legacy.checked_file(receipt["resource_depot_guard_source"], receipt["resource_depot_guard_source_sha256"])
     if guard_path != Path(resource_depot_placement.__file__).resolve():
         raise ValueError("Unexpected resource depot placement guard")
+    from . import mission_balance
+    balance_path, _ = legacy.checked_file(receipt['mission_balance_source'], receipt['mission_balance_source_sha256'])
+    if balance_path != Path(mission_balance.__file__).resolve():raise ValueError('Unexpected mission balance implementation')
     rows = receipt["maps"]
     expected = {row["mission_id"]: row for row in load_missions()}
     if len(rows) != len(expected) or {row["mission_id"] for row in rows} != set(expected):
@@ -235,6 +253,8 @@ def inputs(map_receipt, dll_receipt):
                   all_requirements_assets=normalized_requirements)
     native.update(map_receipt=str(map_path), map_receipt_sha256=legacy.sha(map_path.read_bytes()),
                   map_builder_sha256=maps["map_builder_sha256"],
+                  mission_balance_source=maps["mission_balance_source"],
+                  mission_balance_source_sha256=maps["mission_balance_source_sha256"],
                   mineral_layout_source=maps["mineral_layout_source"],
                   mineral_layout_source_sha256=maps["mineral_layout_source_sha256"],
                   resource_layout_source=maps["resource_layout_source"],

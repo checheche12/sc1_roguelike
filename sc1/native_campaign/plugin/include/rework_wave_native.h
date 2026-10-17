@@ -181,7 +181,7 @@ inline void roster(const policy::Roster& r) {
  U32 created=0;
  for(std::size_t i=0;i<r.units.size();i++){
   auto m=r.units[i];if(!m.count)continue;
-  if(r.slot==policy::Rear)m.unit=static_cast<std::uint16_t>(infantry(primary->race)),m.count=timeline.second()>=1200?12:8;
+  if(r.slot==policy::Rear)m.unit=static_cast<std::uint16_t>(infantry(primary->race)),m.count=(timeline.departure_at?timeline.departure_at:timeline.second())>=1200?18:12;
   if(r.slot==policy::Heavy)m.unit=static_cast<std::uint16_t>(primary->race==0?38:primary->race==2?66:3);
   if(r.slot==policy::Flank)m.unit=static_cast<std::uint16_t>(primary->race==0?37:primary->race==2?65:2);
   if(r.slot==policy::Vanguard){if(!i)m.unit=static_cast<std::uint16_t>(primary->race==0?39:primary->race==2?68:5);else m.unit=static_cast<std::uint16_t>(infantry(primary->race));}

@@ -41324,7 +41324,7 @@
       "id": "09224f2f-b115-5c53-adb3-883bb36075cd",
       "name": "끈질긴 후미대",
       "target": "적 기본 보병",
-      "description": "두 번째 공세부터 두 공세마다 보병 8기 추가. 20분부터 12기이며 중첩과 증원량 증가가 적용됩니다.",
+      "description": "두 번째 공세부터 매 공세에 보병 편성이 추가될 수 있습니다. 기본 10기, 20분부터 15기이며 중첩과 증원량 증가가 적용됩니다.",
       "trigger": "",
       "numbers": "",
       "notes": "게임 반영 전 저주 설계입니다. 효과는 실제 적 소유 추가 공세에만 적용하며 동족전에서도 아군에는 적용하지 않습니다. 원래 임무 병력·AI·목표·승리 트리거는 변경하지 않습니다. 생성 전 별도 공세 타이머와 20초 경고를 표시하고 적 기지 또는 경로가 연결된 안전한 외곽에서 출발합니다. 일꾼·건물 옆 즉시 생성 금지. 준비 시간은 일반 임무 최소 5분, 생산 없는 임무 최소 6분입니다. 진입 경로·대공·탐지 등 대응 수단이 없는 임무는 해당 편성을 후보에서 제외합니다. 재능·저주로 추가 생성한 병력의 사망은 망자의 지원군 등 생성 효과를 다시 발동하지 않습니다. 지연된 회차를 한꺼번에 몰아 보내지 않습니다. 희귀 이상 편성은 지도 원래 적 종족과 무관하게 사용할 수 있습니다. 스토리 영웅 전역 능력치나 임무 목표 유닛을 재사용하지 않고 독립 태그가 있는 전투 인스턴스로 구성합니다. 증원량 증가는 일반 호위에만 적용하며 특수 유닛 수 상한은 넘기지 않습니다.\n설계 참고: SC2 Outbreak의 지속 증원과 Heroes from the Storm의 공세 특수 유닛. https://news.blizzard.com/en-gb/article/20274192/mutation-creation-vote-for-the-winner",
@@ -41347,9 +41347,13 @@
         "type": "rework_v5",
         "ordinal": 10,
         "source_id": "09224f2f-b115-5c53-adb3-883bb36075cd",
-        "units_per_stack": 8,
-        "late_units_per_stack": 12,
+        "units_per_stack": 12,
+        "late_units_per_stack": 18,
         "late_seconds": 1200,
+        "base_delivered_units": 10,
+        "late_delivered_units": 15,
+        "wave_cadence": 1,
+        "shared_special_roster_limit": 2,
         "qa_revision": 20261016
       },
       "target_units": [],
@@ -49878,9 +49882,10 @@
         "original_trigger_types_preserved": true,
         "coverage_receipts": [
           "analysis/runtime_rework_20261016/wave_curse_coverage.json",
-          "analysis/qa_fixes_20261016/infantry_waves/verification.json"
+          "analysis/qa_fixes_20261016/infantry_waves/verification.json",
+          "analysis/mission_balance_qa14_20261017/verification.json"
         ],
-        "mechanism": "race-matched rear8per stack then12after1200sec; reinforcement scaling; starts second main wave",
+        "mechanism": "race-matched rear12per stack then18at1200sec departure; global85percent gives10/15 at one stack; reinforcement scaling; eligible each wave from second; shared2-special selection retained",
         "actual_engine_verified": false
       },
       "64ba451e-5781-5d89-9163-50a0b5295319": {

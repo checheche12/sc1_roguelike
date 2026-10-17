@@ -14,7 +14,7 @@ struct Roster {U32 slot,cadence,grade,requirements,hp_percent,attack_percent;std
 // grade0 common/uncommon,1 rare,2 epic,3 legendary. No hero count scaling.
 inline constexpr Roster kRosters[]={
  {Reserve,1,0,GroundPath,100,100,{{{0,3},{0,0},{0,0},{0,0},{0,0},{0,0}}}},
- {Rear,2,0,GroundPath,100,100,{{{0,8}}}},
+ {Rear,1,0,GroundPath,100,100,{{{0,12}}}},
  {Heavy,1,0,GroundPath,100,100,{{{3,4}}}},
  {Flank,2,0,GroundPath,100,100,{{{2,8}}}},
  {Ground,2,1,GroundPath,100,100,{{{5,2},{38,6},{66,4}}}},
