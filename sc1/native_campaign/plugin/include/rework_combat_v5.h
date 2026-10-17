@@ -62,6 +62,8 @@ inline U32 manual_base(U32 ordinal,U32 id) noexcept {
     }
     return in(ordinal,{29,70,111})?1u:2u;
 }
+// QA13: shared defense manuals grant +0.5 armor and +28% health per rank.
+inline std::uint64_t armor_eighths(U32 stacks) noexcept {return std::uint64_t(stacks)*4u;}
 inline bool plan_stats(const GrowthSnapshot& s,std::vector<Edit>& edits) {
     const auto edit=[&](Key k,U32 op,U32 n,U32 d=1u){return plan_edit(edits,k,op,n,d);};
     const auto plus=[&](Key k,U32 n){return !n || edit(k,1,n);};
@@ -70,9 +72,9 @@ inline bool plan_stats(const GrowthSnapshot& s,std::vector<Edit>& edits) {
     for(U32 id=0;id<228;id++){
         U32 health=0;
         for(U32 ord:{26u,27u,28u,67u,68u,69u,108u,109u,110u})if(rank(s,ord) && group(ord,id))health=ord+1;
-        if(health){const U32 percent=100+talent_power::v5(health-1,std::uint64_t(rank(s,health-1))*20);if(!edit({0,8,id},4,percent,100))return false;if(health>=109 && !edit({0,7,id},4,percent,100))return false;}
+        if(health){const U32 percent=100+rank(s,health-1)*(talent_power::enabled?28u:20u);if(!edit({0,8,id},4,percent,100))return false;if(health>=109 && !edit({0,7,id},4,percent,100))return false;}
         if(soldier(id)){
-            const U32 armor=U32(std::uint64_t(rank(s,ground_type(id) ? 11u : 12u))*talent_power::quarters(249)/8u)+(rank(s,32)&&group(32,id) ? talent_power::v5(32,1) : 0u);
+            const U32 armor=U32(armor_eighths(rank(s,ground_type(id) ? 11u : 12u))/8u)+(rank(s,32)&&group(32,id) ? talent_power::v5(32,1) : 0u);
             if(!plus({0,27,id},armor))return false;
             if(rank(s,13)){const auto value=std::min(11u,original_stat({0,24,id})+talent_power::v5(13,1));if(!edit({0,24,id},0,value))return false;}
         }
@@ -696,12 +698,12 @@ struct DamageScope {
         previous=current;
         target=to;source=from;w=weapon_id;normal=g.normal_hit&&ordinary_weapon(w);raw=damage;
         if(!g.active||!g.applied||generated_depth||!live(target))return;
-        if(normal&&own(target)&&soldier(target->unit_id)&&((std::uint64_t(rank(ground_type(target->unit_id)?11u:12u))*talent_power::quarters(249))%8u)){
+        if(normal&&own(target)&&soldier(target->unit_id)&&((armor_eighths(rank(ground_type(target->unit_id)?11u:12u)))%8u)){
             const U32 type=original_stat({1,7,w}),size=original_stat({0,26,target->unit_id});had_shield=target->shields>=256;
             // Native armor is removed before explosive/concussive size scaling.
             // Apply the odd half-rank at the native HP callback with that same
             // scaling; shield-only hits and Matrix absorption remain native.
-            const U32 fraction=U32((std::uint64_t(rank(ground_type(target->unit_id)?11u:12u))*talent_power::quarters(249))%8u)*32u;
+            const U32 fraction=U32((armor_eighths(rank(ground_type(target->unit_id)?11u:12u)))%8u)*32u;
             if(type==3)half_armor_reduction=fraction;
             else if(type==1)half_armor_reduction=size==1?fraction/2:size==2?fraction*3/4:size==3?fraction:0u;
             else if(type==2)half_armor_reduction=size==1?fraction:size==2?fraction/2:size==3?fraction/4:0u;

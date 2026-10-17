@@ -62,9 +62,9 @@ inline void qa10_ground_roles_and_four_health_ranks(){
     for(U32 ordinal:{26u,27u,28u,67u,68u,69u,108u,109u,110u})ranks[ordinal]=4;
     install();
     for(U32 id:{0u,3u,8u,37u,38u,43u,65u,66u,70u}){
-        CHECK(owner_stat(1,{0,8,id})==original_stat({0,8,id})*240/100);
+        CHECK(owner_stat(1,{0,8,id})==(original_stat({0,8,id})*212+50)/100);
         CHECK(owner_stat(6,{0,8,id})==original_stat({0,8,id}));
-        if(id>=65)CHECK(owner_stat(1,{0,7,id})==original_stat({0,7,id})*240/100);
+        if(id>=65)CHECK(owner_stat(1,{0,7,id})==(original_stat({0,7,id})*212+50)/100);
     }
     for(auto pair:{std::pair<U32,U32>{6,6},{31,12},{2,5},{12,6},{39,6},{50,60},{66,3},{61,6},{68,6}}){
         const auto w=original_stat({0,17,pair.first});CHECK(w<130);

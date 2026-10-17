@@ -26349,7 +26349,7 @@
       "id": "e490f090-f385-5961-93b9-76fdece67f52",
       "name": "임무 보급 상자",
       "target": "전역",
-      "description": "임무를 시작할 때 보유한 저주 하나당 미네랄·가스를 50씩 받습니다.",
+      "description": "임무 시작 시 보유 저주 수 × 37.5만큼 미네랄·가스를 받습니다. 총합의 소수점은 버립니다.",
       "trigger": "",
       "numbers": "",
       "notes": "생산 임무에 분산된 경제 선택에서만 등장합니다. 캠페인 전체 경제 보상은 5회입니다.",
@@ -26372,8 +26372,10 @@
         "type": "rework_v5",
         "ordinal": 5,
         "source_id": "e490f090-f385-5961-93b9-76fdece67f52",
-        "qa_revision": 2026101610,
-        "benefit_power_quarters": 4
+        "qa_revision": 2026101713,
+        "benefit_power_quarters": 4,
+        "resources_per_curse": 37.5,
+        "resource_total_rounding": "floor"
       },
       "target_units": [],
       "requirements": {
@@ -27111,7 +27113,7 @@
       "id": "1ec96c5e-bd7f-5b05-a4e2-1707b863f061",
       "name": "전열 방호 교범",
       "target": "아군 지상 병력·영웅",
-      "description": "아군 지상 병력과 영웅의 방어력 +0.75.  중첩당 적용, 최대 4회 선택할 수 있습니다.",
+      "description": "아군 지상 병력과 영웅의 방어력 +0.5.  중첩당 적용, 최대 4회 선택할 수 있습니다.",
       "trigger": "",
       "numbers": "선택 횟수 제한 없음. 같은 창에서는 동일 재능 1개만 표시. 공격주기 = 원래 주기 × 0.97^중첩 수(해당 교범에만 적용). 엔진 최소 1틱, 매 단계 원본에서 다시 계산.",
       "notes": "일반 병력 교범은 보유 후에도 재등장합니다. 공격력·방어력은 중첩당 수치를 합산하고, 이동 속도는 원래 속도 × (1 + 0.03 × 중첩 수)로 계산합니다. 일꾼·건물·탄약은 제외하며, 인터셉터는 함대 교범의 공격력만 캐리어를 통해 1회 상속합니다. 지상/공중 분류는 겹치지 않습니다. 자폭·튀김의 타격 수와 마법 피해는 늘리지 않습니다. 기존 발급 선택과 과거 기록은 재해석하지 않습니다.",
@@ -27134,8 +27136,8 @@
         "type": "rework_v5",
         "ordinal": 11,
         "source_id": "1ec96c5e-bd7f-5b05-a4e2-1707b863f061",
-        "armor_per_rank": 0.75,
-        "qa_revision": 2026101610,
+        "armor_per_rank": 0.5,
+        "qa_revision": 2026101713,
         "benefit_power_quarters": 6
       },
       "target_units": [
@@ -27275,7 +27277,7 @@
       "id": "12dda10f-da28-5df4-9a3b-5f8d1aa30d81",
       "name": "공중 방호 교범",
       "target": "아군 공중 병력·영웅",
-      "description": "아군 공중 병력과 영웅의 방어력 +0.75.  중첩당 적용, 최대 4회 선택할 수 있습니다.",
+      "description": "아군 공중 병력과 영웅의 방어력 +0.5.  중첩당 적용, 최대 4회 선택할 수 있습니다.",
       "trigger": "",
       "numbers": "선택 횟수 제한 없음. 같은 창에서는 동일 재능 1개만 표시. 공격주기 = 원래 주기 × 0.97^중첩 수(해당 교범에만 적용). 엔진 최소 1틱, 매 단계 원본에서 다시 계산.",
       "notes": "일반 병력 교범은 보유 후에도 재등장합니다. 공격력·방어력은 중첩당 수치를 합산하고, 이동 속도는 원래 속도 × (1 + 0.03 × 중첩 수)로 계산합니다. 일꾼·건물·탄약은 제외하며, 인터셉터는 함대 교범의 공격력만 캐리어를 통해 1회 상속합니다. 지상/공중 분류는 겹치지 않습니다. 자폭·튀김의 타격 수와 마법 피해는 늘리지 않습니다. 기존 발급 선택과 과거 기록은 재해석하지 않습니다.",
@@ -27298,8 +27300,8 @@
         "type": "rework_v5",
         "ordinal": 12,
         "source_id": "12dda10f-da28-5df4-9a3b-5f8d1aa30d81",
-        "armor_per_rank": 0.75,
-        "qa_revision": 2026101610,
+        "armor_per_rank": 0.5,
+        "qa_revision": 2026101713,
         "benefit_power_quarters": 6
       },
       "target_units": [
@@ -29043,7 +29045,7 @@
       "id": "39983934-eff0-5a0f-870c-41a6c6013969",
       "name": "생체 전열 강화",
       "target": "테란 지상 생체 병력·영웅",
-      "description": "테란 지상 생체 병력과 영웅의 최대 체력 +35%. 일꾼은 제외됩니다. 중첩당 적용, 최대 4회 선택할 수 있습니다.",
+      "description": "테란 지상 생체 병력과 영웅의 최대 체력 +28%. 일꾼은 제외됩니다. 중첩당 적용, 최대 4회 선택할 수 있습니다.",
       "trigger": "",
       "numbers": "",
       "notes": "현재 체력은 증가분만큼 자동 회복하지 않음.",
@@ -29066,8 +29068,9 @@
         "type": "rework_v5",
         "ordinal": 26,
         "source_id": "39983934-eff0-5a0f-870c-41a6c6013969",
-        "qa_revision": 2026101610,
-        "benefit_power_quarters": 7
+        "qa_revision": 2026101713,
+        "benefit_power_quarters": 7,
+        "health_percent_per_rank": 28
       },
       "target_units": [
         0,
@@ -29119,7 +29122,7 @@
       "id": "12d58417-b192-5873-8c39-d801578d78a0",
       "name": "기갑 차체 강화",
       "target": "테란 지상 기계 병력·영웅",
-      "description": "테란 지상 기계 병력과 영웅의 최대 체력 +35%. 전차·공성 모드 모두 적용됩니다. 중첩당 적용, 최대 4회 선택할 수 있습니다.",
+      "description": "테란 지상 기계 병력과 영웅의 최대 체력 +28%. 전차·공성 모드 모두 적용됩니다. 중첩당 적용, 최대 4회 선택할 수 있습니다.",
       "trigger": "",
       "numbers": "",
       "notes": "일꾼·보조 포탑·공중 제외.",
@@ -29142,8 +29145,9 @@
         "type": "rework_v5",
         "ordinal": 27,
         "source_id": "12d58417-b192-5873-8c39-d801578d78a0",
-        "qa_revision": 2026101610,
-        "benefit_power_quarters": 7
+        "qa_revision": 2026101713,
+        "benefit_power_quarters": 7,
+        "health_percent_per_rank": 28
       },
       "target_units": [
         2,
@@ -29199,7 +29203,7 @@
       "id": "a7a4b88b-99dd-5c73-880f-83bc6fbe59bc",
       "name": "비행 동체 강화",
       "target": "테란 공중 병력·영웅",
-      "description": "테란 공중 병력과 영웅의 최대 체력 +35%. 과학선·드롭십도 포함됩니다. 중첩당 적용, 최대 4회 선택할 수 있습니다.",
+      "description": "테란 공중 병력과 영웅의 최대 체력 +28%. 과학선·드롭십도 포함됩니다. 중첩당 적용, 최대 4회 선택할 수 있습니다.",
       "trigger": "",
       "numbers": "",
       "notes": "지상 기계 체력과 겹치지 않음.",
@@ -29222,8 +29226,9 @@
         "type": "rework_v5",
         "ordinal": 28,
         "source_id": "a7a4b88b-99dd-5c73-880f-83bc6fbe59bc",
-        "qa_revision": 2026101610,
-        "benefit_power_quarters": 7
+        "qa_revision": 2026101713,
+        "benefit_power_quarters": 7,
+        "health_percent_per_rank": 28
       },
       "target_units": [
         8,
@@ -31907,7 +31912,7 @@
       "id": "8339d38d-2b37-56c8-a5e3-98d88ba0b146",
       "name": "돌격 군체 갑각",
       "target": "저글링·울트라리스크·브루들링·감염된 테란·동일 유형 영웅",
-      "description": "저글링·울트라·브루들링·감염된 테란과 같은 계열 영웅의 최대 체력 +35%. 중첩당 적용, 최대 4회 선택할 수 있습니다.",
+      "description": "저글링·울트라·브루들링·감염된 테란과 같은 계열 영웅의 최대 체력 +28%. 중첩당 적용, 최대 4회 선택할 수 있습니다.",
       "trigger": "",
       "numbers": "",
       "notes": "일꾼·공중·원거리·지원 제외.",
@@ -31930,8 +31935,9 @@
         "type": "rework_v5",
         "ordinal": 67,
         "source_id": "8339d38d-2b37-56c8-a5e3-98d88ba0b146",
-        "qa_revision": 2026101610,
-        "benefit_power_quarters": 7
+        "qa_revision": 2026101713,
+        "benefit_power_quarters": 7,
+        "health_percent_per_rank": 28
       },
       "target_units": [
         37,
@@ -31986,7 +31992,7 @@
       "id": "c6944d6f-83df-58e1-b9a9-ecd8e2da96a0",
       "name": "가시·지원 군체 갑각",
       "target": "히드라리스크·러커·디파일러·동일 유형 영웅",
-      "description": "히드라·러커·디파일러와 같은 계열 영웅의 최대 체력 +35%. 중첩당 적용, 최대 4회 선택할 수 있습니다.",
+      "description": "히드라·러커·디파일러와 같은 계열 영웅의 최대 체력 +28%. 중첩당 적용, 최대 4회 선택할 수 있습니다.",
       "trigger": "",
       "numbers": "",
       "notes": "디파일러 전용 지상 지원 갑각을 이 카드로 통합합니다. 저글링·울트라리스크·브루들링·감염된 테란은 돌격 군체, 퀸·오버로드 등 모든 공중 병력은 비행 군체에만 포함하여 중복 적용하지 않습니다.",
@@ -32009,8 +32015,9 @@
         "type": "rework_v5",
         "ordinal": 68,
         "source_id": "c6944d6f-83df-58e1-b9a9-ecd8e2da96a0",
-        "qa_revision": 2026101610,
-        "benefit_power_quarters": 7
+        "qa_revision": 2026101713,
+        "benefit_power_quarters": 7,
+        "health_percent_per_rank": 28
       },
       "target_units": [
         38,
@@ -32063,7 +32070,7 @@
       "id": "0acfc640-2141-5dbb-aef3-59b6d96fd8b6",
       "name": "비행 군체 외피",
       "target": "저그 공중 병력·영웅",
-      "description": "저그 공중 병력과 영웅의 최대 체력 +35%. 퀸·오버로드도 포함됩니다. 중첩당 적용, 최대 4회 선택할 수 있습니다.",
+      "description": "저그 공중 병력과 영웅의 최대 체력 +28%. 퀸·오버로드도 포함됩니다. 중첩당 적용, 최대 4회 선택할 수 있습니다.",
       "trigger": "",
       "numbers": "",
       "notes": "모든 공중 병력은 이 카드에만 포함됩니다. 퀸·오버로드 포함, 지상 갑각 카드와 겹치지 않습니다.",
@@ -32086,8 +32093,9 @@
         "type": "rework_v5",
         "ordinal": 69,
         "source_id": "0acfc640-2141-5dbb-aef3-59b6d96fd8b6",
-        "qa_revision": 2026101610,
-        "benefit_power_quarters": 7
+        "qa_revision": 2026101713,
+        "benefit_power_quarters": 7,
+        "health_percent_per_rank": 28
       },
       "target_units": [
         42,
@@ -34931,7 +34939,7 @@
       "id": "f98413ba-abcb-51f0-87cd-0855115d04ea",
       "name": "전사 생명력",
       "target": "프로토스 지상 생체·에너지 병력",
-      "description": "프로토스 지상 생체·에너지 병력의 최대 체력·보호막 +35%. 질럿·템플러·아콘 계열. 중첩당 적용, 최대 4회 선택할 수 있습니다.",
+      "description": "프로토스 지상 생체·에너지 병력의 최대 체력·보호막 +28%. 질럿·템플러·아콘 계열. 중첩당 적용, 최대 4회 선택할 수 있습니다.",
       "trigger": "",
       "numbers": "",
       "notes": "아콘·다크 아콘도 이 전사 계열에 포함. 기계·공중·일꾼 제외.",
@@ -34954,8 +34962,10 @@
         "type": "rework_v5",
         "ordinal": 108,
         "source_id": "f98413ba-abcb-51f0-87cd-0855115d04ea",
-        "qa_revision": 2026101610,
-        "benefit_power_quarters": 7
+        "qa_revision": 2026101713,
+        "benefit_power_quarters": 7,
+        "health_percent_per_rank": 28,
+        "shield_percent_per_rank": 28
       },
       "target_units": [
         61,
@@ -35008,7 +35018,7 @@
       "id": "1295a6ab-05cb-5760-ba2c-830e661e0a5c",
       "name": "지상 기체 강화",
       "target": "프로토스 지상 기계 병력",
-      "description": "프로토스 지상 기계 병력의 최대 체력·보호막 +35%. 드라군·리버 계열. 중첩당 적용, 최대 4회 선택할 수 있습니다.",
+      "description": "프로토스 지상 기계 병력의 최대 체력·보호막 +28%. 드라군·리버 계열. 중첩당 적용, 최대 4회 선택할 수 있습니다.",
       "trigger": "",
       "numbers": "",
       "notes": "공중 관측선·셔틀 등 제외.",
@@ -35031,8 +35041,10 @@
         "type": "rework_v5",
         "ordinal": 109,
         "source_id": "1295a6ab-05cb-5760-ba2c-830e661e0a5c",
-        "qa_revision": 2026101610,
-        "benefit_power_quarters": 7
+        "qa_revision": 2026101713,
+        "benefit_power_quarters": 7,
+        "health_percent_per_rank": 28,
+        "shield_percent_per_rank": 28
       },
       "target_units": [
         66,
@@ -35078,7 +35090,7 @@
       "id": "6e8a9b64-74d6-573f-a944-94a9c5e0d0bd",
       "name": "함대 동체 강화",
       "target": "프로토스 공중 병력·영웅",
-      "description": "프로토스 공중 병력과 영웅의 최대 체력·보호막 +35%. 중첩당 적용, 최대 4회 선택할 수 있습니다.",
+      "description": "프로토스 공중 병력과 영웅의 최대 체력·보호막 +28%. 중첩당 적용, 최대 4회 선택할 수 있습니다.",
       "trigger": "",
       "numbers": "",
       "notes": "인터셉터 탄약 제외.",
@@ -35101,8 +35113,10 @@
         "type": "rework_v5",
         "ordinal": 110,
         "source_id": "6e8a9b64-74d6-573f-a944-94a9c5e0d0bd",
-        "qa_revision": 2026101610,
-        "benefit_power_quarters": 7
+        "qa_revision": 2026101713,
+        "benefit_power_quarters": 7,
+        "health_percent_per_rank": 28,
+        "shield_percent_per_rank": 28
       },
       "target_units": [
         60,

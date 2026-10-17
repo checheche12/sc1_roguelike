@@ -18,7 +18,7 @@ inline void power_common_precision_and_caps(){
     using namespace rework_fixture;begin({29,11});ranks[29]=10;install();auto marine=unit(0,1,100,100),enemy=unit(37,6,120,100);
     std::int32_t damage=6*256;g.normal_hit=true;
     {rework_combat_v5::DamageScope hit(enemy,marine,0,1,damage);CHECK(damage==15*256);}
-    damage=6*256;{rework_combat_v5::DamageScope hit(marine,enemy,35,1,damage);CHECK(hit.half_armor_reduction==192);}
+    damage=6*256;{rework_combat_v5::DamageScope hit(marine,enemy,35,1,damage);CHECK(hit.half_armor_reduction==128);}
     CHECK(std::abs(rework_combat_v5::cooldown_ratio(marine,0)-std::pow(.955,10))<1e-9);
     CHECK(rework_combat_v5::infantry_damage(0x7fffffff,0xffffffffu)==0x7fffffff);
     CHECK(rework_combat_v5::infantry_ui_value(marine,0,0xffffffffu)==0xffffffffu);
@@ -27,7 +27,7 @@ inline void power_common_precision_and_caps(){
 }
 inline void power_economy_actual_native_ledgers(){
     CHECK(talent_power::quarters(264)==7&&talent_power::quarters(238)==4&&talent_power::quarters(15)==4);
-    reset();CHECK(apply_snapshot(nullptr,economy_snapshot({26})));CHECK(owner_stat(1,{0,8,0})==54*256);
+    reset();CHECK(apply_snapshot(nullptr,economy_snapshot({26})));CHECK(owner_stat(1,{0,8,0})==(40*256*128+50)/100);
     reset();auto s=economy_snapshot({0,1,3,7,24,151,117});CHECK(apply_snapshot(nullptr,s));
     CHECK(owner_stat(1,{0,40,0})==40);CHECK(owner_stat(1,{0,40,106})==280);
     CHECK(owner_stat(1,{0,40,41})==100);CHECK(owner_stat(1,{0,42,41})==150);
