@@ -8,7 +8,16 @@ inline void* __cdecl selected(){return selection.data();}
 inline bool transport_id(U32 id){return id==11 || id==42 || id==57 || id==69;}
 inline bw::Unit* fresh(U32 id,U32 owner=1){auto u=add(id,owner,600,600,10000);u->flags=1;u->flingy.sprite=reinterpret_cast<void*>(1);return u;}
 inline void talent(U32 ordinal){const auto bit=238+ordinal;g.growth.talent_bits[bit/32]|=1u<<(bit%32);}
-inline void begin(){reset();g.applied=true;g.growth={};g.growth.wire_version=2;rework_cargo_v5::reset();selection={};death_calls={};give_calls={};rework_cargo_v5::selection_source=selected;CHECK(rework_cargo_v5::bind());}
+inline bool blocked_unload=false;
+inline U32 unload_calls=0,detach_calls=0;
+inline void __cdecl detach(bw::Unit* p,U32 hidden_flag){
+ CHECK(hidden_flag==0);++detach_calls;auto carrier=p->related;CHECK(carrier!=nullptr);
+ for(U32 i=0;i<8;i++){::sc1::sight_cargo::PackedWindow w{};std::memcpy(w.low.data(),carrier->loaded_units,sizeof(carrier->loaded_units));w.high=carrier->scr_carried_unit_high_bits;
+  if(rework_cargo_v5::cargo.resolve(::sc1::sight_cargo::unpack_slot(w,i))==p){carrier->loaded_units[i]=0;carrier->scr_carried_unit_high_bits&=~(3u<<(i*2));break;}}
+ p->related=nullptr;p->flags&=~0x60u;p->order=2;
+}
+inline void __cdecl unload_all(bw::Unit* c){++unload_calls;if(blocked_unload)return;for(U32 i=0;i<8;i++){::sc1::sight_cargo::PackedWindow w{};std::memcpy(w.low.data(),c->loaded_units,sizeof(c->loaded_units));w.high=c->scr_carried_unit_high_bits;if(auto p=rework_cargo_v5::cargo.resolve(::sc1::sight_cargo::unpack_slot(w,i)))if(p->related==c)detach(p,0);}}
+inline void begin(){reset();blocked_unload=false;unload_calls=detach_calls=0;rework_cargo_v5::native_unload_all=unload_all;rework_cargo_v5::native_detach=detach;g.applied=true;g.growth={};g.growth.wire_version=2;rework_cargo_v5::reset();selection={};death_calls={};give_calls={};rework_cargo_v5::selection_source=selected;CHECK(rework_cargo_v5::bind());}
 inline auto packed(bw::Unit* c){::sc1::sight_cargo::PackedWindow w{};std::memcpy(w.low.data(),c->loaded_units,sizeof(c->loaded_units));w.high=c->scr_carried_unit_high_bits;return w;}
 inline void __cdecl board(bw::Unit* passenger){
  auto carrier=passenger->order_target.unit;if(!valid_unit(carrier) || passenger->player!=carrier->player)return;
@@ -30,10 +39,8 @@ inline void __cdecl single_unload(const void* data,U32 length,U32){
  for(U32 i=0;i<8;i++)if(::sc1::sight_cargo::unpack_slot(window,i)==id){p->related=nullptr;p->flags&=~0x40u;c->loaded_units[i]=0;return;}
 }
 inline void __cdecl native_kill(bw::Unit* u){
- ++death_calls[static_cast<std::size_t>(u-units.data())];if(transport_id(u->unit_id)){const auto w=packed(u);for(U32 i=0;i<8;i++)if(auto p=rework_cargo_v5::cargo.resolve(::sc1::sight_cargo::unpack_slot(w,i)))owner_kill_hook(p,native_kill);}
- // The native bunker death path ejects its passengers. The production hook
- // must leave both their lives and the original packed handles intact.
- if(u->unit_id==125){const auto w=packed(u);for(U32 i=0;i<8;i++)if(auto p=rework_cargo_v5::cargo.resolve(::sc1::sight_cargo::unpack_slot(w,i))){p->related=nullptr;p->flags&=~0x60u;p->order=2;}std::memset(u->loaded_units,0,sizeof(u->loaded_units));u->scr_carried_unit_high_bits=0;}
+ ++death_calls[static_cast<std::size_t>(u-units.data())];if(transport_id(u->unit_id) || u->unit_id==125){const auto w=packed(u);for(U32 i=0;i<8;i++)if(auto p=rework_cargo_v5::cargo.resolve(::sc1::sight_cargo::unpack_slot(w,i)))owner_kill_hook(p,native_kill);}
+ // Any still-linked bunker passengers are killed: ejection must precede this.
  u->flingy.hitpoints=0;u->order=0;u->order_state=1;u->related=nullptr;u->flags&=~0x40u;
 }
 inline void __cdecl native_give(bw::Unit* u,U32 owner){
@@ -86,13 +93,14 @@ inline void native_extended_transport_research_gate(){
  array.end=array.pointer+24*12+1;CHECK(rework_cargo_v5::capacity(ordinary)==8 && !rework_upgrade_storage::slot(1,24));g.extended=nullptr;g.extended_count=0;
 }
 inline void bunker_death_preserves_native_ejection(){
- for(U32 owner:{1u,6u})for(U32 passengers:{1u,4u})for(bool lethal:{false,true}){
-  begin();auto bunker=fresh(125,owner);std::array<bw::Unit*,4> inside{};
-  for(U32 i=0;i<passengers;i++){inside[i]=enter(bunker,i%2 ? 32u : 0u);CHECK((inside[i]->flags&0x60u)==0x60u);}
+ for(U32 owner:{1u,6u})for(U32 passengers:{1u,4u})for(bool lethal:{false,true})for(bool blocked:{false,true}){
+  begin();blocked_unload=blocked;auto bunker=fresh(125,owner);std::array<bw::Unit*,4> inside{};
+  for(U32 i=0;i<passengers;i++){inside[i]=enter(bunker,i%2 ? 32u : 0u);inside[i]->energy=std::uint16_t((50+i)*256);CHECK((inside[i]->flags&0x60u)==0x60u);}
   CHECK(rework_cargo_v5::cargo.count(bunker)==passengers);
   if(lethal)bunker->flingy.hitpoints=0;
-  owner_kill_hook(bunker,native_kill);CHECK(death_calls[0]==1 && bunker->order==0);
-  for(U32 i=0;i<passengers;i++){auto p=inside[i];CHECK(death_calls[p-units.data()]==0);CHECK(p->flingy.hitpoints==10000 && p->order!=0);CHECK(!p->related && !(p->flags&0x60u) && p->player==owner);}
+  owner_kill_hook(bunker,native_kill);CHECK(death_calls[0]==1 && bunker->order==0);CHECK(unload_calls==1 && detach_calls==passengers);
+  for(U32 i=0;i<passengers;i++){auto p=inside[i];CHECK(death_calls[p-units.data()]==0);CHECK(p->flingy.hitpoints==10000 && p->order!=0);CHECK(!p->related && !(p->flags&0x60u) && p->player==owner);CHECK(p->energy==(50+i)*256);}
+  CHECK(count==passengers+1);
  }
 }
 inline void bunker_give_preserves_native_manifest(){

@@ -7,6 +7,11 @@ from .runtime_catalog import GrowthError, load_catalog, validate_catalog, encode
 
 SKIPPED_CURSE='__no_future_added_waves__'
 SKIPPED_FINAL='__campaign_clear_no_final_reward__'
+RETIRED_TALENTS=frozenset(('bbf067dc-0ced-5875-a519-2c0443580c8d',))
+
+
+def retired(item):
+    return item['id'] in RETIRED_TALENTS or bool(item.get('effect',{}).get('retired'))
 
 
 def enabled(catalog):
@@ -92,6 +97,7 @@ def encode(conn,mission,catalog,owned,stacks):
 
 def acquire(conn,mission,catalog,owned,identity):
     item=next(x for x in catalog['talents'] if x['id']==identity)
+    if retired(item):raise GrowthError('retired_talent','삭제된 재능은 선택할 수 없습니다.')
     if identity in owned and not item.get('repeatable'):
         raise GrowthError('duplicate_talent','이미 보유한 재능입니다.')
     if item.get('repeatable'):
@@ -163,6 +169,7 @@ def candidates(catalog,mission,phase,owned,rng,*,recent_manuals=(),rank_counts=N
         return progression.item_eligible(item,identity,'talent') and (not targets or bool(targets&available))
     rank_counts=rank_counts or {}
     for item in catalog['talents']:
+        if retired(item):continue
         if rank_policy.exhausted(item,owned,rank_counts):continue
         if item.get('rework_revision')!=5 or not progression.item_eligible(item,mission,'talent'):continue
         # Every legendary choice must be usable on this mission. Native coverage can

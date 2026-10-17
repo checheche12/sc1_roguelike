@@ -27613,7 +27613,7 @@
       "id": "bbf067dc-0ced-5875-a519-2c0443580c8d",
       "name": "전장 재배치",
       "target": "아군 병력·영웅",
-      "description": "아군이 공격한 뒤 1.875초 안에 이동 명령을 내리면 최대 3.75타일 도약합니다. 재사용 8초.",
+      "description": "삭제된 재능입니다. 더 이상 선택하거나 효과를 받을 수 없습니다.",
       "trigger": "",
       "numbers": "",
       "notes": "공격 주기는 초기화하지 않음. 지상 병력은 현재 경로가 연결된 빈 착지점이 있어야 하며 벽·절벽을 넘지 않음.",
@@ -27636,8 +27636,9 @@
         "type": "rework_v5",
         "ordinal": 14,
         "source_id": "bbf067dc-0ced-5875-a519-2c0443580c8d",
-        "qa_revision": 2026101610,
-        "benefit_power_quarters": 10
+        "qa_revision": 2026101712,
+        "benefit_power_quarters": 10,
+        "retired": true
       },
       "target_units": [
         0,
@@ -29795,7 +29796,7 @@
       "id": "221f97e2-ecb4-5c36-92e6-77b8ecbd015d",
       "name": "특수전 에너지 비축",
       "target": "고스트·메딕·과학선",
-      "description": "고스트·메딕·과학선의 최대 에너지 +200. 현재 에너지도 즉시 200 받습니다.",
+      "description": "고스트·메딕·과학선의 최대 에너지 +200. 획득 시 기존 병력과 이후 생산 완료된 병력에 현재 에너지 200을 한 번 지급합니다.",
       "trigger": "",
       "numbers": "",
       "notes": "회복은 실제 최대 에너지까지 적용.",
@@ -29818,8 +29819,11 @@
         "type": "rework_v5",
         "ordinal": 36,
         "source_id": "221f97e2-ecb4-5c36-92e6-77b8ecbd015d",
-        "qa_revision": 2026101610,
-        "benefit_power_quarters": 8
+        "qa_revision": 2026101712,
+        "benefit_power_quarters": 8,
+        "energy_grant_on_acquisition": true,
+        "energy_grant_on_production": true,
+        "energy_grant_once": true
       },
       "target_units": [
         1,
@@ -31700,7 +31704,7 @@
       "id": "b8a603b2-ca89-5cf0-bdab-f5b7549480e4",
       "name": "삼중 야마토",
       "target": "배틀크루저 야마토",
-      "description": "야마토가 주변의 다른 적 최대 2기에도 200% 피해를 줍니다. 에너지는 한 번만 사용합니다.",
+      "description": "야마토 3발이 각각 원래의 200% 피해를 줍니다. 추가 2발은 주 대상의 4타일 안 다른 적을 우선 공격하며, 적이 부족하면 살아 있는 주 대상에 집중합니다. 에너지 소모는 총 75입니다.",
       "trigger": "",
       "numbers": "",
       "notes": "세부 적용: 주 표적 원래 피해, 반경 3타일 내 다른 적 최대 2기에 각각 원래 피해의 50%. 비용·주 시전 1회, 동일 대상 중복 금지.",
@@ -31723,7 +31727,7 @@
         "type": "rework_v5",
         "ordinal": 64,
         "source_id": "b8a603b2-ca89-5cf0-bdab-f5b7549480e4",
-        "qa_revision": 2026101610,
+        "qa_revision": 2026101712,
         "benefit_power_quarters": 16
       },
       "target_units": [
@@ -32610,7 +32614,7 @@
       "id": "b5521a38-81d0-5f52-9b4e-1b8454831afa",
       "name": "군체 정신 비축",
       "target": "퀸·디파일러",
-      "description": "퀸·디파일러의 최대 에너지가 200 늘어납니다.",
+      "description": "퀸·디파일러의 최대 에너지 +200. 획득 시 기존 병력과 이후 생산 완료된 병력에 현재 에너지 200을 한 번 지급합니다.",
       "trigger": "",
       "numbers": "",
       "notes": "회복은 실제 최대 에너지까지 적용.",
@@ -32633,8 +32637,11 @@
         "type": "rework_v5",
         "ordinal": 76,
         "source_id": "b5521a38-81d0-5f52-9b4e-1b8454831afa",
-        "qa_revision": 2026101610,
-        "benefit_power_quarters": 8
+        "qa_revision": 2026101712,
+        "benefit_power_quarters": 8,
+        "energy_grant_on_acquisition": true,
+        "energy_grant_on_production": true,
+        "energy_grant_once": true
       },
       "target_units": [
         45,
@@ -35675,7 +35682,7 @@
       "id": "10be23c9-95d7-5410-ac9f-bb7212ed43fc",
       "name": "기사단 정신 비축",
       "target": "하이 템플러·다크 아콘·아비터·커세어",
-      "description": "하이 템플러·다크 아콘·아비터·커세어의 최대 에너지 +200.",
+      "description": "하이 템플러·다크 아콘·아비터·커세어의 최대 에너지 +200. 획득 시 기존 병력과 이후 생산 완료된 병력에 현재 에너지 200을 한 번 지급합니다.",
       "trigger": "",
       "numbers": "",
       "notes": "회복은 실제 최대 에너지까지 적용.",
@@ -35698,8 +35705,11 @@
         "type": "rework_v5",
         "ordinal": 118,
         "source_id": "10be23c9-95d7-5410-ac9f-bb7212ed43fc",
-        "qa_revision": 2026101610,
-        "benefit_power_quarters": 8
+        "qa_revision": 2026101712,
+        "benefit_power_quarters": 8,
+        "energy_grant_on_acquisition": true,
+        "energy_grant_on_production": true,
+        "energy_grant_once": true
       },
       "target_units": [
         60,

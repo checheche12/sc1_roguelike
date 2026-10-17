@@ -9,6 +9,22 @@ inline Adapter cargo;
 inline bw::Unit* bound_units=nullptr;inline std::size_t bound_count=0;
 inline Selection selection_source=nullptr;
 inline U32 lifecycle_depth=0;
+using UnloadAll=void (__cdecl*)(bw::Unit*);
+using Detach=void (__cdecl*)(bw::Unit*,U32);
+inline UnloadAll native_unload_all=nullptr;
+inline Detach native_detach=nullptr;
+inline constexpr U8 unload_bytes[]={0x41,0x56,0x48,0x83,0xec,0x60,0x4c,0x8b,0xf1,0xe8,0x02,0x51,0xfe,0xff,0x85,0xc0};
+inline constexpr U8 detach_bytes[]={0x40,0x57,0x41,0x54,0x48,0x83,0xec,0x38,0x44,0x8b,0xe2,0x48,0x8b,0xf9,0xe8,0x8d,0x5b,0xfe,0xff};
+inline constexpr U8 detach_call[]={0x33,0xd2,0x48,0x8b,0xcb,0xe8,0x5d,0xf2,0xff,0xff};
+inline bool native_bytes(U8* base) noexcept {
+ return base && native_engine_hooks::match(base+0x1e1e60,unload_bytes,sizeof(unload_bytes)) &&
+ native_engine_hooks::match(base+0x1e1250,detach_bytes,sizeof(detach_bytes)) && native_engine_hooks::match(base+0x1e1fe9,detach_call,sizeof(detach_call));
+}
+inline bool bind_native() noexcept {
+ if(!native_engine_hooks::verify_image() || !native_bytes(native_engine_hooks::verified_base))return false;
+ native_unload_all=reinterpret_cast<UnloadAll>(native_engine_hooks::verified_base+0x1e1e60);
+ native_detach=reinterpret_cast<Detach>(native_engine_hooks::verified_base+0x1e1250);return true;
+}
 inline unsigned space(const bw::Unit* u) {return valid_unit(u) && u->unit_id<228?std::min(8u,original_stat({0,47,u->unit_id})):0u;}
 inline unsigned capacity(const bw::Unit* u) {
  if(!valid_unit(u) || u->unit_id>=228 || (u->flags&0x40000000u))return 8;
@@ -50,12 +66,33 @@ struct CommandScope {
  ~CommandScope(){if(active)cargo.after_commands();}
 };
 inline bool transport_lifecycle(const bw::Unit* carrier) noexcept {
- // Only these transports use the paged cargo windows. A bunker shares the
- // passenger links, but the native death path ejects its occupants alive.
+ // Only these transports use paged windows. Bunkers are explicitly ejected.
  // Do not require positive HP: lethal damage may already have set it to zero.
  return valid_unit(carrier) && (carrier->unit_id==11 || carrier->unit_id==42 || carrier->unit_id==57 || carrier->unit_id==69);
 }
 template<class Callback> inline void before_death(bw::Unit* carrier,Callback callback) {
+ if(g.active && valid_unit(carrier) && carrier->unit_id==125 && !lifecycle_depth && bind() && native_unload_all && native_detach){
+  ++lifecycle_depth;native_unload_all(carrier);
+  // Timers, disables and blocked terrain can reject stock UnloadAll. Only
+  // detach passengers resolved from the physical, generation-tagged slots.
+  ::sc1::sight_cargo::PackedWindow window{};
+  std::memcpy(window.low.data(),carrier->loaded_units,sizeof(carrier->loaded_units));window.high=carrier->scr_carried_unit_high_bits;
+  const U32 slots=std::min(8u,original_stat({0,48,125}));
+  for(U32 i=0;i<slots;i++)if(auto p=cargo.resolve(::sc1::sight_cargo::unpack_slot(window,i))){
+   if(p->related!=carrier || !(p->flags&0x40u))continue;
+   const auto center=carrier->flingy.position;bw::Point placed=center;
+   if(rework_relocation::native_move && rework_relocation::native_place){
+    rework_relocation::native_move(p,U32(center.x),U32(center.y));
+    bw::Point candidate{};if(rework_relocation::native_place(p,&center,&candidate,nullptr,0,0))placed=candidate;
+    rework_relocation::native_move(p,U32(placed.x),U32(placed.y));
+   }
+   // Native ShowUnit/list/collision/packed-handle cleanup preserves the same
+   // unit, HP and energy. It never spawns replacement occupants.
+   native_detach(p,0);
+   if(g.order && !p->related)g.order(p,1,U32(placed.x),U32(placed.y),nullptr,228);
+  }
+  --lifecycle_depth;return;
+ }
  if(!g.active || !transport_lifecycle(carrier) || !bind() || lifecycle_depth || !cargo.count(carrier))return;
  ++lifecycle_depth;cargo.for_each_passenger(carrier,[&](bw::Unit* p){callback(p);});cargo.hide_window(carrier);--lifecycle_depth;
 }

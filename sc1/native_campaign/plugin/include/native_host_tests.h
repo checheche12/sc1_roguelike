@@ -10,9 +10,9 @@ int checks=0;
 #define CHECK(x) do {++checks;if (!(x)) throw std::runtime_error(std::string(__func__)+":"+std::to_string(__LINE__)+": " #x);} while(0)
 bw::Game game{};
 std::array<bw::Unit,1900> units{};
-bw::DatTable dat[3][96]{};
-std::size_t dat_counts[3]={64,64,64};
-std::array<std::array<std::array<U8,228*4>,64>,3> storage{};
+bw::DatTable dat[5][96]{};
+std::size_t dat_counts[5]={64,64,64,64,64};
+std::array<std::array<std::array<U8,228*4>,64>,5> storage{};
 samase::PluginApi api{};
 std::size_t count=0;
 bw::Unit* active=nullptr,*hidden=nullptr;
@@ -37,8 +37,9 @@ void __cdecl get_array(bw::Unit** p,std::size_t* n){*p=units.data();*n=units.siz
 bw::DatTable* __cdecl dat0(std::size_t* n){++dat_getter_calls;*n=dat_counts[0];return dat[0];}
 bw::DatTable* __cdecl dat1(std::size_t* n){++dat_getter_calls;*n=dat_counts[1];return dat[1];}
 bw::DatTable* __cdecl dat2(std::size_t* n){++dat_getter_calls;*n=dat_counts[2];return dat[2];}
-GenericFn __cdecl get_dat(U32 t){++dat_factory_calls;if(!require_init())return nullptr;return t<3 ? reinterpret_cast<GenericFn>(t==2 ? dat2 : t ? dat1 : dat0) : nullptr;}
-void* __cdecl mutate(U32 t,U32 f){++mutate_calls;return t<2 && f<64 ? &dat[t][f] : nullptr;}
+bw::DatTable* __cdecl dat4(std::size_t* n){++dat_getter_calls;*n=dat_counts[4];return dat[4];}
+GenericFn __cdecl get_dat(U32 t){++dat_factory_calls;if(!require_init())return nullptr;if(t==4)return reinterpret_cast<GenericFn>(dat4);return t<3 ? reinterpret_cast<GenericFn>(t==2 ? dat2 : t ? dat1 : dat0) : nullptr;}
+void* __cdecl mutate(U32 t,U32 f){++mutate_calls;return (t<2 || t==4) && f<64 ? &dat[t][f] : nullptr;}
 void __cdecl set_hp(bw::Unit* u,std::int32_t hp){++hps;u->flingy.hitpoints=hp;}
 void __cdecl kill(bw::Unit* u){++kills;u->flingy.hitpoints=0;u->order=0;}
 void __cdecl order(bw::Unit* u,U32 id,U32 x,U32 y,bw::Unit*,U32){++orders;u->order=static_cast<U8>(id);u->order_target.x=static_cast<std::int16_t>(x);u->order_target.y=static_cast<std::int16_t>(y);}
@@ -93,7 +94,8 @@ void reset() {
     api.is_multiplayer=api.is_replay=factory<zero>;api.get_func=get_function;api.max_func_id=80;
     api.hook_on_first_file_access=reinterpret_cast<GenericFn>(register_first_file);
     api.load_vars=load_vars;api.hook_init_units=register_units;api.hook_step_objects=register_step;api.extend_save=register_save;
-    for(U32 t=0;t<3;t++)for(U32 f=0;f<64;f++)dat[t][f]={storage[t][f].data(),4,228};
+    for(U32 t=0;t<5;t++)for(U32 f=0;f<64;f++)dat[t][f]={storage[t][f].data(),4,228};
+    write_entry(&dat[4][3],8,150);
     const char* stock_paths[]={"../managed_dat/arr/units.dat","../managed_dat/arr/weapons.dat","../support_dat/arr/flingy.dat"};
     for(U32 table=0;table<3;table++){
         std::ifstream file(stock_paths[table],std::ios::binary);CHECK(file.good());file.seekg(0,std::ios::end);const auto n=file.tellg();
@@ -106,7 +108,7 @@ void reset() {
     }
     for(const auto& e:expected_stats){dat[e.table][e.field].entry_size=e.width;write_entry(&dat[e.table][e.field],e.id,e.before);}
     plugin_init_open=true;const bool bound=bind_api(&api);plugin_init_open=false;CHECK(bound);
-    CHECK(dat_factory_calls==3 && extended_array_calls==1 && late_init_calls==0);
+    CHECK(dat_factory_calls==4 && extended_array_calls==1 && late_init_calls==0);
     g.mission=&campaign_config::kMissions[0];g.campaign_index=2;
     g.active=true;g.applied=false;g.hooks_ready=true;g.game_thread=GetCurrentThreadId();g.pumping=false;
     g.dialog.set_callbacks(dialog_callbacks());
@@ -550,12 +552,12 @@ void wave_host_integration() {
 }
 void api_lifecycle_boundaries() {
     reset();const auto init_count=init_calls;
-    CHECK(init_count==25 && !plugin_init_open);
+    CHECK(init_count==26 && !plugin_init_open);
     // The registration object is not a runtime API. Invalidating it after bind
     // models that boundary, while cached direct callbacks remain executable.
     api={};make_chk();init_units(original);
     CHECK(g.active && g.api_version==44 && read_var_calls==1 && free_calls==1);
-    CHECK(dat_factory_calls==3 && extended_array_calls==1 && late_init_calls==0);
+    CHECK(dat_factory_calls==4 && extended_array_calls==1 && late_init_calls==0);
     auto s=all();s.completed_phase=1;CHECK(apply_snapshot(nullptr,s));
     const auto first_mutations=mutate_calls;CHECK(first_mutations>0 && dat_getter_calls>0);
     s.completed_phase=2;s.curse_counts[1]=2;CHECK(apply_snapshot(nullptr,s));
@@ -688,6 +690,8 @@ void real_managed_dat_assets() {
 #include "campaign_research_host_tests.h"
 #include "qa9_host_tests.h"
 #include "qa10_host_tests.h"
+#include "qa12_host_tests.h"
+#include "qa12_combat_visibility_tests.h"
 int main() {
     using namespace host_test;
     try {
@@ -717,9 +721,9 @@ int main() {
         run_rework_shield_ui_v5_groups();
         run_wave_progression_groups();
         run_talent_rank_groups();
-        run_talent_power_groups();run_campaign_research_groups();run_qa9_groups();run_qa10_groups();
+        run_talent_power_groups();run_campaign_research_groups();run_qa9_groups();run_qa10_groups();run_qa12_groups();run_qa12_extra_groups();
         abandon_session();g.baseline.clear();g.game=nullptr;
         CHECK(late_init_calls==0);
-        std::printf("PASS native host integration: %zu groups, %d checks; game process never accessed.\n",87u+qa9_group_count+qa10_group_count+campaign_research_group_count+talent_power_group_count+std::size(combat_audit::cases)+max_hp_engine_group_count+samase_status_ui_group_count+samase_weapon_ui_group_count+samase_armor_ui_group_count+trampoline_unwind_group_count+wave_targeting_group_count+wave_progression_group_count+talent_rank_group_count+rework_wave_group_count+enemy_progression_group_count+enemy_performance_group_count+targeting_bridge_group_count+rework_cargo_group_count+rework_carrier_group_count+rework_economy_group_count+rework_binding_group_count+rework_lighting_v5_group_count+rework_combat_v5_group_count+rework_economy_ui_group_count+rework_shield_ui_v5_group_count,checks);return 0;
+        std::printf("PASS native host integration: %zu groups, %d checks; game process never accessed.\n",87u+qa12_extra_group_count+qa12_group_count+qa9_group_count+qa10_group_count+campaign_research_group_count+talent_power_group_count+std::size(combat_audit::cases)+max_hp_engine_group_count+samase_status_ui_group_count+samase_weapon_ui_group_count+samase_armor_ui_group_count+trampoline_unwind_group_count+wave_targeting_group_count+wave_progression_group_count+talent_rank_group_count+rework_wave_group_count+enemy_progression_group_count+enemy_performance_group_count+targeting_bridge_group_count+rework_cargo_group_count+rework_carrier_group_count+rework_economy_group_count+rework_binding_group_count+rework_lighting_v5_group_count+rework_combat_v5_group_count+rework_economy_ui_group_count+rework_shield_ui_v5_group_count,checks);return 0;
     } catch(const std::exception& e){std::fprintf(stderr,"FAIL %s reason=%s\n",e.what(),g.apply_failure ? g.apply_failure : "none");return 1;}
 }

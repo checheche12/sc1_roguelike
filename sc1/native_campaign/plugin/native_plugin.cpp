@@ -77,7 +77,7 @@ using UnitArray = void (__cdecl*)(bw::Unit**,std::size_t*);
 struct ProjectileSource {bw::Unit* unit=nullptr;U32 id=228,owner=12,unique=0;};
 struct State {
     U32 api_version = 0;
-    std::array<GetDat,3> dat_getters{};
+    std::array<GetDat,5> dat_getters{};
     MutateDat mutate_dat = nullptr;
     ReadVars read_vars = nullptr;
     FreeMemory free_memory = nullptr;
@@ -141,6 +141,8 @@ struct State {
 } g;
 namespace rework_combat_v5 {bool plan_stats(const GrowthSnapshot&,std::vector<Edit>&);double speed_ratio(bw::Unit*);double cooldown_ratio(bw::Unit*,U32);U32 fractional_period(bw::Unit*,U32,U32,double);void growth_applied(const GrowthSnapshot&,const GrowthSnapshot&);}
 namespace rework_economy_v5 {bool plan_stats(const GrowthSnapshot&,std::vector<Edit>&);void before_snapshot();void after_snapshot();double motion_ratio(bw::Unit*) noexcept;}
+namespace campaign_visibility {void reset() noexcept;}
+namespace yamato_cost_ui {void reset() noexcept;void publish() noexcept;}
 namespace rework_energy_ui {void reset() noexcept;void publish() noexcept;}
 namespace rework_economy_ui {void reset() noexcept;bool publish(bool) noexcept;}
 namespace rework_shield_ui_v5 {void reset() noexcept;bool publish(bool) noexcept;}
@@ -662,7 +664,7 @@ bool apply_snapshot(void*,const GrowthSnapshot& s) noexcept {
         g.growth=s;g.wave_stacks=s.curse_counts[0];g.applied_phase=phase;
         rework_combat_v5::growth_applied(previous_growth,s);
         rework_economy_v5::after_snapshot();
-        rework_economy_ui::publish(true);
+        rework_economy_ui::publish(true);yamato_cost_ui::publish();
         rework_shield_ui_v5::publish(true);
         log_event("Owner-isolated cumulative growth: mission=%u phase=%u fields=%zu",g.mission ? g.mission->mission_id : 0,phase,g.owner_edits.size());
         return true;
@@ -1281,7 +1283,7 @@ void restore_baseline() noexcept {
 void abandon_session() noexcept {
     g.survival_hint_shown=false;
     g.campaign_clear_shown=false;
-    rework_energy_ui::reset();rework_economy_ui::reset();rework_shield_ui_v5::reset();enemy_progression::reset();rework_waves::reset();rework_combat_v5::reset();rework_economy_v5::reset();rework_cargo_v5::reset();rework_carrier_v5::reset();
+    campaign_visibility::reset();yamato_cost_ui::reset();rework_energy_ui::reset();rework_economy_ui::reset();rework_shield_ui_v5::reset();enemy_progression::reset();rework_waves::reset();rework_combat_v5::reset();rework_economy_v5::reset();rework_cargo_v5::reset();rework_carrier_v5::reset();
     max_hp_cache::reset();
     wave_targeting::reset();enemy_detection::reset();
     movement_effects::reset();combat_effects::reset_melee();g.objective_units.clear();
@@ -1427,7 +1429,7 @@ void __cdecl frame() noexcept {
         apply_unit_motion();
         max_hp_cache::publish();
         multi_target::step();
-        rework_combat_v5::step();rework_economy_v5::step();rework_cargo_v5::step();rework_energy_ui::publish();rework_economy_ui::publish(false);rework_shield_ui_v5::publish(false);
+        rework_combat_v5::step();rework_economy_v5::step();rework_cargo_v5::step();rework_energy_ui::publish();yamato_cost_ui::publish();rework_economy_ui::publish(false);rework_shield_ui_v5::publish(false);
         bool ready=g.protocol.growth_applied() && g.applied && !g.protocol.failed();
         if(ready && after_dialog && !g.survival_hint_shown){
             if(g.mission->mission_id==103)message("추가 승리 조건: 적 기지의 모든 건물을 파괴하면 남은 시간과 관계없이 승리합니다.");
@@ -1457,7 +1459,7 @@ bool bind_api(const samase::PluginApi* api) noexcept {
     // Resolve every init-only factory here. Store only runtime callbacks/data;
     // no runtime path retains or invokes the PluginApi registration object.
     g.api_version=api->version;
-    g.dat_getters={reinterpret_cast<GetDat>(api->extended_dat(0)),reinterpret_cast<GetDat>(api->extended_dat(1)),reinterpret_cast<GetDat>(api->extended_dat(2))};
+    g.dat_getters={reinterpret_cast<GetDat>(api->extended_dat(0)),reinterpret_cast<GetDat>(api->extended_dat(1)),reinterpret_cast<GetDat>(api->extended_dat(2)),nullptr,reinterpret_cast<GetDat>(api->extended_dat(4))};
     g.mutate_dat=api->mutate_dat;g.read_vars=api->read_vars;g.free_memory=api->free_memory;
     g.extended_count=api->extended_arrays(&g.extended);
     g.game=reinterpret_cast<GetGame>(api->game());
@@ -1484,7 +1486,7 @@ bool bind_api(const samase::PluginApi* api) noexcept {
     multi_target::bind(can_attack,outside_range,create_bullet);
     return g.game && g.first_active && g.first_hidden && g.unit_array && g.create && g.finish_pre &&
            g.finish_post && g.order && g.text && g.read_map && g.multiplayer && g.replay &&
-            g.set_hp && g.damage && rework_waves::native_tech_target && can_attack && outside_range && create_bullet && g.lone_sprite && g.add_overlay && g.dat_getters[0] && g.dat_getters[1] && g.dat_getters[2] && (!g.extended_count || g.extended);
+            g.set_hp && g.damage && rework_waves::native_tech_target && can_attack && outside_range && create_bullet && g.lone_sprite && g.add_overlay && g.dat_getters[0] && g.dat_getters[1] && g.dat_getters[2] && g.dat_getters[4] && (!g.extended_count || g.extended);
 }
 }
 
@@ -1496,8 +1498,10 @@ namespace {
 #include "include/rework_lighting_v5.h"
 #include "include/rework_energy_ui_v5.h"
 #include "include/rework_economy_ui_v5.h"
+#include "include/yamato_cost_ui.h"
 #include "include/rework_shield_ui_v5.h"
 bool verify_stat_engine_after_dat() noexcept {
+    if(yamato_cost_ui::queued && !yamato_cost_ui::verify_installation())return false;
     if(max_hp_engine::hooks[0].queued && !max_hp_engine::verify_installation())return false;
     if(samase_armor_ui::queued && !samase_armor_ui::verify_installation()){
         log_event("Armor display changed after DAT mutation: stage=%s",samase_armor_ui::last_error);
@@ -1521,7 +1525,7 @@ void __cdecl verify_registered_engine_hooks() noexcept {
         log_event("Engine patch verification failed: stage=%s error=%lu weapon_ui=%s armor_ui=%s",native_engine_hooks::last_install.stage,native_engine_hooks::last_install.win32_error,samase_weapon_ui::last_error,samase_armor_ui::last_error);
         visible_failure(L"게임 패치의 실제 적용을 확인하지 못했습니다. 플러그인을 활성화하지 않습니다. sc1_native.log를 확인하세요.");return;
     }
-    if(!rework_relocation::bind() || !rework_energy_ui::verify_installation()){visible_failure(L"이동·에너지 기능을 연결하지 못했습니다. sc1_native.log를 확인하세요.");return;}
+    if(!yamato_cost_ui::verify_installation() || !rework_relocation::bind() || !rework_cargo_v5::bind_native() || !campaign_visibility::bind_native() || !rework_energy_ui::verify_installation()){visible_failure(L"이동·에너지 기능을 연결하지 못했습니다. sc1_native.log를 확인하세요.");return;}
     if(!rework_economy_ui::verify_installation()){log_event("Production tooltip verification failed: stage=%s",rework_economy_ui::last_error);visible_failure(L"생산 비용 표시를 연결하지 못했습니다. sc1_native.log를 확인하세요.");return;}
     if(!rework_shield_ui_v5::verify_installation()){log_event("Shield armor display verification failed: stage=%s",rework_shield_ui_v5::last_error);visible_failure(L"보호막 방어력 표시를 연결하지 못했습니다. sc1_native.log를 확인하세요.");return;}
     g.hooks_ready=true;log_event("Required engine patch verified after loader; init_units/step_objects hooks ready.");
@@ -1535,7 +1539,7 @@ extern "C" __declspec(dllexport) void __cdecl samase_plugin_init(const samase::P
         visible_failure(L"전투 효과 엔진 연결을 확인하지 못했습니다. 지원되는 스타크래프트 버전은 1.23.10.13515입니다. 플러그인을 활성화하지 않습니다.");return;
     }
     rework_combat_v5::bind([](const GrowthSnapshot& snapshot,U32 ordinal) noexcept {return rework_catalog::rank(snapshot,ordinal);});
-    if(!rework_combat_v5::bind_engine(api)) {visible_failure(L"새 재능 기능을 연결하지 못했습니다. sc1_native.log를 확인하세요.");return;}
+    if(!campaign_visibility::bind_api(api) || !rework_combat_v5::bind_engine(api)) {visible_failure(L"새 재능 기능을 연결하지 못했습니다. sc1_native.log를 확인하세요.");return;}
     if(!api->client_selection || !(rework_cargo_v5::selection_source=reinterpret_cast<rework_cargo_v5::Selection>(reinterpret_cast<GenericFn (__cdecl*)()>(api->client_selection)()))) {visible_failure(L"수송 목록 기능을 연결하지 못했습니다. sc1_native.log를 확인하세요.");return;}
     if(!api->pathing || !(rework_relocation::pathing_source=reinterpret_cast<rework_relocation::GetPathing>(reinterpret_cast<GenericFn (__cdecl*)()>(api->pathing)()))) {visible_failure(L"이동 경로 기능을 연결하지 못했습니다. sc1_native.log를 확인하세요.");return;}
     if (!max_hp_engine::bind(api)) {
@@ -1547,6 +1551,7 @@ extern "C" __declspec(dllexport) void __cdecl samase_plugin_init(const samase::P
         visible_failure(L"유닛 능력치 표시 기능을 연결하지 못했습니다. sc1_native.log를 확인하세요.");return;
     }
     if(!rework_energy_ui::bind(api)){visible_failure(L"에너지 표시 기능을 연결하지 못했습니다. sc1_native.log를 확인하세요.");return;}
+    if(!yamato_cost_ui::bind(api)){visible_failure(L"야마토 에너지 표시를 연결하지 못했습니다.");return;}
     if(!rework_economy_ui::bind(api)){log_event("Production tooltip registration failed: stage=%s",rework_economy_ui::last_error);visible_failure(L"생산 비용 표시를 연결하지 못했습니다. sc1_native.log를 확인하세요.");return;}
     if (!samase_weapon_ui::bind(api)) {
         log_event("SAMASE weapon display registration failed: stage=%s",samase_weapon_ui::last_error);

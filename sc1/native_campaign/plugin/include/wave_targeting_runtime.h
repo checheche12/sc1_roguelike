@@ -6,7 +6,9 @@ struct Target {bool valid=false;int x=0,y=0;bw::Unit* base=nullptr;U8 unique=0;}
 inline Target target{};
 inline bool sampled=false;
 inline U32 sample_frame=0;
-inline void reset() noexcept {target={};sampled=false;sample_frame=0;}
+inline bool orders_sampled=false;
+inline U32 order_scan_frame=0;
+inline void reset() noexcept {target={};sampled=orders_sampled=false;sample_frame=order_scan_frame=0;}
 inline bool headquarters(U32 id) noexcept {return id==106 || id==131 || id==132 || id==133 || id==154;}
 inline bool worker(U32 id) noexcept {return id==7 || id==41 || id==64;}
 inline bool usable(const bw::Unit* u) noexcept {
@@ -88,7 +90,7 @@ inline bool reorderable(U32 order) noexcept {
         order==107 || order==156 || order==157 || order==158 || order==159 || order==160 ||
         order==8 || order==9 || order==10 || order==11 || order==12 || order==21;
 }
-inline bool detector(const bw::Unit* u) noexcept {return valid_unit(u) && (u->unit_id==9 || u->unit_id==42 || u->unit_id==84);}
+inline bool detector(const bw::Unit* u) noexcept {return valid_unit(u) && u->unit_id<228 && (original_stat({0,22,u->unit_id})&0x8001u)==0x8000u;}
 inline void issue(bw::Unit* u) {
     if(!g.order || !g.active || counter(kGoalCounter) || !marked(u) || rework_curses::appearing(u))return;
     refresh();if(!target.valid)return;
@@ -110,7 +112,8 @@ inline void issue(bw::Unit* u) {
     if(!t->wave_position_seen || distance(position.x,position.y,t->wave_position_x,t->wave_position_y)>=16ll*16){
         t->wave_position_seen=true;t->wave_position_x=position.x;t->wave_position_y=position.y;t->wave_position_frame=frame;
     }
-    if((u->flags&0x40u) || u->lockdown_timer || u->stasis_timer || u->maelstrom_timer || !reorderable(u->order) || engaged(u,frame,*t))return;
+    const bool support_idle=support && (u->order==49 || u->order==163); // Native Follow / ComputerReturn.
+    if((u->flags&0x40u) || u->lockdown_timer || u->stasis_timer || u->maelstrom_timer || (!reorderable(u->order) && !support_idle) || engaged(u,frame,*t))return;
     if(t->wave_ordered && frame-t->wave_order_frame<48)return;
     const bool moving=u->order==6 || u->order==14 || u->order==157 || u->order==158 || u->order==159;
     if(t->wave_ordered && moving && distance(u->order_target.x,u->order_target.y,aim_x,aim_y)<64ll*64 && frame-t->wave_position_frame<8u*24u)return;
@@ -121,7 +124,10 @@ inline void step(bool ready,bool goal) {
     if(!ready || goal || !g.active)return;
     const auto game=g.game ? g.game():nullptr;if(!game)return;
     // Simulation frames only; pause and modal UI pumps never advance this scan.
-    if(sampled && game->frame_count-sample_frame<24)return;
+    // Other frame consumers refresh the target before this pass. That target
+    // cache must never suppress the independent marching/escort scan.
+    if(orders_sampled && game->frame_count-order_scan_frame<24)return;
+    orders_sampled=true;order_scan_frame=game->frame_count;
     refresh();living_units([&](bw::Unit* u){if(marked(u))issue(u);});
 }
 }
