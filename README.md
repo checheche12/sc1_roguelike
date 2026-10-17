@@ -4,7 +4,7 @@
 
 ## 다운로드
 
-[최신 버전 받기 — v2026.10.16-qa10](https://github.com/checheche12/sc1_roguelike/raw/refs/tags/asset-v2026.10.16-qa10/SC1_Roguelike_20261016_QA10.zip)
+[최신 버전 받기 — v2026.10.17-qa11](https://github.com/checheche12/sc1_roguelike/raw/refs/tags/asset-v2026.10.17-qa11/SC1_Roguelike_20261017_QA11.zip)
 
 Windows 64비트·스타크래프트 리마스터용입니다. ZIP 전체를 압축 해제한 뒤 `Start_Campaign.exe`를 실행하세요. Python은 따로 설치하지 않아도 됩니다.
 

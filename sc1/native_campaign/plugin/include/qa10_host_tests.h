@@ -97,18 +97,26 @@ namespace qa10_fixture {
 inline std::array<U32,256*256> tiles{};
 inline U32* __cdecl get_tiles(){return tiles.data();}
 }
-inline void qa10_full_vision_changes_only_human_fog_bits(){
+inline void qa10_explored_map_preserves_current_fog(){
     using namespace rework_fixture;qa9_fixture::begin({});
     auto old_tiles=rework_combat_v5::get_tiles;rework_combat_v5::get_tiles=qa10_fixture::get_tiles;
     const auto old_mission=g.mission;auto mission=*old_mission;mission.mission_id=206;g.mission=&mission;
-    qa10_fixture::tiles.fill(0xa55affffu);campaign_visibility::step();
-    const U32 mask=~((1u<<player_owner())|(1u<<(player_owner()+8)));
-    for(U32 i=0;i<4096;i++)CHECK(qa10_fixture::tiles[i]==(0xa55affffu&mask));
-    CHECK(qa10_fixture::tiles[4096]==0xa55affffu);
-    qa10_fixture::tiles[0]=0xa55affffu;campaign_visibility::step();CHECK(qa10_fixture::tiles[0]==(0xa55affffu&mask));
+    constexpr U32 samples[]={0xa55affffu,0xa55a0000u,0xa55a55aau,0xa55aaa55u,0xffffffffu,0u,0x12345678u,0x87654321u};
+    for(auto id:campaign_visibility::missions)for(U32 owner=0;owner<8;owner++){
+        mission.mission_id=id;mission.owner=static_cast<U8>(owner);
+        qa10_fixture::tiles.fill(0xa55affffu);
+        for(U32 i=0;i<4096;i++)qa10_fixture::tiles[i]=samples[i%8];
+        campaign_visibility::step();
+        const U32 mask=~(1u<<(owner+8));
+        for(U32 i=0;i<4096;i++)CHECK(qa10_fixture::tiles[i]==(samples[i%8]&mask));
+        CHECK(qa10_fixture::tiles[4096]==0xa55affffu);
+        // A native sight change on a later frame must survive exploration.
+        qa10_fixture::tiles[0]^=1u<<owner;const U32 refreshed=qa10_fixture::tiles[0];
+        campaign_visibility::step();CHECK(qa10_fixture::tiles[0]==refreshed);
+    }
     mission.mission_id=104;qa10_fixture::tiles.fill(0xa55affffu);campaign_visibility::step();CHECK(qa10_fixture::tiles[0]==0xa55affffu);
     mission.mission_id=206;mission.width=128;campaign_visibility::step();CHECK(qa10_fixture::tiles[0]==0xa55affffu);
     g.mission=old_mission;rework_combat_v5::get_tiles=old_tiles;qa9_fixture::end();
 }
-inline void run_qa10_groups(){qa10_full_vision_changes_only_human_fog_bits();qa10_burrow_regeneration();qa10_lurker_click_attack_move_and_unburrow_boundaries();qa10_mobility_damage_ui_and_dead_projectile_snapshot();qa10_ground_roles_and_four_health_ranks();qa10_old_snapshots_fallback_and_native_cap();}
+inline void run_qa10_groups(){qa10_explored_map_preserves_current_fog();qa10_burrow_regeneration();qa10_lurker_click_attack_move_and_unburrow_boundaries();qa10_mobility_damage_ui_and_dead_projectile_snapshot();qa10_ground_roles_and_four_health_ranks();qa10_old_snapshots_fallback_and_native_cap();}
 }
