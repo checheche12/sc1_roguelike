@@ -177,6 +177,7 @@ def main(argv=None) -> int:
     run.add_argument("--expected-start-time", type=int, help="Reject a replaced process after automatic discovery")
     run.add_argument("--database", type=Path,
                      default=Path(__file__).resolve().parents[1] / "data" / "original.sqlite3")
+    run.add_argument("--curses-per-mission", type=int, choices=range(5), default=3)
     run.add_argument("--attach-write", required=True, action="store_true")
     run.add_argument("--poll-seconds", type=float, default=0.10)
     run.add_argument("--duration", type=float, default=0,
@@ -215,7 +216,7 @@ def main(argv=None) -> int:
                 return 0
             # Import only when run has an active mailbox; scan creates no save.
             from sc1.manager.store import open_campaign_store
-            run_connected(memory, active, lambda: open_campaign_store(args.database), stopped=stopped,
+            run_connected(memory, active, lambda: open_campaign_store(args.database,curses_per_mission=args.curses_per_mission), stopped=stopped,
                           deadline=deadline, poll_seconds=args.poll_seconds)
             if not stopped.is_set():
                 emit({"event": "stopped", "reason": "duration"})

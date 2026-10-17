@@ -49,7 +49,7 @@ void switch_initialization_and_route_isolation() {
     CHECK(std::memcmp(game.switches,previous.switches,sizeof(game.switches))==0);
     // Only newly authenticated V3_SW1 assets may use this native handshake.
     const std::string old_marker="SC1_NATIVE_M101_V2_R469";
-    const std::string current=campaign_config::kMissions[0].marker;
+    const std::string current=legacy_mission_marker(campaign_config::kMissions[0]).data();
     auto marker=std::search(chk.begin(),chk.end(),current.begin(),current.end());CHECK(marker!=chk.end());
     std::fill(marker,marker+current.size(),U8(0));std::copy(old_marker.begin(),old_marker.end(),marker);
     CHECK(!identify_chk(chk.data(),chk.size()));

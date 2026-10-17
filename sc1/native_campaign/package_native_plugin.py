@@ -289,10 +289,13 @@ def native_inputs(plain_receipt_path, dll_receipt_path):
     plain, dll = map(read_json, (plain_receipt_path, dll_receipt_path))
     if dll.get('growth_protocol')=='PHC1 v2' and dll.get('growth_wire_version')!=2:
         raise ValueError('Revision-five native receipt requires wire version two')
+    phase_layout_ok=(dll.get('phase_count')==3 and dll.get('choices_per_phase')=={'talent':1,'curse':1}) or (
+        dll.get('phase_capability')==2 and dll.get('growth_wire_version')==2 and dll.get('phase_count')==4
+        and dll.get('talent_phases')==[1,3,4] and dll.get('curses_per_mission')==[0,1,2,3,4]
+        and dll.get('default_curses_per_mission')==3)
     if (dll.get('growth_protocol') not in ('PHC1 v1','PHC1 v2') or dll.get('automatic_popup') is not True
             or dll.get('custom_menu_json') is not True or dll.get('native_upper_text_control') is not True
-            or dll.get('choice_number_buttons') is not True or dll.get('phase_count') != 3
-            or dll.get('choices_per_phase') != {'talent': 1, 'curse': 1}):
+            or dll.get('choice_number_buttons') is not True or not phase_layout_ok):
         raise ValueError('Native DLL receipt must identify the phased automatic popup candidate')
     lifecycle = dll.get('api_lifecycle', {})
     if (lifecycle.get('factories_resolved_during_plugin_init') is not True

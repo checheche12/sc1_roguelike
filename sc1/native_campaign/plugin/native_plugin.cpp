@@ -200,9 +200,12 @@ bool is_enemy(U32 owner) noexcept {
 }
 // An authenticated per-map marker is necessary but not sufficient: the original
 // format, dimensions, human owner and race must agree with the frozen manifest.
-const campaign_config::Mission* identify_chk(const U8* data,std::size_t size) noexcept {
+std::array<char,80> legacy_mission_marker(const campaign_config::Mission& m) noexcept {
+    std::array<char,80> result{};std::snprintf(result.data(),result.size(),"SC1_NATIVE_M%u_V3_SW1_R469",m.mission_id);return result;
+}
+const campaign_config::Mission* identify_chk(const U8* data,std::size_t size,U32* phase_capability=nullptr) noexcept {
     U32 ver=0; U32 width=0,height=0; const U8* owners=nullptr;const U8* sides=nullptr;
-    const campaign_config::Mission* found=nullptr;
+    const campaign_config::Mission* found=nullptr;U32 found_capability=0;
     if (!data || size>16*1024*1024) return nullptr;
     for (std::size_t pos=0;pos<size;) {
         if(size-pos<8)return nullptr;
@@ -217,15 +220,18 @@ const campaign_config::Mission* identify_chk(const U8* data,std::size_t size) no
             for(U32 i=0;i<count;i++){
                 U32 off=u16(p+2+i*2);if(off>=n)continue;
                 for(const auto& m:campaign_config::kMissions){
-                    const auto len=std::strlen(m.marker)+1;
-                    if(n-off>=len && !std::memcmp(p+off,m.marker,len)){
-                        if(found && found!=&m)return nullptr;found=&m;
+                    const auto old=legacy_mission_marker(m);const auto len=std::strlen(m.marker)+1,old_len=std::strlen(old.data())+1;
+                    const U32 capability=n-off>=len && !std::memcmp(p+off,m.marker,len) ? 2u :
+                        n-off>=old_len && !std::memcmp(p+off,old.data(),old_len) ? 1u : 0u;
+                    if(capability){
+                        if(found && (found!=&m || found_capability!=capability))return nullptr;found=&m;found_capability=capability;
                     }
                 }
             }
         }
         pos+=8+n;
     }
+    if(phase_capability)*phase_capability=found_capability;
     return found && ver==found->chk_version && owners && sides && width==found->width && height==found->height &&
         found->owner<8 && owners[found->owner]==6 && sides[found->owner]==found->race ? found : nullptr;
 }
@@ -586,7 +592,7 @@ bool apply_snapshot(void*,const GrowthSnapshot& s) noexcept {
     const U32 phase=s.completed_phase ? s.completed_phase : 1;
     g.apply_failure=nullptr;
     if(!g.active)return reject_growth("session_inactive");
-    if(phase>3)return reject_growth("phase_bounds");
+    if(phase>g.protocol.total_phases())return reject_growth("phase_bounds");
     if(g.applied && phase<=g.applied_phase)return reject_growth("phase_already_applied");
     if(s.wire_version!=1 && s.wire_version!=2)return reject_growth("growth_version");
     const U32 talent_limit=s.wire_version==1 ? frozen::kLegacyTalentCount:frozen::kTalentCount;
@@ -1330,12 +1336,13 @@ void __cdecl init_units(GenericFn original) noexcept {
         if (!game || !game->campaign_mission || g.multiplayer() || g.replay() ||
             false) return;
         std::size_t size=0;auto data=g.read_map(reinterpret_cast<const U8*>("staredit\\scenario.chk"),&size);
-        const auto mission=identify_chk(data,size);if(data)g.free_memory(data);
+        U32 phase_capability=0;const auto mission=identify_chk(data,size,&phase_capability);if(data)g.free_memory(data);
         if(!mission || (mission->campaign_index && game->campaign_mission!=mission->campaign_index) ||
            game->map_width_tiles!=mission->width || game->map_height_tiles!=mission->height)return;
         g.mission=mission;g.campaign_index=game->campaign_mission;
         capture_objective_units();
         log_event("Campaign marker accepted: mission=%u index=%u owner=%u race=%u",mission->mission_id,mission->campaign_index,mission->owner,mission->race);
+        if(phase_capability==2)write_switch(game,campaign_config::kQuarterSwitch,false);
         if (!set_counter(kRouteCounter,0) || !set_counter(kMiddleCounter,0) || !set_counter(kReadyCounter,0) || !set_counter(kGoalCounter,0) || !set_counter(kAckCounter,0)) return;
         // The map must observe actual hostile bases in this mission before an
         // empty-building alternate win is eligible. Never inherit an old latch.
@@ -1347,7 +1354,7 @@ void __cdecl init_units(GenericFn original) noexcept {
         g.game_thread=GetCurrentThreadId();g.active=true;
         g.dialog.set_callbacks(dialog_callbacks());
         sc1_native::MailboxCallbacks callbacks{nullptr,apply_snapshot,show_offer,clear_offer,on_error};
-        if (!g.protocol.initialize(callbacks,g.mission->mission_id,true,2)) {g.active=false;return;}
+        if (!g.protocol.initialize(callbacks,g.mission->mission_id,true,2,phase_capability)) {g.active=false;return;}
         refresh_units();log_event("Native T01 initialized: API=%u Game=%zu Unit=%zu unit_array_len=%zu mailbox=%p",g.api_version,sizeof(bw::Game),sizeof(bw::Unit),g.units_count,static_cast<const void*>(const_cast<const U32*>(g.protocol.mailbox_words())));
         message("성장 기록을 연결합니다.");
     } catch (...) {g.active=false;message("본편 플러그인 초기화 오류. 캠페인 기록 연결을 중단했습니다.");}
@@ -1372,7 +1379,7 @@ void protocol_pump(void*) noexcept {
         // Only frame() publishes the ready/ACK switches after modal closure
         // and a subsequent simulation frame. Optional deaths are diagnostics.
         const bool dialog_open=g.dialog.open();observe_progress_dialog(dialog_open);
-        const bool final_phase=playable && (!g.protocol.phased() || g.protocol.completed_phase()==3);
+        const bool final_phase=playable && (!g.protocol.phased() || g.protocol.completed_phase()==g.protocol.total_phases());
         if(!final_phase || dialog_open){set_counter(kReadyCounter,0);set_counter(kAckCounter,0);}
         if (counter(kGoalCounter)) g.protocol.on_goal_reached();
         mirror_handshake();
@@ -1411,12 +1418,15 @@ void __cdecl frame() noexcept {
                     phase,barracks,goal ? 1u : 0u,dialog_open ? 1u : 0u,g.extended_count,game->completed_units_count[111][kOwner]);
                 g.milestone_barracks=barracks;g.milestone_flags=flags;
             }
-            const bool due=(phase==1 && (barracks>0 || goal)) || (phase==2 && goal);
+            const bool quarter=switch_set(game,campaign_config::kQuarterSwitch);
+            const bool due=g.protocol.phase_version()==2 ?
+                ((phase==1 && (quarter || barracks>0 || goal)) || (phase==2 && (barracks>0 || goal)) || (phase==3 && goal)) :
+                ((phase==1 && (barracks>0 || goal)) || (phase==2 && goal));
             if(!dialog_open && due && g.protocol.request_phase(phase+1))
                 log_event("Growth phase requested: phase=%u completed_barracks=%u original_goal=%u",phase+1,barracks,goal ? 1u : 0u);
         }
         const bool final_phase=g.protocol.growth_applied() && g.applied && !g.protocol.failed() &&
-            (!g.protocol.phased() || g.protocol.completed_phase()==3);
+            (!g.protocol.phased() || g.protocol.completed_phase()==g.protocol.total_phases());
         const bool victory_ready=final_phase && after_dialog && game->frame_count!=g.phase_frame;
         set_counter(kReadyCounter,victory_ready ? 1u : 0u);
         set_counter(kAckCounter,victory_ready && g.protocol.victory_ack_ready() ? 1u : 0u);

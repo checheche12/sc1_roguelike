@@ -29,7 +29,7 @@ HEADER=ROOT/'plugin/include/campaign_config.generated.h'
 WAVE_HEADER=ROOT/'plugin/include/campaign_waves.generated.h'
 COUNTERS={'route':223,'middle':224,'growth_ready':225,'goal':226,'ack':227}
 # Zero-based engine switch IDs, audited unused across all 63 original assets.
-SWITCHES={'goal':240,'middle':241,'growth_ready':242,'ack':243,'route_base':244,'route_count':6,'enemy_base_seen':250}
+SWITCHES={'goal':240,'middle':241,'growth_ready':242,'ack':243,'route_base':244,'route_count':6,'enemy_base_seen':250,'quarter':251}
 TILESETS=('badlands','platform','install','ashworld','jungle','desert','ice','twilight')
 RACES={'terran':1,'zerg':0,'protoss':2}
 BASE_UNITS={
@@ -104,7 +104,7 @@ def append_marker(data,marker):
  return result
 
 def reserved_switch_ids():
- return set(range(SWITCHES['goal'],SWITCHES['route_base']+SWITCHES['route_count']))|{SWITCHES['enemy_base_seen']}
+ return set(range(SWITCHES['goal'],SWITCHES['route_base']+SWITCHES['route_count']))|{SWITCHES['enemy_base_seen'],SWITCHES['quarter']}
 
 def roster_specs():
  rows=[]
@@ -139,7 +139,7 @@ def metadata(spec,chk,source):
  # These missions transfer neutral bases through original campaign AI scripts.
  if spec['mission_id'] in (105,301,503,601,605,606):no_production=False
  version=struct.unpack('<H',chk.getsection('VER '))[0]
- marker=f'SC1_NATIVE_M{spec["mission_id"]}_V3_SW1_R469'
+ marker=f'SC1_NATIVE_M{spec["mission_id"]}_V4_PH2_R469'
  objectives=[];ss=strings(chk.getsection('STR '))
  for t in triggers(chk):
   for _,a in actions(t):
@@ -306,6 +306,32 @@ def milestone(chk,row):
  cs=[cond(5,owner,threshold,229)]
  return cs,owner_bytes(owner),{'kind':'original_hostile_force_combat_progress','original_hostile_combatants':len(hostile),'kills_required':threshold,'conditions':[cf(c) for c in cs],'goal_catches_up_if_bypassed':True}
 
+def quarter_milestone(chk,row,middle_cs,middle):
+ """Earlier real progress; the middle/goal latches also catch up skipped routes."""
+ cs=list(middle_cs);report={'kind':'quarter_'+middle['kind'],'conditions':[]}
+ if middle['kind']=='original_scripted_movement_checkpoint':
+  choices=[]
+  for ti,t in enumerate(triggers(chk)):
+   if ti>=middle['source_trigger']:break
+   aa=actions(t);cc=conditions(t)
+   if any(a[26] in (1,2) for _,a in aa) or not trigger_has_player(chk,t,row['owner']):continue
+   if any(a[26] in (7,12,13,48) for _,a in aa) and any(c[15]==3 and cf(c)['player'] not in (17,26) and cf(c)['comparison'] in (0,10) and cf(c)['amount']>0 and row['owner'] in players_for(chk,cf(c)['player'],row['owner']) for _,c in cc):choices.append((ti,[c for _,c in cc]))
+  ti,cs=choices[len(choices)//2] if choices else (middle['source_trigger'],cs)
+  report['source_trigger']=ti
+ else:
+  for i,c in enumerate(cs):
+   f=cf(c);r=bytearray(c)
+   if middle['kind']=='half_original_countdown' and f['type']==1:
+    struct.pack_into('<I',r,8,max(1,middle['original_countdown_seconds']*3//4))
+   elif middle['kind']=='half_original_elimination_goal' and f['type']==2:
+    struct.pack_into('<I',r,8,max(1,middle['initial_target_count']*3//4))
+   elif f['type'] in (2,5) and f['comparison']==0 and f['amount']>1:
+    struct.pack_into('<I',r,8,max(1,f['amount']//2))
+   cs[i]=bytes(r)
+ report['conditions']=[cf(c) for c in cs]
+ return cs,report
+
+
 def patch_progression(chk,row):
  original=triggers(chk);result=[];receipt=[];original_indices=[]
  survival=timed_survival_plan(chk,row)
@@ -314,7 +340,11 @@ def patch_progression(chk,row):
  # blocking cinematic. Capture its condition before that exact source event.
  middle_source=mid.get('source_trigger') if mid['kind']=='original_scripted_movement_checkpoint' else None
  middle_index=None
+ quarter_cs,quarter=quarter_milestone(chk,row,middle_cs,mid)
+ quarter_source=quarter.get('source_trigger');quarter_index=None
  for ti,t in enumerate(original):
+  if ti==quarter_source:
+   quarter_index=len(result);result.append(new_trigger(quarter_cs,[setswitch(SWITCHES['quarter'])],owners))
   if ti==middle_source:
    middle_index=len(result);result.append(new_trigger(middle_cs,[setswitch(SWITCHES['middle']),setdeath(224)],owners))
   victory=[ai for ai,a in actions(t) if a[26]==1]
@@ -336,6 +366,8 @@ def patch_progression(chk,row):
  assert receipt,('No original Victory',row['mission_id'])
  if middle_index is None:
   middle_index=len(result);result.append(new_trigger(middle_cs,[setswitch(SWITCHES['middle']),setdeath(224)],owners))
+ if quarter_index is None:
+  quarter_index=len(result);result.append(new_trigger(quarter_cs,[setswitch(SWITCHES['quarter'])],owners))
  alternate=None
  if survival is not None:
   config=survival['config'];ending_route=next(r for r in receipt if r['source_trigger']==config['ending_trigger'])
@@ -349,7 +381,7 @@ def patch_progression(chk,row):
   objective_updates=append_survival_objectives(chk,row,survival,result)
   alternate={'kind':'reviewed_timed_survival_all_hostile_buildings','name':config['name'],'goal_trigger_index':latch_index,'enemy_seen_trigger_index':seen_index,'enemy_seen_switch':SWITCHES['enemy_base_seen'],'enemy_owners':list(config['enemy_owners']),'initial_enemy_building_counts':survival['initial_enemy_building_counts'],'initial_enemy_building_types':survival['initial_enemy_building_types'],'conditions':[cf(c) for c in survival['conditions']],'conditions_hex':[c.hex() for c in survival['conditions']],'original_ending_trigger':config['ending_trigger'],'ending_trigger_index':ending_route['ending_trigger_index'],'route':ending_route['route'],'route_switch':ending_route['route_switch'],'original_timer_seconds':config['seconds'],'original_timer_victory_preserved':True,'timer_expiration_required':False,'base_clear_semantics':'Command Buildings equals zero for every reviewed original hostile base owner, anywhere; all standard structures including defense, supply, technology, resource buildings, add-ons and lifted or rebuilt buildings count. Enemy mobile units do not block. Neutral, rescuable, player and decorative campaign-object owners are excluded.','startup_guard':'Each reviewed hostile owner must first be observed with at least one building at elapsed time >=1s; original countdown activation switch and player survival guards are required.','objective_updates':objective_updates,'same_original_success_actions_after_growth_and_ack':True}
  chk.setsection('TRIG',b''.join(result))
- return {'routes':receipt,'goal_latches_inserted_before_original_endings':len(receipt),'middle_trigger_index':middle_index,'middle':mid,'middle_evaluated_before_source_actions':middle_source is not None,'original_trigger_indices':original_indices,'preserves_all_original_actions':True,'preserves_all_original_trigger_owners':True,'original_initialization_and_goal_evaluation_order_preserved':True,'defeat_triggers_byte_identical':True,'victory_requires':'latched original route switch + phase3 readiness switch242 + durable save ACK switch243','handshake':{'kind':'ordinary_switches_v1',**SWITCHES},'death_counters_are_diagnostic_mirrors_only':True,'cinematic_begins_after_save_ack':True,'alternate_survival_victory':alternate}
+ return {'routes':receipt,'goal_latches_inserted_before_original_endings':len(receipt),'quarter_trigger_index':quarter_index,'quarter':quarter,'middle_trigger_index':middle_index,'middle':mid,'middle_evaluated_before_source_actions':middle_source is not None,'original_trigger_indices':original_indices,'preserves_all_original_actions':True,'preserves_all_original_trigger_owners':True,'original_initialization_and_goal_evaluation_order_preserved':True,'defeat_triggers_byte_identical':True,'victory_requires':'latched original route switch + phase4 readiness switch242 + durable save ACK switch243','handshake':{'kind':'ordinary_switches_v1',**SWITCHES},'death_counters_are_diagnostic_mirrors_only':True,'cinematic_begins_after_save_ack':True,'alternate_survival_victory':alternate}
 
 def unlock(chk,row):
  owner=row['owner'];race=row['race'];selected=set(BASE_UNITS[race])|set(BW_UNITS[race])
@@ -388,7 +420,7 @@ def generate_metadata():
   source=SOURCE_ROOT/'locales/koKR/Assets'/spec['asset_path']
   row=metadata(spec,CHK(source.read_bytes()),source);rows.append(row)
  dump(MISSION_JSON,{'schema_version':2,'scope':'30 original +33 Brood War scenario assets; 57 logical missions','missions':rows,'excluded_assets':['Terran/Terran07 (deleted mission)','Terran/Terran10 (deleted mission)','all three tutorials'],'variant_rewards_shared':True,'bonus_campaign_id':7})
- h=['// Generated from original CHK metadata; do not hand edit.','#pragma once','#include <cstdint>','namespace sc1_native { namespace campaign_config {','struct Mission { std::uint32_t mission_id,campaign_index,owner,race,width,height; const char* marker; bool no_production; std::uint32_t chk_version; };','inline constexpr std::uint32_t kGoalSwitch=240,kMiddleSwitch=241,kReadySwitch=242,kAckSwitch=243,kRouteSwitchBase=244,kRouteSwitchCount=6,kEnemyBaseSeenSwitch=250;', 'inline constexpr Mission kMissions[] = {']
+ h=['// Generated from original CHK metadata; do not hand edit.','#pragma once','#include <cstdint>','namespace sc1_native { namespace campaign_config {','struct Mission { std::uint32_t mission_id,campaign_index,owner,race,width,height; const char* marker; bool no_production; std::uint32_t chk_version; };','inline constexpr std::uint32_t kGoalSwitch=240,kMiddleSwitch=241,kReadySwitch=242,kAckSwitch=243,kRouteSwitchBase=244,kRouteSwitchCount=6,kEnemyBaseSeenSwitch=250,kQuarterSwitch=251;', 'inline constexpr Mission kMissions[] = {']
  for row in rows:h.append('    {'+', '.join(map(str,(row['mission_id'],row['campaign_index'],row['owner'],RACES[row['race']],row['width'],row['height'])))+', "'+row['fingerprint']+'", '+str(row['no_production']).lower()+', '+str(row['chk_version'])+'},')
  h+=['};','inline constexpr bool final_mission(std::uint32_t id) noexcept {return '+' || '.join('id=='+str(r['mission_id']) for r in rows if r['final'])+';}','} } // namespace sc1_native::campaign_config']
  HEADER.write_text('\n'.join(h)+'\n',encoding='utf-8')
@@ -546,12 +578,12 @@ def make_map(raw,row):
  from sc1.native_campaign import mineral_amount_bonus
  mineral_amounts=mineral_amount_bonus.apply(chk)
  from sc1.native_campaign import mission_balance
- balance=mission_balance.apply(chk,row,difficulty)
  from sc1.native_campaign import campaign_objectives
  objective_correction=campaign_objectives.apply(chk,row)
  progression=patch_progression(chk,row)
  progression['objective_correction']=objective_correction
  chk.setsection('STR ',append_marker(chk.getsection('STR '),row['fingerprint'].encode('ascii')))
+ balance=mission_balance.apply(chk,row,difficulty)
  permitted={b'UNIT',b'PUNI',b'UPGR',b'PUPx',b'PTEC',b'PTEx',b'TRIG',b'STR '}
  if row['mission_id']==101:permitted|={b'OWNR',b'SIDE',b'FORC'}
  assert chk.order==original_order
@@ -611,6 +643,8 @@ def build(output=OUT,receipt=RECEIPT):
  from sc1.native_campaign import mission_balance
  report['mission_balance_source']=str(Path(mission_balance.__file__).resolve())
  report['mission_balance_source_sha256']=digest(Path(mission_balance.__file__).read_bytes())
+ report['phase_capability']=2
+ report['checkpoint_count']=4
  report['map_builder_sha256']=digest(Path(__file__).read_bytes())
  dump(receipt,report);return report
 

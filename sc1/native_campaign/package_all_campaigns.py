@@ -132,6 +132,26 @@ def verify_mineral_layout(source_chk, output_chk, mission, row):
         raise ValueError('Invalid mission-specific unit transformation') from error
 
 
+def verify_checkpoint_layout(source_chk, output_chk, mission, row):
+    """A four-stage receipt cannot authorize different mission trigger code."""
+    from . import mission_balance, campaign_objectives
+    baseline=CHK(source_chk.save());units=CHK(output_chk.save())
+    try:mission_balance.undo(units,row['mission_balance'])
+    except AssertionError as error:raise ValueError('Invalid checkpoint base units') from error
+    baseline.setsection('UNIT',units.getsection('UNIT'))
+    for tag in ('OWNR','SIDE','FORC'):baseline.setsection(tag,output_chk.getsection(tag))
+    correction=campaign_objectives.apply(baseline,mission)
+    progression=map_builder.patch_progression(baseline,mission);progression['objective_correction']=correction
+    progression=json.loads(json.dumps(progression))
+    baseline.setsection('STR ',map_builder.append_marker(baseline.getsection('STR '),mission['fingerprint'].encode('ascii')))
+    if (baseline.getsection('TRIG')!=output_chk.getsection('TRIG')
+            or baseline.getsection('STR ')!=output_chk.getsection('STR ')
+            or progression!=row['progression']):
+        differences=[tag for tag in ('TRIG','STR ') if baseline.getsection(tag)!=output_chk.getsection(tag)]
+        if progression!=row['progression']:differences.append('progression receipt')
+        raise ValueError(f"Checkpoint layout differs on mission {mission['mission_id']}: {differences}")
+
+
 def validate_maps(receipt_path):
     receipt_path = legacy.owned_file(receipt_path)
     receipt = legacy.read_json(receipt_path)
@@ -200,6 +220,7 @@ def validate_maps(receipt_path):
         before_strings, after_strings = strings(source_chk.getsection("STR ")), strings(output_chk.getsection("STR "))
         if after_strings[:len(before_strings)] != before_strings or mission["fingerprint"].encode() not in after_strings:
             raise ValueError("Original string IDs or runtime authentication marker changed")
+        if receipt.get('phase_capability')==2:verify_checkpoint_layout(source_chk,output_chk,mission,row)
         verify_mineral_layout(source_chk, output_chk, mission, row)
         outputs[asset] = output
         print(json.dumps({'resource_map_verified':row['mission_id']}),flush=True)
@@ -210,6 +231,12 @@ def inputs(map_receipt, dll_receipt):
     map_path, maps, outputs, header = validate_maps(map_receipt)
     dll_receipt = legacy.owned_file(dll_receipt)
     dll = legacy.read_json(dll_receipt)
+    if maps.get('phase_capability')==2:
+        if dll.get('phase_capability')!=2 or dll.get('phase_count')!=4:
+            raise ValueError('Four-checkpoint maps require the matching native capability')
+        interop=next((x.get('result',{}) for x in dll.get('mailbox_offline_tests',[]) if x.get('name')=='checkpoint_v2_python_native'),{})
+        if not interop.get('passed') or {x.get('curses') for x in interop.get('modes',[])}!=set(range(5)):
+            raise ValueError('All five curse difficulty modes require native/manager interop')
     # Reuse all eleven stock DAT transformations and PE/source/lifecycle checks.
     _, plugin, native = legacy.native_inputs(ROOT / "plain_chk_evidence.json", dll_receipt)
     compiled = {str(legacy.owned_file(row["path"])): row["sha256"] for row in dll["sources"]}
@@ -275,6 +302,10 @@ def inputs(map_receipt, dll_receipt):
                   legacy_expanded_catalog=dll['expanded_catalog'],legacy_expanded_catalog_sha256=dll['expanded_catalog_sha256'],
                   catalog_pins=[{'path':str(path),'sha256':legacy.sha(raw)} for path,raw in catalog_pins],
                   growth_contract=growth_contract,
+                  phase_capability=maps.get('phase_capability',1),
+                  checkpoint_count=maps.get('checkpoint_count',3),
+                  talent_phases=[1,3,4] if maps.get('phase_capability')==2 else [1,2,3],
+                  curses_per_mission=[0,1,2,3,4] if maps.get('phase_capability')==2 else [3],
                   mission_metadata=str(ROOT.parent / "campaign/missions.json"),
                   mission_metadata_sha256=legacy.sha((ROOT.parent / "campaign/missions.json").read_bytes()),
                   manager_sources=manager_sources,

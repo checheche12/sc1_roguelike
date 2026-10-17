@@ -523,4 +523,18 @@ void cargo_page_button_test(){
 }
 
 }
-int main(int argc,char** argv) {try {if(argc==2 && std::strcmp(argv[1],"native_metadata")==0)native_sized_metadata_test();else if(argc==2 && std::strcmp(argv[1],"spawn_no_delete")==0)spawn_no_delete_test();else {api_test();catalog_test();spawn_reinit_test();stale_test();text_failure_test();phases_auto_test();standalone_legendary_v2_test();stock_depth_test();hud_test();thread_delete_test();legacy_test();backed_panel_test();render_lifetime_test();hotkey_render_test();constructor_file_test();native_sized_metadata_test();spawn_no_delete_test();independent_wave_timer_test();cargo_page_button_test();}std::cout<<"{\"passed\":true,\"groups\":"<<groups<<",\"assertions\":"<<assertions<<"}\n";return 0;}catch(const std::exception& e) {std::cerr<<"FAILED: "<<e.what()<<'\n';return 1;}}
+void checkpoint_v2_small_curse_lists_test() {
+    ++groups;
+    for(unsigned count=1;count<=3;++count) {
+        Host h;bind_api(h);check(h.ui.initialize(&h.api,h.callbacks()),"checkpoint UI hooks installed");
+        h.show(2,count,4);h.offer.wire_version=2;h.offer.phase_version=2;h.offer.count=count;
+        for(unsigned i=count;i<4;++i)h.offer.candidates[i]=0;
+        h.ui.show(h.offer);h.actions=[&] {
+            check(h.ui.pending() && h.ui.open(),"phase4 curse list opens with available candidates");
+            h.preview(1);h.confirm();check(h.submits==1 && h.last_slot==1,"phase4 curse confirms one durable slot");
+            h.finish();
+        };
+        open(h);check(!h.ui.open() && h.resumes==1,"small curse list resumes after confirmation");
+    }
+}
+int main(int argc,char** argv) {try {if(argc==2 && std::strcmp(argv[1],"native_metadata")==0)native_sized_metadata_test();else if(argc==2 && std::strcmp(argv[1],"spawn_no_delete")==0)spawn_no_delete_test();else {api_test();checkpoint_v2_small_curse_lists_test();catalog_test();spawn_reinit_test();stale_test();text_failure_test();phases_auto_test();standalone_legendary_v2_test();stock_depth_test();hud_test();thread_delete_test();legacy_test();backed_panel_test();render_lifetime_test();hotkey_render_test();constructor_file_test();native_sized_metadata_test();spawn_no_delete_test();independent_wave_timer_test();cargo_page_button_test();}std::cout<<"{\"passed\":true,\"groups\":"<<groups<<",\"assertions\":"<<assertions<<"}\n";return 0;}catch(const std::exception& e) {std::cerr<<"FAILED: "<<e.what()<<'\n';return 1;}}

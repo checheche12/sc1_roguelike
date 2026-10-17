@@ -16,7 +16,7 @@ import uuid
 
 from sc1.campaign.catalog import (MISSIONS, ORIGINAL_PROFILE, PROFILE_NAMES,
                                   PROBE_PROFILE, Mission, missions_for_profile)
-from sc1.campaign import growth, phased_growth, rework_growth
+from sc1.campaign import growth, phased_growth, rework_growth, checkpoint_growth
 from sc1.campaign.progression import metadata
 from sc1.campaign.missions import load_missions
 from sc1.campaign.growth import GrowthChoicesPending
@@ -48,9 +48,11 @@ class CampaignStore:
     """
 
     def __init__(self, db_path: str | Path, *, new_profile: str = PROBE_PROFILE,
-                 runtime_catalog_path: str | Path | None = None):
+                 runtime_catalog_path: str | Path | None = None, curses_per_mission: int = 3):
         if new_profile not in PROFILE_NAMES:
             raise ProtocolError("unknown_profile", "Unknown record profile")
+        checkpoint_growth.curse_stages(curses_per_mission)
+        self.curses_per_mission = curses_per_mission
         self.path = Path(db_path).resolve()
         self.runtime_catalog_path = runtime_catalog_path
         self.path.parent.mkdir(parents=True, exist_ok=True)
@@ -128,6 +130,10 @@ class CampaignStore:
         return {"protocol_version": PROTOCOL_VERSION, "gold": row["gold"],
                 "revision": row["revision"], "completed_mask": row["completed_mask"]}
 
+    @staticmethod
+    def _growth_engine(conn, mission):
+        return checkpoint_growth if checkpoint_growth.run(conn,mission) else phased_growth
+
     def status(self) -> dict:
         with self._connect() as conn:
             row = conn.execute("SELECT * FROM campaign WHERE id=1").fetchone()
@@ -138,7 +144,7 @@ class CampaignStore:
             result["profile"] = self.profile
             result["sample_only"] = self.profile == PROBE_PROFILE
             result["supported_missions"] = [mission.mission_id for mission in missions_for_profile(self.profile)]
-            result["growth_selection"] = (phased_growth.status(conn, self._latest_growth_mission(conn)) if self.profile == ORIGINAL_PROFILE
+            result["growth_selection"] = (self._growth_engine(conn,self._latest_growth_mission(conn)).status(conn, self._latest_growth_mission(conn)) if self.profile == ORIGINAL_PROFILE
                                           else {"state": "unsupported"})
             return result
 
@@ -157,22 +163,22 @@ class CampaignStore:
         with self._connect() as conn:
             mission=self._latest_growth_mission(conn,campaign_id)
             self._validate_request(mission,PROTOCOL_VERSION)
-            return phased_growth.status(conn,mission)
+            return self._growth_engine(conn,mission).status(conn,mission)
 
     def growth_status(self, mission: int | None = None) -> dict:
         """Read selection state without creating or migrating any tables."""
         with self._connect() as conn:
             mission = self._latest_growth_mission(conn) if mission is None else mission
             entry = self._validate_request(mission, PROTOCOL_VERSION)
-            return phased_growth.status(conn, entry.mission_id)
+            return self._growth_engine(conn,entry.mission_id).status(conn, entry.mission_id)
 
     @staticmethod
     def _require_unphased(conn, mission):
-        if phased_growth.run(conn, mission):
+        if phased_growth.run(conn, mission) or checkpoint_growth.run(conn,mission):
             raise GrowthError("phased_protocol_required", "이 기록은 단계별 성장 선택을 지원하는 지도로 불러와 주세요.")
 
     def restore_growth_phase(self, mission: int, catalog_version: int, phase: int, *,
-                             nonce: str | None = None) -> dict:
+                             nonce: str | None = None, phase_version: int = 1) -> dict:
         """Opt into PHC1; persist only this checkpoint's displayed candidates."""
         entry = self._validate_growth(mission, catalog_version,allow_rework=True)
         mission = entry.mission_id
@@ -181,22 +187,33 @@ class CampaignStore:
             self._check_mission_access(conn, entry)
             if catalog_version==2:
                 rework_growth.enable(conn,self.runtime_catalog_path)
-            response = phased_growth.restore(conn, mission, catalog_version, phase, nonce,
-                lambda: self._restore_response(conn, entry, PROTOCOL_VERSION), self.runtime_catalog_path)
+            if type(phase_version) is not int or phase_version not in (1,2) or phase_version==2 and catalog_version!=2:
+                raise GrowthError('phase_version','지원하지 않는 성장 단계 버전입니다.')
+            if phase_version==1 and checkpoint_growth.run(conn,mission):
+                raise GrowthError('phase_version','이 임무는 업데이트된 지도와 로더로 시작해 주세요.')
+            engine=checkpoint_growth if phase_version==2 else phased_growth
+            extra={'curses_per_mission':self.curses_per_mission} if phase_version==2 else {}
+            response = engine.restore(conn, mission, catalog_version, phase, nonce,
+                lambda: self._restore_response(conn, entry, PROTOCOL_VERSION), self.runtime_catalog_path, **extra)
             conn.commit()
         if response.get("state") == "choosing":
-            raise GrowthChoicesPending("게임 안에서 현재 단계의 재능 1개와 저주 1개를 선택해 주세요.", state=response)
+            raise GrowthChoicesPending("게임 안에서 현재 단계에 표시된 성장 선택을 마쳐 주세요.", state=response)
         return response
 
     def choose_growth_phase_slot(self, offer_id: str, choice_slot: int, expected_revision: int,
                                  mission: int = 101, catalog_version: int = 1, *,
-                                 choice_kind: int, phase: int, nonce: str | None = None) -> dict:
+                                 choice_kind: int, phase: int, nonce: str | None = None, phase_version: int = 1) -> dict:
         """Resolve one persisted slot and freeze a completed pair atomically."""
         entry = self._validate_growth(mission, catalog_version,allow_rework=True)
         mission = entry.mission_id
         with self._connect() as conn:
             conn.execute("BEGIN IMMEDIATE")
-            response = phased_growth.choose_slot(conn, mission, catalog_version, phase, nonce,
+            if type(phase_version) is not int or phase_version not in (1,2):
+                raise GrowthError('phase_version','지원하지 않는 성장 단계 버전입니다.')
+            if phase_version==1 and checkpoint_growth.run(conn,mission):
+                raise GrowthError('phase_version','업데이트된 지도와 로더를 사용해 주세요.')
+            engine=checkpoint_growth if phase_version==2 else phased_growth
+            response = engine.choose_slot(conn, mission, catalog_version, phase, nonce,
                 offer_id, choice_slot, expected_revision, choice_kind,
                 lambda: self._restore_response(conn, entry, PROTOCOL_VERSION))
             conn.commit()
@@ -383,7 +400,7 @@ class CampaignStore:
                 response["duplicate"] = True
                 conn.commit()
                 return response
-            phased_growth.check_completion(conn, mission)
+            self._growth_engine(conn,mission).check_completion(conn, mission)
             attempt = conn.execute("SELECT * FROM attempts WHERE nonce=?", (nonce,)).fetchone()
             if not attempt or attempt["state"] != "active":
                 raise ProtocolError("unknown_attempt", "No active attempt matches this result")
@@ -405,7 +422,7 @@ class CampaignStore:
             conn.execute("UPDATE attempts SET state='complete' WHERE nonce=?", (nonce,))
             conn.execute("INSERT INTO results (nonce,request_json,response_json) VALUES (?,?,?)",
                          (nonce, request, json.dumps(response, sort_keys=True)))
-            if not phased_growth.award_completion(conn, nonce):
+            if not self._growth_engine(conn,mission).award_completion(conn, nonce):
                 growth.award_completion(conn, nonce)
             self._commit_result(conn)
         return response
@@ -416,11 +433,11 @@ class CampaignStore:
 
 
 def open_campaign_store(db_path: str | Path, *, new_profile: str = ORIGINAL_PROFILE,
-                        runtime_catalog_path: str | Path | None = None) -> CampaignStore:
+                        runtime_catalog_path: str | Path | None = None, curses_per_mission: int = 3) -> CampaignStore:
     """Open an existing profile unchanged; new application records are original.
 
     CampaignStore's default remains probe for existing integrations/tests. All
     application entry points use this factory so a newly named file has an
     explicit original profile while legacy probe files remain probe records.
     """
-    return CampaignStore(db_path, new_profile=new_profile, runtime_catalog_path=runtime_catalog_path)
+    return CampaignStore(db_path, new_profile=new_profile, runtime_catalog_path=runtime_catalog_path,curses_per_mission=curses_per_mission)

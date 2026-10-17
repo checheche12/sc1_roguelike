@@ -25,6 +25,7 @@ struct ChoiceOffer {
     std::uint32_t pending_talents{};
     std::uint32_t pending_curses{};
     std::uint8_t curse_counts[16]{};
+    std::uint32_t phase_version{};        // 1: three checkpoints, 2: four checkpoints
     std::uint32_t requested_phase{};      // PHC1 UI metadata; legacy 0
     std::uint32_t completed_phase{};
 };
@@ -57,7 +58,7 @@ public:
     // A fresh MEM_PRIVATE/PAGE_READWRITE mailbox and fresh request sequence are
     // allocated per mission. Call shutdown before restoring game/DAT state.
     bool initialize(const MailboxCallbacks& callbacks, std::uint32_t mission = 101,
-                    bool phased = false, std::uint32_t wire_version = 1) noexcept;
+                    bool phased = false, std::uint32_t wire_version = 1, std::uint32_t phase_version = 1) noexcept;
     void shutdown() noexcept;
     void tick() noexcept;
     bool submit_choice(std::uint32_t slot) noexcept;
@@ -66,12 +67,14 @@ public:
 
     bool ready() const noexcept { return state_ == 2; }
     bool failed() const noexcept { return state_ == 5; }
-    bool victory_ack_ready() const noexcept { return state_ == 4 && goal_reached_ && applied_ && (!phased_ || completed_phase_ == 3); }
+    bool victory_ack_ready() const noexcept { return state_ == 4 && goal_reached_ && applied_ && (!phased_ || completed_phase_ == total_phases()); }
     bool offer_active() const noexcept { return offer_active_; }
     bool growth_applied() const noexcept { return applied_; }
     bool already_completed() const noexcept { return already_complete_; }
     bool phased() const noexcept { return phased_; }
     std::uint32_t requested_phase() const noexcept { return requested_phase_; }
+    std::uint32_t total_phases() const noexcept {return phase_version_==2 ? 4u : 3u;}
+    std::uint32_t phase_version() const noexcept {return phase_version_;}
     std::uint32_t completed_phase() const noexcept { return completed_phase_; }
     std::uint32_t state() const noexcept { return state_; }
     std::uint32_t error_code() const noexcept { return error_; }
@@ -110,6 +113,7 @@ private:
     std::uint32_t requested_phase_{};
     std::uint32_t completed_phase_{};
     std::uint32_t wire_version_{1};
+    std::uint32_t phase_version_{1};
     GrowthSnapshot snapshot_{};
     bool phased_{};
     bool applied_{};

@@ -38,6 +38,20 @@ def startup_database(explicit: Path | None = None, *, preferences_path: Path = P
     return database.resolve()
 
 
+def startup_curses_per_mission(*, preferences_path: Path = PREFERENCES_PATH) -> int:
+    try:
+        path=Path(preferences_path)
+        if path.stat().st_size>65536:return 3
+        value=json.loads(path.read_text(encoding='utf8')).get('curses_per_mission',3)
+        return value if type(value) is int and 0<=value<=4 else 3
+    except (OSError,ValueError,AttributeError):return 3
+
+
+def remember_curses_per_mission(value: int, *, preferences_path: Path = PREFERENCES_PATH) -> None:
+    if type(value) is not int or value not in range(5):raise ValueError('저주 선택은 0~4회여야 합니다.')
+    _save_preferences({'curses_per_mission':value},preferences_path)
+
+
 def remember_database(database: Path, *, preferences_path: Path = PREFERENCES_PATH) -> None:
     database = Path(database).resolve()
     if not database.is_file():

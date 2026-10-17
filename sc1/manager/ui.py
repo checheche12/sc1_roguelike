@@ -17,7 +17,7 @@ from tkinter import filedialog, messagebox, ttk
 from .store import open_campaign_store
 from .lifecycle import ManagerInstance
 from .preferences import (PREFERENCES_PATH, startup_database, remember_database,
-                          startup_game_path, remember_game_path)
+                          startup_game_path, remember_game_path, startup_curses_per_mission, remember_curses_per_mission)
 from .auto_connect import AutoConnectTarget, publish_request, read_request, request_path
 from sc1.bridge.discovery import discover_games
 from sc1.campaign.catalog import ORIGINAL_PROFILE, missions_for_profile
@@ -44,6 +44,8 @@ def growth_summary(state: dict) -> str:
     if mode == "legacy_complete":
         return "완료한 임무는 당시 저장한 성장으로 다시 플레이합니다."
     if mode == "waiting_next_map":
+        if state.get('phase_version')==2:
+            return "임무 완료. 다음 임무의 저주 선택 횟수는 로더의 난이도 설정을 따릅니다."
         upcoming = state["upcoming"]
         return f"선택 대기: 재능 {upcoming['talent']}회·저주 {upcoming['curse']}회. 게임의 선택창에서 고르세요."
     if state.get("phased_growth"):
@@ -51,7 +53,7 @@ def growth_summary(state: dict) -> str:
             pending = state["phase_pending"]
             return f"선택 대기: 재능 {pending['talent']}회·저주 {pending['curse']}회. 게임의 선택창에서 고르세요."
         completed = state["completed_phase"]
-        return "선택한 재능·저주 저장 완료." if completed < 3 else "재능·저주 선택 완료."
+        return "선택한 재능·저주 저장 완료." if completed < state.get('total_phases',3) else "재능·저주 선택 완료."
     if mode == "in_mission":
         return "출전 성장 확정 · 재시작과 재연결에도 같은 재능·저주를 사용합니다."
     if mode == "ready":
@@ -115,6 +117,7 @@ class ManagerWindow:
         self.database = database.resolve()
         self.store = open_campaign_store(self.database, new_profile=new_profile)
         self.preferences_path = preferences_path
+        self.curses_per_mission = tk.IntVar(value=startup_curses_per_mission(preferences_path=preferences_path or PREFERENCES_PATH))
         self.process = None
         self.last_connection_error = None
         self.events = queue.Queue()
@@ -167,6 +170,15 @@ class ManagerWindow:
         self.game_path_entry.pack(side="left", fill="x", expand=True, padx=8)
         self.browse_game_button = ttk.Button(path_row, text="찾기…", command=self.browse_game_path)
         self.browse_game_button.pack(side="left")
+        difficulty_row = ttk.Frame(install)
+        difficulty_row.pack(fill="x", pady=(8,0))
+        ttk.Label(difficulty_row,text="난이도 · 임무당 저주 선택").pack(side="left")
+        self.curse_choice=ttk.Combobox(difficulty_row,state="readonly",width=19,
+            values=("0회 · 저주 없음","1회 · 쉬움","2회 · 보통","3회 · 기존","4회 · 어려움"))
+        self.curse_choice.current(self.curses_per_mission.get())
+        self.curse_choice.pack(side="left",padx=8)
+        self.curse_choice.bind("<<ComboboxSelected>>",self.change_difficulty)
+        ttk.Label(difficulty_row,text="재능 3회 고정 · 진행 중인 임무의 설정은 유지").pack(side="left")
         actions = ttk.Frame(install)
         actions.pack(fill="x", pady=(8, 5))
         self.installation_buttons = []
@@ -206,6 +218,15 @@ class ManagerWindow:
         self.root.after(500, self.auto_connect_tick)
 
 
+    def change_difficulty(self,event=None):
+        value=self.curse_choice.current()
+        if value not in range(5):return
+        self.curses_per_mission.set(value)
+        try:
+            remember_curses_per_mission(value,preferences_path=self.preferences_path or PREFERENCES_PATH)
+        except OSError as exc:
+            messagebox.showerror("난이도 저장 실패",str(exc),parent=self.root)
+
     def browse_game_path(self):
         selected = filedialog.askdirectory(parent=self.root, title="스타크래프트 설치 폴더 선택",
                                             initialdir=self.game_path.get())
@@ -219,6 +240,7 @@ class ManagerWindow:
                     self.game_path_entry, self.connect_button, self.inspect_button, *self.installation_buttons]
         for control in controls:
             control.configure(state="disabled" if busy else "normal")
+        if hasattr(self,"curse_choice"):self.curse_choice.configure(state="disabled" if busy or self.process is not None else "readonly")
 
     def installation_action(self, action):
         if self.closed or self.installation_busy:
@@ -499,6 +521,7 @@ class ManagerWindow:
         threading.Thread(target=discover, daemon=True).start()
 
     def set_connection_busy(self, busy):
+        if hasattr(self,"curse_choice"):self.curse_choice.configure(state="disabled" if busy else "readonly")
         for button in (self.connect_button, self.inspect_button):
             button.configure(state="disabled" if busy else "normal")
 
@@ -560,7 +583,8 @@ class ManagerWindow:
         command = [sys.executable, "-u", "-m", "sc1.bridge", "run" if write else "scan",
                    "--pid", str(game.pid), "--expected-start-time", str(game.started_at)]
         if write:
-            command += ["--database", str(self.database), "--attach-write", "--exit-with-manager"]
+            command += ["--database", str(self.database), "--attach-write", "--exit-with-manager",
+                        "--curses-per-mission",str(self.curses_per_mission.get())]
         flags = getattr(subprocess, "CREATE_NO_WINDOW", 0)
         try:
             process = subprocess.Popen(command, cwd=Path(__file__).resolve().parents[2], stdin=subprocess.PIPE, stdout=subprocess.PIPE,

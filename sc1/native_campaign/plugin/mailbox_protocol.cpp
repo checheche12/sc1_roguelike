@@ -54,7 +54,7 @@ MailboxProtocol::~MailboxProtocol() noexcept {
     shutdown();
 }
 
-bool MailboxProtocol::initialize(const MailboxCallbacks& callbacks, std::uint32_t mission, bool phased, std::uint32_t wire_version) noexcept {
+bool MailboxProtocol::initialize(const MailboxCallbacks& callbacks, std::uint32_t mission, bool phased, std::uint32_t wire_version, std::uint32_t phase_version) noexcept {
     shutdown();
     callbacks_ = callbacks;
     offer_ = {};
@@ -67,6 +67,8 @@ bool MailboxProtocol::initialize(const MailboxCallbacks& callbacks, std::uint32_
     applied_ = already_complete_ = goal_reached_ = offer_active_ = false;
     phased_ = phased;
     wire_version_ = wire_version;
+    phase_version_=phase_version;
+    if((phase_version_!=1 && phase_version_!=2) || (phase_version_==2 && (!phased_ || wire_version_!=2))){fail(MailboxError::InvalidSnapshot);return false;}
     if(wire_version_!=1 && wire_version_!=2){ fail(MailboxError::InvalidSnapshot); return false; }
     requested_phase_ = phased ? 1u : 0u;
     completed_phase_ = 0;
@@ -129,6 +131,7 @@ void MailboxProtocol::shutdown() noexcept {
     state_ = operation_ = error_ = 0;
     applied_ = goal_reached_ = offer_active_ = already_complete_ = false;
     phased_ = false;
+    phase_version_=1;
     requested_phase_ = completed_phase_ = 0;
     snapshot_ = {};
     offer_ = {};
@@ -154,7 +157,7 @@ void MailboxProtocol::publish(std::uint32_t state, std::uint32_t operation) noex
     mailbox_[27] = request_offer_.revision;
     mailbox_[28] = request_offer_.kind;
     mailbox_[29] = phased_ ? kPhaseMagic : 0;
-    mailbox_[30] = phased_ ? 1u : 0u;
+    mailbox_[30] = phased_ ? phase_version_ : 0u;
     mailbox_[31] = requested_phase_;
     MemoryBarrier();
     request_sequence_ = committed;
@@ -178,7 +181,7 @@ bool MailboxProtocol::valid_request() const noexcept {
         && mailbox_[27] == request_offer_.revision
         && mailbox_[28] == request_offer_.kind
         && mailbox_[29] == (phased_ ? kPhaseMagic : 0u)
-        && mailbox_[30] == (phased_ ? 1u : 0u) && mailbox_[31] == requested_phase_;
+        && mailbox_[30] == (phased_ ? phase_version_ : 0u) && mailbox_[31] == requested_phase_;
 }
 
 bool MailboxProtocol::read_response(std::uint32_t (&words)[96]) const noexcept {
@@ -217,10 +220,11 @@ bool MailboxProtocol::accept_offer(const std::uint32_t (&words)[96]) noexcept {
         || !any_nonce(next.token_words) || (words[25] & 0xFF000000u)) return false;
     for (std::size_t index = 3; index <= 10; ++index) if (words[index]) return false;
     if (phased_) {
-        if (words[26] != kPhaseMagic || words[27] != 1 || words[28] != requested_phase_
-            || words[29] != completed_phase_ || words[30] != 3 || words[31]
+        if (words[26] != kPhaseMagic || words[27] != phase_version_ || words[28] != requested_phase_
+            || words[29] != completed_phase_ || words[30] != total_phases() || words[31]
             || completed_phase_ + 1 != requested_phase_) return false;
         if ((wire_version_==1 && next.pending_curses != 1) || (next.kind == 2 && next.pending_talents)) return false;
+        next.phase_version=phase_version_;
         next.requested_phase = requested_phase_;
         next.completed_phase = completed_phase_;
     } else {
@@ -229,7 +233,7 @@ bool MailboxProtocol::accept_offer(const std::uint32_t (&words)[96]) noexcept {
     if (next.kind == 1) {
         if ((wire_version_==1 ? next.count!=4 : next.count<1 || next.count>4) || next.pending_talents == 0) return false;
     } else if (next.kind == 2) {
-        if (next.count != 3 || next.pending_curses == 0 || next.candidates[3]) return false;
+        if ((phase_version_==2 ? next.count<1 || next.count>3 : next.count!=3) || next.pending_curses == 0 || next.candidates[3]) return false;
     } else return false;
     for (std::size_t index = 0; index < next.count; ++index) {
         const auto candidate = next.candidates[index];
@@ -256,11 +260,11 @@ bool MailboxProtocol::accept_snapshot(const std::uint32_t (&words)[96]) noexcept
     if (phased_) {
         phase = (words[10] >> 8) & 0xFF;
         if (words[10] != (0x50480000u | (phase << 8) | requested_phase_)
-            || phase < 1 || phase > 3 || phase <= completed_phase_) return false;
+            || phase < 1 || phase > total_phases() || phase <= completed_phase_) return false;
         // Only a fresh stage1 restore can return a later completed snapshot.
         if (applied_ && phase != requested_phase_) return false;
         if (!applied_ && (requested_phase_ != 1 || (phase > 1 && operation_ != 1))) return false;
-        if ((words[9] & 1) && phase != 3) return false;
+        if ((words[9] & 1) && phase != total_phases()) return false;
     } else if (applied_ || words[10]) return false;
     if (words[11] != wire_version_) return false;
     for(std::size_t i=0;i<16;i++)if(words[12+i]&~frozen::kTalentMasks[i])return false;
@@ -363,7 +367,7 @@ bool MailboxProtocol::submit_choice(std::uint32_t slot) noexcept {
 
 bool MailboxProtocol::request_phase(std::uint32_t phase) noexcept {
     if (!mailbox_ || !phased_ || state_ != 2 || !applied_ || already_complete_
-        || phase < 2 || phase > 3 || phase != completed_phase_ + 1) return false;
+        || phase < 2 || phase > total_phases() || phase != completed_phase_ + 1) return false;
     if (!valid_request()) { fail(MailboxError::RequestCorrupted); return false; }
     requested_phase_ = phase;
     offer_ = {};
@@ -375,8 +379,8 @@ bool MailboxProtocol::request_phase(std::uint32_t phase) noexcept {
 
 void MailboxProtocol::advance_goal() noexcept {
     if (!goal_reached_ || state_ != 2 || !applied_) return;
-    if (phased_ && completed_phase_ != 3) return;
-    if (phased_) requested_phase_ = 3;
+    if (phased_ && completed_phase_ != total_phases()) return;
+    if (phased_) requested_phase_ = total_phases();
     // Completed records are replayed with their original frozen snapshot, and
     // the map's original objective still gates victory. They never COMMIT again.
     publish(already_complete_ ? 4 : 3, already_complete_ ? 0 : 2);
@@ -423,7 +427,7 @@ struct Host {
 struct Fixture {
     Host host;
     MailboxProtocol protocol;
-    Fixture(bool phased = false,std::uint32_t wire=1) { CHECK(protocol.initialize(host.callbacks(), 101, phased,wire)); }
+    Fixture(bool phased = false,std::uint32_t wire=1,std::uint32_t capability=1) { CHECK(protocol.initialize(host.callbacks(), 101, phased,wire,capability)); }
     Reply base(std::uint32_t status) {
         Reply reply{};
         const auto sequence = protocol.mailbox_words()[32];
@@ -692,8 +696,8 @@ void dump(Fixture& f) {
               << ' ' << f.protocol.victory_ack_ready() << '\n' << std::flush;
 }
 
-int wire_loop(bool phased = false,std::uint32_t wire=1) {
-    Fixture f(phased,wire); dump(f);
+int wire_loop(bool phased = false,std::uint32_t wire=1,std::uint32_t capability=1) {
+    Fixture f(phased,wire,capability); dump(f);
     std::string command;
     while (std::cin >> command) {
         if (command == "QUIT") return 0;
@@ -703,7 +707,7 @@ int wire_loop(bool phased = false,std::uint32_t wire=1) {
         } else if (command == "TICK") f.protocol.tick();
         else if (command == "CHOOSE") { std::uint32_t slot; if (!(std::cin >> slot)) return 2; f.protocol.submit_choice(slot); }
         else if (command == "GOAL") f.protocol.on_goal_reached();
-        else if (command == "RESET") { if (!f.protocol.initialize(f.host.callbacks(), 101, phased,wire)) return 2; }
+        else if (command == "RESET") { if (!f.protocol.initialize(f.host.callbacks(), 101, phased,wire,capability)) return 2; }
         else if (command == "PHASE") { std::uint32_t phase; if (!(std::cin >> phase)) return 2; f.protocol.request_phase(phase); }
         else if (command != "DUMP") return 2;
         dump(f);
@@ -976,6 +980,7 @@ int main(int argc, char** argv) {
         if (argc == 2 && std::string(argv[1]) == "--wire") return wire_loop();
         if (argc == 2 && std::string(argv[1]) == "--phase-wire") return wire_loop(true);
         if (argc == 2 && std::string(argv[1]) == "--rework-wire") return wire_loop(true,2);
+        if (argc == 2 && std::string(argv[1]) == "--checkpoint-wire") return wire_loop(true,2,2);
         if (argc == 2 && std::string(argv[1]) == "--phase-tests") return phase_tests();
         if (argc == 2 && std::string(argv[1]) == "--python-driver") { print_python_driver(); return 0; }
         const std::vector<std::function<void()>> tests = {

@@ -97,7 +97,7 @@ def read_json(path):
 def source_entries():
     files = [PLUGIN / name for name in (*TRANSLATION_UNITS,'dialog_ui_tests.cpp')]
     files += list(PLUGIN.glob("*.h")) + list((PLUGIN / "include").rglob("*.h"))
-    files += [Path(__file__), WORKSPACE / 'sc1/build_environment.py', PLUGIN / "rework_protocol_driver.py",
+    files += [Path(__file__), WORKSPACE / 'sc1/build_environment.py', PLUGIN / "rework_protocol_driver.py", PLUGIN / "checkpoint_protocol_driver.py",
               ROOT / "dialog_assets/plain_panel_templates.generated.h",
               ROOT / "dialog_assets/wave_timer_statfluf.ui.json",
               ROOT / "build_effect_iscript.py",ROOT / "iscript_effects/iscript.bin",
@@ -180,6 +180,9 @@ def build(*, receipt=RECEIPT, protocol=True):
         result=run([sys.executable,'-B','-X','utf8',PLUGIN/'rework_protocol_driver.py',protocol_exe],environment,'protocol_rework_interop.log')
         commands.append(result)
         protocol_results.append({'name':'rework_v2_python_native','result':json.loads(result['output'])})
+        result=run([sys.executable,'-B','-X','utf8',PLUGIN/'checkpoint_protocol_driver.py',protocol_exe],environment,'protocol_checkpoint_interop.log')
+        commands.append(result)
+        protocol_results.append({'name':'checkpoint_v2_python_native','result':json.loads(result['output'])})
     after = source_entries()
     manager_after=manager_source_entries()
     if before != after or manager_before != manager_after or catalogs != {name: digest(ROOT.parent / "campaign" / name) for name in catalogs}:
@@ -211,7 +214,8 @@ def build(*, receipt=RECEIPT, protocol=True):
                                   'production_translation_units_used':True},
         "growth_protocol": "PHC1 v2",'growth_wire_version':2, "automatic_popup": True,
         "custom_menu_json": True, "native_upper_text_control": True, "choice_number_buttons": True,
-        "phase_count": 3, "choices_per_phase": {"talent": 1, "curse": 1},
+        "phase_capability": 2, "phase_count": 4, "talent_phases": [1,3,4],
+        "curses_per_mission": [0,1,2,3,4], "default_curses_per_mission": 3,
         "api_lifecycle": {"factories_resolved_during_plugin_init": True,
                           "runtime_plugin_api_object_retained": False},
         "managed_dat_receipt": str(dat_receipt_path),

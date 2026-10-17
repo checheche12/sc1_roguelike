@@ -179,7 +179,7 @@ std::vector<std::string> meaning_lines(const std::string& source,int width) {
 }
 bool same_offer(const ChoiceOffer& a,const ChoiceOffer& b) noexcept {
     return a.wire_version==b.wire_version && a.kind==b.kind && a.count==b.count && a.revision==b.revision
-        && a.requested_phase==b.requested_phase && a.completed_phase==b.completed_phase
+        && a.phase_version==b.phase_version && a.requested_phase==b.requested_phase && a.completed_phase==b.completed_phase
         && std::memcmp(a.token_words,b.token_words,sizeof(a.token_words))==0
         && std::memcmp(a.candidates,b.candidates,sizeof(a.candidates))==0;
 }
@@ -268,8 +268,8 @@ void DialogUi::report(const char* text) const noexcept {
 }
 bool DialogUi::valid_offer(const ChoiceOffer& o) const noexcept {
     if((o.wire_version!=1 && o.wire_version!=2) || (o.kind!=1 && o.kind!=2) ||
-        (o.kind==1 ? (o.wire_version==2 ? o.count<1 || o.count>4:o.count!=4):o.count!=3)
-        || o.requested_phase>3 || o.completed_phase>3) return false;
+        (o.kind==1 ? (o.wire_version==2 ? o.count<1 || o.count>4:o.count!=4):(o.phase_version==2 ? o.count<1 || o.count>3:o.count!=3))
+        || o.requested_phase>(o.phase_version==2?4u:3u) || o.completed_phase>(o.phase_version==2?4u:3u)) return false;
     for(unsigned i=0;i<4;++i) if(i<o.count ? (!o.candidates[i] || o.candidates[i]>(o.kind==1?frozen::kTalentCount:frozen::kCurseCount)) : o.candidates[i]!=0) return false;
     return true;
 }

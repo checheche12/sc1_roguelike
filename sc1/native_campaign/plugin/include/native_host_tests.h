@@ -162,12 +162,13 @@ void section(const char* tag,const std::vector<U8>& p) {
     chk.insert(chk.end(),tag,tag+4);U32 n=static_cast<U32>(p.size());auto b=reinterpret_cast<U8*>(&n);
     chk.insert(chk.end(),b,b+4);chk.insert(chk.end(),p.begin(),p.end());
 }
-void make_chk(const campaign_config::Mission* mission=nullptr) {
+void make_chk(const campaign_config::Mission* mission=nullptr,U32 phase_capability=1) {
     if(!mission)mission=&campaign_config::kMissions[0];
     const auto word=[](U32 v){return std::vector<U8>{static_cast<U8>(v),static_cast<U8>(v>>8)};};
     chk.clear();section("VER ",word(mission->chk_version));auto d=word(mission->width);auto h=word(mission->height);d.insert(d.end(),h.begin(),h.end());section("DIM ",d);
     std::vector<U8> p(12,0);p[mission->owner]=6;section("OWNR",p);p[mission->owner]=static_cast<U8>(mission->race);section("SIDE",p);
-    p={1,0,4,0};p.insert(p.end(),mission->marker,mission->marker+std::strlen(mission->marker)+1);section("STR ",p);
+    const auto legacy=legacy_mission_marker(*mission);const auto marker=phase_capability==2?mission->marker:legacy.data();
+    p={1,0,4,0};p.insert(p.end(),marker,marker+std::strlen(marker)+1);section("STR ",p);
 }
 
 void fingerprint_and_save_scope() {
@@ -694,6 +695,7 @@ void real_managed_dat_assets() {
 #include "qa12_combat_visibility_tests.h"
 #include "qa13_host_tests.h"
 #include "qa14_host_tests.h"
+#include "qa15_host_tests.h"
 int main() {
     using namespace host_test;
     try {
@@ -723,9 +725,9 @@ int main() {
         run_rework_shield_ui_v5_groups();
         run_wave_progression_groups();
         run_talent_rank_groups();
-        run_talent_power_groups();run_campaign_research_groups();run_qa9_groups();run_qa10_groups();run_qa12_groups();run_qa12_extra_groups();run_qa13_groups();run_qa14_groups();
+        run_talent_power_groups();run_campaign_research_groups();run_qa9_groups();run_qa10_groups();run_qa12_groups();run_qa12_extra_groups();run_qa13_groups();run_qa14_groups();run_qa15_groups();
         abandon_session();g.baseline.clear();g.game=nullptr;
         CHECK(late_init_calls==0);
-        std::printf("PASS native host integration: %zu groups, %d checks; game process never accessed.\n",87u+qa14_group_count+qa13_group_count+qa12_extra_group_count+qa12_group_count+qa9_group_count+qa10_group_count+campaign_research_group_count+talent_power_group_count+std::size(combat_audit::cases)+max_hp_engine_group_count+samase_status_ui_group_count+samase_weapon_ui_group_count+samase_armor_ui_group_count+trampoline_unwind_group_count+wave_targeting_group_count+wave_progression_group_count+talent_rank_group_count+rework_wave_group_count+enemy_progression_group_count+enemy_performance_group_count+targeting_bridge_group_count+rework_cargo_group_count+rework_carrier_group_count+rework_economy_group_count+rework_binding_group_count+rework_lighting_v5_group_count+rework_combat_v5_group_count+rework_economy_ui_group_count+rework_shield_ui_v5_group_count,checks);return 0;
+        std::printf("PASS native host integration: %zu groups, %d checks; game process never accessed.\n",87u+qa15_group_count+qa14_group_count+qa13_group_count+qa12_extra_group_count+qa12_group_count+qa9_group_count+qa10_group_count+campaign_research_group_count+talent_power_group_count+std::size(combat_audit::cases)+max_hp_engine_group_count+samase_status_ui_group_count+samase_weapon_ui_group_count+samase_armor_ui_group_count+trampoline_unwind_group_count+wave_targeting_group_count+wave_progression_group_count+talent_rank_group_count+rework_wave_group_count+enemy_progression_group_count+enemy_performance_group_count+targeting_bridge_group_count+rework_cargo_group_count+rework_carrier_group_count+rework_economy_group_count+rework_binding_group_count+rework_lighting_v5_group_count+rework_combat_v5_group_count+rework_economy_ui_group_count+rework_shield_ui_v5_group_count,checks);return 0;
     } catch(const std::exception& e){std::fprintf(stderr,"FAIL %s reason=%s\n",e.what(),g.apply_failure ? g.apply_failure : "none");return 1;}
 }

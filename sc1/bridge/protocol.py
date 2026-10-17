@@ -99,7 +99,8 @@ def phase_version(words: tuple[int, ...]) -> int:
         if words[30] or words[31]:
             raise BridgeError("Incomplete phased growth mailbox capability")
         return 0
-    if (words[29] != PHASE_MAGIC or words[30] != PHASE_VERSION or words[31] not in (1, 2, 3)
+    if (words[29] != PHASE_MAGIC or words[30] not in (1,2) or words[31] not in range(1,5 if words[30]==2 else 4)
+            or (words[30]==2 and growth_version(words)!=2)
             or not choice_version(words) or MISSIONS[words[5]].profile != "original"):
         raise BridgeError("Unsupported phased growth mailbox capability")
     return words[30]
@@ -161,11 +162,11 @@ def checked_word(value: int, field: str) -> int:
 def phase_result(request: Request, result: dict, *, offer: bool = False) -> int:
     if (not request.phase_version or type(result.get("requested_phase")) is not int
             or result.get("requested_phase") != request.phase or type(result.get("total_phases")) is not int
-            or result.get("total_phases") != 3
+            or result.get("total_phases") != (4 if request.phase_version==2 else 3)
             or type(result.get("completed_phase")) is not int):
         raise BridgeError("Manager returned mismatched phased growth metadata")
     completed = result["completed_phase"]
-    if not 0 <= completed <= 3 or (offer and completed != request.phase - 1) or (not offer and completed < request.phase):
+    if not 0 <= completed <= (4 if request.phase_version==2 else 3) or (offer and completed != request.phase - 1) or (not offer and completed < request.phase):
         raise BridgeError("Manager returned an invalid phased growth checkpoint")
     return completed
 
@@ -221,7 +222,7 @@ def choice_payload(request: Request, state: dict) -> bytes:
     kind = 1 if offer["kind"] == "talent" else 2
     candidates = offer.get("candidates")
     required = len(candidates) if isinstance(candidates,list) else 0
-    if (kind==1 and required not in ((1,2,3,4) if request.growth_version==2 else (4,))) or (kind==2 and required!=3):
+    if (kind==1 and required not in ((1,2,3,4) if request.growth_version==2 else (4,))) or (kind==2 and (required not in (1,2,3) if request.phase_version==2 else required!=3)):
         raise BridgeError("Manager choice has the wrong candidate count")
     try:
         token = uuid.UUID(offer["offer_id"]).bytes
@@ -254,7 +255,7 @@ def choice_payload(request: Request, state: dict) -> bytes:
     assert len(extension) == 21
     if request.phase_version:
         completed = phase_result(request, state, offer=True)
-        extension[15:] = [PHASE_MAGIC, PHASE_VERSION, request.phase, completed, 3, 0]
+        extension[15:] = [PHASE_MAGIC, request.phase_version, request.phase, completed, 4 if request.phase_version==2 else 3, 0]
     payload=[4, request.sequence, *([0] * 8), *extension]
     if request.growth_version==2:payload.extend([0]*(95-len(payload)))
     return struct.pack(f"<{len(payload)}I",*payload)
@@ -333,7 +334,8 @@ class Dispatcher:
                 try:
                     if request.phase_version:
                         result = self._call_store(request, method, request.mission, request.growth_version,
-                                                  request.phase, nonce=request.nonce if is_later_phase else None)
+                                                  request.phase, nonce=request.nonce if is_later_phase else None,
+                                                  **({"phase_version":2} if request.phase_version==2 else {}))
                     else:
                         result = self._call_store(request, method, request.mission, request.growth_version)
                 except GrowthChoicesPending as pending:
@@ -359,6 +361,7 @@ class Dispatcher:
             kwargs = {"choice_kind": request.choice_kind}
             if request.phase_version:
                 kwargs.update(phase=request.phase, nonce=request.nonce if later_choice else None)
+                if request.phase_version==2:kwargs["phase_version"]=2
             chosen = self._call_store(request, method, offer_id, request.choice_slot, request.choice_revision,
                                       request.mission, request.growth_version, **kwargs)
             if chosen.get("state") == "choosing":
@@ -367,12 +370,13 @@ class Dispatcher:
                 if request.phase_version:
                     result = self._call_store(request, self.store.restore_growth_phase, request.mission,
                                               request.growth_version, request.phase,
-                                              nonce=request.nonce if later_choice else None)
+                                              nonce=request.nonce if later_choice else None,
+                                              **({"phase_version":2} if request.phase_version==2 else {}))
                 else:
                     result = self._call_store(request, self.store.restore_growth, request.mission, request.growth_version)
             status = 1
         elif request.state == 3 and request.operation == 2:
-            if request.phase_version and request.phase != 3:
+            if request.phase_version and request.phase != (4 if request.phase_version==2 else 3):
                 raise BridgeError("COMMIT requires the final growth checkpoint")
             if request.nonce == "00" * 16:
                 raise BridgeError("COMMIT request is missing its attempt nonce")
