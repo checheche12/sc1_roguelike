@@ -14,7 +14,7 @@ class Profiles(unittest.TestCase):
   rows=derive();self.assertEqual(sum(not p['enabled'] for p in rows),8)
   for p in rows:
    if p['mission_id']==404:
-    self.assertEqual((p['normal_first_seconds'],p['normal_interval_seconds'],p['new_base_grace_seconds']),(240,120,240))
+    self.assertEqual((p['normal_first_seconds'],p['normal_interval_seconds'],p['new_base_grace_seconds']),(360,120,360))
     self.assertEqual((p['rare_unlock_seconds'],p['epic_unlock_seconds'],p['legendary_unlock_seconds']),(540,660,780))
     self.assertEqual((p['new_base_rare_grace_seconds'],p['new_base_epic_grace_seconds'],p['new_base_legendary_grace_seconds']),(360,480,600))
     self.assertEqual((p['warning_seconds'],p['appearance_seconds']),(20,4))

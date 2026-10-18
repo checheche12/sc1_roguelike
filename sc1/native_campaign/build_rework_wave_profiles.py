@@ -49,16 +49,16 @@ def derive():
           hero_referenced_types=sorted(references),hero_trigger_references=evidence,
           original_chk_sha256=hashlib.sha256(raw).hexdigest(),original_triggers_changed=False))
         if row['mission_id']==404:
-            # Start four minutes after a completed Nexus/working economy,
+            # Start six minutes after a completed Nexus/working economy,
             # then repeat every two minutes. There is no ten-minute map floor.
-            profiles[-1].update(normal_first_seconds=240,normal_interval_seconds=120,
-                new_base_grace_seconds=240)
+            profiles[-1].update(normal_first_seconds=360,normal_interval_seconds=120,
+                new_base_grace_seconds=360)
     return profiles
 
 def build():
     rows=derive()
     record={'schema_version':5,'source':'original CHK metadata + latest user timing overrides','profile_count':len(rows),
-      'policy':'No-production disables every added wave and timer. Normal first departure240sec, then120sec interval, with readiness-relative grace for reclaimed/new HQ. Uraj (404) first departs240sec after a completed Nexus/working economy, then repeats every120sec; no ten-minute map floor. First eligible wave includes an unlocked roster; later cadence is relative to its last delivered normal wave. No catch-up.',
+      'policy':'No-production disables every added wave and timer. Normal first departure240sec, then120sec interval, with readiness-relative grace for reclaimed/new HQ. Uraj (404) first departs360sec after a completed Nexus/working economy, then repeats every120sec; no ten-minute map floor. First eligible wave includes an unlocked roster; later cadence is relative to its last delivered normal wave. No catch-up.',
       'cutscene_guard':'Simulation-frame clock and modal guard; scripted original assault guard uses nearby unmarked hostile combatants.',
       'hero_guard':'Conservative exclusion on any placed or original trigger-referenced hero type, independent of owner. Original hero DAT/triggers remain untouched.',
       'profiles':rows}

@@ -219,8 +219,8 @@ inline void selected_units() {
 inline void main_wave() {
  last_main_budget=policy::scaled_count(policy::normal_budget(timeline.ordinal,g.mission->mission_id),rework_curses::count(16));
  if(g.mission->mission_id==404){
-  // Uraj's reduced shared cap must not let filler consume every free slot
-  // before the owned curse compositions are created. Keep one detector.
+  // Reserve space for owned curse compositions before normal filler consumes
+  // the shared cap. Keep one detector.
   if(primary)create(policy::detector(primary->race),0,100,100,false,primary->owner);
   selected_units();normal_units(last_main_budget);
  }else{normal_units(last_main_budget);selected_units();}
