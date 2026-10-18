@@ -1,4 +1,5 @@
 #include "mailbox_protocol.h"
+#include "include/legendary_bundles.generated.h"
 #include "include/frozen_catalog.generated.h"
 #include "include/campaign_config.generated.h"
 #include "include/rework_catalog.generated.h"
@@ -241,7 +242,22 @@ bool MailboxProtocol::accept_offer(const std::uint32_t (&words)[96]) noexcept {
         for (std::size_t other = 0; other < index; ++other)
             if (candidate == next.candidates[other]) return false;
     }
-    if(wire_version_==2)for(std::size_t index=32;index<96;++index)if(words[index])return false;
+    if(wire_version_==2){
+        const bool paired=words[36]==0x424e4431u;
+        for(std::size_t index=paired?37u:32u;index<96;++index)if(words[index])return false;
+        if(paired){
+            if(next.kind!=1)return false;
+            bool any=false;
+            for(std::size_t i=0;i<4;i++){
+                next.partners[i]=words[32+i];
+                if(!next.partners[i])continue;
+                if(i>=next.count||!legendary_bundles::compatible(next.candidates[i],next.partners[i]))return false;
+                for(std::size_t j=0;j<i;j++)if(next.candidates[i]==next.partners[j]&&next.partners[i]==next.candidates[j])return false;
+                any=true;
+            }
+            if(!any)return false;
+        }
+    }
     for(std::size_t index=next.count;index<4;++index)if(next.candidates[index])return false;
     for (std::size_t index = 0; index < 3; ++index)
         next.curse_counts[index] = static_cast<std::uint8_t>(words[25] >> (index * 8));
@@ -715,6 +731,19 @@ int wire_loop(bool phased = false,std::uint32_t wire=1,std::uint32_t capability=
     return 0;
 }
 
+void qa16_bundle_numeric_offer_validation() {
+    for(unsigned invalid=0;invalid<6;invalid++){
+        Fixture f(true,2);auto r=f.offer();r[23]=1;r[24]=0;r[26]=0x50484331;r[27]=1;r[28]=1;r[29]=0;r[30]=3;
+        r[14]=1;r[15]=300;r[16]=r[17]=r[18]=0;r[32]=302;r[36]=0x424e4431;
+        if(invalid==1)r[32]=301; // same unit family
+        if(invalid==2)r[32]=257; // global extra attack
+        if(invalid==3)r[32]=341; // other race
+        if(invalid==4)r[36]=0;   // missing marker
+        if(invalid==5)r[33]=302; // absent slot
+        f.send(r);CHECK(invalid ? f.protocol.failed():f.protocol.offer_active());
+        if(!invalid)CHECK(f.host.offer.partners[0]==302&&f.protocol.submit_choice(1));
+    }
+}
 void rework_v2_extended_snapshot_and_single_offer() {
     Fixture f(true,2);auto* m=f.protocol.mailbox_words();
     CHECK(m[16]==128 && m[18]==2);
@@ -993,7 +1022,7 @@ int main(int argc, char** argv) {
             reset_quarantines_old_mailbox_and_rejects_old_ack,
             destruction_never_calls_host_but_explicit_shutdown_does, slots_and_request_ownership,
             unsupported_mission_and_corrupt_request_fail_closed, maximum_supported_snapshot_is_valid,
-            rework_v2_extended_snapshot_and_single_offer,qa10_health_bit_fallback_and_capped_phase_transition,rework_v2_rejects_rank_bit_mismatch_and_reserved_payload
+            qa16_bundle_numeric_offer_validation,rework_v2_extended_snapshot_and_single_offer,qa10_health_bit_fallback_and_capped_phase_transition,rework_v2_rejects_rank_bit_mismatch_and_reserved_payload
         };
         for (const auto& test : tests) test();
         std::cout << "{\"cpp_tests\":" << tests.size() << ",\"passed\":true,\"game_accessed\":false,\"database_accessed\":false}\n";

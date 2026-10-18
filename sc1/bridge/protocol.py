@@ -258,6 +258,16 @@ def choice_payload(request: Request, state: dict) -> bytes:
         extension[15:] = [PHASE_MAGIC, request.phase_version, request.phase, completed, 4 if request.phase_version==2 else 3, 0]
     payload=[4, request.sequence, *([0] * 8), *extension]
     if request.growth_version==2:payload.extend([0]*(95-len(payload)))
+    if request.growth_version==2 and kind==1:
+        from sc1.campaign.legendary_bundles import member_ids
+        from sc1.campaign.runtime_catalog import load_catalog
+        catalog=load_catalog(expected_version=2)
+        by_id={item['id']:item for item in catalog['talents']}
+        partners=[0]*4
+        for i,item in enumerate(candidates):
+            members=member_ids(item,catalog)
+            if len(members)==2:partners[i]=by_id[members[1]]['bit_index']+1
+        if any(partners):payload[31:36]=[*partners,0x424E4431]
     return struct.pack(f"<{len(payload)}I",*payload)
 
 

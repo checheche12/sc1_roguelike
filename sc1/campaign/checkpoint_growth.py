@@ -288,7 +288,7 @@ def _freeze(conn, row, phase, response):
     owned, stacks = growth._json(row["baseline_talents_json"]), growth._json(row["baseline_curses_json"])
     saved=conn.execute('SELECT ranks_json FROM growth_checkpoint_rank_baselines WHERE mission=?',(row['mission'],)).fetchone() if conn.execute("SELECT 1 FROM sqlite_master WHERE name='growth_checkpoint_rank_baselines'").fetchone() else None
     ranks=json.loads(saved[0]) if saved else {}
-    selected = conn.execute("""SELECT o.kind,o.selected_id FROM growth_checkpoint_offers p
+    selected = conn.execute("""SELECT o.kind,o.selected_id,o.candidates_json FROM growth_checkpoint_offers p
         JOIN growth_offers o USING(offer_id) WHERE p.mission=? AND p.phase<=?
         ORDER BY p.phase, p.kind""", (row["mission"], phase)).fetchall()
     if len(selected) != sum(len(planned(row,p)) for p in range(1,phase+1)) or any(item["selected_id"] is None for item in selected):
@@ -296,9 +296,11 @@ def _freeze(conn, row, phase, response):
     for item in selected:
         if item['selected_id'] in (rework_growth.SKIPPED_CURSE,rework_growth.SKIPPED_FINAL):continue
         if item["kind"] == "talent":
-            talent=next(x for x in catalog['talents'] if x['id']==item['selected_id'])
-            if talent.get('repeatable'):ranks[item['selected_id']]=ranks.get(item['selected_id'],1 if item['selected_id'] in owned else 0)+1
-            if item['selected_id'] not in owned:owned.append(item["selected_id"])
+            from .legendary_bundles import selected_members
+            for identity in selected_members(item,catalog):
+                talent=next(x for x in catalog['talents'] if x['id']==identity)
+                if talent.get('repeatable'):ranks[identity]=ranks.get(identity,1 if identity in owned else 0)+1
+                if identity not in owned:owned.append(identity)
         else:
             stacks[item["selected_id"]] = stacks.get(item["selected_id"], 0) + 1
     words = encode_growth(catalog, owned, stacks,ranks)
@@ -425,7 +427,7 @@ def choose_slot(conn, mission, catalog_version, phase, nonce, offer_id, slot, re
         raise GrowthError("stale_choice", "현재 게임에 표시된 선택지를 확인해 주세요.")
     owned, stacks = growth._json(state["talents_json"]), growth._json(state["curses_json"])
     if kind == 1:
-        rework_growth.acquire(conn,mission,catalog,owned,identity)
+        rework_growth.acquire_option(conn,mission,catalog,owned,candidates[slot - 1])
     else:
         stacks[identity] = stacks.get(identity, 0) + 1
     rework_growth.encode(conn,mission,catalog, owned, stacks)

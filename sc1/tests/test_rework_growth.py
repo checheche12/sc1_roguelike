@@ -90,7 +90,9 @@ class ReworkGrowthTests(unittest.TestCase):
                     if policy.reward_policy(mission,phase).guaranteed_legendary:
                         self.assertEqual(len(draw),4,(first,mission));self.assertEqual(len({x['id'] for x in draw}),4)
                         self.assertTrue(all(x['rarity']=='legendary' for x in draw));found=True;break
-                    if draw[0]['id'] not in owned:owned.append(draw[0]['id'])
+                    from sc1.campaign.legendary_bundles import member_ids
+                    for identity in member_ids(draw[0],self.catalog):
+                        if identity not in owned:owned.append(identity)
                 if not found:mission=progression.next_missions(mission)[0]
 
     def test_displayed_unchosen_manuals_reach_next_offer_and_reconnect_is_immutable(self):

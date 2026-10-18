@@ -150,6 +150,8 @@ def build(coverage=None):
     contract['balance_revision']=9
     contract['new_talents']=copy.deepcopy(catalog['talents'][238:])
     generate_header(catalog, ROOT)
+    from .legendary_bundles import generate_header as generate_bundles
+    generate_bundles(catalog, ROOT)
     contract['rank_slots_used']=rank_slot
     for path,value in ((TARGET,catalog),(CONTRACT,contract)):
         path.write_text(json.dumps(value,ensure_ascii=False,indent=2)+'\n',encoding='utf8')

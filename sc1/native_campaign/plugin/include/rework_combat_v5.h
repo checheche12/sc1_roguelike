@@ -921,16 +921,22 @@ struct MissileScope {
         });
     }
     void broodlings(){
-        if(!tracked||p.impact||p.source.owner!=player_owner()||p.weapon!=57||(!rank(82)&&!rank(104)))return;
+        if(!tracked||p.impact||p.source.owner!=player_owner()||p.weapon!=57)return;
         std::vector<bw::Unit*> born;
         living_units([&](bw::Unit* u){if(u->unit_id!=40||u->player!=p.source.owner)return;for(const auto& old:before)if(generation(old.who)==u)return;born.push_back(u);});
         if(born.empty())return;
+        // Native Spawn Broodlings may finish HP initialization after CreateUnit.
+        // Synchronize only new spell-born units, after that native initialization,
+        // with the same owner stats as trained troops (including stacked manuals).
+        for(auto u:born){u->flingy.hitpoints=std::int32_t(effective_max_hp(u));max_hp_cache::publish_unit(u);}
+        if(!rank(82)&&!rank(104))return;
         const U32 goal=rank(104) ? 2+talent_power::v5(104,4):2+talent_power::v5(82,1);const auto center=born.front()->flingy.position;const auto duration=born.front()->death_timer ? born.front()->death_timer:1800;
         const U8 skins[2]={U8(p.source.owner),U8(p.source.owner)};
         for(U32 i=U32(born.size());i<goal;i++){
             const int dx=int(i%3)*16-16,dy=int(i/3)*16;
             auto u=g.create ? g.create(40,center.x+dx,center.y+dy,p.source.owner,skins):nullptr;if(!u)break;
             refresh_units();{OwnerDatScope view(u->player,u->player,u);if(g.finish_pre)g.finish_pre(u);if(g.finish_post)g.finish_post(u);}u->death_timer=std::uint16_t(duration);
+            u->flingy.hitpoints=std::int32_t(effective_max_hp(u));max_hp_cache::publish_unit(u);
             if(rework_relocation::native_move&&!rework_relocation::move(u,center.x+dx,center.y+dy,48,false)){if(native_kill)native_kill(u);}
         }
     }
@@ -1045,8 +1051,8 @@ struct OrderScope {
         if(rank(107)&&in(u->unit_id,{45,49})&&order==27&&to&&to->unit_id!=106&&soldier(to->unit_id)&&is_enemy(to->player)&&eligible(to)&&!protected_objective_unit(to)&&!(original_stat({0,22,to->unit_id})&0x40u)&&target_hp<=effective_max_hp(to)/(talent_power::enabled?2u:4u)){
             intercepted=true;
             if(dist(u,to)>64u*64u)borrowed_order(u,dispatch,6,nullptr,to->flingy.position.x,to->flingy.position.y);
-            else if(native_give&&u->energy>=150*256){
-                const U32 old_owner=to->player;owner_give_hook(to,u->player,native_give);u->energy=std::uint16_t(u->energy-150*256);
+            else if(native_give){
+                const U32 old_owner=to->player;owner_give_hook(to,u->player,native_give);
                 Persist p{};p.target=identity(to);p.source=identity(u);p.kind=107;p.until=now()+talent_power::v5(107,720);p.owner=u->player;p.remaining=old_owner;persistent.push_back(p);
                 if(talent_power::enabled){
                     for(auto extra:around(to->flingy.position.x,to->flingy.position.y,128,to,64)){
@@ -1071,7 +1077,6 @@ struct OrderScope {
             // Native Recall order ID137. Additional discount applies to the
             // residual cost after generic casting efficiency, never twice.
             if(order==137&&rank(126))refund=std::min(spent,refund+talent_power::v5(126,75*256));
-            if(talent_power::enabled&&order==27&&rank(85))refund=std::max(refund,spent/4);
             effective_cast_spent=spent-refund;
             u->energy=std::uint16_t(std::min(65535u,U32(u->energy)+refund));
             if(order==182&&rank(125))u->shields=std::int32_t(std::min(shields,talent_power::v5(125,shields/2)));

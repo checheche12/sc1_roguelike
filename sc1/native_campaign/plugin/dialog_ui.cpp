@@ -1,6 +1,7 @@
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 #include "dialog_ui.h"
+#include "include/legendary_bundles.generated.h"
 #include "include/frozen_catalog.generated.h"
 #include "include/wave_timer_asset.generated.h"
 #include "../dialog_assets/plain_panel_templates.generated.h"
@@ -118,6 +119,7 @@ std::string offer_intro(const ChoiceOffer& offer) {
         const auto index=offer.candidates[i]-1;
         body+='\n';body+=std::to_string(i+1)+". ";
         body+=offer.kind==1 ? frozen::talent_names[index] : frozen::curse_names[index];
+        if(offer.partners[i])body+=" + "+std::string(frozen::talent_names[offer.partners[i]-1]);
         body+=" [";body+=offer.kind==1 ? frozen::talent_rarities[index] : frozen::curse_rarities[index];body+=']';
     }
     body+="\n번호를 누르면 설명을 확인할 수 있습니다.";
@@ -181,7 +183,8 @@ bool same_offer(const ChoiceOffer& a,const ChoiceOffer& b) noexcept {
     return a.wire_version==b.wire_version && a.kind==b.kind && a.count==b.count && a.revision==b.revision
         && a.phase_version==b.phase_version && a.requested_phase==b.requested_phase && a.completed_phase==b.completed_phase
         && std::memcmp(a.token_words,b.token_words,sizeof(a.token_words))==0
-        && std::memcmp(a.candidates,b.candidates,sizeof(a.candidates))==0;
+        && std::memcmp(a.candidates,b.candidates,sizeof(a.candidates))==0
+        && std::memcmp(a.partners,b.partners,sizeof(a.partners))==0;
 }
 bool activation(const dialog::Event* e) noexcept { return e->type==14 && e->ext_type==2; }
 bool delete_event(const dialog::Event* e) noexcept { return e->type==14 && e->ext_type==1; }
@@ -271,6 +274,8 @@ bool DialogUi::valid_offer(const ChoiceOffer& o) const noexcept {
         (o.kind==1 ? (o.wire_version==2 ? o.count<1 || o.count>4:o.count!=4):(o.phase_version==2 ? o.count<1 || o.count>3:o.count!=3))
         || o.requested_phase>(o.phase_version==2?4u:3u) || o.completed_phase>(o.phase_version==2?4u:3u)) return false;
     for(unsigned i=0;i<4;++i) if(i<o.count ? (!o.candidates[i] || o.candidates[i]>(o.kind==1?frozen::kTalentCount:frozen::kCurseCount)) : o.candidates[i]!=0) return false;
+    for(unsigned i=0;i<4;i++)if(o.partners[i] && (o.wire_version!=2 || o.kind!=1 || i>=o.count
+        || !legendary_bundles::compatible(o.candidates[i],o.partners[i])))return false;
     return true;
 }
 void DialogUi::show(const ChoiceOffer& o) noexcept {
@@ -278,7 +283,7 @@ void DialogUi::show(const ChoiceOffer& o) noexcept {
     clear_render_text();
     offer_=o; pending_=true; waiting_=false; dirty_=true;
     body_write_logged_=false;
-    preview_slot_=pressed_id_=0; preview_offer_={}; deferred_clear_=deferred_error_=false;
+    bundle_page_=0;preview_slot_=pressed_id_=0; preview_offer_={}; deferred_clear_=deferred_error_=false;
     if(o.wire_version==2 && o.kind==1 && o.count==1){preview_slot_=1;preview_offer_=o;}
     hud_warning_=false;
 }
@@ -589,8 +594,10 @@ bool DialogUi::refresh() noexcept {
         const bool selected=preview_slot_ && same_offer(preview_offer_,offer_) && pending_ && !waiting_;
         std::string body=waiting_ ? "저장 중\n선택 내용을 저장하고 있습니다." : offer_intro(offer_);
         if(selected) {
-            const auto index=offer_.candidates[preview_slot_-1]-1;
+            const auto partner=offer_.partners[preview_slot_-1];
+            const auto index=(partner && bundle_page_ ? partner:offer_.candidates[preview_slot_-1])-1;
             body=offer_.kind==1 ? frozen::talent_names[index] : frozen::curse_names[index];
+            if(partner)body+=" ["+std::to_string(bundle_page_+1)+"/2]";
             body+="\n등급: "+std::string(offer_.kind==1 ? frozen::talent_rarities[index] : frozen::curse_rarities[index]);
             const auto lines=meaning_lines(offer_.kind==1 ? frozen::talent_effects[index] : frozen::curse_effects[index],line_width(control(-1)));
             // Complete information is written to actual native CTEXT storage.
@@ -614,7 +621,8 @@ bool DialogUi::refresh() noexcept {
             okay=okay && render_label(candidate_ids[i],number);
             disable(button,!pending_ || waiting_ || i>=offer_.count);
         }
-        okay=okay && render_label(-3,waiting_ ? "저장 중" : "확정");
+        const bool paired=selected && offer_.partners[preview_slot_-1];
+        okay=okay && render_label(-3,waiting_ ? "저장 중" : paired ? (bundle_page_ ? "묶음 확정":"다음 설명") : "확정");
         disable(control(-3),!okay || !selected || waiting_);
         if(okay) {
             std::atomic_store_explicit(&render_text_,std::shared_ptr<const RenderTable>(next),std::memory_order_release);
@@ -663,10 +671,14 @@ std::uint32_t DialogUi::event(dialog::Control* c,dialog::Event* e) noexcept {
             && (!pressed_id_ || (pressed_id_==static_cast<std::uint32_t>(static_cast<std::uint16_t>(c->id)) && same_offer(pressed_,offer_)));
         if(!fresh || !pending_) return 1;
         for(unsigned i=0;i<offer_.count;++i) if(c==control(candidate_ids[i])) {
+            bundle_page_=preview_slot_==i+1 && offer_.partners[i] ? 1-bundle_page_:0;
             preview_slot_=i+1;preview_offer_=offer_;dirty_=true;if(!refresh()) dismiss_error();return 1;
         }
         if(preview_slot_) {
             if(c==control(-3) && same_offer(preview_offer_,offer_)) {
+                if(offer_.partners[preview_slot_-1] && !bundle_page_){
+                    bundle_page_=1;dirty_=true;if(!refresh())dismiss_error();return 1;
+                }
                 waiting_=true;bool submitted=false;
                 try {submitted=callbacks_.submit(callbacks_.context,preview_slot_);} catch(...) {}
                 if(!submitted) waiting_=false;

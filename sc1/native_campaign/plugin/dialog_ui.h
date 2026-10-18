@@ -121,6 +121,7 @@ private:
     std::atomic<std::uint32_t> owner_{0}, gui_owner_{0}, epoch_{0};
     std::atomic<unsigned> native_run_depth_{0};
     ChoiceOffer offer_{}, displayed_{}, pressed_{}, preview_offer_{}, opened_offer_{};
+    std::uint32_t bundle_page_ = 0;
     std::uint32_t preview_slot_ = 0, pressed_id_ = 0, menu_epoch_ = 0;
     std::uint32_t attempted_epoch_ = 0;
     bool supported_ = false, pending_ = false, waiting_ = false, dirty_ = false;

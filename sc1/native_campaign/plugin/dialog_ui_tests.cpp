@@ -2,6 +2,7 @@
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 #include "dialog_ui.h"
+#include "include/legendary_bundles.generated.h"
 #include "include/frozen_catalog.generated.h"
 #include <array>
 #include <cstring>
@@ -523,6 +524,24 @@ void cargo_page_button_test(){
 }
 
 }
+void bundled_legendary_pages_test() {
+    ++groups;
+    const unsigned ids[]={300,301,302,303,304,305,341,342,343,344,345,346,383,384,385,386,387,388};
+    for(auto left:ids)for(auto right:ids){
+        if(!legendary_bundles::compatible(left,right))continue;
+        Host h;bind_api(h);check(h.ui.initialize(&h.api,h.callbacks()),"bundle UI initialized");
+        h.show();h.offer.wire_version=2;h.offer.count=2;h.offer.candidates[0]=left;h.offer.partners[0]=right;h.offer.candidates[1]=257;
+        for(unsigned i=2;i<4;i++)h.offer.candidates[i]=0;h.ui.show(h.offer);
+        h.actions=[&]{
+            const auto intro=h.paint(-1);check(intro.find(frozen::talent_names[left-1])!=std::string::npos && intro.find(frozen::talent_names[right-1])!=std::string::npos,"both names on persisted option");
+            h.preview(1);check(h.paint(-1).find(frozen::talent_names[left-1])!=std::string::npos,"first complete member shown");
+            check(no_spaces(h.paint(-1)).find(no_spaces(frozen::talent_effects[left-1]))!=std::string::npos,"first effect not clipped");
+            h.confirm();check(h.submits==0&&!h.ui.waiting(),"first click moves to second explanation");
+            check(no_spaces(h.paint(-1)).find(no_spaces(frozen::talent_effects[right-1]))!=std::string::npos,"second effect not clipped");
+            h.confirm();check(h.submits==1&&h.last_slot==1,"both effects confirmed through one durable choice");h.finish();
+        };open(h);
+    }
+}
 void checkpoint_v2_small_curse_lists_test() {
     ++groups;
     for(unsigned count=1;count<=3;++count) {
@@ -537,4 +556,4 @@ void checkpoint_v2_small_curse_lists_test() {
         open(h);check(!h.ui.open() && h.resumes==1,"small curse list resumes after confirmation");
     }
 }
-int main(int argc,char** argv) {try {if(argc==2 && std::strcmp(argv[1],"native_metadata")==0)native_sized_metadata_test();else if(argc==2 && std::strcmp(argv[1],"spawn_no_delete")==0)spawn_no_delete_test();else {api_test();checkpoint_v2_small_curse_lists_test();catalog_test();spawn_reinit_test();stale_test();text_failure_test();phases_auto_test();standalone_legendary_v2_test();stock_depth_test();hud_test();thread_delete_test();legacy_test();backed_panel_test();render_lifetime_test();hotkey_render_test();constructor_file_test();native_sized_metadata_test();spawn_no_delete_test();independent_wave_timer_test();cargo_page_button_test();}std::cout<<"{\"passed\":true,\"groups\":"<<groups<<",\"assertions\":"<<assertions<<"}\n";return 0;}catch(const std::exception& e) {std::cerr<<"FAILED: "<<e.what()<<'\n';return 1;}}
+int main(int argc,char** argv) {try {if(argc==2 && std::strcmp(argv[1],"native_metadata")==0)native_sized_metadata_test();else if(argc==2 && std::strcmp(argv[1],"spawn_no_delete")==0)spawn_no_delete_test();else {api_test();bundled_legendary_pages_test();checkpoint_v2_small_curse_lists_test();catalog_test();spawn_reinit_test();stale_test();text_failure_test();phases_auto_test();standalone_legendary_v2_test();stock_depth_test();hud_test();thread_delete_test();legacy_test();backed_panel_test();render_lifetime_test();hotkey_render_test();constructor_file_test();native_sized_metadata_test();spawn_no_delete_test();independent_wave_timer_test();cargo_page_button_test();}std::cout<<"{\"passed\":true,\"groups\":"<<groups<<",\"assertions\":"<<assertions<<"}\n";return 0;}catch(const std::exception& e) {std::cerr<<"FAILED: "<<e.what()<<'\n';return 1;}}

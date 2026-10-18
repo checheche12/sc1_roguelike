@@ -9,6 +9,7 @@ UNIT_LEGENDARIES = frozenset((61,62,63,64,65,66,102,103,104,105,106,107,144,145,
 POWER_QUARTERS = dict(common=6, uncommon=7, rare=8, epic=10, legendary=10)
 
 def power_quarters(item):
+    if item.get("rework_revision")==5 and item.get("effect_ordinal")==18:return 4
     if item.get("rework_revision")==5 and item.get("effect_ordinal") in UNIT_LEGENDARIES:return 16
     patches=item.get('effect',{}).get('patches',[])
     resource_only=bool(patches) and not item.get('effect',{}).get('movement') and all(
@@ -105,6 +106,12 @@ DESCRIPTIONS.update({
  91:'러커가 잠복한 상태에서 우클릭 이동과 어택땅(A+지점)을 할 수 있습니다. 이동 속도는 기본의 62.5%이며 이동 중에는 공격하지 않습니다.',
 })
 
+DESCRIPTIONS.update({
+ 18:'아군 일반 공격마다 원래 피해의 50%인 공격을 한 번 더 합니다. 원거리는 탄환을 추가 발사합니다.',
+ 85:'퀸이 체력 75% 이하인 커맨드 센터를 감염시킬 수 있습니다.',
+ 107:'퀸이 인페스트로 체력 50% 이하인 적 전투 유닛을 120초간 조종합니다. 성공하면 4타일 안 조건을 만족하는 다른 적 1기도 추가 지배합니다.',
+})
+
 def decorate(catalog):
     catalog['balance_revision']=9
     catalog.pop('talent_power_halves',None)
@@ -121,9 +128,12 @@ def decorate(catalog):
             ordinal=item['effect_ordinal']
             text=original
             for a,b in REPLACEMENTS.get(ordinal,[]):text=text.replace(a,b)
-            item['description']=DESCRIPTIONS[5] if ordinal==5 else original if q==4 else DESCRIPTIONS.get(ordinal,text)
+            item['description']=DESCRIPTIONS[5] if ordinal==5 else original if q==4 and ordinal!=18 else DESCRIPTIONS.get(ordinal,text)
             if item.get('max_rank')==4 and ordinal not in (8,9,29,30,31,70,111):
                 item['description']=item['description'].replace('반복해서 고를 수 있습니다.','')+' 중첩당 적용, 최대 4회 선택할 수 있습니다.'
+            if ordinal in (18,85,107):item['effect']['qa_revision']=2026101816
+            if ordinal==18:item['effect']['extra_attack_percent']=50
+            if ordinal in (85,107):item['effect']['energy_cost']=0
             if ordinal in (11,12):item['effect']['armor_per_rank']=0.5
             if ordinal in (26,27,28,67,68,69,108,109,110):item['effect']['health_percent_per_rank']=28
             if ordinal in (108,109,110):item['effect']['shield_percent_per_rank']=28

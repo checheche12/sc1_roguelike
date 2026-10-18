@@ -41,7 +41,7 @@ inline void power_economy_actual_native_ledgers(){
 inline void power_epic_legendary_projectiles_and_qualitative(){
     using namespace rework_fixture;begin({18,53});auto marine=unit(0,1,100,100),target=unit(37,6,120,100);
     auto b=bullet(marine,target,0);CHECK(rework_combat_v5::projectiles.at(b).percent==150);
-    CHECK(rework_combat_v5::pending_shots.size()==3);CHECK(rework_combat_v5::pending_shots[0].percent==125);
+    CHECK(rework_combat_v5::pending_shots.size()==3);CHECK(rework_combat_v5::pending_shots[0].percent==50);
     CHECK(rework_combat_v5::pending_shots[1].percent==150&&rework_combat_v5::pending_shots[2].percent==150);finish();
     begin({19,46});auto ghost=unit(1,1,100,100),enemy=unit(66,6,120,100);enemy->shields=80*256;game.upgrade_level_sc[6][15]=3;
     g.normal_hit=true;std::int32_t amount=100*256;

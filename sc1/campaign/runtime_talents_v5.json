@@ -28284,7 +28284,7 @@
       "id": "ccf515a4-0372-5837-b7af-423472b39fb6",
       "name": "무한 화력",
       "target": "아군 일반 공격 병력·영웅",
-      "description": "아군 일반 공격마다 원래 피해의 125%인 공격을 한 번 더 합니다. 원거리는 탄환을 추가 발사합니다.",
+      "description": "아군 일반 공격마다 원래 피해의 50%인 공격을 한 번 더 합니다. 원거리는 탄환을 추가 발사합니다.",
       "trigger": "",
       "numbers": "",
       "notes": "세부 적용: 주 공격마다 원래 일반 공격 피해의 50%인 추가 공격 1회. 원거리 무기는 추가 투사체, 근접은 추가 타격. 기존 타격 수 유지, 추가 공격의 재발동 금지.",
@@ -28307,8 +28307,9 @@
         "type": "rework_v5",
         "ordinal": 18,
         "source_id": "ccf515a4-0372-5837-b7af-423472b39fb6",
-        "qa_revision": 2026101610,
-        "benefit_power_quarters": 10
+        "qa_revision": 2026101816,
+        "benefit_power_quarters": 4,
+        "extra_attack_percent": 50
       },
       "target_units": [
         0,
@@ -33279,7 +33280,7 @@
       "id": "0092e1dd-7b0d-5974-9145-b2713cd19dee",
       "name": "감염 촉매",
       "target": "퀸 인페스트 커맨드 센터",
-      "description": "퀸이 체력 75% 이하인 커맨드 센터를 감염시킬 수 있습니다. 인페스트 에너지 비용 -25%.",
+      "description": "퀸이 체력 75% 이하인 커맨드 센터를 감염시킬 수 있습니다.",
       "trigger": "",
       "numbers": "",
       "notes": "",
@@ -33302,8 +33303,9 @@
         "type": "rework_v5",
         "ordinal": 85,
         "source_id": "0092e1dd-7b0d-5974-9145-b2713cd19dee",
-        "qa_revision": 2026101610,
-        "benefit_power_quarters": 8
+        "qa_revision": 2026101816,
+        "benefit_power_quarters": 8,
+        "energy_cost": 0
       },
       "target_units": [
         45,
@@ -34867,7 +34869,7 @@
       "id": "b1da8423-1b19-55c8-8771-f979597efb1b",
       "name": "정신 감염",
       "target": "퀸 인페스트 시전",
-      "description": "퀸이 인페스트로 체력 50% 이하인 적 전투 유닛을 120초간 조종합니다. 성공하면 4타일 안 조건을 만족하는 다른 적 1기도 추가 지배합니다. 에너지 150.",
+      "description": "퀸이 인페스트로 체력 50% 이하인 적 전투 유닛을 120초간 조종합니다. 성공하면 4타일 안 조건을 만족하는 다른 적 1기도 추가 지배합니다.",
       "trigger": "",
       "numbers": "",
       "notes": "건물·영웅·원본 임무 목표·원래 면역 대상 제외. 만료 시 원 소유자 복귀, 획득·재획득 중첩 금지.",
@@ -34890,8 +34892,9 @@
         "type": "rework_v5",
         "ordinal": 107,
         "source_id": "b1da8423-1b19-55c8-8771-f979597efb1b",
-        "qa_revision": 2026101610,
-        "benefit_power_quarters": 16
+        "qa_revision": 2026101816,
+        "benefit_power_quarters": 16,
+        "energy_cost": 0
       },
       "target_units": [
         45,

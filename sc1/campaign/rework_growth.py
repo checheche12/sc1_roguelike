@@ -95,6 +95,18 @@ def encode(conn,mission,catalog,owned,stacks):
     return encode_growth(catalog,owned,stacks,values)
 
 
+def acquire_option(conn,mission,catalog,owned,candidate):
+    from .legendary_bundles import member_ids
+    identities=member_ids(candidate,catalog)
+    # Validate the entire pair before mutating either ownership or ranks.
+    by_id={item['id']:item for item in catalog['talents']}
+    for identity in identities:
+        item=by_id[identity]
+        if retired(item) or (identity in owned and not item.get('repeatable')):
+            raise GrowthError('duplicate_talent','이미 보유했거나 삭제된 재능입니다.')
+    for identity in identities:acquire(conn,mission,catalog,owned,identity)
+
+
 def acquire(conn,mission,catalog,owned,identity):
     item=next(x for x in catalog['talents'] if x['id']==identity)
     if retired(item):raise GrowthError('retired_talent','삭제된 재능은 선택할 수 없습니다.')
@@ -156,6 +168,7 @@ def recent_manuals(conn,mission,offer_id):
 
 
 def candidates(catalog,mission,phase,owned,rng,*,recent_manuals=(),rank_counts=None):
+    from .legendary_bundles import unit_legendary,compatible,pair_options
     reward=policy.reward_policy(mission,phase)
     available=[]
     by_id={}
@@ -181,10 +194,22 @@ def candidates(catalog,mission,phase,owned,rng,*,recent_manuals=(),rank_counts=N
     pending=midpoint is not None and entry['ordinal']<midpoint
     if pending:
         midpoint_mission=next(m for m in progression.campaign_missions(mission) if progression.metadata(m)['ordinal']==midpoint)
-        reserve=sorted(item['id'] for item in catalog['talents'] if item.get('rework_revision')==5
-                       and item['rarity']=='legendary' and item['id'] not in owned and usable_on(item,midpoint_mission))
-        if reserve:available=[x for x in available if x.id not in set(reserve[-4:])]
+        potential=[item for item in catalog['talents'] if item.get('rework_revision')==5
+                   and item['rarity']=='legendary' and item['id'] not in owned
+                   and progression.item_eligible(item,midpoint_mission,'talent')]
+        reserve=set(sorted(item['id'] for item in potential if usable_on(item,midpoint_mission))[-4:])
+        # Keep companions for the guaranteed anchors too. A squad mission may
+        # only supply one caster family; its second unit can help later missions.
+        for item in potential:
+            if item['id'] not in reserve or not unit_legendary(item):continue
+            partners=[other for other in potential if compatible(item,other)]
+            if partners and not any(other['id'] in reserve for other in partners):
+                reserve.add(sorted(other['id'] for other in partners)[0])
+        if reserve:available=[x for x in available if x.id not in reserve]
+    usable_legends=[by_id[x.id] for x in available if x.rarity=='legendary']
+    available=[x for x in available if not unit_legendary(by_id[x.id])
+               or any(compatible(by_id[x.id],other) for other in usable_legends)]
     try:draw=policy.draw_candidates(reward,available,owned,rng,recent_manuals=recent_manuals,exhausted_fallback=True)
     except ValueError as exc:raise GrowthError('choice_pool_unavailable',str(exc)) from exc
     if not draw:raise GrowthError('choice_pool_unavailable','현재 단계에 사용 가능한 개편 재능이 없습니다.')
-    return [copy.deepcopy(by_id[x.id]) for x in draw]
+    return pair_options([by_id[x.id] for x in draw],usable_legends,rng)

@@ -20,6 +20,7 @@ struct ChoiceOffer {
     std::uint32_t kind{};                 // 1 talent, 2 curse
     std::uint32_t count{};                // v1: 4 talent; v2: 1..4 talent; 3 curse
     std::uint32_t candidates[4]{};        // catalog bit/byte index + 1
+    std::uint32_t partners[4]{};          // optional second legendary, same index encoding
     std::uint32_t token_words[4]{};       // UUID.bytes, read as little-endian DWORDs
     std::uint32_t revision{};
     std::uint32_t pending_talents{};
