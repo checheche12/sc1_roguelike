@@ -716,6 +716,7 @@ class ManagerWindow:
             "committed": "저장 완료 · 성장 기록을 보관했습니다.",
             "saved": "성장 기록 저장 완료.",
             "map_error": "지도에서 오류가 발생했습니다. 아래 상세 기록을 확인하세요.",
+            "map_request_rejected": "현재 임무의 기록 연결이 거절되었습니다. 아래 사유를 확인하세요. 다른 임무를 시작하면 다시 연결합니다.",
         }
         if event.get("status") in statuses:
             text = statuses[event["status"]]

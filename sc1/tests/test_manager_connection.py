@@ -23,6 +23,8 @@ class ManagerConnectionTests(unittest.TestCase):
         self.window.process = None
         self.window.last_connection_error = None
         self.window.connection = Mock()
+        self.window.curses_per_mission = Mock()
+        self.window.curses_per_mission.get.return_value = 3
         self.window.connect_button = Mock()
         self.window.inspect_button = Mock()
         self.window.append = Mock()

@@ -41,6 +41,13 @@ class BridgeError(RuntimeError):
     pass
 
 
+class RequestRejected(BridgeError):
+    """A durable store rejection has already been delivered to this map."""
+    def __init__(self, code, message):
+        self.code = code
+        super().__init__(f"Manager rejected request ({code}): {message}")
+
+
 class UnstableMailbox(BridgeError):
     pass
 
@@ -419,4 +426,4 @@ class Dispatcher:
                                   *struct.unpack("<4I", bytes.fromhex(request.nonce)), 0, 0, 1)
             publish_response(self.memory, self.address, request, payload)
             code = getattr(exc, "code", "rejected_request")
-            raise BridgeError(f"Manager rejected request ({code}): {exc}") from exc
+            raise RequestRejected(code, str(exc)) from exc

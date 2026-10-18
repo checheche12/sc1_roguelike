@@ -137,7 +137,7 @@ def metadata(spec,chk,source):
      available.add(struct.unpack_from('<H',a,24)[0])
  no_production=not bool(available&{7,41,64})
  # These missions transfer neutral bases through original campaign AI scripts.
- if spec['mission_id'] in (105,301,503,601,605,606):no_production=False
+ if spec['mission_id'] in (105,301,503,605,606):no_production=False
  version=struct.unpack('<H',chk.getsection('VER '))[0]
  marker=f'SC1_NATIVE_M{spec["mission_id"]}_V4_PH2_R469'
  objectives=[];ss=strings(chk.getsection('STR '))
@@ -334,6 +334,7 @@ def quarter_milestone(chk,row,middle_cs,middle):
 
 def patch_progression(chk,row):
  original=triggers(chk);result=[];receipt=[];original_indices=[]
+ opening_workers=None
  survival=timed_survival_plan(chk,row)
  middle_cs,owners,mid=milestone(chk,row)
  # A scripted checkpoint can consume its own switch, move units, or start a
@@ -343,6 +344,18 @@ def patch_progression(chk,row):
  quarter_cs,quarter=quarter_milestone(chk,row,middle_cs,mid)
  quarter_source=quarter.get('source_trigger');quarter_index=None
  for ti,t in enumerate(original):
+  if row['mission_id']==602 and ti==67:
+   # The original repeatedly transfers rescued P6 Drones at location105.
+   # Give eight extra workers once, at that same first rescue, without adding
+   # a repeated gift to its Preserve Trigger or helping the hostile AI.
+   cs=[c for _,c in conditions(t)];acts=[a for _,a in actions(t)]
+   assert [cf(c) for c in cs]==[cf(cond(3,5,1,41,location=105))]
+   assert acts[1]==struct.pack('<IIIIIIHBBBBH',105,0,0,0,5,13,41,48,0,20,0,0)
+   gift=struct.pack('<IIIIIIHBBBBH',105,0,0,0,row['owner'],0,41,44,8,20,0,0)
+   opening_workers={'kind':'first_original_drone_rescue','source_trigger':ti,'gift_trigger_index':len(result),
+    'owner':row['owner'],'location':105,'original_drones':2,'additional_drones':8,'total_drones':10,
+    'once_only':True,'original_transfer_unchanged':True}
+   result.append(new_trigger(cs,[gift],owner_bytes(row['owner'])))
   if ti==quarter_source:
    quarter_index=len(result);result.append(new_trigger(quarter_cs,[setswitch(SWITCHES['quarter'])],owners))
   if ti==middle_source:
@@ -381,7 +394,9 @@ def patch_progression(chk,row):
   objective_updates=append_survival_objectives(chk,row,survival,result)
   alternate={'kind':'reviewed_timed_survival_all_hostile_buildings','name':config['name'],'goal_trigger_index':latch_index,'enemy_seen_trigger_index':seen_index,'enemy_seen_switch':SWITCHES['enemy_base_seen'],'enemy_owners':list(config['enemy_owners']),'initial_enemy_building_counts':survival['initial_enemy_building_counts'],'initial_enemy_building_types':survival['initial_enemy_building_types'],'conditions':[cf(c) for c in survival['conditions']],'conditions_hex':[c.hex() for c in survival['conditions']],'original_ending_trigger':config['ending_trigger'],'ending_trigger_index':ending_route['ending_trigger_index'],'route':ending_route['route'],'route_switch':ending_route['route_switch'],'original_timer_seconds':config['seconds'],'original_timer_victory_preserved':True,'timer_expiration_required':False,'base_clear_semantics':'Command Buildings equals zero for every reviewed original hostile base owner, anywhere; all standard structures including defense, supply, technology, resource buildings, add-ons and lifted or rebuilt buildings count. Enemy mobile units do not block. Neutral, rescuable, player and decorative campaign-object owners are excluded.','startup_guard':'Each reviewed hostile owner must first be observed with at least one building at elapsed time >=1s; original countdown activation switch and player survival guards are required.','objective_updates':objective_updates,'same_original_success_actions_after_growth_and_ack':True}
  chk.setsection('TRIG',b''.join(result))
- return {'routes':receipt,'goal_latches_inserted_before_original_endings':len(receipt),'quarter_trigger_index':quarter_index,'quarter':quarter,'middle_trigger_index':middle_index,'middle':mid,'middle_evaluated_before_source_actions':middle_source is not None,'original_trigger_indices':original_indices,'preserves_all_original_actions':True,'preserves_all_original_trigger_owners':True,'original_initialization_and_goal_evaluation_order_preserved':True,'defeat_triggers_byte_identical':True,'victory_requires':'latched original route switch + phase4 readiness switch242 + durable save ACK switch243','handshake':{'kind':'ordinary_switches_v1',**SWITCHES},'death_counters_are_diagnostic_mirrors_only':True,'cinematic_begins_after_save_ack':True,'alternate_survival_victory':alternate}
+ report={'routes':receipt,'goal_latches_inserted_before_original_endings':len(receipt),'quarter_trigger_index':quarter_index,'quarter':quarter,'middle_trigger_index':middle_index,'middle':mid,'middle_evaluated_before_source_actions':middle_source is not None,'original_trigger_indices':original_indices,'preserves_all_original_actions':True,'preserves_all_original_trigger_owners':True,'original_initialization_and_goal_evaluation_order_preserved':True,'defeat_triggers_byte_identical':True,'victory_requires':'latched original route switch + phase4 readiness switch242 + durable save ACK switch243','handshake':{'kind':'ordinary_switches_v1',**SWITCHES},'death_counters_are_diagnostic_mirrors_only':True,'cinematic_begins_after_save_ack':True,'alternate_survival_victory':alternate}
+ if opening_workers is not None:report['opening_workers']=opening_workers
+ return report
 
 def unlock(chk,row):
  owner=row['owner'];race=row['race'];selected=set(BASE_UNITS[race])|set(BW_UNITS[race])
@@ -507,7 +522,10 @@ def strengthen(chk,row):
  enemy_ground=[(i,r,unit_info(r)) for i,r in enumerate(records) if unit_info(r)[3] in hostile and unit_info(r)[2] in GROUND_COMBAT]
  # Uraj starts with a fixed landing army and no economy. Additional stationary
  # armies are also recruited by original AI and prevent the first expansion.
- cap=0 if row['mission_id']==404 else 24 if row['no_production'] else 80
+ # Vile Disruption's enemies include invincible actors, released/moved only
+ # by exact original locations. Copies can remain invincible outside them
+ # and keep the final Bring Men == 0 condition false forever.
+ cap=0 if row['mission_id'] in (404,601) else 24 if row['no_production'] else 80
  for index,source,(sx,sy,unit,p) in enemy_ground[::2]:
   if len(added)>=cap:break
   choices=[]

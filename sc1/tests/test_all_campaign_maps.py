@@ -89,7 +89,7 @@ class AllCampaignMapTests(unittest.TestCase):
  def test_all_63_assets_and_57_logical_missions(self):
   self.assertEqual(len(self.rows),63);self.assertEqual(len({r['completion_bit'] for r in self.rows}),57)
   self.assertEqual({r['mission_id'] for r in self.rows},{r['mission_id'] for r in self.receipt['maps']})
-  self.assertEqual({r['mission_id'] for r in self.rows if r['no_production']},{104,205,306,401,405,502,507,611})
+  self.assertEqual({r['mission_id'] for r in self.rows if r['no_production']},{104,205,306,401,405,502,507,601,611})
   self.assertEqual(self.byid[515]['completion_bit'],self.byid[505]['completion_bit'])
   self.assertEqual(self.byid[611]['campaign_id'],7)
   for id in range(614,619):self.assertEqual(self.byid[id]['shared_reward_mission_id'],604)

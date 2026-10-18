@@ -8,7 +8,7 @@ import sys
 import threading
 import time
 
-from .protocol import BridgeError, Dispatcher, MAILBOX_SIZE, UnstableMailbox, validate_header
+from .protocol import BridgeError, Dispatcher, MAILBOX_SIZE, RequestRejected, UnstableMailbox, validate_header
 from .windows import WindowsProcess, find_mailboxes, MailboxUnavailable
 from .lifetime import watch_manager
 
@@ -107,7 +107,9 @@ def run_connected(memory, active, store_factory, *, stopped, deadline=None, poll
     """Keep the PID writer guard and selected store across map generations.
 
     Only retired transport allocations and idle heartbeats enter discovery.
-    Store, permission, malformed ABI and request errors propagate unchanged.
+    Storage, permission and malformed ABI errors propagate unchanged. An
+    explicit store rejection fails only the current map; keep the connection
+    alive for a fresh map without retrying that rejected request.
     Every new binding gets a fresh Dispatcher and fresh heartbeat proof; saved
     offers/nonces remain in the same store, so a lost response is retried there.
     """
@@ -116,6 +118,7 @@ def run_connected(memory, active, store_factory, *, stopped, deadline=None, poll
     previous = None
     generation = 0
     last_stable = clock()
+    rejected = None
     while not stopped.is_set() and (deadline is None or clock() < deadline):
         if not memory.is_running():
             raise BridgeError("스타1이 종료되었습니다. 게임을 다시 켠 뒤 연결해 주세요.")
@@ -136,6 +139,7 @@ def run_connected(memory, active, store_factory, *, stopped, deadline=None, poll
                 if store is None:
                     store = store_factory()
                 dispatch = dispatcher_factory(memory, active["address"], store, clock=clock)
+                rejected = None
                 generation += 1
                 last_stable = clock()
                 previous = None
@@ -147,7 +151,19 @@ def run_connected(memory, active, store_factory, *, stopped, deadline=None, poll
                     and clock() - dispatch.last_change >= dispatch.heartbeat_timeout):
                 raise MailboxUnavailable("Map heartbeat is idle; awaiting a live map generation")
             try:
-                event = dispatch.poll()
+                if rejected is None:
+                    event = dispatch.poll()
+                else:
+                    # The error response was published once. Observe only the
+                    # heartbeat until this map retires; never retry the store.
+                    if dispatch.last_heartbeat != words[6]:
+                        dispatch.last_heartbeat = words[6]
+                        dispatch.last_change = clock()
+                    event = rejected
+                last_stable = clock()
+            except RequestRejected as exc:
+                rejected = event = {"status": "map_request_rejected", "error_code": exc.code,
+                                    "message": str(exc)}
                 last_stable = clock()
             except UnstableMailbox:
                 if clock() - last_stable > 3:

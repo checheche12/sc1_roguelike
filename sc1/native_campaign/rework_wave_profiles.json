@@ -2709,10 +2709,10 @@
     {
       "mission_id": 601,
       "label": "Brood War Zerg 1",
-      "enabled": true,
-      "mode": "build_or_rescue_base",
+      "enabled": false,
+      "mode": "disabled",
       "starting_headquarters": false,
-      "normal_first_seconds": 240,
+      "normal_first_seconds": 360,
       "normal_interval_seconds": 120,
       "new_base_grace_seconds": 240,
       "rare_unlock_seconds": 540,

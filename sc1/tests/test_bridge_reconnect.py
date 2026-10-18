@@ -245,6 +245,44 @@ class ReconnectTests(unittest.TestCase):
                 inspector.assert_not_called()
                 self.assertEqual(self.memory.unbindings, 0)
 
+    def test_locked_mission_rejection_keeps_same_store_for_broodwar_zerg_opening(self):
+        self.memory.pages[BASE].set(5, 408)
+        def report(event):
+            self.events.append(event)
+            if event['status']=='map_request_rejected':
+                self.assertEqual(self.memory.pages[BASE].get(33),3)
+                self.memory.restart()
+                self.memory.pages[BASE+4096].set(5,601)
+            elif event['status']=='choice_offered':
+                self.assertEqual(self.memory.pages[self.memory.mailbox].get(5),601)
+                self.stop.done=True
+        self.run_session(report)
+        self.assertTrue(self.stop.done)
+        self.assertEqual(self.memory.bindings,[BASE,BASE+4096])
+        self.factory.assert_called_once()
+        self.assertIn('map_rebound',[e['status'] for e in self.events])
+
+    def test_rejected_request_is_not_retried_while_waiting_for_another_map(self):
+        self.memory.pages[BASE].set(5,408)
+        with patch.object(self.store,'restore_growth_phase',wraps=self.store.restore_growth_phase) as restore:
+            self.run_session()
+        self.assertEqual(restore.call_count,1)
+        self.assertEqual(self.memory.pages[BASE].get(33),3)
+        self.assertEqual(len(self.memory.writes),3)
+        self.assertEqual([e['status'] for e in self.events].count('map_request_rejected'),1)
+
+    def test_rejected_map_idle_heartbeat_can_still_return_to_discovery(self):
+        self.memory.pages[BASE].set(5,408)
+        def report(event):
+            if event['status']=='map_request_rejected':self.stop.advance=False
+        def inspect(memory):
+            self.assertIsNone(memory.mailbox)
+            self.stop.done=True
+            return []
+        self.run_session(report,inspect)
+        self.assertTrue(self.stop.done)
+        self.assertEqual(self.memory.unbindings,1)
+
     def test_invalid_real_header_is_not_a_retired_generation(self):
         self.memory.pages[BASE].set(18, 99)
         with self.assertRaisesRegex(BridgeError, "Unsupported growth"):

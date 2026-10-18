@@ -52,7 +52,7 @@ inline constexpr Mission kMissions[] = {
     {506, 0, 6, 1, 128, 128, "SC1_NATIVE_M506_V4_PH2_R469", false, 205},
     {507, 0, 2, 1, 192, 128, "SC1_NATIVE_M507_V4_PH2_R469", true, 205},
     {508, 0, 6, 1, 192, 192, "SC1_NATIVE_M508_V4_PH2_R469", false, 205},
-    {601, 0, 3, 0, 96, 128, "SC1_NATIVE_M601_V4_PH2_R469", false, 205},
+    {601, 0, 3, 0, 96, 128, "SC1_NATIVE_M601_V4_PH2_R469", true, 205},
     {602, 0, 3, 0, 128, 128, "SC1_NATIVE_M602_V4_PH2_R469", false, 205},
     {603, 0, 3, 0, 128, 128, "SC1_NATIVE_M603_V4_PH2_R469", false, 205},
     {604, 0, 3, 0, 192, 64, "SC1_NATIVE_M604_V4_PH2_R469", false, 205},

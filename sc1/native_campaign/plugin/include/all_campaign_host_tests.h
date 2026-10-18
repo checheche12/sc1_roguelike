@@ -3,12 +3,20 @@ namespace host_test {
 void all_mission_identity_and_phase_gates() {
     static_assert(std::size(campaign_config::kMissions)>=59,"complete campaigns");
     for(const auto& mission:campaign_config::kMissions){
+        if(mission.mission_id==601)CHECK(mission.no_production && mission.owner==3);
         reset();make_chk(&mission);CHECK(identify_chk(chk.data(),chk.size())==&mission);
         game.campaign_mission=static_cast<std::uint16_t>(mission.campaign_index ? mission.campaign_index : mission.mission_id);
         game.map_width_tiles=static_cast<std::uint16_t>(mission.width);game.map_height_tiles=static_cast<std::uint16_t>(mission.height);
         init_units(original);CHECK(g.active && g.mission==&mission);CHECK(g.protocol.mailbox_words()[5]==mission.mission_id);
         CHECK(!counter(kRouteCounter) && !counter(kMiddleCounter) && !counter(kReadyCounter) && !counter(kAckCounter));
         for(U32 i=0;i<16;i++)CHECK(game.upgrade_level_sc[mission.owner][i]==(mission.no_production ? 6 : 0));
+        if(mission.mission_id==601){
+            std::array<U8,61*12> levels{};levels.fill(1);
+            std::array<samase::ExtendedArray,1> arrays{};arrays[0].pointer=levels.data();arrays[0].end=levels.data()+levels.size();
+            g.extended=arrays.data();g.extended_count=arrays.size();CHECK(apply_no_production_upgrades());
+            for(U32 id=0;id<61;id++)for(U32 owner=0;owner<12;owner++)CHECK(levels[id*12+owner]==(id<16 && owner==3 ? 6 : 1));
+            g.extended=nullptr;g.extended_count=0;
+        }
         auto snapshot=load_reply(1);snapshot[12]=snapshot[28]=0;publish(snapshot);protocol_pump(nullptr);CHECK(g.protocol.completed_phase()==1);
         game.switches[campaign_config::kMiddleSwitch/32]|=1u<<(campaign_config::kMiddleSwitch%32);
         CHECK(!counter(kGoalCounter));
