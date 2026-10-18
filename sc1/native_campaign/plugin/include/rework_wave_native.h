@@ -89,10 +89,19 @@ inline bool live_hero(U32 slot) {
 }
 inline void select_specials() {
  selected={0,0};const auto caps=capabilities();U32 n=0;const auto start=timeline.cursor;
- for(U32 step=0;step<std::size(policy::kRosters) && n<2;step++){
+ std::array<bool,std::size(policy::kRosters)> allowed{};
+ for(std::size_t i=0;i<std::size(policy::kRosters);i++){
+  const auto& r=policy::kRosters[i];if(r.slot==policy::Reserve || !rework_curses::count(r.slot))continue;
+  const bool hero=live_hero(r.slot);allowed[i]=timeline.eligible(*current,r,caps)&&!hero;
+  log_event("V5 special curse eligibility: slot=%u eligible=%u unlock=%u departure=%u caps=%u required=%u live_hero=%u last_delivered=%u",r.slot,allowed[i]?1u:0u,timeline.unlock_second(*current,r),timeline.departure_at,caps,r.requirements,hero?1u:0u,timeline.delivered[r.slot-24]);
+ }
+ // Give a newly unlocked/previously capacity-blocked curse its first delivery
+ // before repeating other compositions. Keep the two-roster and cadence limits.
+ for(U32 pass=0;pass<2 && n<2;pass++)for(U32 step=0;step<std::size(policy::kRosters) && n<2;step++){
   const auto idx=(start+step)%std::size(policy::kRosters);const auto& r=policy::kRosters[idx];
-  if(r.slot==policy::Reserve || !rework_curses::count(r.slot) || !timeline.eligible(*current,r,caps) || live_hero(r.slot))continue;
+  if(!allowed[idx] || (timeline.delivered[r.slot-24]!=0)!=(pass==1))continue;
   selected[n++]=r.slot;timeline.cursor=static_cast<U32>((idx+1)%std::size(policy::kRosters));}
+ log_event("V5 special curse selection: slots=%u,%u normal_ordinal=%u",selected[0],selected[1],timeline.ordinal+1);
 }
 inline bool clear_cell(int x,int y,bool worker_raid=false) {
  bool clear=true;U32 alive=0;living_units([&](bw::Unit* u){++alive;const auto p=u->flingy.position;const auto dx=std::int64_t(x)-p.x,dy=std::int64_t(y)-p.y;
@@ -172,7 +181,8 @@ inline void normal_units(U32 half_supply,U32 slot=0) {
  if(half_supply<=detection_cost)return;
  // Reserve a real cell for detection before the combat units fill an origin.
  // Mixed-owner fallback origins must not strand the detector without a cell.
- auto detection=create(policy::detector(race),slot,100,100,false,primary?primary->owner:12u);
+ auto detection=add_detector(slot);
+ if(!detection)detection=create(policy::detector(race),slot,100,100,false,primary?primary->owner:12u);
  if(detection)half_supply-=detection_cost;
  const bool air_only=primary&&sc1_native::wave_progression::air_only_unit(static_cast<std::uint16_t>(primary->unit1))&&sc1_native::wave_progression::air_only_unit(static_cast<std::uint16_t>(primary->unit2));
  for(U32 i=0;i<480 && used<half_supply;i++){
@@ -201,6 +211,19 @@ inline void roster(const policy::Roster& r) {
   created+=count_spawn(m.unit,m.count,r.slot,boosted?r.hp_percent:100,boosted?r.attack_percent:100,r.slot==policy::Flank);
  }
  if(created)timeline.mark_delivered(r.slot);
+ log_event("V5 special curse delivery: slot=%u units=%u live_half_supply=%u cap=%u normal_ordinal=%u",r.slot,created,live_supply(),policy::live_supply_cap(g.mission->mission_id),timeline.ordinal+1);
+}
+inline void selected_units() {
+ for(auto slot:selected)if(slot)for(const auto& r:policy::kRosters)if(r.slot==slot)roster(r);
+}
+inline void main_wave() {
+ last_main_budget=policy::scaled_count(policy::normal_budget(timeline.ordinal,g.mission->mission_id),rework_curses::count(16));
+ if(g.mission->mission_id==404){
+  // Uraj's reduced shared cap must not let filler consume every free slot
+  // before the owned curse compositions are created. Keep one detector.
+  if(primary)create(policy::detector(primary->race),0,100,100,false,primary->owner);
+  selected_units();normal_units(last_main_budget);
+ }else{normal_units(last_main_budget);selected_units();}
 }
 inline void note_death(bw::Unit* u,bool direct) noexcept {
  if(!direct || !enabled() || !rework_curses::count(20) || !regular_enemy(u))return;
@@ -264,7 +287,7 @@ inline void tick(bool ready,bool blocked,bool goal) {
  }
  if(pending_kind && !spawned_pending && timeline.second()>=pending_spawn_at){
   spawned_pending=true;
-  if(pending_kind==1){last_main_budget=policy::scaled_count(policy::normal_budget(timeline.ordinal,g.mission->mission_id),rework_curses::count(16));normal_units(last_main_budget);for(auto slot:selected)if(slot)for(const auto& r:policy::kRosters)if(r.slot==slot)roster(r);}
+  if(pending_kind==1)main_wave();
   else if(pending_kind==2)normal_units(16+8*(std::min(3u,rework_curses::count(20))-1));
   else if(pending_kind==3)count_spawn(43,policy::reduced_amount(policy::raid_count(rework_curses::count(15),rework_curses::count(16))),15);
   else normal_units(reserve_supply,24);

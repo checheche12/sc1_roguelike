@@ -52,10 +52,7 @@ def derive():
             # Start four minutes after a completed Nexus/working economy,
             # then repeat every two minutes. There is no ten-minute map floor.
             profiles[-1].update(normal_first_seconds=240,normal_interval_seconds=120,
-                new_base_grace_seconds=240,rare_unlock_seconds=1200,
-                epic_unlock_seconds=1500,legendary_unlock_seconds=1800,
-                new_base_rare_grace_seconds=600,new_base_epic_grace_seconds=900,
-                new_base_legendary_grace_seconds=1200)
+                new_base_grace_seconds=240)
     return profiles
 
 def build():

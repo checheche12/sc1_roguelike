@@ -46,7 +46,7 @@ inline constexpr U32 reduced_amount(U32 amount) noexcept {return U32((std::uint6
 inline constexpr U32 detector(U32 race) noexcept {return race==0?42u:race==2?84u:9u;}
 inline U32 scaled_count(U32 amount,U32 stacks) noexcept {return amount*(100u+15u*std::min(stacks,3u))/100u;}
 inline constexpr U32 normal_budget(U32 ordinal,U32 mission=0) noexcept {return mission==404?16u+4u*std::min(ordinal,4u):32u+8u*std::min(ordinal,12u);}
-inline constexpr U32 live_supply_cap(U32 mission) noexcept {return mission==404?64u:480u;}
+inline constexpr U32 live_supply_cap(U32) noexcept {return 480u;}
 inline U32 raid_count(U32 stacks,U32 reinforcements=0) noexcept {stacks=std::min(stacks,255u);return scaled_count(stacks*(stacks+1u),reinforcements);}
 inline U32 reserve_budget(U32 main_budget,U32 stacks) noexcept {return U32(std::min<std::uint64_t>(480u,std::uint64_t(main_budget)*stacks/2u));}
 inline U32 stacked_count(U32 amount,U32 stacks) noexcept {return U32(std::min<std::uint64_t>(480u,std::uint64_t(amount)*stacks));}
@@ -64,16 +64,18 @@ struct Timeline {
    home=home_ready;
    if(!home){warning_at=departure_at=0;next=0;}
  }
+ U32 unlock_second(const Profile& p,const Roster& r) const noexcept {
+   U32 nominal=r.grade==1?p.rare:r.grade==2?p.epic:r.grade==3?p.legendary:0u;
+   U32 grace=r.grade==1?p.rare_grace:r.grade==2?p.epic_grace:r.grade==3?p.legendary_grace:0u;
+   return std::max(nominal,(!p.starting_hq || ready_at)?ready_at+grace:0u);
+ }
  bool eligible(const Profile& p,const Roster& r,U32 capabilities) const noexcept {
    if(!p.enabled || !home || (r.requirements&capabilities)!=r.requirements || (p.blocked_heroes&(1u<<(r.slot-24))))return false;
    if(r.slot==Reserve && ordinal<1)return false;
    if(r.slot==Rear && ordinal<1)return false;
-   U32 nominal=r.grade==1?p.rare:r.grade==2?p.epic:r.grade==3?p.legendary:0u;
-   U32 grace=r.grade==1?p.rare_grace:r.grade==2?p.epic_grace:r.grade==3?p.legendary_grace:0u;
-   const auto unlock=std::max(nominal,(!p.starting_hq || ready_at)?ready_at+grace:0u);
    // Selection occurs at the warning, but eligibility belongs to the actual
    // departure. An unlock exactly on that departure joins this first wave.
-   if((departure_at?departure_at:second())<unlock)return false;
+   if((departure_at?departure_at:second())<unlock_second(p,r))return false;
    const auto last=delivered[r.slot-24];return !last || ordinal+1>=last+r.cadence;
  }
  void mark_delivered(U32 slot) noexcept {if(slot>=24 && slot<=49)delivered[slot-24]=ordinal+1;}

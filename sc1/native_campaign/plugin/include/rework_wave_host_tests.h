@@ -99,7 +99,7 @@ inline void larger_raids_reserves_and_uncommon_stacks(){
 inline void profile_binding_and_readiness(){
  static_assert(std::size(p::kProfiles)==std::size(campaign_config::kMissions),"all original profiles are bound");
  for(const auto& m:campaign_config::kMissions){const auto profile=p::profile(m.mission_id);CHECK(profile && profile->enabled==!m.no_production);
-  if(m.mission_id==404){CHECK(profile->first==240&&profile->interval==120&&profile->base_grace==240);CHECK(profile->rare==1200&&profile->epic==1500&&profile->legendary==1800);}
+  if(m.mission_id==404){CHECK(profile->first==240&&profile->interval==120&&profile->base_grace==240);CHECK(profile->rare==540&&profile->epic==660&&profile->legendary==780);}
   else {CHECK(profile->first>=240 && profile->first<=360);CHECK(profile->rare>=480 && profile->rare<=600);CHECK(profile->epic>=600 && profile->epic<=720);CHECK(profile->legendary>=720 && profile->legendary<=840);}}
  const p::Profile profile{1,true,false,300,120,240,480,600,720,360,480,600,0};p::Timeline t;
  for(U32 f=0;f<=1200*24;f+=24)t.advance(profile,f,true,false,false);
@@ -238,6 +238,50 @@ inline void actual_stat_damage_heal_and_renderer_scopes(){
  owner_damage_hook(player,1000,original_enemy,original_enemy->player,1,direct_damage);CHECK(player->flingy.hitpoints==50000-1380-1000);CHECK(original_enemy->flingy.hitpoints==untouched);
  CHECK(effective_max_hp(original_enemy)==baseline && effective_max_hp(player)==baseline);CHECK(raw_value(0,8,0)==baseline);
 }
+inline void uraj_owned_air_and_kukulza_are_delivered(){
+ const auto prepare=[](){
+  begin(404);const auto origin=rework_waves::choose_origin(true);CHECK(origin);
+  add(154,player_owner(),origin->target.x,origin->target.y)->flags=1;
+  add(64,player_owner(),origin->target.x+32,origin->target.y)->flags=1;
+  add(0,player_owner(),origin->target.x+64,origin->target.y)->flags=1;
+  rework_waves::timeline.home=true;rework_waves::timeline.ready_at=134;
+  rework_waves::timeline.active_ticks=610*24;rework_waves::timeline.departure_at=614;rework_waves::timeline.ordinal=2;
+  rework_waves::primary=origin;g.current_wave_id=10;
+  for(U32 i=0;i<233;i++){auto u=rework_waves::create(0,0);CHECK(u);u->flingy.position={1900,1552};}
+  CHECK(rework_waves::live_supply()==466);
+  g.current_wave_id=11;rework_waves::unit_ordinal=0;
+  g.growth.curse_counts[p::Air]=g.growth.curse_counts[p::Kukulza]=1;g.growth.curse_counts[16]=3;
+  rework_waves::select_specials();CHECK(rework_waves::selected[0]==p::Air&&rework_waves::selected[1]==p::Kukulza);
+ };
+ // Reproduce the previous dispatch order: filler fills the cap and neither
+ // selected composition gets its representative unit.
+ prepare();rework_waves::normal_units(p::scaled_count(p::normal_budget(2,404),3));rework_waves::selected_units();
+ CHECK(!rework_waves::timeline.delivered[p::Air-24]&&!rework_waves::timeline.delivered[p::Kukulza-24]);
+ prepare();const auto baseline=count;rework_waves::main_wave();U32 wraiths=0,kukulzas=0,detectors=0;
+ for(std::size_t i=baseline;i<count;i++){
+  const auto v=rework_curses::identity(&units[i]);CHECK(v);
+  if(v->slot==p::Air&&units[i].unit_id==8)++wraiths;
+  if(v->slot==p::Kukulza&&units[i].unit_id==55)++kukulzas;
+  if(wave_targeting::detector(&units[i]))++detectors;
+ }
+ CHECK(wraiths>0&&kukulzas==1&&detectors==1&&rework_waves::live_supply()<=480);
+ CHECK(rework_waves::timeline.delivered[p::Air-24]==3&&rework_waves::timeline.delivered[p::Kukulza-24]==3);
+ rework_waves::timeline.active_ticks=614*24;rework_waves::release_and_orders();
+ for(std::size_t i=baseline;i<count;i++)CHECK(!rework_curses::appearing(&units[i])&&marching(&units[i]));
+}
+inline void newly_unlocked_curses_precede_delivered_repeats(){
+ begin(404);const auto origin=rework_waves::choose_origin(true);CHECK(origin);
+ add(154,player_owner(),origin->target.x,origin->target.y)->flags=1;
+ add(64,player_owner(),origin->target.x+32,origin->target.y)->flags=1;
+ add(0,player_owner(),origin->target.x+64,origin->target.y)->flags=1;
+ rework_waves::timeline.home=true;rework_waves::timeline.ready_at=134;rework_waves::timeline.active_ticks=610*24;
+ rework_waves::timeline.departure_at=614;rework_waves::timeline.ordinal=2;rework_waves::timeline.cursor=1;
+ for(U32 slot:{p::Rear,p::Heavy,p::Air,p::Kukulza})g.growth.curse_counts[slot]=1;
+ rework_waves::timeline.delivered[p::Rear-24]=rework_waves::timeline.delivered[p::Heavy-24]=1;
+ rework_waves::select_specials();CHECK(rework_waves::selected[0]==p::Air&&rework_waves::selected[1]==p::Kukulza);
+ CHECK(rework_waves::timeline.unlock_second(*rework_waves::current,p::kRosters[p::Air-24])==540);
+ CHECK(rework_waves::timeline.unlock_second(*rework_waves::current,p::kRosters[p::Kukulza-24])==540);
+}
 inline void uraj_completed_nexus_clock_and_auxiliary_grace(){
  for(U32 completed:{120u,900u}){
   begin(404);const auto origin=rework_waves::choose_origin(true);CHECK(origin);
@@ -270,13 +314,14 @@ inline void uraj_completed_nexus_clock_and_auxiliary_grace(){
 }
 inline void uraj_shared_cap_and_capped_growth(){
  CHECK(p::normal_budget(0,404)==16&&p::normal_budget(1,404)==20&&p::normal_budget(4,404)==32&&p::normal_budget(100,404)==32);
- CHECK(p::live_supply_cap(404)==64&&p::live_supply_cap(403)==480);
+ CHECK(p::live_supply_cap(404)==480&&p::live_supply_cap(403)==480);
  begin(404);const auto origin=rework_waves::choose_origin(true);CHECK(origin);
  add(154,player_owner(),origin->target.x,origin->target.y)->flags=1;
  add(64,player_owner(),origin->target.x+32,origin->target.y)->flags=1;
  auto original=add(0,origin->owner,origin->target.x+700,origin->target.y+700);const auto untouched=*original;
  rework_waves::timeline.home=true;rework_waves::timeline.active_ticks=1200*24;g.current_wave_id=9;
- CHECK(rework_waves::count_spawn(0,100,25)==32);CHECK(rework_waves::live_supply()==64);
+ for(U32 i=0;i<240;i++){auto u=rework_waves::create(0,25);CHECK(u);u->flingy.position={1900,1552};}
+ CHECK(rework_waves::live_supply()==480);
  for(U32 slot:{0u,15u,20u,24u,25u,38u})CHECK(!rework_waves::create(0,slot));
  CHECK(std::memcmp(original,&untouched,sizeof(untouched))==0);
  living_units([&](bw::Unit* u){if(rework_curses::marked(u))u->flingy.hitpoints=0;});
@@ -297,7 +342,7 @@ inline void native_caster_orders_and_original_hero_exclusion(){
  const auto initial=count;rework_waves::roster(hyperion);CHECK(count==initial);
 }
 }
-inline constexpr std::size_t rework_wave_group_count=19;
+inline constexpr std::size_t rework_wave_group_count=21;
 inline void run_rework_wave_groups(){
  rework_wave_tests::qa_stack_counts_and_wave_budgets();
  rework_wave_tests::reduced_auxiliary_dispatch();
@@ -312,5 +357,7 @@ inline void run_rework_wave_groups(){
  rework_wave_tests::native_caster_orders_and_original_hero_exclusion();
  rework_wave_tests::uraj_shared_cap_and_capped_growth();
  rework_wave_tests::uraj_completed_nexus_clock_and_auxiliary_grace();
+ rework_wave_tests::uraj_owned_air_and_kukulza_are_delivered();
+ rework_wave_tests::newly_unlocked_curses_precede_delivered_repeats();
 }
 }
