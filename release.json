@@ -1,0 +1,31 @@
+{
+  "version": "v2026.10.19-qa25",
+  "file": "SC1_Roguelike_20261019_QA25.zip",
+  "sha256": "732cd145ff7df427588a26efab892e0404c7aae83d092d81130780f6ec354ba3",
+  "bytes": 24607922,
+  "runtime_source_commit": "647bd522f45b83e22da9f84f3f7deb474358ef44",
+  "native_dll_sha256": "eea0b66473e0c933fca8a4cde0c618494aa196c8840f7c8f5918fa88c243c13b",
+  "launcher_compiled_from_source": true,
+  "python_regressions": 97,
+  "host_groups": 297,
+  "host_checks": 1516738,
+  "map_count": 63,
+  "changed_maps": [
+    601,
+    602
+  ],
+  "unchanged_maps": 61,
+  "bw_zerg01_no_production": true,
+  "bw_zerg01_upgrade_level": 6,
+  "bw_zerg01_additional_static_removed": 65,
+  "bw_zerg01_added_waves_disabled": true,
+  "bw_zerg02_first_rescue_workers": 10,
+  "bw_zerg02_worker_bonus_once_only": true,
+  "request_rejection_recovery": true,
+  "validation_scope": "Current checkpoint replay and source/output integrity for63 maps; exact resource replay for changed601/602. Resource checks for other61 inherited from byte-identical QA24 assets/receipts with unchanged resource algorithms.",
+  "resource_audit_limit": "The optional broad replay stopped at unchanged203 with Resource layout differs from the exact constrained transformation. No203 source/output/resource code was changed; this historical audit discrepancy is retained for separate investigation. No live gameplay conclusion follows.",
+  "readme_patch_notes": false,
+  "game_started": false,
+  "live_game_verified": false,
+  "created_at_utc": "2026-10-18T19:17:56.033632+00:00"
+}
