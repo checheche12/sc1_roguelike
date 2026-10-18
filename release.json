@@ -1,0 +1,43 @@
+{
+  "version": "v2026.10.18-qa24",
+  "file": "SC1_Roguelike_20261018_QA24.zip",
+  "sha256": "fed66367a0d4fc55855eb0f0a523d8d7367beafade585b031778726b8e0f10bd",
+  "bytes": 24608971,
+  "runtime_source_commit": "b9e79807596138e69b62d870ee782e2660707e62",
+  "native_dll_sha256": "e99fff9a6b22cf57ede70fa9ef9858b6408c9a56308035245e1e9492dc38341f",
+  "launcher_compiled_from_source": true,
+  "python_regressions": 16,
+  "host_groups": 297,
+  "host_checks": 1516601,
+  "map_count": 63,
+  "uraj_starting_probes": 10,
+  "uraj_landing_minerals_added": 1500,
+  "uraj_landing_gas_added": 500,
+  "resource_modifier": "Add (8)",
+  "uraj_additional_static_enemies_removed": 64,
+  "uraj_first_wave_anchor": "completed Nexus",
+  "uraj_first_wave_delay_seconds": 360,
+  "uraj_repeat_interval_seconds": 120,
+  "uraj_live_added_half_supply_cap": 480,
+  "uraj_live_added_supply_cap": 240,
+  "uraj_special_unlock_seconds": [
+    540,
+    660,
+    780
+  ],
+  "uraj_special_base_grace_seconds": [
+    360,
+    480,
+    600
+  ],
+  "uraj_selected_curses_precede_normal_filler": true,
+  "undelivered_curses_precede_repeats": true,
+  "qa18_fixes_included": true,
+  "carrier_legend_id": "e021408c-a180-5275-9f8b-1792e28b2524",
+  "carrier_legend_additional_targets": 1,
+  "carrier_legend_damage_percent": 100,
+  "readme_patch_notes": false,
+  "game_started": false,
+  "live_game_verified": false,
+  "created_at_utc": "2026-10-18T13:37:21.628155+00:00"
+}
