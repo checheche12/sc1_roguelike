@@ -118,17 +118,21 @@ def _verify_base_resource_layout(source_chk, output_chk, mission, row):
 
 
 def verify_mineral_layout(source_chk, output_chk, mission, row):
-    from . import mission_balance,corner_resource_layout,scripted_openings
+    from . import mission_balance,corner_resource_layout,scripted_openings,courtyard_resource_layout
     report = row.get('mission_balance')
     if not report:raise ValueError('Mission-specific balance proof missing')
     baseline = CHK(output_chk.save())
     try:
+        courtyard_resource_layout.undo(baseline,row['courtyard_resource_layout'])
         mission_balance.undo(baseline, report)
         corner_resource_layout.undo(baseline,row['corner_resource_layout'])
         _verify_base_resource_layout(source_chk, baseline, mission, row)
         corners=corner_resource_layout.apply(baseline,mission,row['resource_layout'],
             reserved_points=map_builder.mineral_reserved_points(row['difficulty']))
         expected = mission_balance.apply(baseline, mission, row['difficulty'])
+        courtyard=courtyard_resource_layout.apply(baseline,mission,row['resource_layout'],row['main_base_gas'],corners,
+            reserved_points=map_builder.mineral_reserved_points(row['difficulty']))
+        if courtyard!=row['courtyard_resource_layout']:raise ValueError('Joint resource court differs from deterministic replay')
         if corners!=row['corner_resource_layout'] or row.get('scripted_opening')!=scripted_openings.evidence(mission):
             raise ValueError('Corner resources/scripted opening differ from deterministic replay')
         if scripted_openings.excluded_factions(mission)&set(row['difficulty']['hostile_owners']):
@@ -141,9 +145,10 @@ def verify_mineral_layout(source_chk, output_chk, mission, row):
 
 def verify_checkpoint_layout(source_chk, output_chk, mission, row):
     """A four-stage receipt cannot authorize different mission trigger code."""
-    from . import mission_balance, campaign_objectives,corner_resource_layout
+    from . import mission_balance, campaign_objectives,corner_resource_layout,courtyard_resource_layout
     baseline=CHK(source_chk.save());units=CHK(output_chk.save())
     try:
+        courtyard_resource_layout.undo(units,row['courtyard_resource_layout'])
         mission_balance.undo(units,row['mission_balance'])
         corner_resource_layout.undo(units,row['corner_resource_layout'])
     except AssertionError as error:raise ValueError('Invalid checkpoint base units') from error
@@ -193,8 +198,8 @@ def validate_maps(receipt_path):
     from . import mission_balance
     balance_path, _ = legacy.checked_file(receipt['mission_balance_source'], receipt['mission_balance_source_sha256'])
     if balance_path != Path(mission_balance.__file__).resolve():raise ValueError('Unexpected mission balance implementation')
-    from . import corner_resource_layout,scripted_openings
-    for module in (corner_resource_layout,scripted_openings):
+    from . import corner_resource_layout,scripted_openings,courtyard_resource_layout
+    for module in (corner_resource_layout,scripted_openings,courtyard_resource_layout):
         name=module.__name__.rsplit('.',1)[-1]
         pinned,_=legacy.checked_file(receipt[name+'_source'],receipt[name+'_source_sha256'])
         if pinned!=Path(module.__file__).resolve():raise ValueError('Unexpected '+name+' implementation')

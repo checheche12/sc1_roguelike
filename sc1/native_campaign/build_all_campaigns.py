@@ -590,6 +590,8 @@ def make_map(raw,row):
  from sc1.native_campaign import corner_resource_layout,scripted_openings
  corners=corner_resource_layout.apply(chk,row,minerals,reserved_points=mineral_reserved_points(difficulty))
  balance=mission_balance.apply(chk,row,difficulty)
+ from sc1.native_campaign import courtyard_resource_layout
+ courtyard=courtyard_resource_layout.apply(chk,row,minerals,gas,corners,reserved_points=mineral_reserved_points(difficulty))
  permitted={b'UNIT',b'PUNI',b'UPGR',b'PUPx',b'PTEC',b'PTEx',b'TRIG',b'STR '}
  if row['mission_id']==101:permitted|={b'OWNR',b'SIDE',b'FORC'}
  assert chk.order==original_order
@@ -604,6 +606,7 @@ def make_map(raw,row):
  report['mineral_amount_bonus']=mineral_amounts
  report['corner_resource_layout']=corners
  report['scripted_opening']=scripted_openings.evidence(row)
+ report['courtyard_resource_layout']=courtyard
  return rawout,report
 
 def wave_header(rows):
@@ -650,8 +653,8 @@ def build(output=OUT,receipt=RECEIPT):
  from sc1.native_campaign import mission_balance
  report['mission_balance_source']=str(Path(mission_balance.__file__).resolve())
  report['mission_balance_source_sha256']=digest(Path(mission_balance.__file__).read_bytes())
- from sc1.native_campaign import corner_resource_layout,scripted_openings
- for module in (corner_resource_layout,scripted_openings):
+ from sc1.native_campaign import corner_resource_layout,scripted_openings,courtyard_resource_layout
+ for module in (corner_resource_layout,scripted_openings,courtyard_resource_layout):
   name=module.__name__.rsplit('.',1)[-1]
   report[name+'_source']=str(Path(module.__file__).resolve())
   report[name+'_source_sha256']=digest(Path(module.__file__).read_bytes())

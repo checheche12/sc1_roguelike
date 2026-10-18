@@ -6,6 +6,13 @@ from sc1.native_campaign import build_all_campaigns as maps,mission_balance as b
 from sc1.native_campaign import package_all_campaigns as package,mining_layout_audit as mining
 from sc1.campaign.missions import load_missions
 
+def balance_map(row):
+ chk=maps.CHK(Path(row['output']).read_bytes())
+ if 'courtyard_resource_layout' in row:
+  from sc1.native_campaign import courtyard_resource_layout
+  courtyard_resource_layout.undo(chk,row['courtyard_resource_layout'])
+ return chk
+
 class MissionBalanceTests(unittest.TestCase):
  @classmethod
  def setUpClass(cls):
@@ -19,7 +26,7 @@ class MissionBalanceTests(unittest.TestCase):
    if self.missions[row['mission_id']]['no_production'] or row['mission_id'] in (201,501,602):self.assertEqual(r['garrison_added'],0)
  def test_original_units_preserved_and_only_hostile_armed_prototypes_copied(self):
   for row in self.rows:
-   chk=maps.CHK(Path(row['output']).read_bytes());raw=balance.records(chk);r=row['mission_balance']
+   chk=balance_map(row);raw=balance.records(chk);r=row['mission_balance']
    baseline=maps.CHK(chk.save());balance.undo(baseline,r);old=balance.records(baseline)
    moved={m['index'] for m in (r.get('opening') or {}).get('mineral_moves',[])}
    for i,v in enumerate(old):
@@ -32,7 +39,7 @@ class MissionBalanceTests(unittest.TestCase):
  def test_placements_do_not_overlap_fixed_objects_or_wave_cells(self):
   boxes,_=balance.geometry.load_unit_geometry()
   for row in self.rows:
-   chk=maps.CHK(Path(row['output']).read_bytes());points=list(map(balance.info,balance.records(chk)));r=row['mission_balance']
+   chk=balance_map(row);points=list(map(balance.info,balance.records(chk)));r=row['mission_balance']
    for i,p in enumerate(points[r['base_unit_count']:],r['base_unit_count']):
     x,y,u,owner=p;rect=balance.geometry._rect(x,y,u,boxes)
     for j,(xx,yy,unit,_) in enumerate(points):
@@ -42,7 +49,7 @@ class MissionBalanceTests(unittest.TestCase):
      for origin in row['difficulty']['wave_origins']:
       self.assertTrue(all(math.dist((x,y),cell)>=48 for cell in origin['cells']))
  def test_zerg01_ten_drones_and_all_eleven_mineral_fronts(self):
-  row=next(r for r in self.rows if r['mission_id']==201);chk=maps.CHK(Path(row['output']).read_bytes())
+  row=next(r for r in self.rows if r['mission_id']==201);chk=balance_map(row)
   info=list(map(balance.info,balance.records(chk)));r=row['mission_balance']['opening']
   self.assertEqual(sum(u==41 and owner==row['owner'] for x,y,u,owner in info),10)
   self.assertEqual(row['mission_balance']['garrison_added'],0)
@@ -53,7 +60,7 @@ class MissionBalanceTests(unittest.TestCase):
   self.assertTrue(r['army_routes_preserved']);self.assertTrue(r['resource_trigger_membership_preserved'])
  def test_new_pass_replays_exactly_after_undo(self):
   for row in self.rows:
-   raw=Path(row['output']).read_bytes();chk=maps.CHK(raw);balance.undo(chk,row['mission_balance'])
+   raw=balance_map(row).save();chk=maps.CHK(raw);balance.undo(chk,row['mission_balance'])
    report=balance.apply(chk,self.missions[row['mission_id']],row['difficulty'])
    self.assertEqual(report,row['mission_balance']);self.assertEqual(chk.save(),raw)
  def test_receipt_cannot_authorize_a_different_guard(self):

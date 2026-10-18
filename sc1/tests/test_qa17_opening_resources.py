@@ -15,7 +15,11 @@ class OpeningResourceTests(unittest.TestCase):
   self.assertEqual(len(self.rows),63)
   for row in self.rows:
    output=maps.CHK(Path(row['output']).read_bytes());original=maps.CHK(Path(row['source']).read_bytes())
-   baseline=maps.CHK(output.save());mission_balance.undo(baseline,row['mission_balance'])
+   baseline=maps.CHK(output.save())
+   if 'courtyard_resource_layout' in row:
+    from sc1.native_campaign import courtyard_resource_layout
+    courtyard_resource_layout.undo(baseline,row['courtyard_resource_layout'])
+   mission_balance.undo(baseline,row['mission_balance'])
    corner.undo(baseline,row['corner_resource_layout'])
    maps.assert_original_units_preserved(original.getsection('UNIT'),baseline.getsection('UNIT'),mineral_bonus=500)
    # Final pass has an exact, separately reversible record for each amount edit.
@@ -65,7 +69,11 @@ class OpeningResourceTests(unittest.TestCase):
   self.assertGreater(changed,250)
  def test_amount_and_coordinate_tampering_is_rejected(self):
   row=next(r for r in self.rows if r['mission_id']==402)
-  output=maps.CHK(Path(row['output']).read_bytes());mission_balance.undo(output,row['mission_balance'])
+  output=maps.CHK(Path(row['output']).read_bytes())
+  if 'courtyard_resource_layout' in row:
+   from sc1.native_campaign import courtyard_resource_layout
+   courtyard_resource_layout.undo(output,row['courtyard_resource_layout'])
+  mission_balance.undo(output,row['mission_balance'])
   raw=bytearray(output.getsection('UNIT'));struct.pack_into('<I',raw,20*36+20,7001);output.setsection('UNIT',raw)
   with self.assertRaises(AssertionError):corner.undo(output,row['corner_resource_layout'])
 
