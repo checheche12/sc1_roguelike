@@ -49,6 +49,22 @@ inline void power_epic_legendary_projectiles_and_qualitative(){
     CHECK(rework_upgrade_storage::level(6,15)==3);g.normal_hit=false;amount=100*256;
     {rework_combat_v5::DamageScope hit(enemy,ghost,31,1,amount);CHECK(amount==150*256);}
     finish();
+    for(bool learned:{false,true}){
+        begin();if(learned)ranks[148]=1;
+        auto carrier=unit(72,1,100,100,true),interceptor=unit(73,1,100,100,true);
+        std::memcpy(interceptor->unit_specific.bytes,&carrier,sizeof(carrier));
+        auto primary=unit(37,6,120,100),extra=unit(37,6,130,100);
+        unit(37,6,140,100);unit(43,6,150,100,true);unit(37,6,160,100);unit(37,1,125,100);
+        const auto w=rework_combat_v5::weapon(interceptor,false);CHECK(w<130);
+        bullet(interceptor,primary,w);pulse(100);
+        CHECK(multi_fixture::shots.size()==(learned?2u:1u));
+        if(learned){
+            const auto& shot=multi_fixture::shots[1];CHECK(shot.target==extra&&shot.target!=primary&&shot.secondary);
+            auto extra_bullet=&multi_fixture::bullets[1];CHECK(rework_combat_v5::projectiles.at(extra_bullet).percent==100);
+        }
+        pulse(101);CHECK(multi_fixture::shots.size()==(learned?2u:1u));
+        CHECK(rework_combat_v5::pending_shots.empty());finish();
+    }
 }
 inline void power_carrier_cargo_and_legacy_conversion(){
     using namespace rework_carrier_tests;begin();talent(130);auto c=carrier(12);CHECK(rework_carrier_v5::capacity(c)==12);

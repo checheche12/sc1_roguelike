@@ -9,7 +9,7 @@ UNIT_LEGENDARIES = frozenset((61,62,63,64,65,66,102,103,104,105,106,107,144,145,
 POWER_QUARTERS = dict(common=6, uncommon=7, rare=8, epic=10, legendary=10)
 
 def power_quarters(item):
-    if item.get("rework_revision")==5 and item.get("effect_ordinal")==18:return 4
+    if item.get("rework_revision")==5 and item.get("effect_ordinal") in (18,148):return 4
     if item.get("rework_revision")==5 and item.get("effect_ordinal") in UNIT_LEGENDARIES:return 16
     patches=item.get('effect',{}).get('patches',[])
     resource_only=bool(patches) and not item.get('effect',{}).get('movement') and all(
@@ -91,6 +91,8 @@ DESCRIPTIONS[70]='저글링·브루들링의 공격력 중첩당 +1.5(중첩 합
 
 DESCRIPTIONS[89]='잠복 후 3초간 공격하거나 맞지 않으면 초당 최대 체력의 6%를 추가 회복합니다.'
 
+DESCRIPTIONS[148]='인터셉터가 주변의 다른 적 1기도 공격합니다. 각 대상에게 원래 피해를 줍니다.'
+
 DESCRIPTIONS.update({
  14:'삭제된 재능입니다. 더 이상 선택하거나 효과를 받을 수 없습니다.',
  36:'고스트·메딕·과학선의 최대 에너지 +200. 획득 시 기존 병력과 이후 생산 완료된 병력에 현재 에너지 200을 한 번 지급합니다.',
@@ -132,6 +134,7 @@ def decorate(catalog):
             if item.get('max_rank')==4 and ordinal not in (8,9,29,30,31,70,111):
                 item['description']=item['description'].replace('반복해서 고를 수 있습니다.','')+' 중첩당 적용, 최대 4회 선택할 수 있습니다.'
             if ordinal in (18,85,107):item['effect']['qa_revision']=2026101816
+            if ordinal==148:item['effect']['qa_revision']=2026101824
             if ordinal==18:item['effect']['extra_attack_percent']=50
             if ordinal in (85,107):item['effect']['energy_cost']=0
             if ordinal in (11,12):item['effect']['armor_per_rank']=0.5

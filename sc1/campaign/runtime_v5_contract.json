@@ -11882,7 +11882,7 @@
       "id": "e021408c-a180-5275-9f8b-1792e28b2524",
       "name": "전방위 요격",
       "target": "인터셉터",
-      "description": "인터셉터가 주변의 다른 적 4기도 공격합니다. 각 대상에게 원래 피해를 줍니다.",
+      "description": "인터셉터가 주변의 다른 적 1기도 공격합니다. 각 대상에게 원래 피해를 줍니다.",
       "trigger": "",
       "numbers": "",
       "notes": "세부 적용: 주 공격마다 사거리 내 다른 적 1기에게 같은 원래 피해 추가 공격. 같은 대상 중복 금지, 추가 공격 재발동 금지. 캐리어 총기수 유지.",
@@ -11905,8 +11905,8 @@
         "type": "rework_v5",
         "ordinal": 148,
         "source_id": "e021408c-a180-5275-9f8b-1792e28b2524",
-        "qa_revision": 2026101610,
-        "benefit_power_quarters": 16
+        "qa_revision": 2026101824,
+        "benefit_power_quarters": 4
       },
       "target_units": [
         73
