@@ -38,7 +38,9 @@ inline void buildings(U32 owner) {
  }
  const U32 mask=1u<<owner;
  living_units([&](bw::Unit* u){
-  if(!valid_unit(u) || u->unit_id>=228 || !is_enemy(u->player) || hallucination(u) || !rework_combat_v5::building(u) || !u->flingy.sprite)return;
+  if(!valid_unit(u) || u->unit_id>=228 || hallucination(u) || !u->flingy.sprite)return;
+  const bool resource=(u->unit_id>=176 && u->unit_id<=178) || u->unit_id==188 || u->unit_id==110 || u->unit_id==149 || u->unit_id==157;
+  if(!resource && !(is_enemy(u->player) && rework_combat_v5::building(u)))return;
   auto& s=seen[std::size_t(u-g.units)];
   if(s.generation!=u->minor_unique_index || s.type!=u->unit_id || s.owner!=u->player)s={u->minor_unique_index,u->unit_id,u->player,false};
   if(s.revealed)return;

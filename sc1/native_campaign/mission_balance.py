@@ -69,6 +69,7 @@ def add_record(source,x,y,serial):
     r=bytearray(source);struct.pack_into('<IHH',r,0,serial,x,y);return bytes(r)
 
 def _garrisons(chk,row,difficulty):
+    from . import scripted_openings
     target=GARRISONS[row['mission_id']]
     if row['no_production']:assert target==0
     if not target:return []
@@ -98,6 +99,7 @@ def _garrisons(chk,row,difficulty):
         sx,sy,u,owner=p
         for _,dy,dx in offsets:
             x,y=sx+dx,sy+dy
+            if not scripted_openings.additional_spawn_allowed(row,x,y):continue
             if any((x-a)**2+(y-b)**2<512**2 for a,b in friendly):continue
             if any((x-a)**2+(y-b)**2<48**2 for a,b in reserved):continue
             if not placement.safe(x,y,u):continue

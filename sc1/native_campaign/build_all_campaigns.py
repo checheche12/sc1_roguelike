@@ -473,6 +473,8 @@ def strengthen(chk,row):
  friendly|=allied
  if force[16+force[owner]]&1:friendly|={i for i in range(8) if force[i]==force[owner]}
  hostile={i for i,v in enumerate(own[:8]) if v==5 and i not in friendly}
+ from sc1.native_campaign import scripted_openings
+ hostile-=scripted_openings.excluded_factions(row)
  human=[r for r in info if r[3]==owner and r[2]!=214]
  bases=[r for r in human if r[2] in (106,131,132,133,154)]
  mobile=[r for r in human if r[2]<106]
@@ -493,6 +495,7 @@ def strengthen(chk,row):
  protected=[(x,y) for x,y,u,p in info if p in friendly and u!=214]+[tuple(target)]
  occupied=[(x,y,80 if 106<=u<176 else 40) for x,y,u,p in info if u!=214]
  def safe(x,y,ground=True,extra=()):
+  if not scripted_openings.additional_spawn_allowed(row,x,y):return False
   if not(24<x<w-24 and 24<y<h-24):return False
   if ground and not clear[y//8][x//8]:return False
   if any((x-a)**2+(y-b)**2<512**2 for a,b in protected):return False
@@ -583,12 +586,14 @@ def make_map(raw,row):
  progression=patch_progression(chk,row)
  progression['objective_correction']=objective_correction
  chk.setsection('STR ',append_marker(chk.getsection('STR '),row['fingerprint'].encode('ascii')))
+ assert_original_units_preserved(original[b'UNIT'],chk.getsection('UNIT'),mineral_bonus=500)
+ from sc1.native_campaign import corner_resource_layout,scripted_openings
+ corners=corner_resource_layout.apply(chk,row,minerals,reserved_points=mineral_reserved_points(difficulty))
  balance=mission_balance.apply(chk,row,difficulty)
  permitted={b'UNIT',b'PUNI',b'UPGR',b'PUPx',b'PTEC',b'PTEx',b'TRIG',b'STR '}
  if row['mission_id']==101:permitted|={b'OWNR',b'SIDE',b'FORC'}
  assert chk.order==original_order
  assert all(chk.sections[k]==v for k,v in original.items() if k not in permitted)
- assert_original_units_preserved(original[b'UNIT'],chk.getsection('UNIT'),mineral_bonus=500)
  assert strings(chk.getsection('STR '))[:len(strings(original[b'STR ']))]==strings(original[b'STR '])
  rawout=chk.save();assert CHK(rawout).save()==rawout
  report={'mission_id':row['mission_id'],'asset_path':row['asset_path'],'source':row['source'],'source_sha256':row['source_sha256'],'sha256':digest(rawout),'bytes':len(rawout),'chk_version':row['chk_version'],'fingerprint':row['fingerprint'],'owner':row['owner'],'no_production':row['no_production'],'original_section_order_preserved':True,'unchanged_sections':[k.decode('ascii') for k in original if k not in permitted],'original_briefing_wav_locations_terrain_heroes_preserved':True,'original_player_ownership_and_races_preserved':row['mission_id']!=101,'ownership_exception':'T01 existing dedicated P7 wave slot only' if row['mission_id']==101 else None,'progression':progression,'death_counter_audit':counter_audit,'switch_audit':switch_audit,'unlock':settings,'difficulty':difficulty,'native_load_verified':False,'mission_completion_verified':False}
@@ -597,6 +602,8 @@ def make_map(raw,row):
  report['resource_layout']=minerals
  report['main_base_gas']=gas
  report['mineral_amount_bonus']=mineral_amounts
+ report['corner_resource_layout']=corners
+ report['scripted_opening']=scripted_openings.evidence(row)
  return rawout,report
 
 def wave_header(rows):
@@ -643,6 +650,11 @@ def build(output=OUT,receipt=RECEIPT):
  from sc1.native_campaign import mission_balance
  report['mission_balance_source']=str(Path(mission_balance.__file__).resolve())
  report['mission_balance_source_sha256']=digest(Path(mission_balance.__file__).read_bytes())
+ from sc1.native_campaign import corner_resource_layout,scripted_openings
+ for module in (corner_resource_layout,scripted_openings):
+  name=module.__name__.rsplit('.',1)[-1]
+  report[name+'_source']=str(Path(module.__file__).resolve())
+  report[name+'_source_sha256']=digest(Path(module.__file__).read_bytes())
  report['phase_capability']=2
  report['checkpoint_count']=4
  report['map_builder_sha256']=digest(Path(__file__).read_bytes())
