@@ -505,7 +505,9 @@ def strengthen(chk,row):
  next_serial=max(struct.unpack_from('<I',r)[0] for r in records)+1
  added=[];static=[]
  enemy_ground=[(i,r,unit_info(r)) for i,r in enumerate(records) if unit_info(r)[3] in hostile and unit_info(r)[2] in GROUND_COMBAT]
- cap=24 if row['no_production'] else 80
+ # Uraj starts with a fixed landing army and no economy. Additional stationary
+ # armies are also recruited by original AI and prevent the first expansion.
+ cap=0 if row['mission_id']==404 else 24 if row['no_production'] else 80
  for index,source,(sx,sy,unit,p) in enemy_ground[::2]:
   if len(added)>=cap:break
   choices=[]
@@ -583,8 +585,11 @@ def make_map(raw,row):
  from sc1.native_campaign import mission_balance
  from sc1.native_campaign import campaign_objectives
  objective_correction=campaign_objectives.apply(chk,row)
+ from sc1.native_campaign import scripted_openings
+ opening_balance=scripted_openings.apply(chk,row)
  progression=patch_progression(chk,row)
  progression['objective_correction']=objective_correction
+ if opening_balance is not None:progression['opening_balance']=opening_balance
  chk.setsection('STR ',append_marker(chk.getsection('STR '),row['fingerprint'].encode('ascii')))
  assert_original_units_preserved(original[b'UNIT'],chk.getsection('UNIT'),mineral_bonus=500)
  from sc1.native_campaign import corner_resource_layout,scripted_openings

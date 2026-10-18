@@ -45,7 +45,8 @@ inline constexpr Roster kRosters[]={
 inline constexpr U32 reduced_amount(U32 amount) noexcept {return U32((std::uint64_t(amount)*85u+50u)/100u);}
 inline constexpr U32 detector(U32 race) noexcept {return race==0?42u:race==2?84u:9u;}
 inline U32 scaled_count(U32 amount,U32 stacks) noexcept {return amount*(100u+15u*std::min(stacks,3u))/100u;}
-inline constexpr U32 normal_budget(U32 ordinal) noexcept {return 32u+8u*std::min(ordinal,12u);}
+inline constexpr U32 normal_budget(U32 ordinal,U32 mission=0) noexcept {return mission==404?16u+4u*std::min(ordinal,4u):32u+8u*std::min(ordinal,12u);}
+inline constexpr U32 live_supply_cap(U32 mission) noexcept {return mission==404?64u:480u;}
 inline U32 raid_count(U32 stacks,U32 reinforcements=0) noexcept {stacks=std::min(stacks,255u);return scaled_count(stacks*(stacks+1u),reinforcements);}
 inline U32 reserve_budget(U32 main_budget,U32 stacks) noexcept {return U32(std::min<std::uint64_t>(480u,std::uint64_t(main_budget)*stacks/2u));}
 inline U32 stacked_count(U32 amount,U32 stacks) noexcept {return U32(std::min<std::uint64_t>(480u,std::uint64_t(amount)*stacks));}

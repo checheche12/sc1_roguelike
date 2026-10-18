@@ -145,7 +145,7 @@ def verify_mineral_layout(source_chk, output_chk, mission, row):
 
 def verify_checkpoint_layout(source_chk, output_chk, mission, row):
     """A four-stage receipt cannot authorize different mission trigger code."""
-    from . import mission_balance, campaign_objectives,corner_resource_layout,courtyard_resource_layout
+    from . import mission_balance, campaign_objectives,corner_resource_layout,courtyard_resource_layout,scripted_openings
     baseline=CHK(source_chk.save());units=CHK(output_chk.save())
     try:
         courtyard_resource_layout.undo(units,row['courtyard_resource_layout'])
@@ -155,7 +155,9 @@ def verify_checkpoint_layout(source_chk, output_chk, mission, row):
     baseline.setsection('UNIT',units.getsection('UNIT'))
     for tag in ('OWNR','SIDE','FORC'):baseline.setsection(tag,output_chk.getsection(tag))
     correction=campaign_objectives.apply(baseline,mission)
+    opening_balance=scripted_openings.apply(baseline,mission)
     progression=map_builder.patch_progression(baseline,mission);progression['objective_correction']=correction
+    if opening_balance is not None:progression['opening_balance']=opening_balance
     progression=json.loads(json.dumps(progression))
     baseline.setsection('STR ',map_builder.append_marker(baseline.getsection('STR '),mission['fingerprint'].encode('ascii')))
     if (baseline.getsection('TRIG')!=output_chk.getsection('TRIG')

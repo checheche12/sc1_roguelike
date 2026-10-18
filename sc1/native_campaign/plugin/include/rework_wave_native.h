@@ -51,6 +51,10 @@ inline const sc1_native::campaign_wave_config::Origin* primary=nullptr;
 inline bw::Unit* raid_worker=nullptr;inline U8 raid_worker_unique=0;inline U32 raid_worker_frame=0;inline bool raid_worker_sampled=false;
 inline void reset() noexcept {reset_spells();if(g.units && rework_curses::identities.size()==g.units_count)for(std::size_t i=0;i<g.units_count;i++)rework_curses::forget(&g.units[i]);timeline.reset();current=nullptr;pending_kind=pending_spawn_at=raid_next=support_kills=support_last=reserve_at=unit_ordinal=0;last_main_budget=reserve_supply=0;support_due=spawned_pending=false;selected={0,0};primary=nullptr;raid_worker=nullptr;raid_worker_sampled=false;raid_worker_frame=0;raid_worker_unique=0;rework_curses::identities.clear();}
 inline bool enabled() noexcept {return g.mission && !g.mission->no_production && (current=policy::profile(g.mission->mission_id)) && current->enabled;}
+inline U32 opening_second() noexcept {
+ if(!current)return 0;
+ return current->mission==404?std::max(current->first,timeline.ready_at+current->base_grace):current->first;
+}
 inline bool usable_home() {
  bool hq=false,worker=false;
  living_units([&](bw::Unit* u){if(u->player!=player_owner() || u->flingy.hitpoints<=0 || !u->order || !(u->flags&1u) || (u->flags&(4u|0x40000040u)))return;
@@ -125,7 +129,7 @@ inline bw::Unit* finish_created(bw::Unit* u,U32 slot,U32 hp,U32 attack,int x,int
  ground_pulse(x,y,u->player,367);role_marker(u,0,-24,379);max_hp_cache::publish_unit(u);++unit_ordinal;return u;
 }
 inline bw::Unit* create(U32 id,U32 slot,U32 hp=100,U32 attack=100,bool alternate=false,U32 required_owner=12) {
- if(!enabled() || live_supply()+std::max(1u,original_stat({0,46,id}))>480)return nullptr;
+ if(!enabled() || live_supply()+std::max(1u,original_stat({0,46,id}))>policy::live_supply_cap(g.mission->mission_id))return nullptr;
  // Explicit user exception: only worker-raid Mutalisks appear directly at the
  // mining line. Other waves retain the512px allied clearance at real origins.
  if(slot==policy::Raid&&(id==43 || id==9 || id==42 || id==84)){
@@ -201,7 +205,7 @@ inline void roster(const policy::Roster& r) {
 inline void note_death(bw::Unit* u,bool direct) noexcept {
  if(!direct || !enabled() || !rework_curses::count(20) || !regular_enemy(u))return;
  const auto t=existing_track(u);if(t && t->spawned)return;
- if(timeline.second()<current->first || !timeline.home)return;
+ if(timeline.second()<opening_second() || !timeline.home)return;
  if(++support_kills>=20){support_kills=0;if(!support_last || timeline.second()-support_last>=60)support_due=true;}
 }
 inline void ammunition(bw::Unit* u) {
@@ -253,14 +257,14 @@ inline void tick(bool ready,bool blocked,bool goal) {
  if(!raid_next)raid_next=std::max(current->first,timeline.ready_at+current->base_grace);
  if(!pending_kind){
   if(timeline.due(*current)){pending_kind=1;timeline.warn();pending_spawn_at=timeline.departure_at-4;select_specials();}
-  else if(support_due && !reserve_at && timeline.second()>=current->first && (!support_last || timeline.second()-support_last>=60)){pending_kind=2;timeline.warn();pending_spawn_at=timeline.departure_at-4;support_due=false;support_last=timeline.second();selected={0,0};}
+  else if(support_due && !reserve_at && timeline.second()>=opening_second() && (!support_last || timeline.second()-support_last>=60)){pending_kind=2;timeline.warn();pending_spawn_at=timeline.departure_at-4;support_due=false;support_last=timeline.second();selected={0,0};}
   else if(rework_curses::count(15) && !reserve_at && timeline.second()>=raid_next && (capabilities()&policy::AntiAir)){pending_kind=3;timeline.warn();pending_spawn_at=timeline.departure_at-4;raid_next=timeline.second()+current->interval;selected={0,0};}
   else if(reserve_at && timeline.second()+4>=reserve_at){pending_kind=4;pending_spawn_at=reserve_at-4;timeline.departure_at=reserve_at;reserve_at=0;selected={0,0};}
   if(pending_kind){primary=pending_kind==3?raid_owner():choose_origin(true);if(!primary&&pending_kind!=3)primary=choose_origin(false);if(!primary){pending_kind=0;timeline.finished(*current);return;}spawned_pending=false;unit_ordinal=0;g.wave_spawn_number=0;g.current_wave_id=++g.next_wave_id;log_event("V5 added wave warning kind=%u departure=%u normal_ordinal=%u",pending_kind,timeline.departure_at,timeline.ordinal+1);message(pending_kind==4?"후속 예비대가 모습을 드러냅니다. 모습을 드러낸 후 4초 뒤 출발합니다.":"추가 공세가 20초 뒤 모습을 드러냅니다. 모습을 드러낸 후 4초 뒤 출발합니다.");}
  }
  if(pending_kind && !spawned_pending && timeline.second()>=pending_spawn_at){
   spawned_pending=true;
-  if(pending_kind==1){last_main_budget=policy::scaled_count(policy::normal_budget(timeline.ordinal),rework_curses::count(16));normal_units(last_main_budget);for(auto slot:selected)if(slot)for(const auto& r:policy::kRosters)if(r.slot==slot)roster(r);}
+  if(pending_kind==1){last_main_budget=policy::scaled_count(policy::normal_budget(timeline.ordinal,g.mission->mission_id),rework_curses::count(16));normal_units(last_main_budget);for(auto slot:selected)if(slot)for(const auto& r:policy::kRosters)if(r.slot==slot)roster(r);}
   else if(pending_kind==2)normal_units(16+8*(std::min(3u,rework_curses::count(20))-1));
   else if(pending_kind==3)count_spawn(43,policy::reduced_amount(policy::raid_count(rework_curses::count(15),rework_curses::count(16))),15);
   else normal_units(reserve_supply,24);

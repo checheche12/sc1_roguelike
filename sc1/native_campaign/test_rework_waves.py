@@ -13,6 +13,11 @@ class Profiles(unittest.TestCase):
  def test_no_production_fails_closed_and_timings_fit(self):
   rows=derive();self.assertEqual(sum(not p['enabled'] for p in rows),8)
   for p in rows:
+   if p['mission_id']==404:
+    self.assertEqual((p['normal_first_seconds'],p['normal_interval_seconds'],p['new_base_grace_seconds']),(240,120,240))
+    self.assertEqual((p['rare_unlock_seconds'],p['epic_unlock_seconds'],p['legendary_unlock_seconds']),(1200,1500,1800))
+    self.assertEqual((p['warning_seconds'],p['appearance_seconds']),(20,4))
+    continue
    self.assertEqual(p['normal_first_seconds'],240 if p['enabled'] else 360);self.assertIn(p['rare_unlock_seconds'],range(480,601));self.assertIn(p['epic_unlock_seconds'],range(600,721));self.assertIn(p['legendary_unlock_seconds'],range(720,841))
    self.assertEqual((p['warning_seconds'],p['appearance_seconds']),(20,4))
    self.assertEqual(p['normal_interval_seconds'],120)
