@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <array>
 #include <cstdint>
+#include "curse_scaling.h"
 namespace sc1_native { namespace rework_wave {
 using U32=std::uint32_t;
 struct Profile {U32 mission;bool enabled,starting_hq;U32 first,interval,base_grace,rare,epic,legendary,rare_grace,epic_grace,legendary_grace,blocked_heroes;};
@@ -44,11 +45,11 @@ inline constexpr Roster kRosters[]={
 // unit/half-supply so small groups remain usable and zero stays zero.
 inline constexpr U32 reduced_amount(U32 amount) noexcept {return U32((std::uint64_t(amount)*85u+50u)/100u);}
 inline constexpr U32 detector(U32 race) noexcept {return race==0?42u:race==2?84u:9u;}
-inline U32 scaled_count(U32 amount,U32 stacks) noexcept {return amount*(100u+15u*std::min(stacks,3u))/100u;}
-inline constexpr U32 normal_budget(U32 ordinal,U32 mission=0) noexcept {return mission==404?16u+4u*std::min(ordinal,4u):32u+8u*std::min(ordinal,12u);}
+inline U32 scaled_count(U32 amount,U32 stacks) noexcept {return curse_scaling::scale(amount,curse_scaling::bonus(stacks,25));}
+inline constexpr U32 normal_budget(U32 ordinal,U32 mission=0) noexcept {return ((mission==404?16u+4u*std::min(ordinal,4u):32u+8u*std::min(ordinal,12u))*6u)/5u;}
 inline constexpr U32 live_supply_cap(U32) noexcept {return 480u;}
-inline U32 raid_count(U32 stacks,U32 reinforcements=0) noexcept {stacks=std::min(stacks,255u);return scaled_count(stacks*(stacks+1u),reinforcements);}
-inline U32 reserve_budget(U32 main_budget,U32 stacks) noexcept {return U32(std::min<std::uint64_t>(480u,std::uint64_t(main_budget)*stacks/2u));}
+inline U32 raid_count(U32 stacks,U32 reinforcements=0) noexcept {stacks=std::min(stacks,3u);return scaled_count(stacks==0?0u:stacks==1?2u:stacks==2?6u:10u,reinforcements);}
+inline U32 reserve_budget(U32 main_budget,U32 stacks) noexcept {return U32(std::min<std::uint64_t>(480u,std::uint64_t(main_budget)*stacks*55u/100u));}
 inline U32 stacked_count(U32 amount,U32 stacks) noexcept {return U32(std::min<std::uint64_t>(480u,std::uint64_t(amount)*stacks));}
 struct Timeline {
  bool initialized=false,had_home=false,home=false;U32 frame=0,active_ticks=0,ready_at=0,next=0,ordinal=0,warning_at=0,departure_at=0;
@@ -72,7 +73,7 @@ struct Timeline {
  bool eligible(const Profile& p,const Roster& r,U32 capabilities) const noexcept {
    if(!p.enabled || !home || (r.requirements&capabilities)!=r.requirements || (p.blocked_heroes&(1u<<(r.slot-24))))return false;
    if(r.slot==Reserve && ordinal<1)return false;
-   if(r.slot==Rear && ordinal<1)return false;
+   if(r.slot==Rear)return false; // Retained wire slot; removed curse never spawns.
    // Selection occurs at the warning, but eligibility belongs to the actual
    // departure. An unlock exactly on that departure joins this first wave.
    if((departure_at?departure_at:second())<unlock_second(p,r))return false;

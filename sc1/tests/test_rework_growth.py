@@ -247,12 +247,12 @@ class ReworkGrowthTests(unittest.TestCase):
                 for phase in (1,2,3):
                     tier=rework_growth.curse_tier(mission,phase)
                     eligible=[x for x in self.catalog['curses'][15:] if x['rarity']==tier
-                              and counts.get(x['id'],0)<x['max_stacks']]
+                              and not rework_growth.retired(x) and counts.get(x['id'],0)<x.get('choice_max_stacks',x['max_stacks'])]
                     self.assertGreaterEqual(len(eligible),3,(first,ordinal,phase,tier))
                     selected=min(eligible,key=lambda x:(x['max_stacks'],-counts.get(x['id'],0),x['id']))
                     counts[selected['id']]=counts.get(selected['id'],0)+1
             legends=[counts.get(x['id'],0) for x in self.catalog['curses'][15:] if x['rarity']=='legendary']
-            self.assertEqual(sum(legends),2)
+            self.assertEqual(sum(legends),sum(rework_growth.curse_tier(m,2)=='legendary' for m in rows.values()))
 
     def test_common_curse_returns_between_upper_tier_phases(self):
         from sc1.campaign.missions import load_missions

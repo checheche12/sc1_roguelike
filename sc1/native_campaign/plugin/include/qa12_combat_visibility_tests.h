@@ -24,7 +24,7 @@ inline void qa12_yamato_primary_extras_and_single_target(){
  for(U32 neighbours=0;neighbours<3;neighbours++)for(bool dead_caster:{false,true}){
   qa9_fixture::begin({64});auto caster=unit(12,1,100,100),target=unit(106,6,200,100);caster->energy=100*256;target->flingy.hitpoints=4000*256;
   std::array<bw::Unit*,2> others{};for(U32 i=0;i<neighbours;i++){others[i]=unit(106,6,300+int(i),100);others[i]->flingy.hitpoints=4000*256;}
-  auto outside=unit(106,6,330,100),ally=unit(106,1,210,100);auto shot=bullet(caster,target,30);if(dead_caster)kill(caster);
+  auto outside=unit(106,6,500,100),ally=unit(106,1,210,100);auto shot=bullet(caster,target,30);if(dead_caster)kill(caster);
   qa12_extra::yamato_hits=0;{rework_combat_v5::MissileScope missile(shot,qa12_extra::impact);qa12_extra::impact(shot);}
   CHECK(qa12_extra::yamato_hits==3);CHECK(target->flingy.hitpoints==(4000-520*int(3-neighbours))*256);
   for(U32 i=0;i<neighbours;i++)CHECK(others[i]->flingy.hitpoints==(4000-520)*256);

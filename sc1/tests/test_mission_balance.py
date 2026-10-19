@@ -74,7 +74,7 @@ class MissionBalanceTests(unittest.TestCase):
  def test_rear_catalog_matches_actual_default_counts(self):
   catalog=json.loads((maps.SC1/'campaign/runtime_talents_v5.json').read_text(encoding='utf8'))
   rear=next(c for c in catalog['curses'] if c['id']=='09224f2f-b115-5c53-adb3-883bb36075cd')
-  self.assertEqual(rear['effect']['base_delivered_units'],10);self.assertEqual(rear['effect']['late_delivered_units'],15)
+  self.assertTrue(rear['effect']['retired']);self.assertTrue(rear['effect']['runtime_disabled'])
   self.assertEqual(rear['effect']['shared_special_roster_limit'],2)
 
 if __name__=='__main__':unittest.main()

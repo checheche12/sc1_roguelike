@@ -75,8 +75,8 @@ def validate_catalog(value: dict, expected_version: int | None = None) -> dict:
                         or item.get("target_units") != [effect["unit_id"]]):
                     raise GrowthError("invalid_catalog", "다중 대상 공격의 유닛·대상 수·피해 규칙이 잘못되었습니다.")
             if kind == "curses" and (type(item.get("max_stacks")) is not int
-                                      or not 1 <= item["max_stacks"] <= 255):
-                raise GrowthError("invalid_catalog", "저주 중첩 한도는 1~255여야 합니다.")
+                                      or not 1 <= item["max_stacks"] <= (0xffffffff if expected_version==2 and item["byte_index"] in (16,17,18) else 255)):
+                raise GrowthError("invalid_catalog", "저주 중첩 저장 범위가 잘못되었습니다.")
     ranked = {item['id']: item for item in value['talents'] if item.get('offer_family') is not None}
     family_ranks = set()
     for item in ranked.values():
@@ -141,6 +141,9 @@ def encode_growth(catalog: dict, talents: list[str], curses: dict[str, int], ran
                 or not 0 <= count <= item["max_stacks"]):
             raise GrowthError("invalid_growth", "보유 저주의 중첩 기록이 잘못되었습니다.")
         index = item["byte_index"]
+        if version==2 and index in (16,17,18):
+            words[80-index]=count
+            count=min(count,255)
         words[17 + index // 4] |= count << (8 * (index % 4))
     return words
 

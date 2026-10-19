@@ -294,7 +294,7 @@ void stage1_growth_keeps_waves_playable() {
     for(int i=0;i<600;i++)tick();
     CHECK(g.protocol.state()==1 && !counter(kReadyCounter));
     CHECK(rework_waves::timeline.ordinal==1);
-    CHECK(rework_waves::live_supply()==27 && count>2);
+    CHECK(rework_waves::live_supply()==32 && count>2);
 }
 void paused_protocol_pump_and_reentrancy() {
     reset();make_chk();init_units(original);CHECK(g.protocol.state()==1);
@@ -540,7 +540,7 @@ void wave_host_integration() {
     CHECK(count==2 && rework_waves::timeline.active_ticks==0);
     CHECK(rework_waves::current && rework_waves::timeline.home);rework_waves::timeline.active_ticks=(rework_waves::current->first-24)*24;
     for(U32 f=2000;f<2600;f++){game.frame_count=f;rework_waves::tick(true,false,false);}
-    CHECK(rework_waves::live_supply()==27 && count>2);CHECK(rework_waves::timeline.ordinal==1);CHECK(orders>0 && orders<=count*2);
+    CHECK(rework_waves::live_supply()==32 && count>2);CHECK(rework_waves::timeline.ordinal==1);CHECK(orders>0 && orders<=count*2);
     const auto n=count;
     for(U32 f=2600;f<5000;f++){game.frame_count=f;rework_waves::tick(true,false,true);}
     CHECK(count==n && rework_waves::countdown(true,true).kind==sc1_native::WaveCountdown::Kind::Hidden);
@@ -697,6 +697,7 @@ void real_managed_dat_assets() {
 #include "qa14_host_tests.h"
 #include "qa15_host_tests.h"
 #include "qa16_host_tests.h"
+#include "qa26_host_tests.h"
 #include "qa17_host_tests.h"
 int main() {
     using namespace host_test;
@@ -727,9 +728,9 @@ int main() {
         run_rework_shield_ui_v5_groups();
         run_wave_progression_groups();
         run_talent_rank_groups();
-        run_talent_power_groups();run_campaign_research_groups();run_qa9_groups();run_qa10_groups();run_qa12_groups();run_qa12_extra_groups();run_qa13_groups();run_qa14_groups();run_qa15_groups();run_qa16_groups();run_qa17_groups();
+        run_talent_power_groups();run_campaign_research_groups();run_qa9_groups();run_qa10_groups();run_qa12_groups();run_qa12_extra_groups();run_qa13_groups();run_qa14_groups();run_qa15_groups();run_qa16_groups();run_qa17_groups();run_qa26_groups();
         abandon_session();g.baseline.clear();g.game=nullptr;
         CHECK(late_init_calls==0);
-        std::printf("PASS native host integration: %zu groups, %d checks; game process never accessed.\n",87u+qa17_group_count+qa16_group_count+qa15_group_count+qa14_group_count+qa13_group_count+qa12_extra_group_count+qa12_group_count+qa9_group_count+qa10_group_count+campaign_research_group_count+talent_power_group_count+std::size(combat_audit::cases)+max_hp_engine_group_count+samase_status_ui_group_count+samase_weapon_ui_group_count+samase_armor_ui_group_count+trampoline_unwind_group_count+wave_targeting_group_count+wave_progression_group_count+talent_rank_group_count+rework_wave_group_count+enemy_progression_group_count+enemy_performance_group_count+targeting_bridge_group_count+rework_cargo_group_count+rework_carrier_group_count+rework_economy_group_count+rework_binding_group_count+rework_lighting_v5_group_count+rework_combat_v5_group_count+rework_economy_ui_group_count+rework_shield_ui_v5_group_count,checks);return 0;
+        std::printf("PASS native host integration: %zu groups, %d checks; game process never accessed.\n",87u+qa26_group_count+qa17_group_count+qa16_group_count+qa15_group_count+qa14_group_count+qa13_group_count+qa12_extra_group_count+qa12_group_count+qa9_group_count+qa10_group_count+campaign_research_group_count+talent_power_group_count+std::size(combat_audit::cases)+max_hp_engine_group_count+samase_status_ui_group_count+samase_weapon_ui_group_count+samase_armor_ui_group_count+trampoline_unwind_group_count+wave_targeting_group_count+wave_progression_group_count+talent_rank_group_count+rework_wave_group_count+enemy_progression_group_count+enemy_performance_group_count+targeting_bridge_group_count+rework_cargo_group_count+rework_carrier_group_count+rework_economy_group_count+rework_binding_group_count+rework_lighting_v5_group_count+rework_combat_v5_group_count+rework_economy_ui_group_count+rework_shield_ui_v5_group_count,checks);return 0;
     } catch(const std::exception& e){std::fprintf(stderr,"FAIL %s reason=%s\n",e.what(),g.apply_failure ? g.apply_failure : "none");return 1;}
 }

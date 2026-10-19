@@ -188,7 +188,7 @@ def _issue(conn, mission, phase, catalog):
         conn.execute('UPDATE growth_offers SET selected_id=?,selected_revision=?,selected_at=CURRENT_TIMESTAMP WHERE offer_id=?',
                      (rework_growth.SKIPPED_FINAL,state['revision'],offer['offer_id']))
         return _issue(conn,mission,phase,catalog)
-    if offer["candidates_json"] is not None and rework_growth.enabled(catalog) and offer['kind']=='talent':
+    if offer["candidates_json"] is not None and rework_growth.enabled(catalog) :
         # Reissue pending offers containing a removed talent, or entirely
         # exhausted pre-cap offers. Archive their exact JSON and UUID first;
         # selected offers and immutable snapshots never enter this branch.
@@ -197,7 +197,7 @@ def _issue(conn, mission, phase, catalog):
         by_id={x['id']:x for x in catalog['talents']}
         saved=growth._json(offer['candidates_json'])
         has_retired=any(rework_growth.retired(x) for x in saved)
-        if saved and (has_retired or all(exhausted(by_id[x['id']],owned,counts) for x in saved)):
+        if saved and (has_retired or (offer['kind']=='talent' and all(exhausted(by_id[x['id']],owned,counts) for x in saved))):
             if has_retired:
                 conn.execute('CREATE TABLE IF NOT EXISTS growth_offer_retirement_history (offer_id TEXT PRIMARY KEY,candidates_json TEXT NOT NULL,offered_revision INTEGER)')
                 conn.execute('INSERT OR IGNORE INTO growth_offer_retirement_history VALUES (?,?,?)',
@@ -246,7 +246,7 @@ def _issue(conn, mission, phase, catalog):
                 and (not rework_growth.enabled(catalog) or item.get('rework_revision')==5)
                 and (kind != 'talent' or talent_ranks.eligible(item, owned, catalog))
                 and (kind != "talent" or item["id"] not in owned)
-                and (kind != "curse" or (item["rarity"] == offer["rarity"] and stacks.get(item["id"], 0) < item["max_stacks"]))]
+                and (kind != "curse" or (item["rarity"] == offer["rarity"] and stacks.get(item["id"], 0) < item.get('choice_max_stacks',item["max_stacks"])))]
     # A four-curse run can exhaust the common tier before its campaign ends.
     # Fill a short list from already unlocked tiers, respecting every mission
     # restriction and stack cap; never invent stacks or unlock future tiers.
@@ -258,7 +258,7 @@ def _issue(conn, mission, phase, catalog):
             fallback=[item for item in catalog['curses'] if item['id'] not in known
                 and item.get('rework_revision')==5 and item['rarity']==tier
                 and rework_growth.curse_eligible(item,mission)
-                and stacks.get(item['id'],0)<item['max_stacks']]
+                and stacks.get(item['id'],0)<item.get('choice_max_stacks',item['max_stacks'])]
             eligible.extend(fallback);known.update(item['id'] for item in fallback)
             if len(eligible)>=3:break
     required = 4 if kind == "talent" else 3

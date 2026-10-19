@@ -4,9 +4,9 @@ namespace rework_wave_tests {
 namespace p=sc1_native::rework_wave;
 inline void qa_stack_counts_and_wave_budgets(){
  CHECK(p::reduced_amount(0)==0&&p::reduced_amount(1)==1&&p::reduced_amount(20)==17&&p::reduced_amount(32)==27&&p::reduced_amount(40)==34&&p::reduced_amount(128)==109);
- CHECK(p::normal_budget(0)==32&&p::normal_budget(1)==40&&p::normal_budget(12)==128&&p::normal_budget(100)==128);
- const U32 wanted[]={0,2,6,12,20,30,42,56};for(U32 i=0;i<std::size(wanted);i++)CHECK(p::raid_count(i)==wanted[i]);
- CHECK(p::raid_count(4,3)==29);CHECK(p::reserve_budget(40,1)==20&&p::reserve_budget(40,2)==40&&p::reserve_budget(40,3)==60&&p::reserve_budget(128,255)==480);
+ CHECK(p::normal_budget(0)==38&&p::normal_budget(1)==48&&p::normal_budget(12)==153&&p::normal_budget(100)==153);
+ const U32 wanted[]={0,2,6,10,10,10,10,10};for(U32 i=0;i<std::size(wanted);i++)CHECK(p::raid_count(i)==wanted[i]);
+ CHECK(p::raid_count(4,3)==19);CHECK(p::reserve_budget(40,1)==22&&p::reserve_budget(40,2)==44&&p::reserve_budget(40,3)==66&&p::reserve_budget(128,255)==480);
 }
 inline void begin(U32 mission=106){wave_target_tests::begin(mission);g.applied=true;g.growth={};g.growth.wire_version=2;rework_waves::reset();CHECK(rework_waves::enabled());}
 inline void advance_second(U32 second){game.frame_count=second*24;game.elapsed_seconds=second;rework_waves::tick(true,false,false);wave_targeting::step(true,false);}
@@ -65,8 +65,8 @@ inline void resource_and_neutral_origin_guards(){
 inline void larger_raids_reserves_and_uncommon_stacks(){
  begin(101);rework_waves::timeline.home=true;rework_waves::timeline.active_ticks=600*24;g.current_wave_id=10;
  auto worker=add(7,player_owner(),1000,1700);worker->flags=1;add(176,11,960,1700);
- CHECK(rework_waves::count_spawn(43,p::reduced_amount(p::raid_count(4)),15)==17);CHECK(rework_waves::live_supply()==68);
- U32 mutas=0;living_units([&](bw::Unit* u){if(u->unit_id==43&&rework_curses::marked(u)){++mutas;CHECK(wave_targeting::distance(u->flingy.position.x,u->flingy.position.y,1000,1700)<384ll*384);CHECK(rework_curses::raid_target(u)==worker);}});CHECK(mutas==17);
+ CHECK(rework_waves::count_spawn(43,p::raid_count(4),15)==10);CHECK(rework_waves::live_supply()==40);
+ U32 mutas=0;living_units([&](bw::Unit* u){if(u->unit_id==43&&rework_curses::marked(u)){++mutas;CHECK(wave_targeting::distance(u->flingy.position.x,u->flingy.position.y,1000,1700)<384ll*384);CHECK(rework_curses::raid_target(u)==worker);}});CHECK(mutas==10);
  living_units([&](bw::Unit* u){if(u->unit_id==43&&rework_curses::marked(u)){wave_targeting::issue(u);CHECK(u->order==23);}});
  rework_waves::timeline.active_ticks+=4*24;rework_waves::release_and_orders();
  living_units([&](bw::Unit* u){if(u->unit_id==43&&rework_curses::marked(u))CHECK(u->order==14&&u->order_target.x==1000&&u->order_target.y==1700);});
@@ -84,7 +84,7 @@ inline void larger_raids_reserves_and_uncommon_stacks(){
   advance_second(second);
   if(second==rework_waves::current->first){living_units([&](bw::Unit* u){if(rework_curses::marked(u))u->flingy.position={std::int16_t(origin->target.x+96),std::int16_t(origin->target.y+96)};});}
  }
- CHECK(rework_waves::reserve_at==second_departure+15&&rework_waves::reserve_supply==40);
+ CHECK(rework_waves::reserve_at==second_departure+15&&rework_waves::reserve_supply==52);
  // A simultaneously eligible raid/death support must not delay the promised
  // reserve departure beyond15sec after its main wave.
  g.growth.curse_counts[15]=1;rework_waves::raid_next=second_departure;rework_waves::support_due=true;
@@ -92,7 +92,7 @@ inline void larger_raids_reserves_and_uncommon_stacks(){
  for(U32 second=second_departure+1;second<second_departure+15;second++)advance_second(second);
  CHECK(rework_waves::pending_kind==4);U32 supply=0;std::array<bool,228> types{};
  living_units([&](bw::Unit* u){const auto v=rework_curses::identity(u);if(v&&v->slot==24){CHECK(rework_curses::appearing(u));supply+=wave_supply(u->unit_id);types[u->unit_id]=true;}});
- CHECK(supply>=31&&supply<=34);CHECK(std::count(types.begin(),types.end(),true)>1);
+ CHECK(supply>=41&&supply<=44);CHECK(std::count(types.begin(),types.end(),true)>1);
  advance_second(second_departure+15);CHECK(!rework_waves::pending_kind);
  living_units([&](bw::Unit* u){const auto v=rework_curses::identity(u);if(v&&v->slot==24)CHECK(!rework_curses::appearing(u)&&marching(u));});
 }
@@ -124,8 +124,8 @@ inline void reduced_auxiliary_dispatch(){
   rework_waves::primary=kind==3?rework_waves::raid_owner():rework_waves::choose_origin(true);
   const auto before=count;advance_second(0);CHECK(count>before&&rework_waves::spawned_pending);
   const auto supply=rework_waves::live_supply();
-  if(kind==2)CHECK(supply>=24&&supply<=27); // 32 half-supply -> 27, once.
-  else {CHECK(count-before==18&&supply==69);U32 mutas=0,detectors=0;for(std::size_t i=before;i<count;i++){if(units[i].unit_id==43)++mutas;if(wave_targeting::detector(&units[i]))++detectors;}CHECK(mutas==17&&detectors==1);}
+  if(kind==2)CHECK(supply>=26&&supply<=29); // QA26 base9 supply plus two extra4-supply stacks; one reduction.
+  else {CHECK(count-before==11&&supply==41);U32 mutas=0,detectors=0;for(std::size_t i=before;i<count;i++){if(units[i].unit_id==43)++mutas;if(wave_targeting::detector(&units[i]))++detectors;}CHECK(mutas==10&&detectors==1);}
  }
 }
 inline void detectors_cover_their_own_army(){
@@ -147,7 +147,7 @@ inline void detectors_cover_their_own_army(){
 inline void first_eligible_then_relative_cadence(){
  const p::Profile profile{1,true,true,300,120,180,480,600,720,360,480,600,0};
  for(const auto& r:p::kRosters){
-  p::Timeline t;t.home=true;t.ordinal=2;t.active_ticks=900*24;CHECK(t.eligible(profile,r,7));t.mark_delivered(r.slot);CHECK(!t.eligible(profile,r,0));
+  p::Timeline t;t.home=true;t.ordinal=2;t.active_ticks=900*24;if(r.slot==p::Rear){CHECK(!t.eligible(profile,r,7));continue;}CHECK(t.eligible(profile,r,7));t.mark_delivered(r.slot);CHECK(!t.eligible(profile,r,0));
   if(r.cadence>1){t.ordinal=3;CHECK(!t.eligible(profile,r,7));}
   t.ordinal=2+r.cadence;CHECK(t.eligible(profile,r,7));
   auto disabled=profile;disabled.enabled=false;CHECK(!t.eligible(disabled,r,7));
@@ -173,7 +173,7 @@ inline void marked_passives_mirror_identity_and_preservation(){
  for(U32 slot:{17u,18u,19u,21u,22u})g.growth.curse_counts[slot]=3;g.growth.curse_counts[23]=2;
  rework_waves::timeline.home=true;rework_waves::timeline.active_ticks=600*24;g.current_wave_id=7;rework_waves::unit_ordinal=0;
  auto enemy=rework_waves::create(0,0);CHECK(enemy && enemy->player!=player_owner());CHECK(rework_curses::marked(enemy));
- CHECK(rework_curses::hp_percent(enemy)==195);CHECK(rework_curses::attack_percent(enemy)==138);CHECK(rework_curses::speed_fortieths(enemy)==49);CHECK(rework_curses::lifesteal_percent(enemy)==20);CHECK(rework_curses::barrier(enemy));
+ CHECK(rework_curses::hp_percent(enemy)==232);CHECK(rework_curses::attack_percent(enemy)==181);CHECK(rework_curses::speed_fortieths(enemy)==52);CHECK(rework_curses::lifesteal_percent(enemy)==24);CHECK(rework_curses::barrier(enemy));
  CHECK(rework_curses::hp_percent(original)==100 && rework_curses::attack_percent(friendly)==100);CHECK(!rework_curses::marked(original) && !rework_curses::marked(friendly));
  CHECK(std::memcmp(original,&before,sizeof(before))==0 && std::memcmp(friendly,&friendly_before,sizeof(friendly_before))==0);
  const auto old_owner=enemy->player;enemy->player=static_cast<U8>(player_owner());CHECK(!rework_curses::marked(enemy));enemy->player=old_owner;++enemy->minor_unique_index;CHECK(!rework_curses::marked(enemy));
@@ -228,14 +228,14 @@ inline void special_max_two_and_counterplay_gate(){
 inline void actual_stat_damage_heal_and_renderer_scopes(){
  begin();for(U32 slot:{17u,18u,21u,22u})g.growth.curse_counts[slot]=3;g.growth.curse_counts[23]=2;
  rework_waves::timeline.home=true;rework_waves::timeline.active_ticks=600*24;g.current_wave_id=8;
- const auto baseline=raw_value(0,8,0);auto enemy=rework_waves::create(0,0);CHECK(enemy);const auto maximum=baseline*195/100;
+ const auto baseline=raw_value(0,8,0);auto enemy=rework_waves::create(0,0);CHECK(enemy);const auto maximum=baseline*232/100;
  CHECK(effective_max_hp(enemy)==maximum);{OwnerDatScope scoped(enemy->player,enemy->player,enemy);CHECK(raw_value(0,8,0)==maximum);}CHECK(raw_value(0,8,0)==baseline);
  max_hp_cache::publish(true);U32 rendered=0;CHECK(max_hp_cache::read_values(enemy,rendered,nullptr,nullptr) && rendered==maximum);
  auto player=add(0,player_owner(),700,700,50000);enemy->flingy.hitpoints=5000;g.normal_hit=true;g.hit_bonus=0;g.elite_hit=false;g.bullet_hit_context=false;
- owner_damage_hook(player,1000,enemy,enemy->player,1,direct_damage);CHECK(player->flingy.hitpoints==50000-1380);CHECK(enemy->flingy.hitpoints==5000+276);
- const auto enemy_before=enemy->flingy.hitpoints;owner_damage_hook(enemy,1000,player,player_owner(),1,direct_damage);CHECK(enemy->flingy.hitpoints==enemy_before-750);
+ owner_damage_hook(player,1000,enemy,enemy->player,1,direct_damage);CHECK(player->flingy.hitpoints==50000-1810);CHECK(enemy->flingy.hitpoints==5000+434);
+ const auto enemy_before=enemy->flingy.hitpoints;owner_damage_hook(enemy,1000,player,player_owner(),1,direct_damage);CHECK(enemy->flingy.hitpoints==enemy_before-720);
  const auto original_enemy=add(0,enemy->player,1800,1700,5000);const auto untouched=original_enemy->flingy.hitpoints;
- owner_damage_hook(player,1000,original_enemy,original_enemy->player,1,direct_damage);CHECK(player->flingy.hitpoints==50000-1380-1000);CHECK(original_enemy->flingy.hitpoints==untouched);
+ owner_damage_hook(player,1000,original_enemy,original_enemy->player,1,direct_damage);CHECK(player->flingy.hitpoints==50000-1810-1000);CHECK(original_enemy->flingy.hitpoints==untouched);
  CHECK(effective_max_hp(original_enemy)==baseline && effective_max_hp(player)==baseline);CHECK(raw_value(0,8,0)==baseline);
 }
 inline void uraj_owned_air_and_kukulza_are_delivered(){
@@ -313,14 +313,14 @@ inline void uraj_completed_nexus_clock_and_auxiliary_grace(){
  }
 }
 inline void uraj_shared_cap_and_capped_growth(){
- CHECK(p::normal_budget(0,404)==16&&p::normal_budget(1,404)==20&&p::normal_budget(4,404)==32&&p::normal_budget(100,404)==32);
+ CHECK(p::normal_budget(0,404)==19&&p::normal_budget(1,404)==24&&p::normal_budget(4,404)==38&&p::normal_budget(100,404)==38);
  CHECK(p::live_supply_cap(404)==480&&p::live_supply_cap(403)==480);
  begin(404);const auto origin=rework_waves::choose_origin(true);CHECK(origin);
  add(154,player_owner(),origin->target.x,origin->target.y)->flags=1;
  add(64,player_owner(),origin->target.x+32,origin->target.y)->flags=1;
  auto original=add(0,origin->owner,origin->target.x+700,origin->target.y+700);const auto untouched=*original;
  rework_waves::timeline.home=true;rework_waves::timeline.active_ticks=1200*24;g.current_wave_id=9;
- for(U32 i=0;i<240;i++){auto u=rework_waves::create(0,25);CHECK(u);u->flingy.position={1900,1552};}
+ for(U32 i=0;i<240;i++){auto u=rework_waves::create(0,26);CHECK(u);u->flingy.position={1900,1552};}
  CHECK(rework_waves::live_supply()==480);
  for(U32 slot:{0u,15u,20u,24u,25u,38u})CHECK(!rework_waves::create(0,slot));
  CHECK(std::memcmp(original,&untouched,sizeof(untouched))==0);

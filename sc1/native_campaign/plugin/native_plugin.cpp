@@ -855,7 +855,7 @@ void __cdecl owner_damage_hook(bw::Unit* u,std::int32_t amount,bw::Unit* attacke
         if(g.hit_bonus)amount=static_cast<std::int32_t>(std::min<std::int64_t>(0x7fffffff,(std::int64_t(amount)*(100+g.hit_bonus)+99)/100));
         if(t && t->barrier && regular_enemy(u) && g.game()->elapsed_seconds-t->spawn_second<20)amount=static_cast<std::int32_t>((std::int64_t(amount)*3+3)/4);
         if(rework_curses::marked(attacking_body))amount=static_cast<std::int32_t>(std::min<std::int64_t>(0x7fffffff,(std::int64_t(amount)*rework_curses::attack_percent(attacking_body)+99)/100));
-        if(rework_curses::barrier(u))amount=static_cast<std::int32_t>((std::int64_t(amount)*3+3)/4);
+        if(rework_curses::barrier(u))amount=static_cast<std::int32_t>((std::int64_t(amount)*72+99)/100);
     }
     amount=rework_combat_v5::post_armor_damage(u,amount);
     const auto hp=u ? u->flingy.hitpoints : 0;original(u,amount,attacker,player,show);

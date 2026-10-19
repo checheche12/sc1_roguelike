@@ -18,11 +18,11 @@ inline Identity* identity(const bw::Unit* u) noexcept {
  return v.wave && v.unique==u->minor_unique_index && v.owner==u->player && v.type==u->unit_id?&v:nullptr;
 }
 inline bool marked(const bw::Unit* u) noexcept {u=body(u);auto v=identity(u);auto t=existing_track(u);return g.active && g.applied && g.mission && !g.mission->no_production && v && t && t->spawned && is_enemy(u->player) && !(u->flags&0x40000000u);}
-inline U32 count(U32 slot) noexcept {return slot<std::size(g.growth.curse_counts)?g.growth.curse_counts[slot]:0u;}
-inline U32 hp_percent(const bw::Unit* u) noexcept {if(!marked(u))return 100;const auto v=identity(u);U32 p=100+10*std::min(3u,count(18));if(v->elite)p=p*3/2;return p*v->hp/100;}
-inline U32 attack_percent(const bw::Unit* u) noexcept {if(!marked(u))return 100;const auto v=identity(u);U32 p=100+5*std::min(3u,count(17));if(v->elite)p=p*6/5;return p*v->attack/100;}
-inline U32 speed_fortieths(const bw::Unit* u) noexcept {return marked(u)?40u+3u*std::min(3u,count(19)):40u;}
-inline U32 lifesteal_percent(const bw::Unit* u) noexcept {return marked(u)?10u*std::min(2u,count(23)):0u;}
+inline U32 count(U32 slot) noexcept {return slot==25?0u:sc1_native::curse_scaling::count(g.growth,slot);}
+inline U32 hp_percent(const bw::Unit* u) noexcept {if(!marked(u))return 100;const auto v=identity(u);U32 p=sc1_native::curse_scaling::scale(100,sc1_native::curse_scaling::bonus(count(18),10));if(v->elite)p=sc1_native::curse_scaling::scale(p,60);return U32(std::min<std::uint64_t>(0xffffffffu,std::uint64_t(p)*v->hp/100));}
+inline U32 attack_percent(const bw::Unit* u) noexcept {if(!marked(u))return 100;const auto v=identity(u);U32 p=sc1_native::curse_scaling::scale(100,sc1_native::curse_scaling::bonus(count(17),10));if(v->elite)p=sc1_native::curse_scaling::scale(p,25);return U32(std::min<std::uint64_t>(0xffffffffu,std::uint64_t(p)*v->attack/100));}
+inline U32 speed_fortieths(const bw::Unit* u) noexcept {return marked(u)?40u+4u*std::min(3u,count(19)):40u;}
+inline U32 lifesteal_percent(const bw::Unit* u) noexcept {return marked(u)?12u*std::min(2u,count(23)):0u;}
 inline bool barrier(const bw::Unit* u) noexcept {const auto v=identity(u);const auto t=existing_track(u);return marked(u) && v && v->barrier && t && g.game()->elapsed_seconds-t->spawn_second<20;}
 inline bool appearing(const bw::Unit* u) noexcept {const auto v=identity(u);return marked(u) && v && v->appearance_until!=0;}
 inline void forget(bw::Unit* u) noexcept {
@@ -138,6 +138,7 @@ inline bw::Unit* finish_created(bw::Unit* u,U32 slot,U32 hp,U32 attack,int x,int
  ground_pulse(x,y,u->player,367);role_marker(u,0,-24,379);max_hp_cache::publish_unit(u);++unit_ordinal;return u;
 }
 inline bw::Unit* create(U32 id,U32 slot,U32 hp=100,U32 attack=100,bool alternate=false,U32 required_owner=12) {
+ if(slot==policy::Rear)return nullptr;
  if(!enabled() || live_supply()+std::max(1u,original_stat({0,46,id}))>policy::live_supply_cap(g.mission->mission_id))return nullptr;
  // Explicit user exception: only worker-raid Mutalisks appear directly at the
  // mining line. Other waves retain the512px allied clearance at real origins.
@@ -208,7 +209,7 @@ inline void roster(const policy::Roster& r) {
   if(!m.hero && (i>0 || !r.grade))m.count=policy::scaled_count(m.count,rework_curses::count(16));
   if(!m.hero)m.count=policy::reduced_amount(m.count);
   const bool boosted=r.slot==policy::Hunters?m.unit==38:(r.slot==policy::Vanguard || r.slot==policy::Catastrophe)?i==0:true;
-  created+=count_spawn(m.unit,m.count,r.slot,boosted?r.hp_percent:100,boosted?r.attack_percent:100,r.slot==policy::Flank);
+  created+=count_spawn(m.unit,m.count,r.slot,(boosted?r.hp_percent:100)*110u/100u,boosted?r.attack_percent:100,r.slot==policy::Flank);
  }
  if(created)timeline.mark_delivered(r.slot);
  log_event("V5 special curse delivery: slot=%u units=%u live_half_supply=%u cap=%u normal_ordinal=%u",r.slot,created,live_supply(),policy::live_supply_cap(g.mission->mission_id),timeline.ordinal+1);
@@ -288,8 +289,8 @@ inline void tick(bool ready,bool blocked,bool goal) {
  if(pending_kind && !spawned_pending && timeline.second()>=pending_spawn_at){
   spawned_pending=true;
   if(pending_kind==1)main_wave();
-  else if(pending_kind==2)normal_units(16+8*(std::min(3u,rework_curses::count(20))-1));
-  else if(pending_kind==3)count_spawn(43,policy::reduced_amount(policy::raid_count(rework_curses::count(15),rework_curses::count(16))),15);
+  else if(pending_kind==2)normal_units(18+8*(std::min(3u,rework_curses::count(20))-1));
+  else if(pending_kind==3)count_spawn(43,policy::raid_count(rework_curses::count(15),rework_curses::count(16)),15);
   else normal_units(reserve_supply,24);
   if(unit_ordinal)add_detector(pending_kind==3?policy::Raid:pending_kind==4?policy::Reserve:0u);
   log_event("V5 added wave created kind=%u units=%u live_half_supply=%u active_second=%u",pending_kind,unit_ordinal,live_supply(),timeline.second());

@@ -177,7 +177,7 @@ struct UnitState {
     U32 fractional[2]{},last_energy=0;bool energy_seen=false;U32 fade_until=0,saved_collision=0;
     bool mobility=false;U32 mobility_flags=0,mobility_speed=0;U8 mobility_type=2,mobility_turn=0,mobility_state=0;std::uint16_t mobility_acceleration=0;
     U32 energy_reserve=0,energy_cap=0,cloak_fraction=0;bool energy_granted=false,energy_pending=false;
-    bool materialized=false,detonated=false;
+    bool materialized=false,detonated=false,legendary_death_done=false;U32 swarm_heal_frame=~0u;
     bool chase=false;int chase_x=0,chase_y=0;
     U32 last_effect_token=~0u;
     U32 retreat_due=0,blink_due=0,reposition_due=0,leap_due=0,charge_due=0,charge_until=0;
@@ -628,7 +628,19 @@ inline void attach(U32 kind,bw::Unit* target,bw::Unit* source,U32 duration,U32 a
 }
 inline void death(bw::Unit* dead) {
     if(!valid_unit(dead))return;
-    if(talent_power::enabled)irradiation::on_death(dead);
+    if(talent_power::enabled){
+        irradiation::on_death(dead);
+        auto s=state(dead);
+        if(s&&rank(147)&&dead->player==player_owner()&&hallucination(dead)&&s->materialized&&!s->legendary_death_done){
+            s->legendary_death_done=true;
+            const auto damage=std::min(100u*256u,effective_max_hp(dead)/4u);
+            const auto pos=dead->flingy.position;
+            if(g.lone_sprite)g.lone_sprite(361,pos.x,pos.y,player_owner());
+            // Freeze identities before damage callbacks can reuse dead slots.
+            std::vector<Identity> victims;for(auto enemy:around(pos.x,pos.y,96,nullptr,4))victims.push_back(identity(enemy));
+            for(const auto& id:victims)if(auto enemy=resolve(id))hurt(enemy,damage,dead,player_owner());
+        }
+    }
 #ifdef SC1_NATIVE_HOST_TEST
     for(auto& p:persistent)if(!talent_power::enabled&&p.kind==61&&p.target.p==dead&&p.target.unique==dead->minor_unique_index&&p.remaining&&dead->irradiate_timer){
         for(auto next:around(dead->flingy.position.x,dead->flingy.position.y,64,dead,64,true,-1,true)){
@@ -976,8 +988,27 @@ struct MissileScope {
             if(p.source.owner==player_owner()&&rank(64)&&p.weapon==30&&!p.secondary&&!p.impact){
                 auto center=generation(p.primary);const int x=center ? center->flingy.position.x:p.x,y=center ? center->flingy.position.y:p.y;
                 auto others=around(x,y,talent_power::enabled?128u:64u,center,2);
+                std::vector<Identity> blast_targets;
+                if(talent_power::enabled){
+                    std::vector<std::pair<int,int>> centers{{x,y}};
+                    for(auto other:others)centers.emplace_back(other->flingy.position.x,other->flingy.position.y);
+                    for(const auto& point:centers)for(auto victim:around(point.first,point.second,96,center,64)){
+                        if(blast_targets.size()>=6)break;
+                        if(std::find(others.begin(),others.end(),victim)!=others.end())continue;
+                        if(std::any_of(blast_targets.begin(),blast_targets.end(),[&](const Identity& id){return id.p==victim&&id.unique==victim->minor_unique_index;}))continue;
+                        blast_targets.push_back(identity(victim));
+                    }
+                }
                 U32 emitted=0;for(auto other:others){replay_yamato(other);++emitted;}
-                if(talent_power::enabled)while(emitted++<2)if(auto remaining=resolve(p.primary))replay_yamato(remaining);
+                if(talent_power::enabled){
+                    while(emitted++<2)if(auto remaining=resolve(p.primary))replay_yamato(remaining);
+                    const auto damage=original_stat({1,14,30})*128u;
+                    for(const auto& id:blast_targets)if(auto victim=resolve(id)){
+                        const auto pos=victim->flingy.position;
+                        if(g.lone_sprite)g.lone_sprite(361,pos.x,pos.y,p.source.owner);
+                        weapon_hurt(victim,damage,30,source,p.source.owner);
+                    }
+                }
             }
             if(p.weapon==102&&primary&&!primary->plague_timer)persistent.erase(std::remove_if(persistent.begin(),persistent.end(),[&](const Persist& effect){return effect.kind==102&&effect.target.p==primary&&effect.target.unique==primary->minor_unique_index;}),persistent.end());
             if(p.source.owner==player_owner()&&p.weapon==104&&!p.impact){
@@ -1163,7 +1194,24 @@ inline void step() {
             else if(extra_acid(*a)&&frame>=a->due){for(auto& timer:a->extra)if(timer&&!--timer&&u->acid_spore_count)--u->acid_spore_count;a->due=frame+8;}
         }
         auto old=existing_track(u);if(old)s->last_damage=std::max(s->last_damage,old->last_damage_frame);
-        if(s->stasis_owner==player_owner()&&s->stasis_before&&u->stasis_timer==0){if(is_enemy(u->player)){u->shields=std::max(0,u->shields-int(talent_power::v5(149,100*256)));hurt(u,talent_power::v5(149,75*256)+(talent_power::enabled?effective_max_hp(u)/4:0u),nullptr,player_owner());}s->stasis_before=0;s->stasis_owner=12;}
+        if(talent_power::enabled&&rank(103)&&u->player==player_owner()&&soldier(u->unit_id)&&!hallucination(u)&&
+           (s->swarm_heal_frame==~0u||frame-s->swarm_heal_frame>=24)){
+            for(const auto& field:persistent)if(field.kind==83&&field.owner==player_owner()&&zone_contains(field,u)){
+                heal(u,effective_max_hp(u)/100u);s->swarm_heal_frame=frame;break;
+            }
+        }
+        if(s->stasis_owner==player_owner()&&s->stasis_before&&u->stasis_timer==0){
+            s->stasis_before=0;s->stasis_owner=12;
+            if(is_enemy(u->player)){
+                const auto pos=u->flingy.position;
+                if(talent_power::enabled){
+                    if(g.lone_sprite)g.lone_sprite(361,pos.x,pos.y,player_owner());
+                    for(auto other:around(pos.x,pos.y,96,nullptr,6))mark_slow(other,50,72);
+                }
+                u->shields=std::max(0,u->shields-int(talent_power::v5(149,100*256)));
+                hurt(u,talent_power::v5(149,75*256)+(talent_power::enabled?effective_max_hp(u)/4:0u),nullptr,player_owner());
+            }
+        }
         if(s->fade_until&&frame>=s->fade_until){
             u->flags=(u->flags&~(0x200000u|0x8000u))|s->saved_collision|s->saved_attack_flag;s->fade_until=0;
             const auto destination=u->order_target;const bool resume=u->order==6;

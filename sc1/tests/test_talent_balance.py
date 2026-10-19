@@ -1,6 +1,7 @@
 import copy
 import unittest
 from sc1.campaign import talent_balance as balance
+from sc1.campaign import legendary_balance
 from sc1.campaign.runtime_catalog import load_catalog
 from sc1.native_campaign.build_native_runtime import catalog_inputs
 
@@ -24,7 +25,7 @@ class TalentBalanceTests(unittest.TestCase):
             for key in ('id','bit_index','rank_slot','repeatable','source_description','missions'):
                 self.assertEqual(item.get(key),before.get(key))
         restored=copy.deepcopy(current);restored['talents']=[balance.historical(x) for x in current['talents']]
-        self.assertEqual(balance.decorate(restored),current)
+        self.assertEqual(legendary_balance.decorate(balance.decorate(restored)),current)
 
     def test_qualitative_effects_have_concrete_bonus_display(self):
         current=load_catalog(expected_version=2)
@@ -32,7 +33,10 @@ class TalentBalanceTests(unittest.TestCase):
         for ordinal in qualitative:
             item=current['talents'][238+ordinal]
             if ordinal!=85:self.assertNotEqual(item['description'],item['pre_balance_description'],ordinal)
-            self.assertEqual(item['description'],balance.DESCRIPTIONS[ordinal])
+            if ordinal==103:
+                self.assertIn('초당 최대 체력 1%',item['description'])
+                self.assertEqual(item['effect']['swarm_max_hp_regen_percent_per_second'],1)
+            else:self.assertEqual(item['description'],balance.DESCRIPTIONS[ordinal])
         for item in current['talents'][:238]:
             if item['effect']['type']=='multi_target':self.assertIn('+25%',item['description'])
 

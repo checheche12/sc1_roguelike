@@ -4,6 +4,7 @@ import copy
 import json
 from . import progression, talent_campaign_policy as policy, rank_policy
 from .runtime_catalog import GrowthError, load_catalog, validate_catalog, encode_growth
+from .curse_balance import REAR_ID
 
 SKIPPED_CURSE='__no_future_added_waves__'
 SKIPPED_FINAL='__campaign_clear_no_final_reward__'
@@ -11,7 +12,7 @@ RETIRED_TALENTS=frozenset(('bbf067dc-0ced-5875-a519-2c0443580c8d',))
 
 
 def retired(item):
-    return item['id'] in RETIRED_TALENTS or bool(item.get('effect',{}).get('retired'))
+    return item['id'] in RETIRED_TALENTS or item['id']==REAR_ID or bool(item.get('effect',{}).get('retired'))
 
 
 def enabled(catalog):
@@ -35,7 +36,7 @@ def enable(conn, catalog_path=None):
             # Correct future display/mechanics metadata only. Issued offers,
             # frozen input text, indices, ranks and completed checkpoints stay.
             old.update(description=new['description'],effect=copy.deepcopy(new['effect']))
-            for field in ('balance_revision','pre_balance_description','pre_balance_effect','repeatable','rank_slot','max_rank'):
+            for field in ('balance_revision','pre_balance_description','pre_balance_effect','repeatable','rank_slot','max_rank','max_stacks','choice_max_stacks'):
                 if field in new:old[field]=copy.deepcopy(new[field])
             changed=True
     if changed:
@@ -67,7 +68,7 @@ def overlay(conn, catalog):
                 existing=next(x for x in result[kind] if x['id']==item['id'])
                 if existing.get('source_description')==item.get('source_description'):
                     existing.update(description=item['description'],effect=copy.deepcopy(item['effect']))
-                    for field in ('balance_revision','pre_balance_description','pre_balance_effect','repeatable','rank_slot','max_rank'):
+                    for field in ('balance_revision','pre_balance_description','pre_balance_effect','repeatable','rank_slot','max_rank','max_stacks','choice_max_stacks'):
                         if field in item:existing[field]=copy.deepcopy(item[field])
     result.update(catalog_version=2,rework_revision=5,policy_revision=5)
     return validate_catalog(result,2)
@@ -129,7 +130,7 @@ def has_future_production(mission):
 
 
 def curse_eligible(item,mission):
-    if not item.get('implemented'):return False
+    if not item.get('implemented') or retired(item):return False
     if not progression.metadata(mission).get('no_production'):
         return progression.item_eligible(item,mission,'curse')
     ordinal=progression.metadata(mission)['ordinal']
@@ -144,8 +145,11 @@ def curse_tier(mission,phase=2):
         raise ValueError('Curse phase must be1,2or3')
     if phase!=2:return 'common'
     entry=progression.metadata(mission)
-    band=min(3,(entry['ordinal']-1)*4//policy.logical_mission_count(mission))
-    return ('uncommon','rare','epic','legendary')[band]
+    total=policy.logical_mission_count(mission);ordinal=entry['ordinal']
+    if ordinal>=(total+1)//2:return 'legendary'
+    if ordinal>=(total*35+99)//100:return 'epic'
+    if ordinal>=(total+4)//5:return 'rare'
+    return 'uncommon'
 
 
 def recent_manuals(conn,mission,offer_id):

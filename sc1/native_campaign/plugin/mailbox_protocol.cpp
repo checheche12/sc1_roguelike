@@ -1,4 +1,5 @@
 #include "mailbox_protocol.h"
+#include <algorithm>
 #include "include/legendary_bundles.generated.h"
 #include "include/frozen_catalog.generated.h"
 #include "include/campaign_config.generated.h"
@@ -290,7 +291,12 @@ bool MailboxProtocol::accept_snapshot(const std::uint32_t (&words)[96]) noexcept
     for(std::size_t i=0;i<curse_count;i++)if(((words[28+i/4]>>((i%4)*8))&255u)>frozen::kCurseMaxStacks[i])return false;
     if(wire_version_==1)for(std::size_t bit=frozen::kLegacyTalentCount;bit<512;++bit)if((words[12+bit/32]>>(bit%32))&1u)return false;
     if(wire_version_==2) {
-        for(std::size_t i=rework_catalog::kRankCount;i<32;++i)if(words[44+i])return false;
+        static_assert(rework_catalog::kRankCount<=29,"QA26 counter slots overlap manual ranks");
+        for(std::size_t i=rework_catalog::kRankCount;i<29;++i)if(words[44+i])return false;
+        for(std::size_t slot=16;slot<=18;++slot){
+            const auto extended=words[91-slot],byte=(words[28+slot/4]>>((slot%4)*8))&255u;
+            if(extended && byte!=std::min(extended,255u))return false;
+        }
         for(std::size_t i=76;i<96;++i)if(words[i])return false;
         for(std::size_t ordinal=0;ordinal<rework_catalog::kTalentCount;++ordinal){
             const auto slot=rework_catalog::kRankSlots[ordinal];if(slot<0)continue;
@@ -320,6 +326,11 @@ bool MailboxProtocol::accept_snapshot(const std::uint32_t (&words)[96]) noexcept
                 || snapshot.curse_counts[index] < snapshot_.curse_counts[index]) return false;
         }
         for(std::size_t index=0;index<curse_limit;++index)if(snapshot.curse_counts[index]<snapshot_.curse_counts[index])return false;
+        for(std::size_t slot=16;wire_version_==2 && slot<=18;++slot){
+            const auto current=std::max(std::uint32_t(snapshot.curse_counts[slot]),snapshot.talent_ranks[47-slot]);
+            const auto previous=std::max(std::uint32_t(snapshot_.curse_counts[slot]),snapshot_.talent_ranks[47-slot]);
+            if(current<previous)return false;
+        }
         for(std::uint32_t ordinal=0;ordinal<rework_catalog::kTalentCount;++ordinal)
             if(rework_catalog::rank(snapshot,ordinal)<rework_catalog::rank(snapshot_,ordinal))return false;
     }
@@ -745,6 +756,25 @@ void qa16_bundle_numeric_offer_validation() {
     }
 }
 void rework_v2_extended_snapshot_and_single_offer() {
+    // QA26 counters cross byte255 without spilling into adjacent curse bytes.
+    for(std::uint32_t count:{4u,255u,256u,1000u,0xffffffffu}){
+        Fixture extended(true,2);auto payload=extended.load();payload[10]=0x50480101;
+        for(std::size_t slot=16;slot<=18;++slot){
+            payload[28+slot/4]|=std::min(count,255u)<<((slot%4)*8);
+            payload[91-slot]=count;
+        }
+        extended.send(payload);CHECK(extended.protocol.ready());
+        CHECK(extended.host.snapshot.talent_ranks[31]==count);
+        CHECK(extended.host.snapshot.curse_counts[19]==0);
+        CHECK(extended.protocol.request_phase(2));auto next=extended.load();next[10]=0x50480202;
+        next[32]=payload[32];
+        for(std::size_t slot=16;slot<=18;++slot)next[91-slot]=payload[91-slot];
+        next[32]=(next[32]&~255u)|std::min(count-1,255u);
+        next[75]=count-1;extended.send(next);
+        CHECK(extended.protocol.failed()); // Decreasing the wide count is rejected.
+    }
+    {Fixture invalid(true,2);auto payload=invalid.load();payload[10]=0x50480101;
+     payload[75]=256;invalid.send(payload);CHECK(invalid.protocol.failed());}
     Fixture f(true,2);auto* m=f.protocol.mailbox_words();
     CHECK(m[16]==128 && m[18]==2);
     auto offer=f.offer();offer[23]=1;offer[24]=0;

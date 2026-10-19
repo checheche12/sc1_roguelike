@@ -147,6 +147,11 @@ def build(coverage=None):
             contract['new_talents' if kind=='talent' else 'new_curses'].append(copy.deepcopy(item))
     from .talent_balance import decorate, generate_header
     decorate(catalog)
+    from .curse_balance import decorate as decorate_curses
+    decorate_curses(catalog)
+    from .legendary_balance import decorate as decorate_legends
+    decorate_legends(catalog)
+    contract['new_curses']=copy.deepcopy(catalog['curses'][15:])
     contract['balance_revision']=9
     contract['new_talents']=copy.deepcopy(catalog['talents'][238:])
     generate_header(catalog, ROOT)
