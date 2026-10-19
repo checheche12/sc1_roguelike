@@ -177,6 +177,8 @@ def candidates(catalog,mission,phase,owned,rng,*,recent_manuals=(),rank_counts=N
     available=[]
     by_id={}
     entry=progression.metadata(mission)
+    opening=reward.guaranteed_legendary
+    campaign_missions=progression.campaign_missions(mission) if opening else ()
     def usable_on(item,identity):
         metadata=progression.metadata(identity)
         if item.get('category')=='economy':
@@ -188,28 +190,18 @@ def candidates(catalog,mission,phase,owned,rng,*,recent_manuals=(),rank_counts=N
     for item in catalog['talents']:
         if retired(item):continue
         if rank_policy.exhausted(item,owned,rank_counts):continue
-        if item.get('rework_revision')!=5 or not progression.item_eligible(item,mission,'talent'):continue
-        # Every legendary choice must be usable on this mission. Native coverage can
-        # provide exact mission eligibility for technologies/target availability.
-        usable=usable_on(item,mission)
+        if item.get('rework_revision')!=5:continue
+        if opening:
+            # Choose a build before its units arrive. Both bundle members must
+            # be usable somewhere in this same campaign, including squad starts.
+            if not unit_legendary(item) or item['race']!=entry['race']:continue
+            usable=any(usable_on(item,identity) for identity in campaign_missions)
+            if not usable:continue
+        else:
+            if not progression.item_eligible(item,mission,'talent'):continue
+            usable=usable_on(item,mission)
         available.append(policy.Candidate(item['id'],item['rarity'],item['category'],usable,item.get('repeatable',False)))
         by_id[item['id']]=item
-    midpoint=policy.legendary_ordinal(mission)
-    pending=midpoint is not None and entry['ordinal']<midpoint
-    if pending:
-        midpoint_mission=next(m for m in progression.campaign_missions(mission) if progression.metadata(m)['ordinal']==midpoint)
-        potential=[item for item in catalog['talents'] if item.get('rework_revision')==5
-                   and item['rarity']=='legendary' and item['id'] not in owned
-                   and progression.item_eligible(item,midpoint_mission,'talent')]
-        reserve=set(sorted(item['id'] for item in potential if usable_on(item,midpoint_mission))[-4:])
-        # Keep companions for the guaranteed anchors too. A squad mission may
-        # only supply one caster family; its second unit can help later missions.
-        for item in potential:
-            if item['id'] not in reserve or not unit_legendary(item):continue
-            partners=[other for other in potential if compatible(item,other)]
-            if partners and not any(other['id'] in reserve for other in partners):
-                reserve.add(sorted(other['id'] for other in partners)[0])
-        if reserve:available=[x for x in available if x.id not in reserve]
     usable_legends=[by_id[x.id] for x in available if x.rarity=='legendary']
     available=[x for x in available if not unit_legendary(by_id[x.id])
                or any(compatible(by_id[x.id],other) for other in usable_legends)]

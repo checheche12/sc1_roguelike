@@ -322,7 +322,7 @@ bool MailboxProtocol::accept_snapshot(const std::uint32_t (&words)[96]) noexcept
                 || snapshot.curse_counts[index] < snapshot_.curse_counts[index]) return false;
         }
         for(std::size_t index=0;index<curse_limit;++index)if(snapshot.curse_counts[index]<snapshot_.curse_counts[index])return false;
-        for(std::uint32_t slot=16;wire_version_==2 && slot<=18;++slot){
+        for(std::uint32_t slot=16;wire_version_==2 && slot<=19;++slot){
             const auto current=curse_scaling::count(snapshot,slot);
             const auto previous=curse_scaling::count(snapshot_,slot);
             if(current<previous)return false;
@@ -755,16 +755,16 @@ void rework_v2_extended_snapshot_and_single_offer() {
     // QA26 counters cross byte255 without spilling into adjacent curse bytes.
     for(std::uint32_t count:{4u,255u,256u,1000u,0xffffffffu}){
         Fixture extended(true,2);auto payload=extended.load();payload[10]=0x50480101;
-        for(std::size_t slot=16;slot<=18;++slot){
+        for(std::size_t slot=16;slot<=19;++slot){
             payload[28+slot/4]|=std::min(count,255u)<<((slot%4)*8);
             payload[91-slot]=count;
         }
         extended.send(payload);CHECK(extended.protocol.ready());
         CHECK(extended.host.snapshot.talent_ranks[31]==count);
-        CHECK(extended.host.snapshot.curse_counts[19]==0);
+        CHECK(extended.host.snapshot.curse_counts[19]==std::min(count,255u));
         CHECK(extended.protocol.request_phase(2));auto next=extended.load();next[10]=0x50480202;
         next[32]=payload[32];
-        for(std::size_t slot=16;slot<=18;++slot)next[91-slot]=payload[91-slot];
+        for(std::size_t slot=16;slot<=19;++slot)next[91-slot]=payload[91-slot];
         next[32]=(next[32]&~255u)|std::min(count-1,255u);
         next[75]=count-1;extended.send(next);
         CHECK(extended.protocol.failed()); // Decreasing the wide count is rejected.

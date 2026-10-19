@@ -93,4 +93,4 @@ class Qa10RankTests(unittest.TestCase):
     def test_depleted_ordinary_tiers_can_use_remaining_military_reward(self):
         candidate=policy.Candidate('remaining','rare')
         with patch.object(policy,'rolled_rarity',return_value='common'):
-            self.assertEqual(policy.draw_candidates(policy.reward_policy(101,1),[candidate],[],random.Random(1),exhausted_fallback=True),(candidate,))
+            self.assertEqual(policy.draw_candidates(policy.reward_policy(102,1),[candidate],[],random.Random(1),exhausted_fallback=True),(candidate,))

@@ -30,10 +30,10 @@ class LegendaryBalanceTests(unittest.TestCase):
             else:
                 self.assertEqual(item['effect']['energy_cost'], 0)
 
-    def test_all_six_midpoints_randomize_different_units_preserve_catalog(self):
+    def test_all_six_openings_randomize_different_units_preserve_catalog(self):
         before = copy.deepcopy(self.catalog)
         partners = {}
-        for mission in (106, 206, 306, 405, 505, 606):
+        for mission in (101, 201, 301, 401, 501, 601):
             for seed in range(30):
                 draw = rework_growth.candidates(self.catalog, mission, 1, [], random.Random(seed))
                 self.assertGreaterEqual(len(draw), 2)
@@ -59,7 +59,7 @@ class LegendaryBalanceTests(unittest.TestCase):
     def test_owned_components_and_single_family_never_get_bundled(self):
         legends = [x for x in self.catalog['talents'] if bundles.unit_legendary(x) and x['race']=='terran']
         owned = [x['id'] for x in legends if x['effect_ordinal'] != 61]
-        draw = rework_growth.candidates(self.catalog, 106, 1, owned, random.Random(0))
+        draw = rework_growth.candidates(self.catalog, 102, 1, owned, random.Random(0))
         self.assertTrue(all(not bundles.unit_legendary(item) for item in draw))
         for item in draw:
             self.assertFalse(set(bundles.member_ids(item, self.catalog)) & set(owned))
@@ -76,7 +76,7 @@ class LegendaryBalanceTests(unittest.TestCase):
                         return pending.state
                 original_draw=rework_growth.candidates
                 def fixed(catalog,mission,phase,owned,rng,**kw):
-                    return original_draw(catalog,106,1,owned,random.Random(3),**kw)
+                    return original_draw(catalog,101,1,owned,random.Random(3),**kw)
                 with patch('sc1.campaign.rework_growth.candidates',side_effect=fixed):
                     state = load()
                 original = copy.deepcopy(state['offer'])
@@ -107,7 +107,7 @@ class LegendaryBalanceTests(unittest.TestCase):
                     self.assertEqual(json.loads(saved), original['candidates'])
 
     def test_pair_validation_rejects_owned_or_invalid_partner_atomically(self):
-        draw = rework_growth.candidates(self.catalog, 106, 1, [], random.Random(3))
+        draw = rework_growth.candidates(self.catalog, 101, 1, [], random.Random(3))
         item = next(x for x in draw if x.get('bundled_talent_ids'))
         identities = bundles.member_ids(item, self.catalog)
         owned = [identities[1]]

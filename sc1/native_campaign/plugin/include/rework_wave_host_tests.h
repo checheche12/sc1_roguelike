@@ -6,7 +6,7 @@ inline void qa_stack_counts_and_wave_budgets(){
  CHECK(p::reduced_amount(0)==0&&p::reduced_amount(1)==1&&p::reduced_amount(20)==17&&p::reduced_amount(32)==27&&p::reduced_amount(40)==34&&p::reduced_amount(128)==109);
  CHECK(p::normal_budget(0)==38&&p::normal_budget(1)==48&&p::normal_budget(12)==153&&p::normal_budget(100)==153);
  const U32 wanted[]={0,2,6,10,10,10,10,10};for(U32 i=0;i<std::size(wanted);i++)CHECK(p::raid_count(i)==wanted[i]);
- CHECK(p::raid_count(4,3)==19);
+ CHECK(p::raid_count(4,3)==17);
 }
 inline void begin(U32 mission=106){wave_target_tests::begin(mission);g.applied=true;g.growth={};g.growth.wire_version=2;rework_waves::reset();CHECK(rework_waves::enabled());}
 inline void advance_second(U32 second){game.frame_count=second*24;game.elapsed_seconds=second;rework_waves::tick(true,false,false);wave_targeting::step(true,false);}
@@ -169,7 +169,7 @@ inline void marked_passives_mirror_identity_and_preservation(){
  for(U32 slot:{17u,18u,19u,21u,22u})g.growth.curse_counts[slot]=3;g.growth.curse_counts[23]=2;
  rework_waves::timeline.home=true;rework_waves::timeline.active_ticks=600*24;g.current_wave_id=7;rework_waves::unit_ordinal=0;
  auto enemy=rework_waves::create(0,0);CHECK(enemy && enemy->player!=player_owner());CHECK(rework_curses::marked(enemy));
- CHECK(rework_curses::hp_percent(enemy)==232);CHECK(rework_curses::attack_percent(enemy)==181);CHECK(rework_curses::speed_fortieths(enemy)==52);CHECK(rework_curses::lifesteal_percent(enemy)==24);CHECK(rework_curses::barrier(enemy));
+ CHECK(rework_curses::hp_percent(enemy)==217);CHECK(rework_curses::attack_percent(enemy)==170);CHECK(rework_curses::speed_percent(enemy)==118);CHECK(rework_curses::lifesteal_percent(enemy)==24);CHECK(rework_curses::barrier(enemy));
  CHECK(rework_curses::hp_percent(original)==100 && rework_curses::attack_percent(friendly)==100);CHECK(!rework_curses::marked(original) && !rework_curses::marked(friendly));
  CHECK(std::memcmp(original,&before,sizeof(before))==0 && std::memcmp(friendly,&friendly_before,sizeof(friendly_before))==0);
  const auto old_owner=enemy->player;enemy->player=static_cast<U8>(player_owner());CHECK(!rework_curses::marked(enemy));enemy->player=old_owner;++enemy->minor_unique_index;CHECK(!rework_curses::marked(enemy));
@@ -224,14 +224,14 @@ inline void special_max_two_and_counterplay_gate(){
 inline void actual_stat_damage_heal_and_renderer_scopes(){
  begin();for(U32 slot:{17u,18u,21u,22u})g.growth.curse_counts[slot]=3;g.growth.curse_counts[23]=2;
  rework_waves::timeline.home=true;rework_waves::timeline.active_ticks=600*24;g.current_wave_id=8;
- const auto baseline=raw_value(0,8,0);auto enemy=rework_waves::create(0,0);CHECK(enemy);const auto maximum=baseline*232/100;
+ const auto baseline=raw_value(0,8,0);auto enemy=rework_waves::create(0,0);CHECK(enemy);const auto maximum=baseline*217/100;
  CHECK(effective_max_hp(enemy)==maximum);{OwnerDatScope scoped(enemy->player,enemy->player,enemy);CHECK(raw_value(0,8,0)==maximum);}CHECK(raw_value(0,8,0)==baseline);
  max_hp_cache::publish(true);U32 rendered=0;CHECK(max_hp_cache::read_values(enemy,rendered,nullptr,nullptr) && rendered==maximum);
  auto player=add(0,player_owner(),700,700,50000);enemy->flingy.hitpoints=5000;g.normal_hit=true;g.hit_bonus=0;g.elite_hit=false;g.bullet_hit_context=false;
- owner_damage_hook(player,1000,enemy,enemy->player,1,direct_damage);CHECK(player->flingy.hitpoints==50000-1810);CHECK(enemy->flingy.hitpoints==5000+434);
+ owner_damage_hook(player,1000,enemy,enemy->player,1,direct_damage);CHECK(player->flingy.hitpoints==50000-1700);CHECK(enemy->flingy.hitpoints==5000+408);
  const auto enemy_before=enemy->flingy.hitpoints;owner_damage_hook(enemy,1000,player,player_owner(),1,direct_damage);CHECK(enemy->flingy.hitpoints==enemy_before-720);
  const auto original_enemy=add(0,enemy->player,1800,1700,5000);const auto untouched=original_enemy->flingy.hitpoints;
- owner_damage_hook(player,1000,original_enemy,original_enemy->player,1,direct_damage);CHECK(player->flingy.hitpoints==50000-1810-1000);CHECK(original_enemy->flingy.hitpoints==untouched);
+ owner_damage_hook(player,1000,original_enemy,original_enemy->player,1,direct_damage);CHECK(player->flingy.hitpoints==50000-1700-1000);CHECK(original_enemy->flingy.hitpoints==untouched);
  CHECK(effective_max_hp(original_enemy)==baseline && effective_max_hp(player)==baseline);CHECK(raw_value(0,8,0)==baseline);
 }
 inline void uraj_owned_air_and_kukulza_are_delivered(){

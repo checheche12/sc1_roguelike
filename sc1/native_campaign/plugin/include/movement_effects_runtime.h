@@ -53,7 +53,9 @@ inline Ratio ratio(bw::Unit* u) noexcept {
 inline std::int32_t scaled(std::int32_t value,Ratio r) noexcept {
     const bool negative=value<0;
     const auto magnitude=negative ? std::uint64_t(-std::int64_t(value)) : std::uint64_t(value);
-    const auto result=std::min<std::uint64_t>(0x7fffffffu,(magnitude*r.numerator+r.denominator/2)/r.denominator);
+    const auto result=r.numerator&&magnitude>(0xffffffffffffffffull-r.denominator/2)/r.numerator
+        ?std::uint64_t(std::min<long double>(0x7fffffffu,static_cast<long double>(magnitude)*r.numerator/r.denominator+0.5L))
+        :std::min<std::uint64_t>(0x7fffffffu,(magnitude*r.numerator+r.denominator/2)/r.denominator);
     return negative ? -static_cast<std::int32_t>(result) : static_cast<std::int32_t>(result);
 }
 inline void after_move(bw::Unit* u,U32 dry_run,U32* speed_out) noexcept {
@@ -68,8 +70,10 @@ inline void after_move(bw::Unit* u,U32 dry_run,U32* speed_out) noexcept {
     const auto r=ratio(u);if(r.numerator==r.denominator){observe();return;}
     // Apply to the result of the unchanged native Move. Engine upgrades,
     // ensnare and zero-speed/turning decisions have already been evaluated.
-    if(speed_out)*speed_out=static_cast<U32>(std::min<std::uint64_t>(0xffffffffu,
-        (std::uint64_t(*speed_out)*r.numerator+r.denominator/2)/r.denominator));
+    if(speed_out){const auto magnitude=std::uint64_t(*speed_out);
+        *speed_out=r.numerator&&magnitude>(0xffffffffffffffffull-r.denominator/2)/r.numerator
+            ?U32(std::min<long double>(0xffffffffu,static_cast<long double>(magnitude)*r.numerator/r.denominator+0.5L))
+            :U32(std::min<std::uint64_t>(0xffffffffu,(magnitude*r.numerator+r.denominator/2)/r.denominator));}
     if(dry_run){observe();return;} // Predictions never mutate a live unit or allocate tracks.
     auto& f=u->flingy;
     f.next_speed=scaled(f.next_speed,r);f.current_speed=scaled(f.current_speed,r);

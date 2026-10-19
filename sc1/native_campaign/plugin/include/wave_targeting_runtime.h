@@ -91,22 +91,24 @@ inline bool reorderable(U32 order) noexcept {
         order==8 || order==9 || order==10 || order==11 || order==12 || order==21;
 }
 inline bool detector(const bw::Unit* u) noexcept {return valid_unit(u) && u->unit_id<228 && (original_stat({0,22,u->unit_id})&0x8001u)==0x8000u;}
+inline bool escort(const bw::Unit* u) noexcept {return detector(u) || (valid_unit(u) && (u->unit_id==71 || u->unit_id==86));}
 inline void issue(bw::Unit* u) {
     if(!g.order || !g.active || counter(kGoalCounter) || !marked(u) || rework_curses::appearing(u))return;
     refresh();if(!target.valid)return;
     auto raid=rework_curses::raid_target(u);int aim_x=raid?raid->flingy.position.x:target.x,aim_y=raid?raid->flingy.position.y:target.y;
     const auto game=g.game();const U32 frame=game->frame_count;auto t=existing_track(u);if(!t)return;
-    const bool support=detector(u);
+    const bool support=escort(u);
     if(support){
-        // Follow a live member of this exact army. AttackMove sends unarmed
-        // detectors ahead to the enemy base and leaves the cloaked wall intact.
+        // Follow a live member of this exact army. Detectors move with it;
+        // armed Arbiters attack along its path while retaining their cloak aura.
         bw::Unit* leader=nullptr;std::int64_t best=std::numeric_limits<std::int64_t>::max();
         living_units([&](bw::Unit* other){auto tracked=existing_track(other);
-            if(other==u || !marked(other) || detector(other) || other->player!=u->player || !tracked || tracked->wave_id!=t->wave_id)return;
+            if(other==u || !marked(other) || escort(other) || other->player!=u->player || !tracked || tracked->wave_id!=t->wave_id)return;
             const auto p=other->flingy.position;const auto d=distance(p.x,p.y,aim_x,aim_y);
             if(!leader || d<best){leader=other;best=d;}
         });
-        if(!leader)return;aim_x=leader->flingy.position.x;aim_y=leader->flingy.position.y;
+        if(leader){aim_x=leader->flingy.position.x;aim_y=leader->flingy.position.y;}
+        else if(detector(u))return; // An armed Arbiter can continue after its escort dies.
     }
     const auto position=u->flingy.position;
     if(!t->wave_position_seen || distance(position.x,position.y,t->wave_position_x,t->wave_position_y)>=16ll*16){
@@ -118,7 +120,7 @@ inline void issue(bw::Unit* u) {
     const bool moving=u->order==6 || u->order==14 || u->order==157 || u->order==158 || u->order==159;
     if(t->wave_ordered && moving && distance(u->order_target.x,u->order_target.y,aim_x,aim_y)<64ll*64 && frame-t->wave_position_frame<8u*24u)return;
     t->wave_ordered=true;t->wave_order_frame=frame;t->wave_position_frame=frame;
-    g.order(u,support?6u:kAttackMove,static_cast<U32>(aim_x),static_cast<U32>(aim_y),nullptr,228);
+    g.order(u,detector(u)?6u:kAttackMove,static_cast<U32>(aim_x),static_cast<U32>(aim_y),nullptr,228);
 }
 inline void step(bool ready,bool goal) {
     if(!ready || goal || !g.active)return;

@@ -19,9 +19,9 @@ inline Identity* identity(const bw::Unit* u) noexcept {
 }
 inline bool marked(const bw::Unit* u) noexcept {u=body(u);auto v=identity(u);auto t=existing_track(u);return g.active && g.applied && g.mission && !g.mission->no_production && v && t && t->spawned && is_enemy(u->player) && !(u->flags&0x40000000u);}
 inline U32 count(U32 slot) noexcept {return (slot==24 || slot==25)?0u:sc1_native::curse_scaling::count(g.growth,slot);}
-inline U32 hp_percent(const bw::Unit* u) noexcept {if(!marked(u))return 100;const auto v=identity(u);U32 p=sc1_native::curse_scaling::scale(100,sc1_native::curse_scaling::bonus(count(18),10));if(v->elite)p=sc1_native::curse_scaling::scale(p,60);return U32(std::min<std::uint64_t>(0xffffffffu,std::uint64_t(p)*v->hp/100));}
-inline U32 attack_percent(const bw::Unit* u) noexcept {if(!marked(u))return 100;const auto v=identity(u);U32 p=sc1_native::curse_scaling::scale(100,sc1_native::curse_scaling::bonus(count(17),10));if(v->elite)p=sc1_native::curse_scaling::scale(p,25);return U32(std::min<std::uint64_t>(0xffffffffu,std::uint64_t(p)*v->attack/100));}
-inline U32 speed_fortieths(const bw::Unit* u) noexcept {return marked(u)?40u+4u*std::min(3u,count(19)):40u;}
+inline U32 hp_percent(const bw::Unit* u) noexcept {if(!marked(u))return 100;const auto v=identity(u);U32 p=sc1_native::curse_scaling::scale(100,sc1_native::curse_scaling::bonus(count(18),8,4));if(v->elite)p=sc1_native::curse_scaling::scale(p,60);return U32(std::min<std::uint64_t>(0xffffffffu,std::uint64_t(p)*v->hp/100));}
+inline U32 attack_percent(const bw::Unit* u) noexcept {if(!marked(u))return 100;const auto v=identity(u);U32 p=sc1_native::curse_scaling::scale(100,sc1_native::curse_scaling::bonus(count(17),8,4));if(v->elite)p=sc1_native::curse_scaling::scale(p,25);return U32(std::min<std::uint64_t>(0xffffffffu,std::uint64_t(p)*v->attack/100));}
+inline U32 speed_percent(const bw::Unit* u) noexcept {return marked(u)?sc1_native::curse_scaling::scale(100,sc1_native::curse_scaling::bonus(count(19),5,1)):100u;}
 inline U32 lifesteal_percent(const bw::Unit* u) noexcept {return marked(u)?12u*std::min(2u,count(23)):0u;}
 inline bool barrier(const bw::Unit* u) noexcept {const auto v=identity(u);const auto t=existing_track(u);return marked(u) && v && v->barrier && t && g.game()->elapsed_seconds-t->spawn_second<20;}
 inline bool appearing(const bw::Unit* u) noexcept {const auto v=identity(u);return marked(u) && v && v->appearance_until!=0;}

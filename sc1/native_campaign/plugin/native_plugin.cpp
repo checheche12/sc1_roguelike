@@ -15,6 +15,7 @@
 #include <cmath>
 #include <deque>
 #include <limits>
+#include <memory>
 #include <numeric>
 #include <vector>
 #include <unordered_map>
@@ -739,7 +740,7 @@ void apply_unit_motion() {
         if(u->flingy.top_speed!=t->applied_speed || !t->base_speed)t->base_speed=u->flingy.top_speed;
         t->applied_speed=static_cast<U32>(std::min<std::uint64_t>(0xffffffffu,(std::uint64_t(enemy_progression::escort_base(u,t->base_speed))*speed_num+speed_den/2)/speed_den));
         u->flingy.top_speed=t->applied_speed;
-        const double rework_speed=rework_combat_v5::speed_ratio(u)*rework_economy_v5::motion_ratio(u)*double(rework_curses::speed_fortieths(u))/40.0;
+        const double rework_speed=rework_combat_v5::speed_ratio(u)*rework_economy_v5::motion_ratio(u)*double(rework_curses::speed_percent(u))/100.0;
         if(rework_speed!=1.0){t->applied_speed=static_cast<U32>(std::min<double>(0xffffffffu,double(t->applied_speed)*rework_speed));u->flingy.top_speed=t->applied_speed;}
         const auto cooldown=[&](U8& current,U8& old,U32 unit_field,CooldownTrack& clock){
             const U32 weapon=original_stat({0,unit_field,u->unit_id});const U32 frame=g.game()->frame_count;
@@ -763,7 +764,7 @@ void apply_unit_motion() {
                     current=static_cast<U8>(std::min<std::uint64_t>(255,total>elapsed ? total-elapsed : 1));
                     clock.fraction=static_cast<U32>(scaled%denominator);
                 }else{clock.fraction=clock.denominator=0;}
-                const double ratio=rework_combat_v5::cooldown_ratio(u,weapon)*40.0/double(rework_curses::speed_fortieths(u));
+                const double ratio=rework_combat_v5::cooldown_ratio(u,weapon)*100.0/double(rework_curses::speed_percent(u));
                 if(ratio!=1.0)current=static_cast<U8>(std::min(255u,rework_combat_v5::fractional_period(u,unit_field==19 ? 1u:0u,current,ratio)));
                 clock.reset_value=0;clock.processed=true;
                 auto body=existing_track(effect_body(u));
@@ -852,6 +853,7 @@ struct DamageObservationScope {
 #include "include/movement_effects_runtime.h"
 #include "include/rework_relocation_v5.h"
 #include "include/rework_combat_v5.h"
+#include "include/area_visuals.h"
 #include "include/rework_economy_v5.h"
 #include "include/rework_cargo_v5.h"
 #include "include/rework_carrier_v5.h"
@@ -1311,7 +1313,7 @@ void abandon_session() noexcept {
     frame_profile::reset();
     g.survival_hint_shown=false;
     g.campaign_clear_shown=false;
-    campaign_visibility::reset();yamato_cost_ui::reset();rework_energy_ui::reset();rework_economy_ui::reset();rework_shield_ui_v5::reset();enemy_progression::reset();rework_waves::reset();rework_combat_v5::reset();rework_economy_v5::reset();rework_cargo_v5::reset();rework_carrier_v5::reset();
+    area_visuals::reset();campaign_visibility::reset();yamato_cost_ui::reset();rework_energy_ui::reset();rework_economy_ui::reset();rework_shield_ui_v5::reset();enemy_progression::reset();rework_waves::reset();rework_combat_v5::reset();rework_economy_v5::reset();rework_cargo_v5::reset();rework_carrier_v5::reset();
     max_hp_cache::reset();
     wave_targeting::reset();enemy_detection::reset();
     movement_effects::reset();combat_effects::reset_melee();g.objective_units.clear();
@@ -1474,7 +1476,7 @@ void __cdecl frame() noexcept {
         }
         rework_waves::tick(ready,!after_dialog,counter(kGoalCounter));regenerate_waves(game->elapsed_seconds);
         frame_profile::mark(5);
-        wave_targeting::step(ready,counter(kGoalCounter));
+        wave_targeting::step(ready,counter(kGoalCounter));area_visuals::publish();
         g.dialog.set_wave_timer(sc1_native::wave_countdown_text(rework_waves::countdown(ready,counter(kGoalCounter))));
         frame_profile::mark(6);frame_profile::finish(ready&&after_dialog,game->frame_count,g.units_count,rework_combat_v5::projectiles.size(),rework_combat_v5::pending_shots.size());
     } catch (...) {set_counter(kReadyCounter,0);set_counter(kAckCounter,0);abandon_session();message("본편 플러그인 실행 오류. 추가 공세와 승리 기록을 중단했습니다.");}
@@ -1522,6 +1524,7 @@ bool bind_api(const samase::PluginApi* api) noexcept {
     const auto outside_range=function<multi_target::OutsideRangeFn>(api,samase::FuncId::IsOutsideAttackRange);
     const auto create_bullet=reinterpret_cast<CreateBulletFn>(reinterpret_cast<GenericFn (__cdecl*)()>(api->create_bullet)());
     multi_target::bind(can_attack,outside_range,create_bullet);
+    log_event("Area visual renderer: registered=%u",area_visuals::bind(api)?1u:0u);
     return g.game && g.first_active && g.first_hidden && g.unit_array && g.create && g.finish_pre &&
            g.finish_post && g.order && g.text && g.read_map && g.multiplayer && g.replay &&
             g.set_hp && g.damage && rework_waves::native_tech_target && can_attack && outside_range && create_bullet && g.lone_sprite && g.add_overlay && g.dat_getters[0] && g.dat_getters[1] && g.dat_getters[2] && g.dat_getters[4] && (!g.extended_count || g.extended);

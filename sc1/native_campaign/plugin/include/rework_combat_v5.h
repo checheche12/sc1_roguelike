@@ -6,6 +6,8 @@
 void __cdecl owner_give_hook(bw::Unit*,U32,void (__cdecl*)(bw::Unit*,U32)) noexcept;
 #include "rework_upgrade_storage.h"
 namespace rework_combat_v5 {
+using AreaVisualEvent=void (*)(U32,U32,int,int) noexcept;
+inline AreaVisualEvent area_visual_event=nullptr;
 using RankLookup=U32 (*)(const GrowthSnapshot&,U32) noexcept;
 inline RankLookup rank_lookup=nullptr;
 inline U32 rank(const GrowthSnapshot& s,U32 ordinal) noexcept {
@@ -57,7 +59,7 @@ inline U32 manual_base(U32 ordinal,U32 id) noexcept {
         if(ordinal==30){if(in(id,{5,6,23,24}))return 4;if(in(id,{25,26,30,31}))return 8;if(in(id,{2,19}))return 3;}
         if(ordinal==31&&in(id,{12,27,28,29,102}))return 4;
         if(ordinal==70){if(in(id,{39,48}))return 4;if(id==50)return 40;}
-        if(ordinal==72&&in(id,{43,55}))return 4;
+        if(ordinal==72&&in(id,{43,44,55,56}))return 4;
         if(ordinal==111){if(in(id,{66,78}))return 2;if(in(id,{61,68,74,75,76}))return 4;if(in(id,{81,83,85}))return 10;}
     }
     return in(ordinal,{29,70,111})?1u:2u;
@@ -822,7 +824,7 @@ inline void* enter_damage(bw::Unit* to,bw::Unit* from,U32 w,U32 divisor,std::int
 inline void leave_damage(void* scope) noexcept {if(!scope||!damage_depth)return;try{static_cast<DamageScope*>(scope)->~DamageScope();}catch(...){}--damage_depth;}
 inline bool skip_damage(void* scope) noexcept {return scope&&static_cast<DamageScope*>(scope)->absorbed_all;}
 inline movement_effects::Ratio movement_extension(bw::Unit* u) noexcept {
-    try{const double value=std::max(1.0/65536,std::min(64.0,speed_ratio(u)));return {std::uint64_t(value*65536),65536};}catch(...){return {};}
+    try{const double value=std::max(1.0/65536,std::min(64.0,speed_ratio(u)));return {std::uint64_t(value*65536)*rework_curses::speed_percent(u),6553600};}catch(...){return {};}
 }
 inline void script_transform(U8* bytes,std::size_t size) noexcept {
     if(!bytes||size<4)return;
@@ -907,6 +909,7 @@ struct MissileScope {
         previous_infantry_rank=DamageScope::current_infantry_rank;previous_mobility_bonus=DamageScope::current_mobility_bonus;previous_projectile=DamageScope::current_projectile;
         auto it=projectiles.find(b);if(it==projectiles.end()||!g.active||!g.applied)return;
         p=it->second;tracked=true;DamageScope::current_percent=p.percent;DamageScope::current_secondary=p.secondary;DamageScope::current_token=p.token;DamageScope::current_primary=generation(p.primary);
+        if(area_visual_event)area_visual_event(p.weapon,p.source.owner,b->target.x,b->target.y);
         DamageScope::current_infantry_rank=p.infantry_rank;DamageScope::current_mobility_bonus=p.mobility_bonus;DamageScope::current_projectile=true;
         DamageScope::current_bounce_divisor=1;
         if(p.source.owner==player_owner()&&in(p.source.id,{43,55})&&rank(93)&&original_stat({1,8,p.weapon})==7){

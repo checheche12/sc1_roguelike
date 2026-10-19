@@ -37,9 +37,9 @@ class TalentCampaignPolicyTests(unittest.TestCase):
                     self.assertFalse(mission["final"], mission)
                     self.assertFalse(reward.guaranteed_legendary)
 
-    def test_legendary_once_after_half_logical_campaign_at_phase_one(self):
-        for mission, ordinal in ((101, 6), (201, 6), (301, 6),
-                                 (401, 5), (501, 5), (601, 6)):
+    def test_legendary_once_at_campaign_opening_phase_one(self):
+        for mission, ordinal in ((101, 1), (201, 1), (301, 1),
+                                 (401, 1), (501, 1), (601, 1)):
             schedule = policy.campaign_schedule(mission)
             guaranteed = [x for x in schedule if x.guaranteed_legendary]
             self.assertEqual(len(guaranteed), 1)
@@ -62,7 +62,7 @@ class TalentCampaignPolicyTests(unittest.TestCase):
         self.assertFalse(any(x.guaranteed_legendary for x in schedule))
 
     def test_ordinary_legendary_has_one_percent_per_slot(self):
-        reward = policy.reward_policy(101, 1)
+        reward = policy.reward_policy(102, 1)
         for value, expected in ((0, 4), (99, 4), (100, 0), (9999, 0)):
             rng = FixedRoll(value)
             self.assertEqual(policy.legendary_candidate_count(reward, rng), expected)
@@ -72,7 +72,7 @@ class TalentCampaignPolicyTests(unittest.TestCase):
 
     def test_guarantee_is_four_economy_is_zero_and_neither_rolls_rarity(self):
         rng = FixedRoll(0)
-        self.assertEqual(policy.legendary_candidate_count(policy.reward_policy(106, 1), rng), 4)
+        self.assertEqual(policy.legendary_candidate_count(policy.reward_policy(101, 1), rng), 4)
         self.assertEqual(policy.legendary_candidate_count(policy.reward_policy(102, 2), rng), 0)
         self.assertEqual(rng.calls, [])
 
@@ -98,13 +98,13 @@ class TalentCampaignPolicyTests(unittest.TestCase):
         cards = [policy.Candidate(str(i), "common") for i in range(7)]
         owned = set()
         for _ in range(30):
-            offer = policy.draw_candidates(policy.reward_policy(101, 1), cards, owned, FixedRoll(0))
+            offer = policy.draw_candidates(policy.reward_policy(102, 1), cards, owned, FixedRoll(0))
             self.assertEqual(len(offer), 4)
             self.assertEqual(len({x.id for x in offer}), 4)
             owned.add(offer[0].id)
 
     def test_depleted_low_tier_never_promotes_to_rare_or_epic(self):
-        reward = policy.reward_policy(101, 1)
+        reward = policy.reward_policy(102, 1)
         cards = [policy.Candidate("rare", "rare"), policy.Candidate("epic", "epic")]
         self.assertEqual(policy.draw_candidates(reward, cards, (), FixedRoll(0)), ())
         cards.append(policy.Candidate("uncommon", "uncommon"))
@@ -115,15 +115,15 @@ class TalentCampaignPolicyTests(unittest.TestCase):
         cards = [policy.Candidate("owned", "legendary"),
                  policy.Candidate("unusable", "legendary", usable=False),
                  policy.Candidate("fresh", "legendary")]
-        offer = policy.draw_candidates(policy.reward_policy(106, 1), cards, {"owned"}, FixedRoll(0))
+        offer = policy.draw_candidates(policy.reward_policy(101, 1), cards, {"owned"}, FixedRoll(0))
         self.assertEqual([x.id for x in offer], ["fresh"])
         with self.assertRaises(ValueError):
-            policy.draw_candidates(policy.reward_policy(106, 1), cards, {"owned", "fresh"}, FixedRoll(0))
+            policy.draw_candidates(policy.reward_policy(101, 1), cards, {"owned", "fresh"}, FixedRoll(0))
 
     def test_guarantee_shows_four_distinct_unowned_usable_legendaries(self):
         cards = [policy.Candidate(str(i), 'legendary') for i in range(7)]
         cards.append(policy.Candidate('unusable', 'legendary', usable=False))
-        offer = policy.draw_candidates(policy.reward_policy(106, 1), cards, {'0'}, FixedRoll(0))
+        offer = policy.draw_candidates(policy.reward_policy(101, 1), cards, {'0'}, FixedRoll(0))
         self.assertEqual([x.id for x in offer], ['1', '2', '3', '4'])
         self.assertTrue(all(x.rarity == 'legendary' for x in offer))
 
@@ -132,7 +132,7 @@ class TalentCampaignPolicyTests(unittest.TestCase):
             def randrange(self, stop):
                 return stop - 1
         cards = [policy.Candidate("last", "legendary"), policy.Candidate("epic", "epic")]
-        offer = policy.draw_candidates(policy.reward_policy(101, 1), cards, (), LastRoll(),
+        offer = policy.draw_candidates(policy.reward_policy(102, 1), cards, (), LastRoll(),
                                        midpoint_pending=True)
         self.assertEqual([x.id for x in offer], ["epic"])
         offer = policy.draw_candidates(policy.reward_policy(107, 1), cards, (), LastRoll())
@@ -174,7 +174,7 @@ class TalentCampaignPolicyTests(unittest.TestCase):
         cards = [policy.Candidate("c", "common"), policy.Candidate("u", "uncommon"),
                  policy.Candidate("e", "epic"), policy.Candidate("l1", "legendary"),
                  policy.Candidate("l2", "legendary")]
-        reward = policy.reward_policy(101, 1)
+        reward = policy.reward_policy(102, 1)
         offer = policy.draw_candidates(reward, cards, (), SequenceRoll([39, 0, 40, 0, 94, 0, 99, 0]))
         self.assertEqual([x.rarity for x in offer], ["common", "uncommon", "epic", "legendary"])
         offer = policy.draw_candidates(reward, cards, (), SequenceRoll([99, 0, 99, 0]), limit=2)

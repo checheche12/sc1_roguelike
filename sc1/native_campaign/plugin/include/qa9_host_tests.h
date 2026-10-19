@@ -112,7 +112,7 @@ inline void qa9_mutalisk_manual_compensates_slower_attack(){
     const U32 hydra=original_stat({0,17,38}),muta=original_stat({0,17,43}),guardian=original_stat({0,17,44});
     CHECK(owner_stat(1,{1,14,hydra})==original_stat({1,14,hydra})+3);
     CHECK(owner_stat(1,{1,14,muta})==original_stat({1,14,muta})+6);
-    CHECK(owner_stat(1,{1,14,guardian})==original_stat({1,14,guardian})+3);
+    CHECK(owner_stat(1,{1,14,guardian})==original_stat({1,14,guardian})+6);
     auto h=unit(38,1,100,100),m=unit(43,1,200,100,true);
     CHECK(std::abs(rework_combat_v5::cooldown_ratio(h,hydra)-0.955)<0.00001);
     CHECK(std::abs(rework_combat_v5::cooldown_ratio(m,muta)-0.955)<0.00001);

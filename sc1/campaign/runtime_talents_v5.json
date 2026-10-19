@@ -32331,7 +32331,7 @@
       "id": "16cf5d07-b1b7-5697-a7c3-220a82bbad55",
       "name": "비행 군체 화력 교범",
       "target": "뮤탈·가디언·디바우러·스커지",
-      "description": "뮤탈리스크의 공격력 +6, 다른 저그 공중 전투 유닛의 공격력 +3. 해당 유닛들의 공격 간격이 4.5% 줄어듭니다.  중첩당 적용, 최대 4회 선택할 수 있습니다.",
+      "description": "중첩당 뮤탈리스크·가디언(영웅 포함)의 공격력 +6, 다른 저그 공중 전투 유닛의 공격력 +3. 공격 간격 -4.5%. 최대 4회.",
       "trigger": "",
       "numbers": "선택 횟수 제한 없음. 같은 창에서는 동일 재능 1개만 표시. 공격주기 = 원래 주기 × 0.97^중첩 수(해당 교범에만 적용). 엔진 최소 1틱, 매 단계 원본에서 다시 계산.",
       "notes": "일반 병력 교범은 보유 후에도 재등장합니다. 공격력·방어력은 중첩당 수치를 합산하고, 이동 속도는 원래 속도 × (1 + 0.03 × 중첩 수)로 계산합니다. 일꾼·건물·탄약은 제외하며, 인터셉터는 함대 교범의 공격력만 캐리어를 통해 1회 상속합니다. 지상/공중 분류는 겹치지 않습니다. 자폭·튀김의 타격 수와 마법 피해는 늘리지 않습니다. 기존 발급 선택과 과거 기록은 재해석하지 않습니다.",
@@ -32354,8 +32354,10 @@
         "type": "rework_v5",
         "ordinal": 72,
         "source_id": "16cf5d07-b1b7-5697-a7c3-220a82bbad55",
-        "qa_revision": 2026101610,
-        "benefit_power_quarters": 6
+        "qa_revision": 2026101931,
+        "benefit_power_quarters": 6,
+        "mutalisk_guardian_attack_per_rank": 6,
+        "other_air_attack_per_rank": 3
       },
       "target_units": [
         43,
@@ -40480,7 +40482,7 @@
           10
         ],
         "direct_mining_line_spawn": true,
-        "qa_revision": 2026101927
+        "qa_revision": 2026101931
       },
       "target_units": [],
       "requirements": {
@@ -40550,7 +40552,7 @@
       "id": "1e777144-aefd-5715-9379-986f6aa5a3ee",
       "name": "끝없는 증원",
       "target": "적 추가 공세 병력",
-      "description": "추가 공세 병력 수가 선택할 때마다 기본 편성 대비 +25%, +30%, +35%…씩 누적 증가합니다. 중첩 상한 없음. 1/2/3중첩 누적 +25/+55/+90%.",
+      "description": "추가 공세 병력 수가 선택할 때마다 기본 편성 대비 +20%, +24%, +28%…씩 누적 증가합니다. 중첩 상한 없음. 1/2/3중첩 누적 +20/+44/+72%.",
       "trigger": "",
       "numbers": "",
       "notes": "이전 첨삭 기록 141의 current-481876a7-e041-567c-91c0-dbbe5915acaf에서 이동한 개편안입니다. 원문은 비교란에 그대로 보존했습니다. 일반 저주가 과해지지 않도록 원래 임무 병력 전체가 아닌 추가 공세만 강화합니다.\n게임 반영 전 저주 설계입니다. 효과는 실제 적 소유 추가 공세에만 적용하며 동족전에서도 아군에는 적용하지 않습니다. 원래 임무 병력·AI·목표·승리 트리거는 변경하지 않습니다. 생성 전 별도 공세 타이머와 20초 경고를 표시하고 적 기지 또는 경로가 연결된 안전한 외곽에서 출발합니다. 일꾼·건물 옆 즉시 생성 금지. 준비 시간은 일반 임무 최소 5분, 생산 없는 임무 최소 6분입니다. 진입 경로·대공·탐지 등 대응 수단이 없는 임무는 해당 편성을 후보에서 제외합니다. 재능·저주로 추가 생성한 병력의 사망은 망자의 지원군 등 생성 효과를 다시 발동하지 않습니다. 지연된 회차를 한꺼번에 몰아 보내지 않습니다. 희귀 이상 편성은 지도 원래 적 종족과 무관하게 사용할 수 있습니다. 스토리 영웅 전역 능력치나 임무 목표 유닛을 재사용하지 않고 독립 태그가 있는 전투 인스턴스로 구성합니다. 증원량 증가는 일반 호위에만 적용하며 특수 유닛 수 상한은 넘기지 않습니다.",
@@ -40573,10 +40575,10 @@
         "type": "rework_v5",
         "ordinal": 1,
         "source_id": "1e777144-aefd-5715-9379-986f6aa5a3ee",
-        "first_increment_percent": 25,
-        "increment_step_percent": 5,
+        "first_increment_percent": 20,
+        "increment_step_percent": 4,
         "unlimited_stacks": true,
-        "qa_revision": 2026101927
+        "qa_revision": 2026101931
       },
       "target_units": [],
       "requirements": {
@@ -40645,7 +40647,7 @@
       "id": "82ba819d-e68c-570a-ac0d-d03031a5a80c",
       "name": "군비 경쟁",
       "target": "적 추가 공세 병력",
-      "description": "추가 공세 병력의 일반 공격력이 선택할 때마다 기본 공격력 대비 +10%, +15%, +20%…씩 누적 증가합니다. 중첩 상한 없음. 1/2/3중첩 누적 +10/+25/+45%.",
+      "description": "추가 공세 병력의 일반 공격력이 선택할 때마다 기본 공격력 대비 +8%, +12%, +16%…씩 누적 증가합니다. 중첩 상한 없음. 1/2/3중첩 누적 +8/+20/+36%.",
       "trigger": "",
       "numbers": "",
       "notes": "이전 첨삭 기록 141의 current-639d3bf8-b455-5b0d-9954-7695a39eb0e5에서 이동한 개편안입니다. 원문은 비교란에 그대로 보존했습니다. 일반 저주가 과해지지 않도록 원래 임무 병력 전체가 아닌 추가 공세만 강화합니다.\n게임 반영 전 저주 설계입니다. 효과는 실제 적 소유 추가 공세에만 적용하며 동족전에서도 아군에는 적용하지 않습니다. 원래 임무 병력·AI·목표·승리 트리거는 변경하지 않습니다. 생성 전 별도 공세 타이머와 20초 경고를 표시하고 적 기지 또는 경로가 연결된 안전한 외곽에서 출발합니다. 일꾼·건물 옆 즉시 생성 금지. 준비 시간은 일반 임무 최소 5분, 생산 없는 임무 최소 6분입니다. 진입 경로·대공·탐지 등 대응 수단이 없는 임무는 해당 편성을 후보에서 제외합니다. 재능·저주로 추가 생성한 병력의 사망은 망자의 지원군 등 생성 효과를 다시 발동하지 않습니다. 지연된 회차를 한꺼번에 몰아 보내지 않습니다. 희귀 이상 편성은 지도 원래 적 종족과 무관하게 사용할 수 있습니다. 스토리 영웅 전역 능력치나 임무 목표 유닛을 재사용하지 않고 독립 태그가 있는 전투 인스턴스로 구성합니다. 증원량 증가는 일반 호위에만 적용하며 특수 유닛 수 상한은 넘기지 않습니다.",
@@ -40668,10 +40670,10 @@
         "type": "rework_v5",
         "ordinal": 2,
         "source_id": "82ba819d-e68c-570a-ac0d-d03031a5a80c",
-        "first_increment_percent": 10,
-        "increment_step_percent": 5,
+        "first_increment_percent": 8,
+        "increment_step_percent": 4,
         "unlimited_stacks": true,
-        "qa_revision": 2026101927
+        "qa_revision": 2026101931
       },
       "target_units": [],
       "requirements": {
@@ -40740,7 +40742,7 @@
       "id": "ea65cda4-34dd-5334-99e8-4085fd00133e",
       "name": "악마의 생명력",
       "target": "적 추가 공세 병력",
-      "description": "추가 공세 병력의 최대 체력이 선택할 때마다 기본 체력 대비 +10%, +15%, +20%…씩 누적 증가합니다. 중첩 상한 없음. 1/2/3중첩 누적 +10/+25/+45%.",
+      "description": "추가 공세 병력의 최대 체력이 선택할 때마다 기본 체력 대비 +8%, +12%, +16%…씩 누적 증가합니다. 중첩 상한 없음. 1/2/3중첩 누적 +8/+20/+36%.",
       "trigger": "",
       "numbers": "",
       "notes": "이전 첨삭 기록 141의 current-8704b857-aed8-5888-aac3-bada4065990d에서 이동한 개편안입니다. 원문은 비교란에 그대로 보존했습니다. 일반 저주가 과해지지 않도록 원래 임무 병력 전체가 아닌 추가 공세만 강화합니다.\n게임 반영 전 저주 설계입니다. 효과는 실제 적 소유 추가 공세에만 적용하며 동족전에서도 아군에는 적용하지 않습니다. 원래 임무 병력·AI·목표·승리 트리거는 변경하지 않습니다. 생성 전 별도 공세 타이머와 20초 경고를 표시하고 적 기지 또는 경로가 연결된 안전한 외곽에서 출발합니다. 일꾼·건물 옆 즉시 생성 금지. 준비 시간은 일반 임무 최소 5분, 생산 없는 임무 최소 6분입니다. 진입 경로·대공·탐지 등 대응 수단이 없는 임무는 해당 편성을 후보에서 제외합니다. 재능·저주로 추가 생성한 병력의 사망은 망자의 지원군 등 생성 효과를 다시 발동하지 않습니다. 지연된 회차를 한꺼번에 몰아 보내지 않습니다. 희귀 이상 편성은 지도 원래 적 종족과 무관하게 사용할 수 있습니다. 스토리 영웅 전역 능력치나 임무 목표 유닛을 재사용하지 않고 독립 태그가 있는 전투 인스턴스로 구성합니다. 증원량 증가는 일반 호위에만 적용하며 특수 유닛 수 상한은 넘기지 않습니다.",
@@ -40763,10 +40765,10 @@
         "type": "rework_v5",
         "ordinal": 3,
         "source_id": "ea65cda4-34dd-5334-99e8-4085fd00133e",
-        "first_increment_percent": 10,
-        "increment_step_percent": 5,
+        "first_increment_percent": 8,
+        "increment_step_percent": 4,
         "unlimited_stacks": true,
-        "qa_revision": 2026101927
+        "qa_revision": 2026101931
       },
       "target_units": [],
       "requirements": {
@@ -40835,7 +40837,7 @@
       "id": "f77ecb43-931b-583f-b975-38b924080322",
       "name": "시간 가속",
       "target": "적 추가 공세 병력",
-      "description": "추가 공세 병력의 공격·이동 속도 +10%/중첩. 최대 3중첩.",
+      "description": "추가 공세 병력의 일반 공격 속도와 이동 속도가 선택할 때마다 각각 기본 속도 대비 +5%, +6%, +7%…씩 누적 증가합니다. 중첩 상한 없음. 1/2/3중첩 누적 각각 +5/+11/+18%. 마법 시전 속도는 바뀌지 않습니다.",
       "trigger": "",
       "numbers": "",
       "notes": "이전 첨삭 기록 141의 current-163a6ce5-eefc-59eb-9e79-840ff9a96dab에서 이동한 개편안입니다. 원문은 비교란에 그대로 보존했습니다. 일반 저주가 과해지지 않도록 원래 임무 병력 전체가 아닌 추가 공세만 강화합니다.\n게임 반영 전 저주 설계입니다. 효과는 실제 적 소유 추가 공세에만 적용하며 동족전에서도 아군에는 적용하지 않습니다. 원래 임무 병력·AI·목표·승리 트리거는 변경하지 않습니다. 생성 전 별도 공세 타이머와 20초 경고를 표시하고 적 기지 또는 경로가 연결된 안전한 외곽에서 출발합니다. 일꾼·건물 옆 즉시 생성 금지. 준비 시간은 일반 임무 최소 5분, 생산 없는 임무 최소 6분입니다. 진입 경로·대공·탐지 등 대응 수단이 없는 임무는 해당 편성을 후보에서 제외합니다. 재능·저주로 추가 생성한 병력의 사망은 망자의 지원군 등 생성 효과를 다시 발동하지 않습니다. 지연된 회차를 한꺼번에 몰아 보내지 않습니다. 희귀 이상 편성은 지도 원래 적 종족과 무관하게 사용할 수 있습니다. 스토리 영웅 전역 능력치나 임무 목표 유닛을 재사용하지 않고 독립 태그가 있는 전투 인스턴스로 구성합니다. 증원량 증가는 일반 호위에만 적용하며 특수 유닛 수 상한은 넘기지 않습니다.",
@@ -40845,7 +40847,7 @@
       "category": "curse",
       "source": "proposal",
       "baseline": "적 공격속도·이동속도, 중첩당 7.5% 증가",
-      "rarity": "uncommon",
+      "rarity": "common",
       "kind": "curse",
       "byte_index": 19,
       "implemented": true,
@@ -40858,8 +40860,11 @@
         "type": "rework_v5",
         "ordinal": 4,
         "source_id": "f77ecb43-931b-583f-b975-38b924080322",
-        "speed_percent_per_stack": 10,
-        "qa_revision": 2026101927
+        "first_increment_percent": 5,
+        "increment_step_percent": 1,
+        "unlimited_stacks": true,
+        "attack_and_movement_speed": true,
+        "qa_revision": 2026101931
       },
       "target_units": [],
       "requirements": {
@@ -40922,7 +40927,7 @@
         609,
         610
       ],
-      "max_stacks": 3
+      "max_stacks": 4294967295
     },
     {
       "id": "0d74cc95-e3fe-5f4c-8ec0-9bbf6cf1ce2b",
@@ -40953,7 +40958,7 @@
         "source_id": "0d74cc95-e3fe-5f4c-8ec0-9bbf6cf1ce2b",
         "supply_base": 9,
         "supply_per_extra_stack": 4,
-        "qa_revision": 2026101927
+        "qa_revision": 2026101931
       },
       "target_units": [],
       "requirements": {
@@ -41047,7 +41052,7 @@
         "source_id": "2c3f8902-a58a-5ae5-8bdb-d5e98cce7d70",
         "elite_hp_percent": 160,
         "elite_attack_percent": 125,
-        "qa_revision": 2026101927
+        "qa_revision": 2026101931
       },
       "target_units": [],
       "requirements": {
@@ -41140,7 +41145,7 @@
         "ordinal": 7,
         "source_id": "f1d772f8-e1b9-57c9-966c-7e3cc5657ff7",
         "damage_reduction_percent": 28,
-        "qa_revision": 2026101927
+        "qa_revision": 2026101931
       },
       "target_units": [],
       "requirements": {
@@ -41233,7 +41238,7 @@
         "ordinal": 8,
         "source_id": "38dd4adc-e24d-5434-b938-4a98ae51d38d",
         "lifesteal_percent_per_stack": 12,
-        "qa_revision": 2026101927
+        "qa_revision": 2026101931
       },
       "target_units": [],
       "requirements": {
@@ -41328,7 +41333,7 @@
         "main_wave_budget_percent_per_stack": 50,
         "departure_delay_seconds": 15,
         "mixed_composition": true,
-        "qa_revision": 2026101927,
+        "qa_revision": 2026101931,
         "retired": true,
         "runtime_disabled": true
       },
@@ -41429,7 +41434,7 @@
         "late_delivered_units": 15,
         "wave_cadence": 1,
         "shared_special_roster_limit": 2,
-        "qa_revision": 2026101927,
+        "qa_revision": 2026101931,
         "retired": true,
         "runtime_disabled": true
       },
@@ -41525,7 +41530,7 @@
         "source_id": "2f180084-63f4-5068-97f6-cf14ba35eb58",
         "units_per_stack": 4,
         "first_normal_wave_eligible": true,
-        "qa_revision": 2026101927,
+        "qa_revision": 2026101931,
         "roster_hp_percent": 110
       },
       "target_units": [],
@@ -41620,7 +41625,7 @@
         "source_id": "f54b8a38-c9de-5c10-91cb-83a96e0351cd",
         "units_per_stack": 8,
         "first_normal_wave_eligible": true,
-        "qa_revision": 2026101927,
+        "qa_revision": 2026101931,
         "roster_hp_percent": 110
       },
       "target_units": [],
@@ -41714,7 +41719,7 @@
         "ordinal": 13,
         "source_id": "64ba451e-5781-5d89-9163-50a0b5295319",
         "roster_hp_percent": 110,
-        "qa_revision": 2026101927
+        "qa_revision": 2026101931
       },
       "target_units": [],
       "requirements": {
@@ -41807,7 +41812,7 @@
         "ordinal": 14,
         "source_id": "13f976e0-a45a-5c31-8131-9cd0fbf55428",
         "roster_hp_percent": 110,
-        "qa_revision": 2026101927
+        "qa_revision": 2026101931
       },
       "target_units": [],
       "requirements": {
@@ -41900,7 +41905,7 @@
         "ordinal": 15,
         "source_id": "fbd1389d-beec-53cc-b4c4-b042577131b3",
         "roster_hp_percent": 110,
-        "qa_revision": 2026101927
+        "qa_revision": 2026101931
       },
       "target_units": [],
       "requirements": {
@@ -41993,7 +41998,7 @@
         "ordinal": 16,
         "source_id": "159a333b-f97d-5a88-a941-ce27e99bac05",
         "roster_hp_percent": 110,
-        "qa_revision": 2026101927
+        "qa_revision": 2026101931
       },
       "target_units": [],
       "requirements": {
@@ -42086,7 +42091,7 @@
         "ordinal": 17,
         "source_id": "bdfe1f11-f323-5522-8926-3471060cfea9",
         "roster_hp_percent": 110,
-        "qa_revision": 2026101927
+        "qa_revision": 2026101931
       },
       "target_units": [],
       "requirements": {
@@ -42179,7 +42184,7 @@
         "ordinal": 18,
         "source_id": "5952306d-d513-5c65-b7bb-c0b73a648d16",
         "roster_hp_percent": 110,
-        "qa_revision": 2026101927
+        "qa_revision": 2026101931
       },
       "target_units": [],
       "requirements": {
@@ -42272,7 +42277,7 @@
         "ordinal": 19,
         "source_id": "0da2889e-d76b-524f-81a1-0e10bb0201ca",
         "roster_hp_percent": 110,
-        "qa_revision": 2026101927
+        "qa_revision": 2026101931
       },
       "target_units": [],
       "requirements": {
@@ -42365,7 +42370,7 @@
         "ordinal": 20,
         "source_id": "6b83283f-0665-5b3d-b100-c5784bb55cc2",
         "roster_hp_percent": 110,
-        "qa_revision": 2026101927
+        "qa_revision": 2026101931
       },
       "target_units": [],
       "requirements": {
@@ -42458,7 +42463,7 @@
         "ordinal": 21,
         "source_id": "8f7f2d75-2a09-5032-b967-73c222016738",
         "roster_hp_percent": 110,
-        "qa_revision": 2026101927
+        "qa_revision": 2026101931
       },
       "target_units": [],
       "requirements": {
@@ -42551,7 +42556,7 @@
         "ordinal": 22,
         "source_id": "6c39bddd-4b24-5cf5-b7be-7ca80e3881b9",
         "roster_hp_percent": 110,
-        "qa_revision": 2026101927
+        "qa_revision": 2026101931
       },
       "target_units": [],
       "requirements": {
@@ -42658,7 +42663,7 @@
             "count": 4
           }
         ],
-        "qa_revision": 2026101927,
+        "qa_revision": 2026101931,
         "roster_hp_percent": 110
       },
       "target_units": [],
@@ -42750,7 +42755,7 @@
         "ordinal": 24,
         "source_id": "df4228c7-76af-5797-8187-2470e5987588",
         "roster_hp_percent": 110,
-        "qa_revision": 2026101927
+        "qa_revision": 2026101931
       },
       "target_units": [],
       "requirements": {
@@ -42841,7 +42846,7 @@
         "ordinal": 25,
         "source_id": "e1b9d03f-c9b9-5c82-ae4a-2b61320d7306",
         "roster_hp_percent": 110,
-        "qa_revision": 2026101927
+        "qa_revision": 2026101931
       },
       "target_units": [],
       "requirements": {
@@ -42931,7 +42936,7 @@
         "ordinal": 26,
         "source_id": "c45e8e99-058d-580d-8ecc-71e844528750",
         "roster_hp_percent": 110,
-        "qa_revision": 2026101927
+        "qa_revision": 2026101931
       },
       "target_units": [],
       "requirements": {
@@ -43024,7 +43029,7 @@
         "ordinal": 27,
         "source_id": "db4dee7a-d558-537a-b5fc-c1ea3efcbd2e",
         "roster_hp_percent": 110,
-        "qa_revision": 2026101927
+        "qa_revision": 2026101931
       },
       "target_units": [],
       "requirements": {
@@ -43117,7 +43122,7 @@
         "ordinal": 28,
         "source_id": "04c55f6f-8ec6-5652-ab18-672a9e552ade",
         "roster_hp_percent": 110,
-        "qa_revision": 2026101927
+        "qa_revision": 2026101931
       },
       "target_units": [],
       "requirements": {
@@ -43203,7 +43208,7 @@
         "ordinal": 29,
         "source_id": "340cf73f-7fdb-58ca-b541-0e3a75ee02e6",
         "roster_hp_percent": 110,
-        "qa_revision": 2026101927
+        "qa_revision": 2026101931
       },
       "target_units": [],
       "requirements": {
@@ -43285,7 +43290,7 @@
         "ordinal": 30,
         "source_id": "fed3f845-5a97-5520-9b6a-826f0542dd2c",
         "roster_hp_percent": 110,
-        "qa_revision": 2026101927
+        "qa_revision": 2026101931
       },
       "target_units": [],
       "requirements": {
@@ -43355,7 +43360,7 @@
         "ordinal": 31,
         "source_id": "69391ab1-159e-5cd0-9968-42c977cc0e15",
         "roster_hp_percent": 110,
-        "qa_revision": 2026101927
+        "qa_revision": 2026101931
       },
       "target_units": [],
       "requirements": {
@@ -43436,7 +43441,7 @@
         "ordinal": 32,
         "source_id": "d1ec1b28-47cf-562e-b5c1-3f98c2adb9db",
         "roster_hp_percent": 110,
-        "qa_revision": 2026101927
+        "qa_revision": 2026101931
       },
       "target_units": [],
       "requirements": {
@@ -43514,7 +43519,7 @@
         "ordinal": 33,
         "source_id": "33f6627e-752e-5405-b5ea-5735bf6256dd",
         "roster_hp_percent": 110,
-        "qa_revision": 2026101927
+        "qa_revision": 2026101931
       },
       "target_units": [],
       "requirements": {
@@ -43607,7 +43612,7 @@
         "ordinal": 34,
         "source_id": "5fff1169-4cb6-5726-801f-27fc3db0d002",
         "roster_hp_percent": 110,
-        "qa_revision": 2026101927
+        "qa_revision": 2026101931
       },
       "target_units": [],
       "requirements": {

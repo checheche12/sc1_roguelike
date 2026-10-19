@@ -701,6 +701,8 @@ void real_managed_dat_assets() {
 #include "qa28_host_tests.h"
 #include "qa29_host_tests.h"
 #include "qa30_host_tests.h"
+#include "qa31_host_tests.h"
+#include "area_visuals_host_tests.h"
 #include "qa30_performance_host_tests.h"
 #include "qa17_host_tests.h"
 int main() {
@@ -736,9 +738,11 @@ int main() {
         run_qa28_groups();
         run_qa29_groups();
         run_qa30_groups();
+        run_qa31_groups();
+        run_area_visual_groups();
         run_qa30_performance_groups();
         abandon_session();g.baseline.clear();g.game=nullptr;
         CHECK(late_init_calls==0);
-        std::printf("PASS native host integration: %zu groups, %d checks; game process never accessed.\n",87u+qa30_performance_group_count+qa30_group_count+qa29_group_count+qa28_group_count+qa26_group_count+qa17_group_count+qa16_group_count+qa15_group_count+qa14_group_count+qa13_group_count+qa12_extra_group_count+qa12_group_count+qa9_group_count+qa10_group_count+campaign_research_group_count+talent_power_group_count+std::size(combat_audit::cases)+max_hp_engine_group_count+samase_status_ui_group_count+samase_weapon_ui_group_count+samase_armor_ui_group_count+trampoline_unwind_group_count+wave_targeting_group_count+wave_progression_group_count+talent_rank_group_count+rework_wave_group_count+enemy_progression_group_count+enemy_performance_group_count+targeting_bridge_group_count+rework_cargo_group_count+rework_carrier_group_count+rework_economy_group_count+rework_binding_group_count+rework_lighting_v5_group_count+rework_combat_v5_group_count+rework_economy_ui_group_count+rework_shield_ui_v5_group_count,checks);return 0;
+        std::printf("PASS native host integration: %zu groups, %d checks; game process never accessed.\n",87u+area_visual_group_count+qa31_group_count+qa30_performance_group_count+qa30_group_count+qa29_group_count+qa28_group_count+qa26_group_count+qa17_group_count+qa16_group_count+qa15_group_count+qa14_group_count+qa13_group_count+qa12_extra_group_count+qa12_group_count+qa9_group_count+qa10_group_count+campaign_research_group_count+talent_power_group_count+std::size(combat_audit::cases)+max_hp_engine_group_count+samase_status_ui_group_count+samase_weapon_ui_group_count+samase_armor_ui_group_count+trampoline_unwind_group_count+wave_targeting_group_count+wave_progression_group_count+talent_rank_group_count+rework_wave_group_count+enemy_progression_group_count+enemy_performance_group_count+targeting_bridge_group_count+rework_cargo_group_count+rework_carrier_group_count+rework_economy_group_count+rework_binding_group_count+rework_lighting_v5_group_count+rework_combat_v5_group_count+rework_economy_ui_group_count+rework_shield_ui_v5_group_count,checks);return 0;
     } catch(const std::exception& e){std::fprintf(stderr,"FAIL %s reason=%s\n",e.what(),g.apply_failure ? g.apply_failure : "none");return 1;}
 }

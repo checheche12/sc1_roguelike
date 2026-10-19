@@ -59,11 +59,11 @@ def logical_mission_count(mission: int) -> int:
 
 
 def legendary_ordinal(mission: int) -> int | None:
-    """First mission after half the campaign is complete; bonus stays separate."""
+    """The first mission of each main campaign; the secret stays separate."""
     entry = progression.metadata(mission)
     if entry["campaign_id"] not in ECONOMY_ORDINALS:
         return None
-    return logical_mission_count(mission) // 2 + 1
+    return 1
 
 
 def progress_band(mission: int) -> int:
@@ -134,7 +134,7 @@ def draw_candidates(policy: RewardPolicy, catalog, owned, rng, limit: int = 4,
     than promoting a common roll to rare/epic. Common alone may fall back to
     uncommon if its usable pool is empty. If no such pool remains, an offer
     is shorter. Economy draws uniformly from unowned economic candidates.
-    The midpoint reward shows up to four distinct usable unowned legendaries.
+    The opening reward shows up to four distinct usable unowned legendaries.
     """
     if type(limit) is not int or limit < 1:
         raise ValueError("An offer must have a positive integer candidate count")
@@ -153,7 +153,7 @@ def draw_candidates(policy: RewardPolicy, catalog, owned, rng, limit: int = 4,
     if policy.guaranteed_legendary:
         legends = [x for x in pool if x.rarity == "legendary" and x.id not in owned]
         if not legends:
-            raise ValueError("Midpoint reward requires an unowned usable legendary")
+            raise ValueError("Guaranteed reward requires an unowned usable legendary")
         result = []
         for _ in range(min(limit, len(legends))):
             result.append(legends.pop(rng.randrange(len(legends))))

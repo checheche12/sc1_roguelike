@@ -79,7 +79,7 @@ class ReworkGrowthTests(unittest.TestCase):
                     self.assertEqual(item['effect'],expected[item['id']]['effect'])
                     self.assertEqual(item.get('source_description'),expected[item['id']].get('source_description'))
 
-    def test_four_midpoint_legends_survive_greedy_earlier_legend_rolls(self):
+    def test_four_opening_legends_are_available_before_ordinary_rolls(self):
         class LastRoll:
             def randrange(self,stop):return stop-1
         for first in (101,201,301,401,501,601):
@@ -96,17 +96,18 @@ class ReworkGrowthTests(unittest.TestCase):
                 if not found:mission=progression.next_missions(mission)[0]
 
     def test_displayed_unchosen_manuals_reach_next_offer_and_reconnect_is_immutable(self):
+        opening=self.finish();nonce=opening['nonce']
         with patch.object(policy,'rolled_rarity',return_value='common'):
-            state=self.load()
+            state=self.load(phase=2,nonce=nonce)
         displayed={x['id'] for x in state['offer']['candidates']}
         self.assertEqual(len(displayed),4)
         first_rows=self.query('SELECT offer_id,candidates_json FROM growth_offers WHERE candidates_json IS NOT NULL')
         self.store=CampaignStore(self.path,runtime_catalog_path=self.catalog_path)
         with patch.object(rework_growth,'recent_manuals',side_effect=AssertionError('Existing offer must not redraw')):
-            self.assertEqual(self.load()['offer'],state['offer'])
-        completed=self.finish()
+            self.assertEqual(self.load(phase=2,nonce=nonce)['offer'],state['offer'])
+        completed=self.finish(phase=2,nonce=nonce)
         with patch.object(policy,'draw_candidates',wraps=policy.draw_candidates) as sampler:
-            self.load(phase=2,nonce=completed['nonce'])
+            self.load(phase=3,nonce=completed['nonce'])
         self.assertEqual(sampler.call_args.kwargs['recent_manuals'],displayed)
         for identity,serialized in first_rows:
             self.assertEqual(self.query('SELECT candidates_json FROM growth_offers WHERE offer_id=?',(identity,)),[(serialized,)])
