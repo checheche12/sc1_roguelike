@@ -1,0 +1,62 @@
+{
+  "version": "v2026.10.19-qa28",
+  "file": "SC1_Roguelike_20261019_QA28.zip",
+  "sha256": "35c8a4c5e57f8cdeb64eee9c154b0906235aa653989a3343283600d3d5a92838",
+  "bytes": 24615255,
+  "runtime_source_commit": "dc4686a7c44806eb4cfd34255653d6a9e1f1d0a2",
+  "native_dll_sha256": "b4450c3cdbf73c3fe1e3126be37e3d1203eb353786e0addf7ada9b19f6fd5ab7",
+  "fixed_issue": "Growth apply error10 / rank_slots after the first reinforcement, attack or health curse selection",
+  "native_application_regression_reproduced": true,
+  "shared_snapshot_rank_validation": true,
+  "python_regression_scope": {
+    "passed": true,
+    "tests": 88,
+    "failures": 0,
+    "errors": 0,
+    "modules": [
+      "sc1.tests.test_qa26_curses",
+      "sc1.tests.test_growth_bridge",
+      "sc1.tests.test_phased_bridge",
+      "sc1.tests.test_rework_growth",
+      "sc1.tests.test_rework_packaging",
+      "sc1.tests.test_talent_balance",
+      "sc1.tests.test_mission_balance",
+      "sc1.tests.test_qa25_broodwar_zerg",
+      "sc1.tests.test_checkpoint_maps",
+      "sc1.tests.test_rework_growth.ReworkGrowthTests.test_greedy_finite_caps_leave_three_same_tier_candidates",
+      "sc1.tests.test_phased_growth"
+    ],
+    "seconds": 286.45,
+    "inherited_full_scope": "analysis/curse_qa26_20261019/python_validation.json",
+    "scope": "Growth snapshots, checkpoint restoration, bridge interoperability and current catalog/package regressions. Native apply callback is independently covered by QA28 host integration tests.",
+    "game_launched": false,
+    "personal_database_accessed": false,
+    "initial_real_tests_passed": 62,
+    "initial_loader_errors": 1,
+    "followup": {
+      "passed": true,
+      "tests": 26,
+      "failures": 0,
+      "errors": 0,
+      "modules": [
+        "sc1.tests.test_phased_growth"
+      ],
+      "seconds": 11.53,
+      "game_launched": false,
+      "user_database_modified": false
+    },
+    "validation_method": "All real tests in the initial suite passed; one requested module name did not exist. The intended phased-growth module was run separately and passed26 tests. No product sources changed between runs.",
+    "initial_evidence": "analysis/growth_rank_qa28_20261019/python_initial.json"
+  },
+  "host_groups": 303,
+  "host_checks": 1518566,
+  "map_count": 63,
+  "unchanged_maps": 63,
+  "player_record_preserved": true,
+  "player_record_reset": false,
+  "installed_by_agent": false,
+  "game_started": false,
+  "live_game_verified": false,
+  "readme_patch_notes": false,
+  "created_at_utc": "2026-10-19T08:38:37.940413+00:00"
+}
