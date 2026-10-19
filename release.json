@@ -1,0 +1,82 @@
+{
+  "version": "v2026.10.19-qa26",
+  "file": "SC1_Roguelike_20261019_QA26.zip",
+  "sha256": "30e542682f73e1df506266e3911bb259cc2ec5f56498ba8e863f23c5c963b467",
+  "bytes": 24615786,
+  "runtime_source_commit": "26caa1fbdbd2f6c74e1f2a4eafbf912bb429efdb",
+  "native_dll_sha256": "052a29c3ed69dc760eea97864519a9ed13d57582e33e6ff06d00c5cfb7949f6e",
+  "launcher_compiled_from_source": true,
+  "python_regression_scope": {
+    "passed": true,
+    "tests": 117,
+    "failures": 0,
+    "errors": 0,
+    "modules": [
+      "sc1.tests.test_qa26_curses",
+      "sc1.tests.test_rework_growth",
+      "sc1.tests.test_rework_packaging",
+      "sc1.tests.test_qa25_broodwar_zerg",
+      "sc1.tests.test_checkpoint_maps",
+      "sc1.tests.test_qa10_objectives",
+      "sc1.tests.test_bridge_reconnect",
+      "sc1.tests.test_manager_connection",
+      "sc1.tests.test_manager_lifecycle",
+      "sc1.tests.test_bridge",
+      "sc1.tests.test_phased_bridge",
+      "sc1.tests.test_talent_balance",
+      "sc1.tests.test_qa19_uraj",
+      "sc1.tests.test_qa20_landing_resources",
+      "sc1.tests.test_mission_balance"
+    ],
+    "seconds": 274.74,
+    "game_launched": false,
+    "personal_database_accessed": false,
+    "initial_passed": 115,
+    "initial_failures": 2,
+    "corrected_expectations": 2,
+    "followup_tests": 10,
+    "followup_passed": true,
+    "followup_modules": [
+      "sc1.tests.test_talent_balance",
+      "sc1.tests.test_qa26_curses"
+    ],
+    "validation_method": "117-test full run:115 passed. The two obsolete description expectations were updated for the QA26 legendary decorator; their owning modules and QA26 compatibility suite were rerun,10 tests passed. No runtime change was made after the full run."
+  },
+  "host_groups": 300,
+  "host_checks": 1518335,
+  "map_count": 63,
+  "unchanged_maps": 63,
+  "baseline_wave_budget_percent": 120,
+  "retired_curse": "끈질긴 후미대",
+  "raid_counts": [
+    2,
+    6,
+    10
+  ],
+  "raid_max_choices": 3,
+  "reinforcement_increments": [
+    25,
+    30,
+    35
+  ],
+  "attack_hp_increments": [
+    10,
+    15,
+    20
+  ],
+  "unlimited_curse_slots": [
+    16,
+    17,
+    18
+  ],
+  "legendary_unlock": "campaign midpoint",
+  "legendary_reviewed": 20,
+  "legendary_changed": 4,
+  "old_local_distributions_removed": true,
+  "old_growth_databases_deleted": 34,
+  "fresh_completed_mask": 0,
+  "game_started": false,
+  "live_game_verified": false,
+  "readme_patch_notes": false,
+  "created_at_utc": "2026-10-19T08:11:29.815684+00:00"
+}
