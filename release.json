@@ -1,0 +1,53 @@
+{
+  "version": "v2026.10.19-qa29",
+  "file": "SC1_Roguelike_20261019_QA29.zip",
+  "sha256": "ed81c73892f77c3f983898df630a52ee532f4983885ea97eeda20e0e0785a82e",
+  "bytes": 24625757,
+  "runtime_source_commit": "f7d4f0d89e2175a57d0351f76baab659af57ff29",
+  "native_dll_sha256": "43afed41298dbe0f7b70535adceea88cb783cca129de3c720995718fb039974d",
+  "marine_shot_percent": [
+    100,
+    35,
+    35
+  ],
+  "yamato_prelaunch_waits_before": 66,
+  "yamato_prelaunch_waits_after": 22,
+  "air_usability_bounded": true,
+  "ultra_original_campaign_armor_gate_fixed": true,
+  "live_lag_cause_confirmed": false,
+  "python_regression_scope": {
+    "passed": true,
+    "tests": 68,
+    "test_executions": 77,
+    "initial_tests": 67,
+    "initial_passed": 66,
+    "initial_failures": 1,
+    "followup_tests": 10,
+    "unresolved_failures": 0,
+    "modules": [
+      "sc1.tests.test_qa29_air",
+      "sc1.tests.test_qa26_curses",
+      "sc1.tests.test_talent_balance",
+      "sc1.tests.test_rework_packaging",
+      "sc1.tests.test_phased_bridge",
+      "sc1.tests.test_phased_growth",
+      "sc1.tests.test_rework_growth"
+    ],
+    "initial_evidence": "python_initial.json",
+    "followup_evidence": "python_followup.json",
+    "resolved_failure": "Economy-description invariant now permits the explicitly requested air production-time addition in153/157/160; all other economy entries retain original descriptions and power.",
+    "game_launched": false,
+    "user_database_modified": false
+  },
+  "host_groups": 311,
+  "host_checks": 1523293,
+  "map_count": 63,
+  "unchanged_maps": 63,
+  "player_record_preserved": true,
+  "player_record_reset": false,
+  "installed_by_agent": false,
+  "game_started": false,
+  "live_game_verified": false,
+  "readme_patch_notes": false,
+  "created_at_utc": "2026-10-19T09:48:12.182276+00:00"
+}
