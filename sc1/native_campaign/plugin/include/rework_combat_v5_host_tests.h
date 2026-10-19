@@ -3,7 +3,7 @@
 // explicit mock callbacks; they do not establish actual SC:R engine/UI proof.
 namespace host_test {
 namespace rework_fixture {
-inline std::array<U32,162> ranks{};
+inline std::array<U32,322> ranks{};
 inline U32 lookup(const GrowthSnapshot&,U32 ordinal) noexcept {return ordinal<ranks.size() ? ranks[ordinal] : 0;}
 inline bw::Bullet* __cdecl hooked(U32 w,int x,int y,U32 owner,U32 direction,bw::Unit* source){
     auto b=owner_bullet_create_hook(w,x,y,owner,direction,source,multi_fixture::raw);

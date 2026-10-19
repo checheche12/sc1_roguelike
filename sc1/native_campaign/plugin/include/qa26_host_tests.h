@@ -26,7 +26,7 @@ inline void qa26_yamato_blasts_are_bounded_and_do_not_hit_allies(){
 inline void qa26_swarm_sustain_does_not_stack_or_heal_enemies(){
  using namespace rework_fixture;qa9_fixture::begin({103});
  auto friend_unit=unit(0,1,100,100),enemy=unit(0,6,120,100),outside=unit(0,1,900,100);
- const auto maximum=effective_max_hp(friend_unit),heal=maximum/100;
+ const auto maximum=effective_max_hp(friend_unit),heal=U32(std::uint64_t(maximum)*3/100);
  friend_unit->flingy.hitpoints=int(maximum/2);enemy->flingy.hitpoints=outside->flingy.hitpoints=100;
  auto field_unit=unit(202,1,100,100);rework_combat_v5::Persist field{};field.target=rework_combat_v5::identity(field_unit);field.kind=83;field.owner=1;field.x=100;field.y=100;field.remaining=160;field.ticks=160;field.until=1000;
  rework_combat_v5::persistent.push_back(field);rework_combat_v5::persistent.push_back(field);
@@ -39,9 +39,9 @@ inline void qa26_illusion_blast_and_stasis_slow_keep_owner_and_once_guards(){
  using namespace rework_fixture;qa9_fixture::begin({147});
  auto illusion=unit(65,1,100,100);illusion->flags|=0x40000000u;rework_combat_v5::state(illusion)->materialized=true;
  std::vector<bw::Unit*> enemies;for(int i=0;i<6;i++)enemies.push_back(unit(37,6,120+i*3,100));
- auto ally=unit(0,1,120,110);const auto damage=std::min(100u*256u,effective_max_hp(illusion)/4u);
+ auto ally=unit(0,1,120,110);const auto damage=U32(std::min<std::uint64_t>(150u*256u,(std::uint64_t(effective_max_hp(illusion))+std::uint64_t(effective_max_shields(illusion))*256u)/2u));
  rework_combat_v5::death(illusion);U32 hit=0;for(auto enemy:enemies)if(enemy->flingy.hitpoints!=256000){++hit;CHECK(enemy->flingy.hitpoints==256000-int(damage));}
- CHECK(hit==4&&ally->flingy.hitpoints==256000);const auto after=enemies.front()->flingy.hitpoints;
+ CHECK(hit==6&&ally->flingy.hitpoints==256000);const auto after=enemies.front()->flingy.hitpoints;
  rework_combat_v5::death(illusion);CHECK(enemies.front()->flingy.hitpoints==after);qa9_fixture::end();
  qa9_fixture::begin({149});auto released=unit(37,6,100,100),close_enemy=unit(37,6,120,100),distant_enemy=unit(37,6,500,100);ally=unit(0,1,120,110);
  auto s=rework_combat_v5::state(released);s->stasis_owner=1;s->stasis_before=80;released->stasis_timer=0;

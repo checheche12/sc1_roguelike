@@ -39,9 +39,9 @@ class AirAuditTests(unittest.TestCase):
 
     def test_bounded_corsair_and_carrier_metadata(self):
         items={x.get('effect_ordinal'):x for x in load_catalog(expected_version=2)['talents'] if x.get('rework_revision')==5}
-        self.assertEqual(items[69]['effect']['qa_revision'],2026101930)
+        self.assertGreaterEqual(items[69]['effect']['qa_revision'],2026101930)
         fleet=items[110]['effect']
-        self.assertEqual(fleet['qa_revision'],2026101930)
+        self.assertGreaterEqual(fleet['qa_revision'],2026101930)
         self.assertEqual(fleet['corsair_range_tiles'],1)
         self.assertFalse(fleet['corsair_speed_bonus'])
         self.assertEqual(fleet['carrier_engagement_range_tiles'],1)

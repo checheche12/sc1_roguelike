@@ -6,11 +6,15 @@ from .build_runtime_catalog import UNIT_FIELDS, WEAPON_FIELDS, RARITY_LABELS, RE
 ROOT=Path(__file__).resolve().parents[2]
 
 def generate(catalog=None):
+    from .effect_copy import describe_effect
     catalog=catalog or load_catalog(expected_version=2)
     talents=sorted(catalog['talents'],key=lambda x:x['bit_index'])
     curses=sorted(catalog['curses'],key=lambda x:x['byte_index'])
     masks=[0]*16
-    for item in talents: masks[item['bit_index']//32]|=1<<(item['bit_index']%32)
+    for item in talents:
+        storage=item.get('wire_storage')
+        if storage is None:masks[item['bit_index']//32]|=1<<(item['bit_index']%32)
+        elif storage['word']<=16:masks[storage['word']-1]|=((1<<storage['width'])-1)<<storage['shift']
     lines=['#pragma once','// Generated compatibility catalog; historical indices remain unchanged.',
       '#include <cstdint>','namespace frozen {',
       f'inline constexpr std::uint32_t kCatalogVersion = {catalog["catalog_version"]};',
@@ -43,7 +47,7 @@ def generate(catalog=None):
     lines.append('};')
     for prefix,items in (('talent',talents),('curse',curses)):
         for key,field in (('rarities','rarity'),('names','name'),('effects','description')):
-            vals=[RARITY_LABELS[x[field]] if field=='rarity' else x[field] for x in items]
+            vals=[RARITY_LABELS[x[field]] if field=='rarity' else describe_effect(x) if field=='description' else x[field] for x in items]
             lines.append('inline constexpr const char* '+prefix+'_'+key+'[] = {'+', '.join(json.dumps(x,ensure_ascii=False) for x in vals)+'};')
     lines.extend(['inline constexpr int home[2] = {232,376};','inline constexpr int slots[4][2] = {{88,264},{184,264},{280,264},{376,264}};',
       'inline constexpr int center[2] = {232,312};','inline constexpr char marker[] = "SC1_NATIVE_ALL_V1_R469_C1";','}'])

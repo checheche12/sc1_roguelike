@@ -12,7 +12,7 @@ enum Slot:U32 {Raid=15,Reinforcements=16,Attack=17,Health=18,Haste=19,DeathSuppo
 enum Requirement:U32 {GroundPath=1,AntiAir=2,Detection=4};
 struct Member {std::uint16_t unit;U32 count;bool hero=false;};
 struct Roster {U32 slot,cadence,grade,requirements,hp_percent,attack_percent;std::array<Member,6> units;};
-// grade0 common/uncommon,1 rare,2 epic,3 legendary. No hero count scaling.
+// grade0 common/uncommon,1 rare,2 epic,3 legendary. QA38 scales heroes too.
 inline constexpr Roster kRosters[]={
  {Reserve,1,0,GroundPath,100,100,{{{0,3},{0,0},{0,0},{0,0},{0,0},{0,0}}}},
  {Rear,1,0,GroundPath,100,100,{{{0,12}}}},
@@ -44,6 +44,11 @@ inline constexpr Roster kRosters[]={
 // Apply once to the final army size, after curse stacking. Round to the nearest
 // unit/half-supply so small groups remain usable and zero stays zero.
 inline constexpr U32 reduced_amount(U32 amount) noexcept {return U32((std::uint64_t(amount)*85u+50u)/100u);}
+inline constexpr U32 normal_amount(U32 amount) noexcept {return U32(std::min<std::uint64_t>(0xffffffffu,(std::uint64_t(amount)*115u+50u)/100u));}
+inline constexpr U32 graded_amount(U32 amount,U32 grade) noexcept {
+ const U32 percent=grade==1?150u:grade==2?175u:grade>=3?200u:115u;
+ return U32(std::min<std::uint64_t>(0xffffffffu,(std::uint64_t(amount)*percent+50u)/100u));
+}
 inline constexpr U32 detector(U32 race) noexcept {return race==0?42u:race==2?84u:9u;}
 inline U32 scaled_count(U32 amount,U32 stacks) noexcept {return curse_scaling::scale(amount,curse_scaling::bonus(stacks,20,4));}
 inline constexpr U32 normal_budget(U32 ordinal,U32 mission=0) noexcept {return ((mission==404?16u+4u*std::min(ordinal,4u):32u+8u*std::min(ordinal,12u))*6u)/5u;}

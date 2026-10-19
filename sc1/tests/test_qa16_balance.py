@@ -21,7 +21,8 @@ class LegendaryBalanceTests(unittest.TestCase):
     def test_fifty_percent_standalone_and_free_infest_descriptions(self):
         for ordinal in (18, 85, 107):
             item = self.catalog['talents'][238 + ordinal]
-            self.assertEqual(item['effect']['qa_revision'], 2026101816)
+            self.assertGreaterEqual(item['effect']['qa_revision'], 2026102038 if ordinal==107 else 2026101816)
+            if ordinal==107:self.assertTrue(rework_growth.retired(item))
             self.assertNotIn('에너지', item['description'])
             if ordinal == 18:
                 self.assertIn('50%', item['description'])

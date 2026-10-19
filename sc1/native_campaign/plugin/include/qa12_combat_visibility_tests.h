@@ -31,16 +31,16 @@ inline void qa12_yamato_primary_extras_and_single_target(){
   CHECK(outside->flingy.hitpoints==256000 && ally->flingy.hitpoints==256000 && caster->energy==100*256);qa9_fixture::end();
  }
 }
-inline void qa12_yamato_seventy_five_native_cost_and_owner_scope(){
+inline void qa12_yamato_fifty_native_cost_and_owner_scope(){
  using namespace qa12_fixture;begin(64,false);g.applied=false;CHECK(apply_snapshot(nullptr,talent(64)));
- CHECK(raw_value(4,3,8)==150 && owner_stat(1,{4,3,8})==75 && owner_stat(6,{4,3,8})==150);
- auto caster=produce(12),enemy=produce(12,6);complete(caster,75);complete(enemy,75);
+ CHECK(raw_value(4,3,8)==150 && owner_stat(1,{4,3,8})==50 && owner_stat(6,{4,3,8})==150);
+ auto caster=produce(12),enemy=produce(12,6);complete(caster,50);complete(enemy,75);
  // Exact engine ordering: energy requirement is tested before deduction.
  qa12_extra::cast_succeeded=false;owner_unit_hook(caster,qa12_extra::cast);CHECK(qa12_extra::cast_succeeded && caster->energy==0);
- complete(caster,74);owner_unit_hook(caster,qa12_extra::cast);CHECK(!qa12_extra::cast_succeeded && caster->energy==74*256);
+ complete(caster,49);owner_unit_hook(caster,qa12_extra::cast);CHECK(!qa12_extra::cast_succeeded && caster->energy==49*256);
  owner_unit_hook(enemy,qa12_extra::cast);CHECK(!qa12_extra::cast_succeeded && enemy->energy==75*256);
  complete(enemy,150);owner_unit_hook(enemy,qa12_extra::cast);CHECK(qa12_extra::cast_succeeded && enemy->energy==0);
- {OwnerDatScope own(1,1,caster);CHECK(raw_value(4,3,8)==75);{OwnerDatScope foe(6,6,enemy);CHECK(raw_value(4,3,8)==150);}CHECK(raw_value(4,3,8)==75);}CHECK(raw_value(4,3,8)==150);
+ {OwnerDatScope own(1,1,caster);CHECK(raw_value(4,3,8)==50);{OwnerDatScope foe(6,6,enemy);CHECK(raw_value(4,3,8)==150);}CHECK(raw_value(4,3,8)==50);}CHECK(raw_value(4,3,8)==150);
  end();
 }
 inline void qa12_fog_buildings_only_last_known_and_retry(){
@@ -65,13 +65,13 @@ inline void qa12_native_helpers_reject_changed_witnesses(){
 }
 inline void qa12_yamato_tooltip_native_relay_and_boundary(){
  using namespace qa12_fixture;namespace ui=yamato_cost_ui;begin(64);auto caster=produce(12),enemy=produce(12,6);complete(caster);complete(enemy);ui::publish();
- CHECK(ui::value(caster,8,150)==75 && ui::value(enemy,8,150)==150 && ui::value(caster,7,100)==100 && ui::value(nullptr,8,150)==150);
+ CHECK(ui::value(caster,8,150)==50 && ui::value(enemy,8,150)==150 && ui::value(caster,7,100)==100 && ui::value(nullptr,8,150)==150);
  auto memory=static_cast<U8*>(VirtualAlloc(nullptr,0x1450000,MEM_COMMIT|MEM_RESERVE,PAGE_EXECUTE_READWRITE));CHECK(memory);std::memcpy(memory+ui::site,ui::original,8);
  CHECK(ui::register_at(memory,qa12_extra::write) && ui::verify_installation());
  std::vector<U8> body={0x53,0x48,0x83,0xec,0x20,0x89,0xcb,0x41,0x89,0xd1,0x48,0xb8};economy_ui_fixture::append64(body,reinterpret_cast<std::uintptr_t>(ui::code));
  for(int byte:{0xff,0xd0,0x48,0x83,0xc4,0x20,0x5b,0xc3})body.push_back(U8(byte));
  auto helper=economy_ui_fixture::executable(body);
- for(auto selected:{caster,enemy}){std::memcpy(memory+0x10a4458,&selected,sizeof(selected));reinterpret_cast<void (__cdecl*)(U32,U32)>(helper)(8,150);std::uint16_t result=0;std::memcpy(&result,memory+ui::output,2);CHECK(result==(selected==caster?75:150));}
+ for(auto selected:{caster,enemy}){std::memcpy(memory+0x10a4458,&selected,sizeof(selected));reinterpret_cast<void (__cdecl*)(U32,U32)>(helper)(8,150);std::uint16_t result=0;std::memcpy(&result,memory+ui::output,2);CHECK(result==(selected==caster?50:150));}
  memory[ui::site]^=1;CHECK(!ui::verify_installation());memory[ui::site]^=1;CHECK(ui::verify_installation());
  CHECK(VirtualFree(helper,0,MEM_RELEASE));CHECK(RtlDeleteFunctionTable(&ui::unwind));CHECK(VirtualFree(ui::code,0,MEM_RELEASE));CHECK(VirtualFree(memory,0,MEM_RELEASE));ui::code=ui::module=nullptr;ui::queued=false;ui::reset();end();
 }
@@ -99,5 +99,5 @@ inline void qa12_detector_following_survives_prior_target_refresh(){
  }
  wave_targeting::reset();
 }
-inline void run_qa12_extra_groups(){qa12_yamato_primary_extras_and_single_target();qa12_yamato_seventy_five_native_cost_and_owner_scope();qa12_fog_buildings_only_last_known_and_retry();qa12_native_helpers_reject_changed_witnesses();qa12_yamato_tooltip_native_relay_and_boundary();qa12_detector_following_survives_prior_target_refresh();}
+inline void run_qa12_extra_groups(){qa12_yamato_primary_extras_and_single_target();qa12_yamato_fifty_native_cost_and_owner_scope();qa12_fog_buildings_only_last_known_and_retry();qa12_native_helpers_reject_changed_witnesses();qa12_yamato_tooltip_native_relay_and_boundary();qa12_detector_following_survives_prior_target_refresh();}
 }

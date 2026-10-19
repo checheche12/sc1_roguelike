@@ -7,7 +7,7 @@ inline bool enabled=false; // Historical mechanism fixtures; QA6 suite opts in.
 #else
 inline constexpr bool enabled=true;
 #endif
-inline U32 quarters(U32 bit) noexcept {return enabled&&bit<400 ? kPowerQuarters[bit]:4u;}
+inline U32 quarters(U32 bit) noexcept {return enabled&&bit<std::size(kPowerQuarters) ? kPowerQuarters[bit]:4u;}
 inline U32 amount(U32 bit,std::uint64_t value) noexcept {
     return U32(std::min<std::uint64_t>(0x7fffffffu,(std::uint64_t(value)*quarters(bit)+2)/4));
 }

@@ -17,7 +17,7 @@ inline void publish() noexcept {
 inline U32 value(const bw::Unit* u,U32 tech,U32 fallback) noexcept {
  const U32 own=owner.load(std::memory_order_acquire);const auto base=units.load(std::memory_order_relaxed),address=reinterpret_cast<std::uintptr_t>(u);
  if(tech!=8 || own>=8 || !base || address<base || (address-base)%sizeof(bw::Unit) || (address-base)/sizeof(bw::Unit)>=count.load(std::memory_order_relaxed))return fallback;
- return u->player==own && !(u->flags&0x40000000u) ? 75u:fallback;
+ return u->player==own && !(u->flags&0x40000000u) ? 50u:150u;
 }
 inline void __cdecl store(U32 tech,U32 energy) noexcept {
  const bw::Unit* selected=nullptr;

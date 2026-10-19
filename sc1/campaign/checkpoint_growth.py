@@ -196,7 +196,7 @@ def _issue(conn, mission, phase, catalog):
         owned=growth._json(state['talents_json']);counts=rework_growth.ranks(conn,mission)
         by_id={x['id']:x for x in catalog['talents']}
         saved=growth._json(offer['candidates_json'])
-        has_retired=any(rework_growth.retired(x) for x in saved)
+        has_retired=any(rework_growth.option_has_retired(x,catalog) for x in saved)
         if saved and (has_retired or (offer['kind']=='talent' and all(exhausted(by_id[x['id']],owned,counts) for x in saved))):
             if has_retired:
                 conn.execute('CREATE TABLE IF NOT EXISTS growth_offer_retirement_history (offer_id TEXT PRIMARY KEY,candidates_json TEXT NOT NULL,offered_revision INTEGER)')

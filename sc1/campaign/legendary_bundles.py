@@ -4,16 +4,28 @@ from __future__ import annotations
 import copy
 from .runtime_catalog import GrowthError
 from .talent_balance import UNIT_LEGENDARIES
+HISTORICAL_UNIT_LEGENDARIES=UNIT_LEGENDARIES|{49,54,55,56,57,58,60,90,92,95,96,97,136,137,138,139,140,141,142,51,183,184,185,186,187,188,189,190,191,192,193,194,195,196,197}
 
 
 def unit_legendary(item):
-    return item.get('rework_revision') == 5 and item.get('effect_ordinal') in UNIT_LEGENDARIES
+    return (item.get('rework_revision') == 5 and item.get('rarity')=='legendary'
+            and item.get('race') in ('terran','zerg','protoss')
+            and not item.get('effect',{}).get('retired'))
+
+def paired_unit(item):
+    return unit_legendary(item) or (item.get('bundle_family') is not None
+            and item.get('rarity') in ('common','uncommon','rare','epic')
+            and not item.get('effect',{}).get('retired'))
 
 
-def compatible(left, right):
+def compatible(left, right, *, historical=False):
     # Hero variants and carried ammunition use their caster/parent's coverage.
-    return (unit_legendary(left) and unit_legendary(right)
+    legacy=lambda item:item.get('rework_revision')==5 and item.get('effect_ordinal') in HISTORICAL_UNIT_LEGENDARIES
+    eligible=lambda item:paired_unit(item) or (historical and legacy(item))
+    return (eligible(left) and eligible(right)
             and left['race'] == right['race']
+            and (left['rarity']==right['rarity'] or historical and legacy(left) and legacy(right))
+            and left.get('bundle_family',min(left['target_units']))!=right.get('bundle_family',min(right['target_units']))
             and not set(left['target_units']) & set(right['target_units']))
 
 
@@ -22,7 +34,7 @@ def pair_options(draw, eligible, rng):
     used_pairs = set()
     for item in draw:
         option = copy.deepcopy(item)
-        if unit_legendary(item):
+        if paired_unit(item):
             partners = [other for other in eligible if compatible(item, other)
                         and frozenset((item['id'], other['id'])) not in used_pairs]
             if not partners:
@@ -49,7 +61,7 @@ def member_ids(candidate, catalog):
         raise GrowthError('invalid_growth', '저장된 전설 묶음이 잘못되었습니다.')
     by_id = {item['id']: item for item in catalog['talents']}
     left, right = (by_id.get(identity) for identity in identities)
-    if left is None or right is None or not compatible(left, right):
+    if left is None or right is None or not compatible(left, right,historical=True):
         raise GrowthError('invalid_growth', '전설 묶음의 유닛이 잘못되었습니다.')
     return tuple(identities)
 
@@ -58,15 +70,15 @@ def generate_header(catalog, root):
     from pathlib import Path
     rows=[]
     for item in catalog['talents']:
-        if unit_legendary(item):
-            rows.append('{%d,%d,%d}' % (item['bit_index']+1,min(item['target_units']),
-                                       {'terran':1,'zerg':2,'protoss':3}[item['race']]))
+        if paired_unit(item) or (item.get('rework_revision')==5 and item.get('effect_ordinal') in HISTORICAL_UNIT_LEGENDARIES):
+            rows.append('{%d,%d,%d,%d,%d}' % (item['bit_index']+1,item.get('bundle_family',min(item['target_units'])),
+                {'terran':1,'zerg':2,'protoss':3}[item['race']],('common','uncommon','rare','epic','legendary').index(item['rarity']),int(item.get('effect_ordinal') in HISTORICAL_UNIT_LEGENDARIES)))
     target=Path(root)/'sc1/native_campaign/plugin/include/legendary_bundles.generated.h'
     target.write_text('#pragma once\nnamespace legendary_bundles {\n'
-        'struct Entry {unsigned index,family,race;};\ninline constexpr Entry entries[]={'+','.join(rows)+'};\n'
+        'struct Entry {unsigned index,family,race,rarity,legacy;};\ninline constexpr Entry entries[]={'+','.join(rows)+'};\n'
         'inline constexpr bool compatible(unsigned a,unsigned b) noexcept {\n'
         ' for(auto left:entries)if(left.index==a)for(auto right:entries)if(right.index==b)\n'
-        '  return left.race==right.race && left.family!=right.family;return false; }\n}\n',encoding='utf8')
+        '  return left.race==right.race && left.family!=right.family && (left.rarity==right.rarity || (left.legacy&&right.legacy));return false; }\n}\n',encoding='utf8')
     return target
 
 

@@ -57,21 +57,15 @@ inline void power_epic_legendary_projectiles_and_qualitative(){
         unit(37,6,140,100);unit(43,6,150,100,true);unit(37,6,160,100);unit(37,1,125,100);
         const auto w=rework_combat_v5::weapon(interceptor,false);CHECK(w<130);
         bullet(interceptor,primary,w);pulse(100);
-        CHECK(multi_fixture::shots.size()==(learned?3u:1u));
-        if(learned){
-            const auto& shot=multi_fixture::shots[1];CHECK(shot.target==extra&&shot.target!=primary&&shot.secondary);
-            auto extra_bullet=&multi_fixture::bullets[1];CHECK(rework_combat_v5::projectiles.at(extra_bullet).percent==100);
-            const auto& second=multi_fixture::shots[2];CHECK(second.target!=extra&&second.target!=primary&&second.target->unit_id==37&&second.target->player==6&&second.secondary);
-            CHECK(rework_combat_v5::projectiles.at(&multi_fixture::bullets[2]).percent==100);
-        }
-        pulse(101);CHECK(multi_fixture::shots.size()==(learned?3u:1u));
+        CHECK(multi_fixture::shots.size()==1&&extra);
+        if(learned){rework_combat_v5::focus_hit(interceptor,primary,256,w);CHECK(rework_combat_v5::focus_damage(interceptor,primary,w,1000,true)==1200);}
+        pulse(101);CHECK(multi_fixture::shots.size()==1);
         CHECK(rework_combat_v5::pending_shots.empty());finish();
     }
 }
 inline void power_carrier_cargo_and_legacy_conversion(){
-    using namespace rework_carrier_tests;begin();talent(130);auto c=carrier(12);CHECK(rework_carrier_v5::capacity(c)==12);
-    {rework_carrier_v5::CountMask mask(c,false);CHECK(c->unit_specific.bytes[16]==8);mask.restore();}CHECK(c->unit_specific.bytes[16]==12);
-    game.upgrade_level_sc[1][43]=1;CHECK(rework_carrier_v5::capacity(c)==16);
+    using namespace rework_carrier_tests;begin();talent(130);auto c=carrier(8);CHECK(rework_carrier_v5::capacity(c)==4);
+    game.upgrade_level_sc[1][43]=1;CHECK(rework_carrier_v5::capacity(c)==8);
     talent(115);auto shuttle=fresh(69);CHECK(rework_cargo_v5::capacity(shuttle)==16);
     reset();GrowthSnapshot s{};s.talent_bits[0]=1u<<5;CHECK(apply_snapshot(nullptr,s));CHECK(owner_stat(1,{1,7,2})==3);CHECK(owner_stat(1,{1,14,2})==13);
 }

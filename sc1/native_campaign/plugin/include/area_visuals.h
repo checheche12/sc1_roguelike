@@ -47,6 +47,17 @@ struct Vertices {std::size_t capacity_floats,used_bytes;U8* data;};
 static_assert(sizeof(Command)==0xd8&&offsetof(Command,vertex_offset)==0x48&&offsetof(Command,used_vertices)==0x5c,"SCR draw command ABI");
 static_assert(sizeof(Commands)==0x1d0058&&offsetof(Commands,count)==0x1d0050,"SCR draw commands ABI");
 static_assert(offsetof(Vertices,data)==0x10&&offsetof(Vertices,used_bytes)==8,"SCR vertex buffer prefix");
+inline std::size_t vertex_stride(U32 shader) noexcept {
+ // Native13515 shader input masks (shader record+0x18). The allocator at
+ // 0x798000 sums these attribute widths, independently of reserved capacity,
+ // alignment padding and recycled holes. DrawCommand offsets cannot tell us
+ // a vertex's width: a 1024-vertex batch releases its unused tail for reuse.
+ constexpr U8 formats[]={3,3,1,3,19,19,19,3,3,3,3,35,3,3,3,3,3,3,3,3,3,3,7,3,3,3,3,3,3,3,3,3,15,15,7,7,3,3,3,3,3,3,3};
+ if(shader>=std::size(formats))return 0;
+ const auto mask=formats[shader];std::size_t bytes=0;
+ for(U32 bit=0;bit<6;++bit)if(mask&(1u<<bit))bytes+=bit==4?4:8;
+ return bytes;
+}
 inline bool candidate(U32 id) noexcept {
  switch(id){case 337:case 364:case 380:case 381:case 382:case 383:case 525:case 548:case 549:
  case 550:case 551:case 552:case 553:case 555:case 556:case 951:case 998:return true;default:return false;}
@@ -71,7 +82,7 @@ inline void publish(bool force=false) {
  const auto set=[&](std::initializer_list<U32> ids,double scale){for(auto id:ids)frame->images[id]={scale,scale};};
  set({525,550,551,552,553},ratio(84));set({555,556},ratio(33));set({548,549},ratio(70));
  if(rework_combat_v5::rank(80))set({383},double(64+talent_power::v5(80,16))/64);
- if(rework_combat_v5::rank(127))set({364},double(48+talent_power::v5(127,12))/48);
+ if(rework_combat_v5::rank(127)||rework_combat_v5::rank(149))set({364},std::max(rework_combat_v5::rank(127)?double(48+talent_power::v5(127,12))/48:1.0,(talent_power::enabled&&rework_combat_v5::rank(149))?1.5:1.0));
  if(rework_combat_v5::rank(124))set({998},double(48+talent_power::v5(124,12))/48);
  interested={};interested[33]=frame->images[555].enlarged();interested[58]=frame->images[383].enlarged();interested[70]=interested[71]=frame->images[548].enlarged();
  interested[83]=frame->images[364].enlarged();interested[84]=frame->images[525].enlarged();interested[108]=frame->images[998].enlarged();
@@ -125,11 +136,18 @@ inline std::uint64_t transform(Commands& commands,Vertices& vertices,U32 first,s
  for(U32 index=old_used?0:first;index<commands.count;++index){const auto& command=commands.commands[index];
   const U32 prior=index<first&&old_used?old_used[index]:0;if(command.used_vertices==prior)continue;
   if(command.used_vertices<prior||count==ranges.size())return 0;
-  std::size_t end=vertices.used_bytes;
-  for(U32 next=0;next<commands.count;++next){if(!commands.commands[next].allocated_vertices)continue;if(next!=index&&commands.commands[next].vertex_offset==command.vertex_offset)return 0;if(commands.commands[next].vertex_offset>command.vertex_offset)end=std::min(end,commands.commands[next].vertex_offset);}
-  const auto begin=command.vertex_offset;const auto allocated=command.allocated_vertices;
-  if((index>=first&&begin<old_bytes)||end<=begin||!allocated||allocated>65536||!command.used_vertices||command.used_vertices>allocated||command.used_vertices-prior>256||(end-begin)%allocated)return 0;
-  const auto stride=(end-begin)/allocated;if(stride<8||stride>80||stride%4||begin%4)return 0;
+  const auto begin=command.vertex_offset;const auto allocated=command.allocated_vertices;const auto stride=vertex_stride(command.shader);
+  if(!stride||command.mode>1||begin%4||!allocated||allocated>65536||!command.used_vertices||command.used_vertices>allocated||command.used_vertices-prior>256||
+     begin>vertices.used_bytes||command.used_vertices>(vertices.used_bytes-begin)/stride)return 0;
+  const auto changed_begin=begin+prior*stride,end=begin+command.used_vertices*stride;
+  // New commands may live below old_bytes. Only live vertices of other
+  // commands are protected; their unused reservations are not live geometry.
+  for(U32 next=0;next<commands.count;++next){if(next==index)continue;const auto& other=commands.commands[next];if(!other.used_vertices)continue;
+   const auto other_stride=vertex_stride(other.shader),other_begin=other.vertex_offset;
+   if(other_begin>=end)continue;
+   if(!other_stride||other_begin>vertices.used_bytes||other.used_vertices>(vertices.used_bytes-other_begin)/other_stride)return 0;
+   if(other_begin+other.used_vertices*other_stride>changed_begin)return 0;
+  }
   double left=1e30,right=-1e30,top=1e30,bottom=-1e30;
   for(U32 v=prior;v<command.used_vertices;++v){float xy[2];std::memcpy(xy,vertices.data+begin+v*stride,8);
    if(!std::isfinite(xy[0])||!std::isfinite(xy[1])||std::abs(xy[0])>1e7||std::abs(xy[1])>1e7)return 0;
@@ -138,7 +156,7 @@ inline std::uint64_t transform(Commands& commands,Vertices& vertices,U32 first,s
   if(right<=left||bottom<=top)return 0;
   const double anchor_x=left+(double(center_x)-image.map_position.x-image.bounds[0])*(right-left)/image.bounds[2];
   const double anchor_y=top+(double(center_y)-image.map_position.y-image.bounds[1])*(bottom-top)/image.bounds[3];
-  ranges[count++]={begin+prior*stride,end,stride,command.used_vertices-prior,anchor_x,anchor_y};
+  ranges[count++]={changed_begin,end,stride,command.used_vertices-prior,anchor_x,anchor_y};
  }
  std::uint64_t changed=0;
  for(U32 i=0;i<count;++i){const auto& r=ranges[i];for(U32 v=0;v<r.count;++v){float xy[2];auto at=vertices.data+r.begin+v*r.stride;std::memcpy(xy,at,8);

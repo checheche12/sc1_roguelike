@@ -9,8 +9,9 @@ UNIT_LEGENDARIES = frozenset((61,62,63,64,65,66,102,103,104,105,106,107,144,145,
 POWER_QUARTERS = dict(common=6, uncommon=7, rare=8, epic=10, legendary=10)
 
 def power_quarters(item):
+    if item.get('expansion_revision')==2026102038:return 4
     if item.get('rework_revision')==5 and item.get('effect_ordinal')==47:return 8
-    if item.get("rework_revision")==5 and item.get("effect_ordinal") in (18,148):return 4
+    if item.get("rework_revision")==5 and item.get("effect_ordinal") in (18,130,148):return 4
     if item.get("rework_revision")==5 and item.get("effect_ordinal") in UNIT_LEGENDARIES:return 16
     patches=item.get('effect',{}).get('patches',[])
     resource_only=bool(patches) and not item.get('effect',{}).get('movement') and all(
@@ -94,6 +95,7 @@ DESCRIPTIONS[70]='저글링·브루들링의 공격력 중첩당 +1.5(중첩 합
 DESCRIPTIONS[89]='잠복 후 3초간 공격하거나 맞지 않으면 초당 최대 체력의 6%를 추가 회복합니다.'
 
 DESCRIPTIONS[148]='인터셉터가 주변의 다른 적 2기도 공격합니다. 각 대상에게 원래 피해를 줍니다.'
+DESCRIPTIONS[130]='캐리어가 공격을 시작하면 보유한 인터셉터를 최대 8기까지 한 번에 출격시킵니다. 아군 인터셉터의 최대 체력·최대 보호막이 각각 2배가 됩니다. 격납고 수용량은 기본 연구를 따릅니다.'
 
 DESCRIPTIONS.update({
  14:'삭제된 재능입니다. 더 이상 선택하거나 효과를 받을 수 없습니다.',
@@ -104,7 +106,7 @@ DESCRIPTIONS.update({
  9:'아군 공중 전투 유닛의 일반 공격 피해 +15%, 이동 속도 +4.5%. 중첩당 적용되며 최대 4회 선택할 수 있습니다.',
  29:'마린·파이어뱃·고스트의 공격력 중첩당 +15%, 공격 간격 -4.5%. 파이어뱃은 일반 공격으로 받는 피해도 중첩당 10% 줄어듭니다. 최대 4회.',
  30:'중첩당 벌처 공격력 +4.5, 전차 모드 +6, 공성 모드 +12, 골리앗 +3. 공격 간격 -4.5%. 소수점 공격력은 중첩 합계를 반올림하며 최대 4회.',
- 31:'중첩당 배틀크루저 공격력 +6, 다른 테란 공중 전투 유닛 +3. 공격 간격 -4.5%. 최대 4회.',
+ 31:'중첩당 레이스 지상 공격력 +6·공중 공격력 +12, 배틀크루저 공격력 +6, 발키리 공격력 +3. 영웅 포함. 공격 간격 -4.5%. 최대 4회.',
  70:'중첩당 저글링·브루들링 공격력 +1.5, 울트라리스크 +6, 감염된 테란 +60. 공격 간격 -4.5%, 일반 공격으로 받는 피해 -10%. 소수점 공격력은 중첩 합계를 반올림하며 최대 4회.',
  111:'중첩당 질럿 공격력 +1.5, 드라군 +3, 다크 템플러·아콘 +6, 리버·스캐럽 +15. 공격 간격 -4.5%. 질럿·다크 템플러는 일반 공격으로 받는 피해도 중첩당 10% 줄어듭니다. 공격력 합계 반올림, 최대 4회.',
  91:'러커가 잠복한 상태에서 우클릭 이동과 어택땅(A+지점)을 할 수 있습니다. 이동 속도는 기본의 62.5%이며 이동 중에는 공격하지 않습니다.',
@@ -122,7 +124,7 @@ DESCRIPTIONS.update({
  69:'저그 공중군 체력 중첩당 +28%, 최대 4회. 첫 선택에 가디언·디바우러(영웅 포함) 사거리 +1타일, 이동 속도 +20%. 기동 보너스 중첩 없음.',
  72:'중첩당 뮤탈리스크·가디언(영웅 포함)의 공격력 +6, 다른 저그 공중 전투 유닛의 공격력 +3. 공격 간격 -4.5%. 최대 4회.',
  110:'공중군 체력·보호막 중첩당 +28%(최대 4회). 첫 선택: 스카우트·커세어·아비터 사거리 +1타일, 캐리어 교전 거리 +1타일. 스카우트·캐리어·아비터 이동 속도 +20%. 영웅 포함, 기동 보너스 중첩 없음.',
- 112:'프로토스 공격 항공기와 인터셉터의 공격력 중첩당 +3, 공격 간격 -4.5%. 최대 4회.',
+ 112:'중첩당 스카우트 지상 공격력 +6·공중 사격 합계 +12(미사일 2발에 각각 +6), 인터셉터 공격력 +1, 커세어·아비터 공격력 +3. 영웅 포함. 공격 간격 -4.5%. 최대 4회.',
  153:'레이스·발키리·배틀크루저·과학선·드롭십의 생산 비용 -20%, 생산 시간 -20%.',
  157:'뮤탈·가디언·디바우러·스커지의 생산·변태 비용 -20%, 생산·변태 시간 -20%.',
  160:'스카우트·커세어·캐리어·아비터·셔틀·옵저버의 생산 비용 -20%, 생산 시간 -20%.',
@@ -145,7 +147,7 @@ def decorate(catalog):
             ordinal=item['effect_ordinal']
             text=original
             for a,b in REPLACEMENTS.get(ordinal,[]):text=text.replace(a,b)
-            item['description']=DESCRIPTIONS[5] if ordinal==5 else original if q==4 and ordinal not in (18,148,153,157,160) else DESCRIPTIONS.get(ordinal,text)
+            item['description']=DESCRIPTIONS[5] if ordinal==5 else original if q==4 and ordinal not in (18,130,148,153,157,160) else DESCRIPTIONS.get(ordinal,text)
             if item.get('max_rank')==4 and ordinal not in (8,9,29,30,31,69,70,72,110,111,112):
                 item['description']=item['description'].replace('반복해서 고를 수 있습니다.','')+' 중첩당 적용, 최대 4회 선택할 수 있습니다.'
             if ordinal in (18,85,107):item['effect']['qa_revision']=2026101816
@@ -176,6 +178,9 @@ def decorate(catalog):
             if ordinal==135:item['effect'].update(attack_counter='primary_corsair_launch',spells_count_as_attacks=False,secondary_attacks_count=False)
             if ordinal==72:item['effect'].update(qa_revision=2026101931,mutalisk_guardian_attack_per_rank=6,other_air_attack_per_rank=3)
             if ordinal==105:item['effect'].update(qa_revision=2026101932,projectile_damage_percent=100,projectile_count=2)
+            if ordinal==130:item['effect'].update(qa_revision=2026102035,capacity_bonus=0,burst_launch_limit=8,interceptor_health_multiplier=2,interceptor_shield_multiplier=2,native_capacity_unchanged=True)
+            if ordinal==31:item['effect'].update(qa_revision=2026102037,wraith_ground_attack_per_rank=6,wraith_air_attack_per_rank=12,battlecruiser_attack_per_rank=6,valkyrie_attack_per_rank=3)
+            if ordinal==112:item['effect'].update(qa_revision=2026102037,scout_ground_attack_per_rank=6,scout_air_projectile_attack_per_rank=6,scout_air_projectiles=2,scout_air_salvo_attack_per_rank=12,interceptor_attack_per_rank=1,other_air_attack_per_rank=3)
         else:
             # Old set-valued cards depend on the map's original DAT values.
             # Keep that reference explicit rather than inventing a fixed total.
@@ -199,6 +204,6 @@ def historical(item):
 def generate_header(catalog, root):
     values=[power_quarters(item) for item in sorted(catalog['talents'],key=lambda x:x['bit_index'])]
     target=Path(root)/'sc1/native_campaign/plugin/include/talent_power.generated.h'
-    target.write_text('#pragma once\nnamespace talent_power {\ninline constexpr unsigned kPowerQuarters[400]={'
+    target.write_text('#pragma once\nnamespace talent_power {\ninline constexpr unsigned kPowerQuarters['+str(len(values))+']={'
                       +','.join(map(str,values))+'};\n}\n',encoding='utf8')
     return target

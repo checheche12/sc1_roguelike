@@ -142,7 +142,7 @@ struct State {
     ChoiceOffer offer{};
     const char* apply_failure = nullptr; // Static diagnostic text; no user record/nonce.
 } g;
-namespace rework_combat_v5 {bool plan_stats(const GrowthSnapshot&,std::vector<Edit>&);double speed_ratio(bw::Unit*);double cooldown_ratio(bw::Unit*,U32);U32 fractional_period(bw::Unit*,U32,U32,double);void growth_applied(const GrowthSnapshot&,const GrowthSnapshot&);}
+namespace rework_combat_v5 {bool plan_stats(const GrowthSnapshot&,std::vector<Edit>&);double speed_ratio(bw::Unit*);double cooldown_ratio(bw::Unit*,U32);U32 fractional_period(bw::Unit*,U32,U32,double);void growth_applied(const GrowthSnapshot&,const GrowthSnapshot&);bool enhanced_ensnare(bw::Unit*);void hold_ensnare_cooldown(bw::Unit*,U32,U8&,U32=0);}
 namespace rework_economy_v5 {bool plan_stats(const GrowthSnapshot&,std::vector<Edit>&);void before_snapshot();void after_snapshot();double motion_ratio(bw::Unit*) noexcept;}
 namespace campaign_visibility {void reset() noexcept;}
 namespace yamato_cost_ui {void reset() noexcept;void publish() noexcept;}
@@ -544,7 +544,9 @@ struct HallucinationCreationScope {
 };
 #include "include/max_hp_runtime.h"
 #include "include/owner_dat_query.h"
+#include "include/native_tech_cost_view.h"
 class OwnerDatScope {
+    native_tech_cost_view::Scope native_tech_cost_;
     struct Saved {bw::DatTable* table;U32 id,value;};
     std::array<Saved,1024> saved_;std::size_t size_=0;
 public:
@@ -554,6 +556,7 @@ public:
         if(!g.active || !g.applied || GetCurrentThreadId()!=g.game_thread.load())return;
         if(hallucination(subject) || hallucination_creation_depth)unit_owner=12;
         if(hallucination(weapon_subject) || hallucination_creation_depth)weapon_owner=12;
+        native_tech_cost_.begin(unit_owner);
         const auto& edits=query_only?owner_dat_query::values():g.owner_edits;
         ++frame_profile::dat_scopes;if(query_only)++frame_profile::query_scopes;frame_profile::dat_entries+=edits.size();
         for(const auto& e:edits){
@@ -628,10 +631,10 @@ bool apply_snapshot(void*,const GrowthSnapshot& s) noexcept {
     if(s.wire_version!=1 && s.wire_version!=2)return reject_growth("growth_version");
     const U32 talent_limit=s.wire_version==1 ? frozen::kLegacyTalentCount:frozen::kTalentCount;
     const U32 curse_limit=s.wire_version==1 ? frozen::kLegacyCurseCount:frozen::kCurseCount;
-    for(U32 i=0;i<16;i++){const U32 remaining=talent_limit>i*32 ? std::min(32u,talent_limit-i*32):0;const U32 allowed=remaining==32 ? 0xffffffffu:remaining ? (1u<<remaining)-1u:0u;if(s.talent_bits[i]&~allowed)return reject_growth("talent_bits");}
+    for(U32 i=0;i<16;i++){const U32 remaining=talent_limit>i*32 ? std::min(32u,talent_limit-i*32):0;const U32 allowed=remaining==32 ? 0xffffffffu:remaining ? (1u<<remaining)-1u:0u;if(s.talent_bits[i]&~(s.wire_version==2?frozen::kTalentMasks[i]:allowed))return reject_growth("talent_bits");}
     for(U32 i=curse_limit;i<64;i++)if(s.curse_counts[i])return reject_growth("curse_slots");
     for(U32 i=0;i<curse_limit;i++)if(s.curse_counts[i]>frozen::kCurseMaxStacks[i])return reject_growth("curse_stack_limit");
-    if(!sc1_native::curse_scaling::valid_rank_storage<rework_catalog::kRankCount>(s))return reject_growth("rank_slots");
+    if(!sc1_native::curse_scaling::valid_rank_storage<rework_catalog::kRankCount>(s)||!rework_catalog::valid_packed(s))return reject_growth("rank_slots");
     try {
         if(!g.weapon_cache){for(U32 id=0;id<228;id++)for(U32 field:{17u,19u}){auto table=table_for({0,field,id},false);if(!table)return false;const auto weapon=read_entry(table,id);if(weapon<130)g.ordinary_weapons[weapon]=true;}g.weapon_cache=true;}
         std::vector<Edit> friendly,enemy;
@@ -786,12 +789,12 @@ void apply_unit_motion() {
                     clock.fraction=static_cast<U32>(scaled%denominator);
                 }else{clock.fraction=clock.denominator=0;}
                 const double ratio=rework_combat_v5::cooldown_ratio(u,weapon)*100.0/double(rework_curses::speed_percent(u));
-                if(ratio!=1.0)current=static_cast<U8>(std::min(255u,rework_combat_v5::fractional_period(u,unit_field==19 ? 1u:0u,current,ratio)));
+                if(ratio!=1.0){const auto period=rework_combat_v5::fractional_period(u,unit_field==19?1u:0u,current,ratio);current=static_cast<U8>(std::min(255u,period));if(rework_combat_v5::enhanced_ensnare(u))rework_combat_v5::hold_ensnare_cooldown(u,unit_field==19?1u:0u,current,period);}
                 clock.reset_value=0;clock.processed=true;
                 auto body=existing_track(effect_body(u));
                 if(body && body->first_attack_bonus)body->first_attack_end=frame+current;
             }
-            clock.launched=false;old=current;
+            rework_combat_v5::hold_ensnare_cooldown(u,unit_field==19?1u:0u,current);clock.launched=false;old=current;
         };
         cooldown(u->ground_cooldown,t->ground,17,t->cooldown[0]);
         cooldown(u->air_cooldown,t->air,19,t->cooldown[1]);
@@ -884,10 +887,13 @@ U32 __cdecl owner_sight_range_hook(bw::Unit* u,U32 ignore_blind,RangeFn original
 void __cdecl owner_unit_hook(bw::Unit* u,UnitFn original) noexcept {
     OwnerDatScope scope(unit_owner(u),unit_owner(u),u);rework_cargo_v5::OrderScope cargo(u);if(!cargo.allow_original())return;rework_economy_v5::UnitScope economy(u);original(u);
 }
-void __cdecl owner_order_hook(bw::Unit* u,UnitFn original) noexcept {
-    campaign_research::Scope research(u);HallucinationCreationScope creation(u && u->order==148);rework_carrier_v5::LaunchScope launch(u);rework_combat_v5::OrderScope rework(u,original);if(!rework.handled())owner_unit_hook(u,original);
+void __cdecl owner_timer_hook(bw::Unit* u,UnitFn original) noexcept {
+    rework_combat_v5::ExpiryScope expiry(u);owner_unit_hook(u,original);
 }
-void __cdecl owner_secondary_hook(bw::Unit* u,UnitFn original) noexcept {rework_carrier_v5::TrainingScope carrier(u);owner_unit_hook(u,original);}
+void __cdecl owner_order_hook(bw::Unit* u,UnitFn original) noexcept {
+    campaign_research::Scope research(u);HallucinationCreationScope creation(u && u->order==148);rework_carrier_v5::LaunchScope launch(u);rework_carrier_v5::BurstScope burst(u);rework_combat_v5::OrderScope rework(u,original);if(!rework.handled()){owner_unit_hook(u,original);burst.finish([&]{owner_unit_hook(u,original);});}
+}
+void __cdecl owner_secondary_hook(bw::Unit* u,UnitFn original) noexcept {owner_unit_hook(u,original);}
 void __cdecl owner_damage_hook(bw::Unit* u,std::int32_t amount,bw::Unit* attacker,U32 player,U32 show,DamageFn original) noexcept {
     OwnerDatScope scope(unit_owner(u),player,u,attacker);
     DamageObservationScope observed(u,player);
@@ -1020,7 +1026,7 @@ void __cdecl owner_commands_hook(const void* data,U32 len,U32 replay,CommandFn o
     // CommandUser is a scalar read_vars value; never dereference it. This covers
     // resource and supply checks before a training/morph order reaches a unit.
     const auto id=static_cast<std::uint16_t>(samase::VarId::CommandUser);std::size_t player=12;
-    if(g.active)g.read_vars(&id,&player,1);OwnerDatScope scope(static_cast<U32>(player),static_cast<U32>(player));rework_economy_v5::CommandScope economy(static_cast<U32>(player),data,len);rework_combat_v5::CommandScope combat(static_cast<U32>(player),false);rework_cargo_v5::CommandScope cargo(data,len);rework_carrier_v5::CommandScope carrier(static_cast<U32>(player),data,len);original(data,len,replay);
+    if(g.active)g.read_vars(&id,&player,1);OwnerDatScope scope(static_cast<U32>(player),static_cast<U32>(player));rework_economy_v5::CommandScope economy(static_cast<U32>(player),data,len);rework_combat_v5::CommandScope combat(static_cast<U32>(player),false);rework_cargo_v5::CommandScope cargo(data,len);original(data,len,replay);
 }
 using GuiFn=void (__cdecl*)(void*);
 void __cdecl owner_rclick_hook(void* event,GuiFn original) noexcept {
@@ -1050,7 +1056,7 @@ bool register_owner_hooks(const samase::PluginApi* api) noexcept {
         bind(samase::FuncId::KillUnit,owner_kill_hook) &&
         bind(samase::FuncId::TransformUnit,owner_transform_hook) &&
         bind(samase::FuncId::GiveUnit,owner_give_hook) &&
-        bind(samase::FuncId::StepUnitTimers,owner_unit_hook) &&
+        bind(samase::FuncId::StepUnitTimers,owner_timer_hook) &&
         bind(samase::FuncId::FinishUnitPre,owner_unit_hook) &&
         bind(samase::FuncId::FinishUnitPost,owner_unit_hook) &&
         bind(samase::FuncId::UnitAttackRange,owner_attack_range_hook) &&
@@ -1563,7 +1569,10 @@ namespace {
 #include "include/rework_economy_ui_v5.h"
 #include "include/yamato_cost_ui.h"
 #include "include/rework_shield_ui_v5.h"
+#include "include/carrier_weapon_ui.h"
 bool verify_stat_engine_after_dat() noexcept {
+    if(native_tech_cost_view::yamato&&!native_tech_cost_view::verify_after_dat())return false;
+    if(carrier_weapon_ui::queued&&!carrier_weapon_ui::verify_installation())return false;
     if(campaign_ultra_armor::queued&&!campaign_ultra_armor::verify_installation())return false;
     if(yamato_cost_ui::queued && !yamato_cost_ui::verify_installation())return false;
     if(max_hp_engine::hooks[0].queued && !max_hp_engine::verify_installation())return false;
@@ -1585,7 +1594,7 @@ bool verify_stat_engine_after_dat() noexcept {
 void __cdecl verify_registered_engine_hooks() noexcept {
     g.hooks_ready=false;
     if(!rework_lighting_v5::verify_ready()){log_event("Lighting synchronization verification failed: stage=%s",rework_lighting_v5::last_error);visible_failure(L"그래픽 보호 기능을 확인하지 못했습니다. sc1_native.log를 확인하세요.");return;}
-    if(!combat_effects::verify_installation() || !max_hp_engine::verify_installation() || !samase_status_ui::verify_installation() || !samase_weapon_ui::verify_installation() || !samase_armor_ui::verify_installation() || !campaign_ultra_armor::verify_installation()){
+    if(!combat_effects::verify_installation() || !max_hp_engine::verify_installation() || !samase_status_ui::verify_installation() || !samase_weapon_ui::verify_installation() || !carrier_weapon_ui::verify_installation() || !samase_armor_ui::verify_installation() || !campaign_ultra_armor::verify_installation()){
         log_event("Engine patch verification failed: stage=%s error=%lu weapon_ui=%s armor_ui=%s",native_engine_hooks::last_install.stage,native_engine_hooks::last_install.win32_error,samase_weapon_ui::last_error,samase_armor_ui::last_error);
         visible_failure(L"게임 패치의 실제 적용을 확인하지 못했습니다. 플러그인을 활성화하지 않습니다. sc1_native.log를 확인하세요.");return;
     }
@@ -1615,12 +1624,13 @@ extern "C" __declspec(dllexport) void __cdecl samase_plugin_init(const samase::P
         visible_failure(L"유닛 능력치 표시 기능을 연결하지 못했습니다. sc1_native.log를 확인하세요.");return;
     }
     if(!rework_energy_ui::bind(api)){visible_failure(L"에너지 표시 기능을 연결하지 못했습니다. sc1_native.log를 확인하세요.");return;}
-    if(!yamato_cost_ui::bind(api)){visible_failure(L"야마토 에너지 표시를 연결하지 못했습니다.");return;}
+    if(!yamato_cost_ui::bind(api)||!native_tech_cost_view::bind(native_engine_hooks::verified_base)){visible_failure(L"야마토 에너지 표시와 실제 비용을 연결하지 못했습니다.");return;}
     if(!rework_economy_ui::bind(api)){log_event("Production tooltip registration failed: stage=%s",rework_economy_ui::last_error);visible_failure(L"생산 비용 표시를 연결하지 못했습니다. sc1_native.log를 확인하세요.");return;}
     if (!samase_weapon_ui::bind(api)) {
         log_event("SAMASE weapon display registration failed: stage=%s",samase_weapon_ui::last_error);
         visible_failure(L"유닛 공격력 표시 기능을 연결하지 못했습니다. sc1_native.log를 확인하세요.");return;
     }
+    if(!carrier_weapon_ui::bind(api)){log_event("Carrier attack tooltip registration failed: stage=%s",carrier_weapon_ui::last_error);visible_failure(L"캐리어 공격력 표시를 연결하지 못했습니다. sc1_native.log를 확인하세요.");return;}
     if (!samase_armor_ui::bind(api)) {
         log_event("Armor display registration failed: stage=%s",samase_armor_ui::last_error);
         visible_failure(L"유닛 방어력 표시 기능을 연결하지 못했습니다. sc1_native.log를 확인하세요.");return;

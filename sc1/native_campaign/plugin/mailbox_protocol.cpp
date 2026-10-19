@@ -315,10 +315,10 @@ bool MailboxProtocol::accept_snapshot(const std::uint32_t (&words)[96]) noexcept
     for (std::size_t index = 0; index < curse_limit; ++index)
         snapshot.curse_counts[index] = static_cast<std::uint8_t>(words[28 + index / 4] >> ((index % 4) * 8));
     if(wire_version_==2)for(std::size_t index=0;index<32;++index)snapshot.talent_ranks[index]=words[44+index];
-    if(!curse_scaling::valid_rank_storage<rework_catalog::kRankCount>(snapshot))return false;
+    if(!curse_scaling::valid_rank_storage<rework_catalog::kRankCount>(snapshot)||!rework_catalog::valid_packed(snapshot))return false;
     if (applied_) {
         for (std::size_t index = 0; index < 16; ++index) {
-            if ((snapshot.talent_bits[index] & snapshot_.talent_bits[index]) != snapshot_.talent_bits[index]
+            if ((snapshot.talent_bits[index] & snapshot_.talent_bits[index] & rework_catalog::kOwnershipMasks[index]) != (snapshot_.talent_bits[index] & rework_catalog::kOwnershipMasks[index])
                 || snapshot.curse_counts[index] < snapshot_.curse_counts[index]) return false;
         }
         for(std::size_t index=0;index<curse_limit;++index)if(snapshot.curse_counts[index]<snapshot_.curse_counts[index])return false;
@@ -570,10 +570,11 @@ void invalid_growth_never_applies() {
     for (int variant = 0; variant < 7; ++variant) {
         Fixture f; auto r = f.load();
         if (variant == 0) r[11] = 2;
-        // Expanded catalogs legitimately own bit127. Inject the first bit
-        // beyond the frozen catalog while retaining the out-of-range guard.
-        static_assert(frozen::kTalentCount < 512, "invalid-bit fixture needs an unused wire bit");
-        if (variant == 1) r[12 + frozen::kTalentCount / 32] |= 1u << (frozen::kTalentCount % 32);
+        // Logical cards may use compact fields. Locate an actual unused wire
+        // bit rather than treating the logical card count as a physical index.
+        constexpr auto unused_bit=[]() constexpr {for(unsigned bit=0;bit<512;bit++)if(!(frozen::kTalentMasks[bit/32]&(1u<<(bit%32))))return bit;return 512u;}();
+        static_assert(unused_bit<512,"invalid-bit fixture needs an unused wire bit");
+        if (variant == 1) r[12+unused_bit/32]|=1u<<(unused_bit%32);
         if (variant == 2) r[27] = 1;
         if (variant == 3) r[31] |= 0x01000000;
         if (variant == 4) r[31] = 0xffffffff;

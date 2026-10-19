@@ -27,6 +27,7 @@ inline void area_visual_geometry_scales_native_xy_preserving_other_attributes(){
  using namespace area_fixture;
  for(std::size_t stride:{8u,16u,20u,24u,32u})for(float zoom:{1.0f,2.0f}){
   auto commands=std::make_unique<Commands>();commands->count=1;auto& command=commands->commands[0];command.allocated_vertices=command.used_vertices=4;
+  command.shader=stride==8?2u:stride==20?6u:stride==24?11u:stride==32?32u:0u;
   std::vector<U8> data(stride*4,0xa5);quad(data,0,stride,zoom);const auto before=data;
   Vertices buffer{data.size()/4,data.size(),data.data()};const auto view=image();const auto saved=view;
   CHECK(transform(*commands,buffer,0,0,view,{2,3},524,618)==4);

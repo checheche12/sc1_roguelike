@@ -3,20 +3,20 @@ namespace host_test {
 inline constexpr std::size_t qa31_group_count=5;
 inline void qa31_four_curse_totals_and_large_counts(){
  namespace p=sc1_native::rework_wave;namespace cs=sc1_native::curse_scaling;
- const U32 amount[]={0,20,44,72,104},stat[]={0,8,20,36,56},haste[]={0,5,11,18,26};
+ const U32 amount[]={0,20,44,72,104},stat[]={0,15,34,57,84},haste[]={0,15,31,48,66};
  for(U32 rank=0;rank<5;++rank){
   rework_wave_tests::begin(101);g.growth.curse_counts[16]=g.growth.curse_counts[17]=g.growth.curse_counts[18]=g.growth.curse_counts[19]=U8(rank);
   g.current_wave_id=1;auto u=rework_waves::create(0,0);CHECK(u);
   CHECK(p::scaled_count(100,rank)==100+amount[rank]);
   CHECK(rework_curses::attack_percent(u)==100+stat[rank]);
-  CHECK(rework_curses::hp_percent(u)==100+stat[rank]);
+  CHECK(rework_curses::hp_percent(u)==100+amount[rank]);
   CHECK(rework_curses::speed_percent(u)==100+haste[rank]);
  }
  CHECK(cs::bonus(40001,5,1)==800220005u);
  for(U32 rank:{256u,1000u,0xffffffffu}){
   g.growth.curse_counts[19]=255;g.growth.talent_ranks[28]=rank;
   CHECK(rework_curses::count(19)==rank);
-  CHECK(rework_curses::speed_percent(&units[count-1])==cs::scale(100,cs::bonus(rank,5,1)));
+  CHECK(rework_curses::speed_percent(&units[count-1])==cs::scale(100,cs::bonus(rank,15,1)));
  }
 }
 inline void qa31_attack_and_movement_speed_are_additive_and_owner_scoped(){

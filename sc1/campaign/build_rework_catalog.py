@@ -151,6 +151,19 @@ def build(coverage=None):
     decorate_curses(catalog)
     from .legendary_balance import decorate as decorate_legends
     decorate_legends(catalog)
+    from .legendary_expansion import decorate as expand_legends, generate_header as generate_expansion
+    expand_legends(catalog)
+    generate_expansion(catalog, ROOT)
+    from .unit_growth import decorate as expand_units,generate_header as generate_units
+    expand_units(catalog);generate_units(catalog,ROOT)
+    from .talent_retirement import decorate as retire_talents
+    retire_talents(catalog)
+    from .legend_focus import decorate as focus_legends,generate_header as generate_focus
+    focus_legends(catalog);generate_focus(catalog,ROOT)
+    from .wave_balance import decorate as decorate_wave_balance
+    decorate_wave_balance(catalog, ROOT)
+    from .effect_copy import decorate as clean_effect_copy
+    clean_effect_copy(catalog)
     contract['new_curses']=copy.deepcopy(catalog['curses'][15:])
     contract['balance_revision']=9
     contract['new_talents']=copy.deepcopy(catalog['talents'][238:])
@@ -162,15 +175,31 @@ def build(coverage=None):
         path.write_text(json.dumps(value,ensure_ascii=False,indent=2)+'\n',encoding='utf8')
     rank_slots=[x.get('rank_slot',-1) for x in contract['new_talents']]
     lines=['#pragma once','#include <cstdint>','namespace rework_catalog {',
-           'inline constexpr std::uint32_t kTalentBase=238, kTalentCount=162, kCurseBase=15, kCurseCount=35;',
-           f'inline constexpr std::uint32_t kRankCount={rank_slot};',
-           'inline constexpr int kRankSlots[162]={'+','.join(map(str,rank_slots))+'};',
+           f'inline constexpr std::uint32_t kTalentBase=238, kTalentCount={len(contract["new_talents"])}, kCurseBase=15, kCurseCount=35;',
+           f'inline constexpr std::uint32_t kRankCount=28;',
+           'inline constexpr int kRankSlots[kTalentCount]={'+','.join(map(str,rank_slots))+'};',
            'template<class Snapshot> inline std::uint32_t rank(const Snapshot& s,std::uint32_t ordinal) noexcept {',
            ' if(ordinal>=kTalentCount)return 0; const auto slot=kRankSlots[ordinal];',
+           ' if(ordinal>=199u)return packed_rank(s,ordinal);',
            ' const auto bit=kTalentBase+ordinal; const auto owned=(s.talent_bits[bit/32]>>(bit%32))&1u;',
            ' if(slot>=0){const auto n=s.talent_ranks[slot];return n ? (n>4u?4u:n):owned;} return owned; }',
-           'inline constexpr const char* kTalentSourceIds[162]={'+','.join(json.dumps(x['id']) for x in contract['new_talents'])+'};',
+           'inline constexpr const char* kTalentSourceIds[kTalentCount]={'+','.join(json.dumps(x['id']) for x in contract['new_talents'])+'};',
            'inline constexpr const char* kCurseSourceIds[35]={'+','.join(json.dumps(x['id']) for x in contract['new_curses'])+'};','}']
+    from .unit_growth import specifications
+    packed=['struct Field {unsigned ordinal,word,shift,width;};','inline constexpr Field kPackedFields[]={']
+    masks=[0]*65;owned=[0]*16
+    for bit in range(437):owned[bit//32]|=1<<(bit%32)
+    for spec in specifications():
+        f=spec['storage'];packed.append('{'+','.join(map(str,(spec['ordinal'],f['word'],f['shift'],f['width'])))+'},')
+        masks[f['word']]|=((1<<f['width'])-1)<<f['shift']
+    packed+=['};','inline constexpr unsigned kOwnershipMasks[16]={'+','.join(str(x)+'u' for x in owned)+'};',
+      'template<class S> inline unsigned word(const S& s,unsigned w) noexcept {return w<=16?s.talent_bits[w-1]:s.talent_ranks[w-33];}',
+      'template<class S> inline unsigned packed_rank(const S& s,unsigned ordinal) noexcept {for(auto f:kPackedFields)if(f.ordinal==ordinal)return (word(s,f.word)>>f.shift)&((1u<<f.width)-1u);return 0;}',
+      'template<class S> inline bool valid_packed(const S& s) noexcept {for(auto f:kPackedFields)if(f.width==3&&packed_rank(s,f.ordinal)>4)return false;']
+    for w in range(54,61):packed.append(f' if(s.talent_ranks[{w-33}]&~{masks[w]}u)return false;')
+    packed+=[' return true;}']
+    at=next(i for i,line in enumerate(lines) if line.startswith('template<class Snapshot>'))
+    lines[at:at]=packed
     HEADER.write_text('\n'.join(lines)+'\n',encoding='utf8')
     return catalog
 

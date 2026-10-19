@@ -39,7 +39,7 @@ class OpeningLegendTests(unittest.TestCase):
         self.assertFalse(any(policy.reward_policy(611, phase).guaranteed_legendary
                              for phase in (1, 2, 3)))
 
-    def test_four_distinct_pairs_include_future_units_without_global_legends(self):
+    def test_four_distinct_choices_include_future_units_and_at_most_one_global(self):
         before = copy.deepcopy(self.catalog)
         for first in STARTS:
             seen = set()
@@ -47,8 +47,11 @@ class OpeningLegendTests(unittest.TestCase):
                 draw = rework_growth.candidates(self.catalog, first, 1, [], random.Random(seed))
                 self.assertEqual(len(draw), 4)
                 pairs = set()
+                globals_seen=0
                 for candidate in draw:
                     members = bundles.member_ids(candidate, self.catalog)
+                    if candidate['race']=='shared':
+                        globals_seen+=1;self.assertEqual(len(members),1);continue
                     self.assertEqual(len(members), 2)
                     pairs.add(frozenset(members))
                     left, right = (self.by_id[identity] for identity in members)
@@ -58,7 +61,8 @@ class OpeningLegendTests(unittest.TestCase):
                         self.assertTrue(any(self.usable(item, mission)
                                             for mission in progression.campaign_missions(first)))
                     seen.update(members)
-                self.assertEqual(len(pairs), 4)
+                self.assertLessEqual(globals_seen,1)
+                self.assertEqual(len(pairs),4-globals_seen)
             expected = {item['id'] for item in self.catalog['talents']
                         if bundles.unit_legendary(item)
                         and item['race'] == progression.metadata(first)['race']}
@@ -95,14 +99,15 @@ class OpeningLegendTests(unittest.TestCase):
                     self.assertEqual(offer['kind'], 'talent')
                     self.assertEqual(len(offer['candidates']), 4)
                     self.assertTrue(all(item['rarity'] == 'legendary' for item in offer['candidates']))
-                    members = bundles.member_ids(offer['candidates'][0], self.catalog)
+                    unit_slot=next(i+1 for i,x in enumerate(offer['candidates']) if x['race']!='shared')
+                    members = bundles.member_ids(offer['candidates'][unit_slot-1], self.catalog)
                     self.assertEqual(len(members), 2)
                     store = open_campaign_store(path)
                     with patch.object(rework_growth, 'candidates', side_effect=AssertionError('No redraw')):
                         self.assertEqual(load()['offer'], offer)
-                    result = store.choose_growth_phase_slot(offer['offer_id'], 1, offer['revision'],
+                    result = store.choose_growth_phase_slot(offer['offer_id'], unit_slot, offer['revision'],
                         first, 2, choice_kind=1, phase=1, phase_version=version)
-                    duplicate = store.choose_growth_phase_slot(offer['offer_id'], 1, offer['revision'],
+                    duplicate = store.choose_growth_phase_slot(offer['offer_id'], unit_slot, offer['revision'],
                         first, 2, choice_kind=1, phase=1, phase_version=version)
                     self.assertTrue(duplicate['duplicate'])
                     while result.get('offer'):
@@ -112,8 +117,12 @@ class OpeningLegendTests(unittest.TestCase):
                             first, 2, choice_kind=2, phase=1, phase_version=version)
                     words = load()['growth_words']
                     for identity in members:
-                        bit = self.by_id[identity]['bit_index']
-                        self.assertTrue(words[1 + bit // 32] & (1 << (bit % 32)))
+                        card = self.by_id[identity]
+                        if field := card.get('wire_storage'):
+                            self.assertTrue(words[field['word']] & (1 << field['shift']))
+                        else:
+                            bit = card['bit_index']
+                            self.assertTrue(words[1 + bit // 32] & (1 << (bit % 32)))
                     store = open_campaign_store(path)
                     self.assertEqual(load()['growth_words'], words)
                     with closing(sqlite3.connect(path)) as conn:

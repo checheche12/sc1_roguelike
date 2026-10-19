@@ -8,11 +8,22 @@ from .curse_balance import REAR_ID, RESERVE_ID
 
 SKIPPED_CURSE='__no_future_added_waves__'
 SKIPPED_FINAL='__campaign_clear_no_final_reward__'
-RETIRED_TALENTS=frozenset(('bbf067dc-0ced-5875-a519-2c0443580c8d',))
+RETIRED_TALENTS=frozenset(('bbf067dc-0ced-5875-a519-2c0443580c8d','9653d275-b027-51c6-bb5d-920e2bab74c4'))
 
 
 def retired(item):
     return item['id'] in RETIRED_TALENTS or item['id'] in (REAR_ID,RESERVE_ID) or bool(item.get('effect',{}).get('retired'))
+
+
+def unit_offer_removed(item):
+    effect=item.get('effect',{})
+    return effect.get('unit_manual_removed',False) or effect.get('unit_trait_removed',False)
+
+def option_has_retired(item,catalog):
+    removed=lambda x:retired(x) or unit_offer_removed(x)
+    if removed(item):return True
+    by_id={x['id']:x for kind in ('talents','curses') for x in catalog[kind]}
+    return any(identity in by_id and removed(by_id[identity]) for identity in item.get('bundled_talent_ids',[item['id']]))
 
 
 def enabled(catalog):
@@ -32,15 +43,29 @@ def enable(conn, catalog_path=None):
         for old in pinned[kind]:
             new=latest.get(old['id'])
             if new is None or new[index]!=old[index] or new.get('source_description')!=old.get('source_description'):continue
+            # Display-only updates have their own revision; mechanics stay exact.
+            if new.get('description_revision',0)>old.get('description_revision',0):
+                old.update(description=new['description'],description_revision=new['description_revision']);changed=True
+                for field in ('effect_subject','target'):
+                    if field in new:old[field]=new[field]
+            for flag in ('unit_manual_removed','unit_trait_removed'):
+                if new.get('effect',{}).get(flag) and not old.get('effect',{}).get(flag):
+                    old['effect'].update(offer_retired=True,**{flag:True});changed=True
             if new['effect']['qa_revision']<=old.get('effect',{}).get('qa_revision',0):continue
             # Correct future display/mechanics metadata only. Issued offers,
             # frozen input text, indices, ranks and completed checkpoints stay.
             old.update(description=new['description'],effect=copy.deepcopy(new['effect']))
-            for field in ('rarity','balance_revision','pre_balance_description','pre_balance_effect','repeatable','rank_slot','max_rank','max_stacks','choice_max_stacks'):
+            for field in ('rarity','target','target_units','balance_revision','pre_balance_description','pre_balance_effect','repeatable','rank_slot','max_rank','max_stacks','choice_max_stacks','bundle_family','wire_storage','name'):
                 if field in new:old[field]=copy.deepcopy(new[field])
             changed=True
+        if kind=='talents':
+            known={x['id'] for x in pinned[kind]};positions={x[index] for x in pinned[kind]}
+            for new in catalog[kind]:
+                if new.get('expansion_revision')!=2026102038 or new['id'] in known:continue
+                if new[index] in positions:raise GrowthError('catalog_incompatible','새 재능의 전송 위치가 기존 기록과 충돌합니다.')
+                pinned[kind].append(copy.deepcopy(new));known.add(new['id']);positions.add(new[index]);changed=True
     if changed:
-        for field in ('balance_revision','talent_power_quarters','economy_talents_scaled'):
+        for field in ('balance_revision','talent_power_quarters','economy_talents_scaled','legendary_expansion_revision','legendary_common_offer_probability','wave_balance_revision','wave_count_multiplier_percent','wave_roster_review','unit_growth_revision','unit_growth_summary','talent_retirement_revision','legend_focus_revision','single_target_legend_ordinals','effect_description_revision'):
             if field in catalog:pinned[field]=copy.deepcopy(catalog[field])
         if 'talent_power_quarters' in catalog:pinned.pop('talent_power_halves',None)
         validate_catalog(pinned,2)
@@ -68,7 +93,7 @@ def overlay(conn, catalog):
                 existing=next(x for x in result[kind] if x['id']==item['id'])
                 if existing.get('source_description')==item.get('source_description'):
                     existing.update(description=item['description'],effect=copy.deepcopy(item['effect']))
-                    for field in ('rarity','balance_revision','pre_balance_description','pre_balance_effect','repeatable','rank_slot','max_rank','max_stacks','choice_max_stacks'):
+                    for field in ('rarity','target','target_units','balance_revision','pre_balance_description','pre_balance_effect','repeatable','rank_slot','max_rank','max_stacks','choice_max_stacks','bundle_family','wire_storage','name'):
                         if field in item:existing[field]=copy.deepcopy(item[field])
     result.update(catalog_version=2,rework_revision=5,policy_revision=5)
     return validate_catalog(result,2)
@@ -103,21 +128,22 @@ def acquire_option(conn,mission,catalog,owned,candidate):
     by_id={item['id']:item for item in catalog['talents']}
     for identity in identities:
         item=by_id[identity]
-        if retired(item) or (identity in owned and not item.get('repeatable')):
+        if retired(item) or unit_offer_removed(item) or rank_policy.exhausted(item,owned,ranks(conn,mission),catalog):
             raise GrowthError('duplicate_talent','이미 보유했거나 삭제된 재능입니다.')
     for identity in identities:acquire(conn,mission,catalog,owned,identity)
 
 
 def acquire(conn,mission,catalog,owned,identity):
     item=next(x for x in catalog['talents'] if x['id']==identity)
-    if retired(item):raise GrowthError('retired_talent','삭제된 재능은 선택할 수 없습니다.')
+    if retired(item) or unit_offer_removed(item):raise GrowthError('retired_talent','삭제된 재능은 선택할 수 없습니다.')
     if identity in owned and not item.get('repeatable'):
         raise GrowthError('duplicate_talent','이미 보유한 재능입니다.')
     if item.get('repeatable'):
         values=ranks(conn,mission)
-        if rank_policy.exhausted(item,owned,values):
+        if rank_policy.exhausted(item,owned,values,catalog):
             raise GrowthError('talent_rank_limit','이 재능은 최대 4회까지 선택할 수 있습니다.')
-        values[identity]=values.get(identity,1 if identity in owned else 0)+1
+        progress=rank_policy.unit_manual_progress(item,owned,values,catalog)
+        values[identity]=(progress[1] if progress is not None else values.get(identity,1 if identity in owned else 0))+1
         save_ranks(conn,mission,values)
     if identity not in owned:owned.append(identity)
 
@@ -166,13 +192,13 @@ def recent_manuals(conn,mission,offer_id):
           AND candidates_json IS NOT NULL AND offer_id!=?
         ORDER BY sequence DESC LIMIT ?''',
         (*missions,offer_id,policy.RECENT_MANUAL_REWARDS)).fetchall()
-    return {item['id'] for row in rows for item in json.loads(row[0])
+    return {identity for row in rows for item in json.loads(row[0]) for identity in item.get('bundled_talent_ids',[item['id']])
             if item.get('repeatable') and item.get('rarity')=='common'
             and item.get('category') in ('combat','military')}
 
 
 def candidates(catalog,mission,phase,owned,rng,*,recent_manuals=(),rank_counts=None):
-    from .legendary_bundles import unit_legendary,compatible,pair_options
+    from .legendary_bundles import paired_unit,compatible,pair_options
     reward=policy.reward_policy(mission,phase)
     available=[]
     by_id={}
@@ -188,13 +214,13 @@ def candidates(catalog,mission,phase,owned,rng,*,recent_manuals=(),rank_counts=N
         return progression.item_eligible(item,identity,'talent') and (not targets or bool(targets&available))
     rank_counts=rank_counts or {}
     for item in catalog['talents']:
-        if retired(item):continue
-        if rank_policy.exhausted(item,owned,rank_counts):continue
+        if retired(item) or item.get("effect",{}).get("offer_retired"):continue
+        if rank_policy.exhausted(item,owned,rank_counts,catalog):continue
         if item.get('rework_revision')!=5:continue
         if opening:
             # Choose a build before its units arrive. Both bundle members must
             # be usable somewhere in this same campaign, including squad starts.
-            if not unit_legendary(item) or item['race']!=entry['race']:continue
+            if item['rarity']!='legendary' or item['race'] not in ('shared',entry['race']):continue
             usable=any(usable_on(item,identity) for identity in campaign_missions)
             if not usable:continue
         else:
@@ -202,10 +228,20 @@ def candidates(catalog,mission,phase,owned,rng,*,recent_manuals=(),rank_counts=N
             usable=usable_on(item,mission)
         available.append(policy.Candidate(item['id'],item['rarity'],item['category'],usable,item.get('repeatable',False)))
         by_id[item['id']]=item
-    usable_legends=[by_id[x.id] for x in available if x.rarity=='legendary']
-    available=[x for x in available if not unit_legendary(by_id[x.id])
+    usable_legends=[by_id[x.id] for x in available]
+    available=[x for x in available if not paired_unit(by_id[x.id])
                or any(compatible(by_id[x.id],other) for other in usable_legends)]
-    try:draw=policy.draw_candidates(reward,available,owned,rng,recent_manuals=recent_manuals,exhausted_fallback=True)
+    try:
+        if reward.guaranteed_legendary:
+            shared=[x for x in available if x.rarity=='legendary' and by_id[x.id]['race']=='shared' and x.usable]
+            faction=[x for x in available if x.rarity=='legendary' and by_id[x.id]['race']==entry['race'] and x.usable]
+            draw=[]
+            if shared and (not faction or rng.randrange(3)==0):draw.append(shared[rng.randrange(len(shared))])
+            for _ in range(min(4-len(draw),len(faction))):draw.append(faction.pop(rng.randrange(len(faction))))
+            # A depleted faction pool does not force duplicate ownership or
+            # introduce extra common slots. Existing issued JSON never redraws.
+            if len(draw)>1:rng.shuffle(draw)
+        else:draw=policy.draw_candidates(reward,available,owned,rng,recent_manuals=recent_manuals,exhausted_fallback=True)
     except ValueError as exc:raise GrowthError('choice_pool_unavailable',str(exc)) from exc
     if not draw:raise GrowthError('choice_pool_unavailable','현재 단계에 사용 가능한 개편 재능이 없습니다.')
     return pair_options([by_id[x.id] for x in draw],usable_legends,rng)

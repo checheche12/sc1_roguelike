@@ -23,38 +23,40 @@ inline Census census(const bw::Unit* carrier) noexcept {
  result.valid=true;return result;
 }
 inline U32 original_capacity(const bw::Unit* u) noexcept {return u && (u->unit_id==82 || rework_upgrade_storage::level(u->player,43))?8u:4u;}
-inline U32 capacity(const bw::Unit* u) noexcept {const auto base=original_capacity(u);return own(u) && rework_catalog::rank(g.growth,130)?std::min(24u,base+talent_power::v5(130,4)):base;}
-struct CountMask {
- Identity who{};U8 inside=0,outside=0;bool masked=false;
- explicit CountMask(bw::Unit* u,bool native_already_eight) noexcept {
-  if(!own(u) || !rework_catalog::rank(g.growth,130) || (!native_already_eight&&!talent_power::enabled))return;
-  const auto actual=census(u);if(!actual.valid || actual.inside!=u->unit_specific.bytes[16] || actual.outside!=u->unit_specific.bytes[17])return;
-  who=identity(u);inside=U8(actual.inside);outside=U8(actual.outside);U32 remove=talent_power::enabled?capacity(u)-8:4u;
-  const auto a=std::min(remove,U32(inside));u->unit_specific.bytes[16]=U8(inside-a);remove-=a;u->unit_specific.bytes[17]=U8(outside-std::min(remove,U32(outside)));masked=true;
+inline U32 capacity(const bw::Unit* u) noexcept {return original_capacity(u);}
+struct BurstClock {Identity who{};U32 frame=~0u;};
+inline std::vector<BurstClock> bursts;
+inline U32 burst_depth=0;
+struct BurstScope {
+ Identity who{};Census before{};bool active=false;
+ explicit BurstScope(bw::Unit* u) noexcept {
+  if(burst_depth || !own(u) || !rework_catalog::rank(g.growth,130))return;
+  before=census(u);if(!before.valid || !before.inside || before.inside!=u->unit_specific.bytes[16] || before.outside!=u->unit_specific.bytes[17])return;
+  who=identity(u);active=true;
  }
- void restore() noexcept {if(!masked || !same(who))return;const auto actual=census(who.p);who.p->unit_specific.bytes[16]=actual.valid?U8(actual.inside):inside;who.p->unit_specific.bytes[17]=actual.valid?U8(actual.outside):outside;masked=false;}
-};
-inline U32 scope_depth=0;
-struct TrainingScope {
- CountMask mask;rework_upgrade_storage::View upgrade;bool active=false;
- explicit TrainingScope(bw::Unit* u) noexcept :mask(u,own(u) && original_capacity(u)==8 && scope_depth==0 && u->secondary_order==63 && rework_upgrade_storage::slot(u->player,43)){
-  if(!own(u) || !rework_catalog::rank(g.growth,130) || u->secondary_order!=63 || scope_depth)return;
-  if(!upgrade.begin(u->player,43,1))return;active=true;++scope_depth;
+ template<class Step> void finish(Step native_order) {
+  if(!active || burst_depth || !same(who) || !own(who.p) || !rework_catalog::rank(g.growth,130))return;
+  auto after=census(who.p);
+  // The native order must first authorize and perform a real launch. Range,
+  // target, disable, Stop and Recall checks remain in that native path.
+  if(!after.valid || after.inside>=before.inside || after.outside<=before.outside)return;
+  if(bursts.size()!=g.units_count)bursts.assign(g.units_count,{});
+  auto& clock=bursts[static_cast<std::size_t>(who.p-g.units)];const auto frame=g.game()->frame_count;
+  if(same(clock.who) && clock.who.p==who.p && clock.frame==frame)return;
+  clock={who,frame};struct Guard {Guard(){++burst_depth;}~Guard(){--burst_depth;}} guard;
+  U32 released=after.outside-before.outside;
+  while(released<8 && after.inside){
+   const auto timer=who.p->order_timer,wait=who.p->order_wait,order=who.p->order;
+   // StepOrder has a separate dispatcher wait (native13515 unit+0xc9).
+   // It resets to eight before CarrierAttack runs; clearing order_timer
+   // alone leaves every additional call blocked at that dispatcher gate.
+   who.p->order_timer=0;who.p->order_wait=0;native_order();
+   if(!same(who) || !own(who.p))return;
+   const auto next=census(who.p);if(!next.valid)return;
+   if(next.inside>=after.inside || next.outside<=after.outside){if(who.p->order==order){who.p->order_timer=timer;who.p->order_wait=wait;}return;}
+   released+=next.outside-after.outside;after=next;
+  }
  }
- ~TrainingScope(){mask.restore();if(active){upgrade.restore();--scope_depth;}}
-};
-struct CommandScope {
- std::vector<CountMask> masks;rework_upgrade_storage::View upgrade;bool active=false;
- CommandScope(U32 player,const void* data,U32 length){
-  if(!g.active || !g.applied || player!=player_owner() || !rework_catalog::rank(g.growth,130) || scope_depth || !data || length!=1 || *static_cast<const U8*>(data)!=0x27)return;
-  if(!rework_upgrade_storage::slot(player,43))return;const auto original=rework_upgrade_storage::level(player,43);
-  // Native TrainFighter keeps its original five-entry queue, resource checks,
-  // payment, construction time, child creation and hangar linkage. Only its
-  // hardcoded4/8 capacity predicate receives this temporary count view.
-  living_units([&](bw::Unit* u){if(own(u))masks.emplace_back(u,u->unit_id==82 || original!=0);});
-  if(!upgrade.begin(player,43,1))return;active=true;++scope_depth;
- }
- ~CommandScope(){for(auto& mask:masks)mask.restore();if(active){upgrade.restore();--scope_depth;}}
 };
 struct LaunchClock {Identity who{};U32 carry=0,last_frame=0;bool sampled=false;};
 inline std::vector<LaunchClock> launches;
@@ -68,6 +70,6 @@ struct LaunchScope {
   const U32 denominator=8+talent_power::quarters(374);const U32 total=U32(who.p->order_timer)*8+clock.carry;who.p->order_timer=U8(std::max(1u,total/denominator));clock.carry=total%denominator;clock.last_frame=frame;clock.sampled=true;
  }
 };
-inline void reset() noexcept {launches.clear();scope_depth=0;}
-inline void forget(bw::Unit* u) noexcept {if(valid_unit(u) && launches.size()==g.units_count)launches[static_cast<std::size_t>(u-g.units)]={};}
+inline void reset() noexcept {launches.clear();bursts.clear();burst_depth=0;}
+inline void forget(bw::Unit* u) noexcept {if(valid_unit(u)){const auto index=static_cast<std::size_t>(u-g.units);if(launches.size()==g.units_count)launches[index]={};if(bursts.size()==g.units_count)bursts[index]={};}}
 }

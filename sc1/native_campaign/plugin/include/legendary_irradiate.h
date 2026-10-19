@@ -48,9 +48,9 @@ inline void on_death(bw::Unit* dead){
     const auto n=nodes[std::size_t(dead-g.units)];if(!n.active||rework_combat_v5::generation(n.who)!=dead)return;
     forget(dead);if(n.generation>=5||!is_enemy(dead->player)||(!dead->irradiate_timer&&n.timer!=1))return;
     auto it=roots.find(n.root);if(it==roots.end())return;
-    auto candidates=nearby(dead->flingy.position.x,dead->flingy.position.y,128);
+    auto candidates=nearby(dead->flingy.position.x,dead->flingy.position.y,192);
     std::sort(candidates.begin(),candidates.end(),[&](const Identity& a,const Identity& b){const auto da=dist(dead,a.p),db=dist(dead,b.p);return da==db?a.p<b.p:da<db;});
-    U32 made=0;for(const auto& id:candidates){auto u=resolve(id);if(!u||u==dead||!is_enemy(u->player)||!organic(u)||building(u)||in(u->unit_id,{35,36,97})||(u->flags&0x40u)||u->irradiate_timer||box_distance(dead,u)>128ull*128)continue;
+    U32 made=0;for(const auto& id:candidates){auto u=resolve(id);if(!u||u==dead||!is_enemy(u->player)||!organic(u)||building(u)||in(u->unit_id,{35,36,97})||(u->flags&0x40u)||u->irradiate_timer||box_distance(dead,u)>192ull*192)continue;
         it=roots.find(n.root);if(it==roots.end()||it->second.visited.count(key(u)))continue;
         enroll(u,n.root,n.generation+1,true);if(++made==5)break;
     }

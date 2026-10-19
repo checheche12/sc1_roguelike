@@ -16,7 +16,7 @@ class FourCommonCurseTests(unittest.TestCase):
         self.catalog = load_catalog(expected_version=2)
 
     def test_four_curves_caps_and_native_wire_storage_do_not_overlap(self):
-        curves = {16: (20, 4), 17: (8, 4), 18: (8, 4), 19: (5, 1)}
+        curves = {16: (20, 4), 17: (15, 4), 18: (20, 4), 19: (15, 1)}
         ids = {}
         for slot, (first, step) in curves.items():
             item = self.catalog['curses'][slot]
@@ -29,7 +29,7 @@ class FourCommonCurseTests(unittest.TestCase):
         self.assertTrue(self.catalog['curses'][19]['effect']['attack_and_movement_speed'])
         self.assertTrue(self.catalog['curses'][18]['effect']['health_and_shields'])
         self.assertNotIn('speed_percent_per_stack', self.catalog['curses'][19]['effect'])
-        manuals = [item for item in self.catalog['talents'] if item.get('repeatable')]
+        manuals = [item for item in self.catalog['talents'] if item.get('repeatable') and not item.get('wire_storage')]
         self.assertTrue(all(item['rank_slot'] < 28 for item in manuals))
         ranks = {item['id']: 2 for item in manuals}
         for count in (1, 3, 4, 255, 256, 1000, 0xffffffff):

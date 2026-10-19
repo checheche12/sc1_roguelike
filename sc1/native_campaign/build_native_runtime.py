@@ -32,8 +32,17 @@ def validate_catalog_bundle(original,legacy,rework,*,require_implemented=True):
     from sc1.campaign.talent_balance import decorate
     import copy
     validate_catalog(original,1);validate_catalog(legacy,1);validate_catalog(rework,2)
-    if (len(legacy['talents']),len(legacy['curses']),len(rework['talents']),len(rework['curses']))!=(238,15,400,50):
-        raise ValueError('Release requires legacy238/15 plus revision-five162/35')
+    count=len(rework['talents'])
+    if (len(legacy['talents']),len(legacy['curses']),len(rework['curses']))!=(238,15,50) or not 400<=count<=1024:
+        raise ValueError('Release requires legacy238/15 and an append-only revision-five catalog within 512 bits')
+    if count>400:
+        from sc1.campaign.legendary_expansion import entries,identity
+        from sc1.campaign.unit_growth import specifications as unit_specs,identity as unit_identity
+        specifications=entries(rework)
+        if count!=437+123 or any(x['id']!=identity(s['ordinal']) or x.get('effect_ordinal')!=s['ordinal'] for x,s in zip(rework['talents'][400:437],specifications)):
+            raise ValueError('Appended unit legends differ from their permanent wire contract')
+        if any(x['id']!=unit_identity(s['ordinal']) or x['wire_storage']!=s['storage'] for x,s in zip(rework['talents'][437:],unit_specs())):
+            raise ValueError('Per-unit growth storage differs from its permanent contract')
     for kind in ('talents','curses'):
         expected=decorate(copy.deepcopy(legacy)) if rework.get('balance_revision') in (6,7,9) else legacy
         old={x['id']:x for x in expected[kind]}
@@ -44,16 +53,16 @@ def validate_catalog_bundle(original,legacy,rework,*,require_implemented=True):
         raise ValueError('Revision-five policy/catalog contract is required')
     talents=[x for x in rework['talents'] if x.get('rework_revision')==5]
     curses=[x for x in rework['curses'] if x.get('rework_revision')==5]
-    if ([x['bit_index'] for x in talents]!=list(range(238,400))
+    if ([x['bit_index'] for x in talents]!=list(range(238,count))
             or [x['byte_index'] for x in curses]!=list(range(15,50))
-            or len([x for x in talents if x.get('repeatable')])!=21):
+            or len([x for x in talents if x.get('repeatable') and not x.get('wire_storage')])!=21):
         raise ValueError('Revision-five wire indices or manual rank layout differ')
     if require_implemented and any(not x['implemented'] for x in talents+curses):
         raise ValueError('Pending native effects cannot be published as a complete revision-five release')
     return dict(growth_protocol='PHC1 v2',growth_wire_version=2,legacy_wire_versions=[1],
                 mailbox_words=128,snapshot_words=65,talent_bit_capacity=512,curse_byte_capacity=64,
                 manual_rank_words=32,manual_rank_slots_used=21,policy_revision=5,
-                legacy_talents=238,legacy_curses=15,new_talents=162,new_curses=35,
+                legacy_talents=238,legacy_curses=15,new_talents=count-238,new_curses=35,
                 implemented_talents=sum(x['implemented'] for x in rework['talents']),
                 implemented_curses=sum(x['implemented'] for x in rework['curses']))
 
@@ -65,13 +74,16 @@ def catalog_inputs(*,require_implemented=True):
     contract=validate_catalog_bundle(*(catalogs[name] for name in CATALOG_NAMES),require_implemented=require_implemented)
     rework=catalogs['runtime_talents_v5.json']
     power=(PLUGIN/'include/talent_power.generated.h').read_text(encoding='utf8')
-    actual_power=[int(x) for x in re.search(r'kPowerQuarters\[400\]=\{([^}]+)\}',power)[1].split(',')]
+    actual_power=[int(x) for x in re.search(r'kPowerQuarters\[\d+\]=\{([^}]+)\}',power)[1].split(',')]
     if actual_power!=[power_quarters(x) for x in rework['talents']]:
         raise ValueError('Native talent strength differs from the release catalog')
     frozen=(PLUGIN/'include/frozen_catalog.generated.h').read_text(encoding='utf8')
     ranks=(PLUGIN/'include/rework_catalog.generated.h').read_text(encoding='utf8')
     expected_masks=[0]*16
-    for item in rework['talents']:expected_masks[item['bit_index']//32]|=1<<(item['bit_index']%32)
+    for item in rework['talents']:
+        storage=item.get('wire_storage')
+        if storage is None:expected_masks[item['bit_index']//32]|=1<<(item['bit_index']%32)
+        elif storage['word']<=16:expected_masks[storage['word']-1]|=((1<<storage['width'])-1)<<storage['shift']
     def numbers(text,pattern):
         found=re.search(pattern,text)
         if not found:raise ValueError('Generated native catalog contract is missing')
@@ -80,8 +92,12 @@ def catalog_inputs(*,require_implemented=True):
         raise ValueError('Generated native talent masks differ from the release catalog')
     if numbers(frozen,r'kCurseMaxStacks\[kCurseCount\] = \{([^}]+)\}')!=[x['max_stacks'] for x in rework['curses']]:
         raise ValueError('Generated native curse caps differ from the release catalog')
-    if numbers(ranks,r'kRankSlots\[162\]=\{([^}]+)\}')!=[x.get('rank_slot',-1) for x in rework['talents'][238:]]:
+    if numbers(ranks,r'kRankSlots\[(?:\d+|kTalentCount)\]=\{([^}]+)\}')!=[x.get('rank_slot',-1) for x in rework['talents'][238:]]:
         raise ValueError('Generated native manual rank mapping differs from the release catalog')
+    if rework.get('unit_growth_revision'):
+        actual_fields=[tuple(map(int,row)) for row in re.findall(r'\{(\d+),(\d+),(\d+),(\d+)\}',ranks)]
+        expected_fields=[(x['effect_ordinal'],x['wire_storage']['word'],x['wire_storage']['shift'],x['wire_storage']['width']) for x in rework['talents'][437:]]
+        if actual_fields!=expected_fields:raise ValueError('Generated per-unit packed fields differ from the release catalog')
     pins={name:{'path':str(path),'sha256':digest(path)} for name,path in paths.items()}
     return contract,pins
 

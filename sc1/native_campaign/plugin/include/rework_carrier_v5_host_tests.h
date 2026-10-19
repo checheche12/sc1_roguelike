@@ -41,15 +41,15 @@ inline void __cdecl stock_give(bw::Unit* u,U32 owner){
 inline void __cdecl stock_kill(bw::Unit* u){
  ++deaths[static_cast<std::size_t>(u-units.data())];if(u->unit_id==72){for(U32 offset:{0u,8u})while(auto p=pointer(u->unit_specific.bytes,offset)){unlink(p);owner_kill_hook(p,stock_kill);}}u->flingy.hitpoints=0;u->order=0;u->order_state=1;
 }
-inline void stock_queue_cost_time_birth_and_twelve_cap(){
- begin();talent(130);game.upgrade_level_sc[1][43]=1;game.minerals[1]=1000;auto c=carrier(8);CHECK(rework_carrier_v5::capacity(c)==12);const auto cost=original_stat({0,40,73}),time=original_stat({0,42,73});CHECK(cost>0 && time>0);
- for(U32 i=0;i<5;i++)command(c);U32 queued=0;for(auto q:c->build_queue)if(q==73)++queued;CHECK(queued==4 && game.minerals[1]==1000-4*cost);CHECK(c->unit_specific.bytes[16]==8 && game.upgrade_level_sc[1][43]==1);
- c->secondary_order=63;owner_secondary_hook(c,stock_training_step);auto pending=c->secondary_order_target.unit;CHECK(pending && pending->remaining_build_time==time && !(pending->flags&1u));CHECK(c->unit_specific.bytes[16]==8);
- for(U32 i=0;i<time;i++)owner_secondary_hook(c,stock_training_step);CHECK(c->unit_specific.bytes[16]==9 && !c->secondary_order_target.unit);
- for(U32 i=0;i<3*(time+1);i++)owner_secondary_hook(c,stock_training_step);const auto actual=rework_carrier_v5::census(c);CHECK(actual.valid && actual.inside==12 && actual.outside==0);CHECK(c->unit_specific.bytes[16]==12 && game.minerals[1]==1000-4*cost);
+inline void stock_queue_cost_time_birth_and_native_cap(){
+ begin();talent(130);game.upgrade_level_sc[1][43]=1;game.minerals[1]=1000;auto c=carrier(4);CHECK(rework_carrier_v5::capacity(c)==8);const auto cost=original_stat({0,40,73}),time=original_stat({0,42,73});CHECK(cost>0 && time>0);
+ for(U32 i=0;i<5;i++)command(c);U32 queued=0;for(auto q:c->build_queue)if(q==73)++queued;CHECK(queued==4 && game.minerals[1]==1000-4*cost);CHECK(c->unit_specific.bytes[16]==4 && game.upgrade_level_sc[1][43]==1);
+ owner_secondary_hook(c,stock_training_step);auto pending=c->secondary_order_target.unit;CHECK(pending && pending->remaining_build_time==time && !(pending->flags&1u));CHECK(c->unit_specific.bytes[16]==4);
+ for(U32 i=0;i<time;i++)owner_secondary_hook(c,stock_training_step);CHECK(c->unit_specific.bytes[16]==5 && !c->secondary_order_target.unit);
+ for(U32 i=0;i<3*(time+1);i++)owner_secondary_hook(c,stock_training_step);const auto actual=rework_carrier_v5::census(c);CHECK(actual.valid && actual.inside==8 && actual.outside==0);
  command(c);CHECK(game.minerals[1]==1000-4*cost);for(auto q:c->build_queue)CHECK(q==228);
- // Unresearched native4 gets exactly+4 while the research level remains0.
- begin();talent(130);game.minerals[1]=1000;c=carrier(4);CHECK(rework_carrier_v5::capacity(c)==8);for(U32 i=0;i<5;i++)command(c);queued=0;for(auto q:c->build_queue)if(q==73)++queued;CHECK(queued==4 && game.upgrade_level_sc[1][43]==0);
+ // The replacement talent never changes native4/8 capacity or research.
+ begin();talent(130);game.minerals[1]=1000;c=carrier(4);CHECK(rework_carrier_v5::capacity(c)==4);for(U32 i=0;i<5;i++)command(c);for(auto q:c->build_queue)CHECK(q==228);CHECK(game.minerals[1]==1000 && game.upgrade_level_sc[1][43]==0);
 }
 inline void launch_fractional_progress_and_negative_owners(){
  begin();talent(136);auto c=carrier(12);U32 total=0;
@@ -62,19 +62,16 @@ inline void ammo_survives_talent_loss_give_death_and_bad_lists(){
  begin();talent(130);game.upgrade_level_sc[1][43]=1;auto c=carrier(8,4);const auto n=count;g.growth.talent_bits[(238+130)/32]&=~(1u<<((238+130)%32));CHECK(rework_carrier_v5::capacity(c)==8 && rework_carrier_v5::census(c).inside==8 && rework_carrier_v5::census(c).outside==4);
  owner_give_hook(c,2,stock_give);CHECK(rework_carrier_v5::census(c).valid && rework_carrier_v5::census(c).inside+rework_carrier_v5::census(c).outside==12);for(std::size_t i=0;i<n;i++)CHECK(units[i].player==2 && gives[i]==1);
  owner_kill_hook(c,stock_kill);for(std::size_t i=0;i<n;i++)CHECK(deaths[i]==1);
- begin();talent(130);game.upgrade_level_sc[1][43]=1;c=carrier(8);auto head=pointer(c->unit_specific.bytes,0);set_pointer(head->unit_specific.bytes,8,head);CHECK(!rework_carrier_v5::census(c).valid);const auto before=c->unit_specific;{rework_carrier_v5::CommandScope scope(1,"\x27",1);}CHECK(std::memcmp(&c->unit_specific,&before,sizeof(before))==0);
+ begin();talent(130);game.upgrade_level_sc[1][43]=1;c=carrier(8);auto head=pointer(c->unit_specific.bytes,0);set_pointer(head->unit_specific.bytes,8,head);CHECK(!rework_carrier_v5::census(c).valid);const auto before=c->unit_specific;{rework_carrier_v5::BurstScope scope(c);CHECK(!scope.active);}CHECK(std::memcmp(&c->unit_specific,&before,sizeof(before))==0);
 }
-inline void native_extended_upgrade_precedence_and_scope_restore(){
- begin();talent(130);std::array<U8,61*12> levels{};samase::ExtendedArray array{levels.data(),levels.data()+levels.size(),0,0};g.extended=&array;g.extended_count=1;levels[43*12+1]=1;game.upgrade_level_sc[1][43]=0;game.minerals[1]=1000;auto c=carrier(8);
- CHECK(rework_carrier_v5::original_capacity(c)==8 && rework_carrier_v5::capacity(c)==12);const auto cost=original_stat({0,40,73}),time=original_stat({0,42,73});for(U32 i=0;i<5;i++)command(c);CHECK(game.minerals[1]==1000-4*cost && levels[43*12+1]==1 && game.upgrade_level_sc[1][43]==0);
- for(U32 i=0;i<4*(time+1);i++)owner_secondary_hook(c,stock_training_step);CHECK(rework_carrier_v5::census(c).inside==12 && levels[43*12+1]==1 && game.upgrade_level_sc[1][43]==0);command(c);CHECK(game.minerals[1]==1000-4*cost);
- // Native unresearched4 gets exactly+4 even when stale legacy says researched.
- levels[43*12+1]=0;game.upgrade_level_sc[1][43]=1;c=carrier(4);CHECK(rework_carrier_v5::capacity(c)==8);command(c);CHECK(game.minerals[1]==1000-5*cost && levels[43*12+1]==0 && game.upgrade_level_sc[1][43]==1);
- // A present, truncated native array never falls back to stale Game bytes.
- array.end=array.pointer+43*12+1;const auto before=game.minerals[1];{rework_carrier_v5::CommandScope scope(1,"\x27",1);CHECK(!scope.active && c->unit_specific.bytes[16]==4);}CHECK(game.minerals[1]==before && rework_carrier_v5::original_capacity(c)==4);
- g.extended=nullptr;g.extended_count=0;
+inline void native_extended_upgrade_precedence_without_capacity_mutation(){
+ begin();talent(130);std::array<U8,61*12> levels{};samase::ExtendedArray array{levels.data(),levels.data()+levels.size(),0,0};g.extended=&array;g.extended_count=1;levels[43*12+1]=1;game.upgrade_level_sc[1][43]=0;game.minerals[1]=1000;auto c=carrier(4);
+ CHECK(rework_carrier_v5::capacity(c)==8);const auto cost=original_stat({0,40,73}),time=original_stat({0,42,73});for(U32 i=0;i<5;i++)command(c);CHECK(game.minerals[1]==1000-4*cost && levels[43*12+1]==1 && game.upgrade_level_sc[1][43]==0);
+ for(U32 i=0;i<4*(time+1);i++)owner_secondary_hook(c,stock_training_step);CHECK(rework_carrier_v5::census(c).inside==8 && levels[43*12+1]==1 && game.upgrade_level_sc[1][43]==0);command(c);CHECK(game.minerals[1]==1000-4*cost);
+ levels[43*12+1]=0;game.upgrade_level_sc[1][43]=1;c=carrier(4);CHECK(rework_carrier_v5::capacity(c)==4);command(c);CHECK(game.minerals[1]==1000-4*cost && levels[43*12+1]==0 && game.upgrade_level_sc[1][43]==1);
+ array.end=array.pointer+43*12+1;CHECK(rework_carrier_v5::original_capacity(c)==4);g.extended=nullptr;g.extended_count=0;
 }
 }
 inline constexpr std::size_t rework_carrier_group_count=4;
-inline void run_rework_carrier_groups(){rework_carrier_tests::stock_queue_cost_time_birth_and_twelve_cap();rework_carrier_tests::launch_fractional_progress_and_negative_owners();rework_carrier_tests::ammo_survives_talent_loss_give_death_and_bad_lists();rework_carrier_tests::native_extended_upgrade_precedence_and_scope_restore();}
+inline void run_rework_carrier_groups(){rework_carrier_tests::stock_queue_cost_time_birth_and_native_cap();rework_carrier_tests::launch_fractional_progress_and_negative_owners();rework_carrier_tests::ammo_survives_talent_loss_give_death_and_bad_lists();rework_carrier_tests::native_extended_upgrade_precedence_without_capacity_mutation();}
 }

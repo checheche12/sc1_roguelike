@@ -199,6 +199,7 @@ void catalog_test() {
         h.actions=[&] {
             check(h.paint(1)=="1" && text(h.row(-1)).find(kind==1 ? frozen::talent_names[index] : frozen::curse_names[index])!=std::string::npos,"numeric choice button and actual native text panel show corresponding candidate");
             h.preview(1);check(h.submits==0 && h.ui.previewing(),"candidate previews only");
+            if(h.body_lines()[0]!=(kind==1 ? frozen::talent_names[index] : frozen::curse_names[index]))std::cerr<<"preview rejected kind="<<kind<<" index="<<index<<" effect="<<(kind==1 ? frozen::talent_effects[index] : frozen::curse_effects[index])<<"\n";
             check(h.body_lines()[0]==(kind==1 ? frozen::talent_names[index] : frozen::curse_names[index]),"name is first complete upper-panel line");
             check(h.body_lines()[1]==std::string("등급: ")+(kind==1 ? frozen::talent_rarities[index] : frozen::curse_rarities[index]),"rarity is a separate complete line");
             if(no_spaces(h.full_detail())!=no_spaces(h.expected_detail(index,kind)))std::cerr<<"detail mismatch kind="<<kind<<" index="<<index<<" actual="<<h.full_detail()<<" expected="<<h.expected_detail(index,kind)<<"\n";
@@ -527,8 +528,11 @@ void cargo_page_button_test(){
 void bundled_legendary_pages_test() {
     ++groups;
     const unsigned ids[]={300,301,302,303,304,305,341,342,343,344,345,346,383,384,385,386,387,388};
-    for(auto left:ids)for(auto right:ids){
-        if(!legendary_bundles::compatible(left,right))continue;
+    std::vector<std::pair<unsigned,unsigned>> pairs;
+    for(auto left:ids)for(auto right:ids)if(legendary_bundles::compatible(left,right))pairs.emplace_back(left,right);
+    for(auto left:legendary_bundles::entries)if(std::find(std::begin(ids),std::end(ids),left.index)==std::end(ids))
+        for(auto right:legendary_bundles::entries)if(left.race==right.race&&left.rarity==right.rarity&&left.family!=right.family){pairs.emplace_back(left.index,right.index);break;}
+    for(auto pair:pairs){const auto left=pair.first,right=pair.second;
         Host h;bind_api(h);check(h.ui.initialize(&h.api,h.callbacks()),"bundle UI initialized");
         h.show();h.offer.wire_version=2;h.offer.count=2;h.offer.candidates[0]=left;h.offer.partners[0]=right;h.offer.candidates[1]=257;
         for(unsigned i=2;i<4;i++)h.offer.candidates[i]=0;h.ui.show(h.offer);

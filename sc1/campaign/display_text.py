@@ -127,7 +127,8 @@ _SUMMARIES = {
 def concise_description(item: dict) -> str:
     """Render current/legacy canonical items without mutating their pinned record."""
     if item.get('rework_revision')==5 or item.get('effect',{}).get('qa_revision'):
-        return str(item.get('description') or '').strip()
+        from .effect_copy import describe_effect
+        return describe_effect(item)
     if item.get('offer_family'):
         return str(item.get('description') or '').strip()
     if summary := _SUMMARIES.get(item.get("id")):

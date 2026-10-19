@@ -73,8 +73,8 @@ inline void qa30_scout_dual_layer_respects_native_primary_clock(){
  for(U32 type:{70u,80u,88u}){
   qa9_fixture::begin({142});auto scout=unit(type,1,100,100,true);auto ground=unit(37,6,130,100),air=unit(43,6,135,100,true);unit(43,1,132,100,true);
   scout->order=10;multi_fixture::target(scout,ground);pulse(100);
-  CHECK(multi_fixture::shots.size()==multi_target::factor(original_stat({0,19,type})));
-  for(auto& p:rework_combat_v5::projectiles)CHECK(p.second.primary.p==air&&p.second.percent==250);
+  CHECK(multi_fixture::shots.empty()&&rework_combat_v5::focus_base(scout)==75&&air);
+  CHECK(rework_combat_v5::focus_damage(scout,ground,original_stat({0,17,type}),1000,true)==1750);
   const auto stacks=multi_fixture::shots.size();pulse(101);CHECK(multi_fixture::shots.size()==stacks);qa9_fixture::end();
  }
 }
