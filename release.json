@@ -1,0 +1,70 @@
+{
+  "version": "v2026.10.19-qa27",
+  "file": "SC1_Roguelike_20261019_QA27.zip",
+  "sha256": "b2a9ac7db89027f58e51ce71d869405b3a8866813fc6ee369590339a75798a9e",
+  "bytes": 24615105,
+  "runtime_source_commit": "efdeeddad2f61216e1cc8ec9463d6e1dfb8358c6",
+  "native_dll_sha256": "53643c2b149ab77b7e03d8411677b3f450e12677439d0eaec253a498c757181b",
+  "launcher_compiled_from_source": true,
+  "python_regression_scope": {
+    "passed": true,
+    "tests": 31,
+    "failures": 0,
+    "errors": 0,
+    "modules": [
+      "sc1.tests.test_qa26_curses",
+      "sc1.tests.test_rework_packaging",
+      "sc1.tests.test_talent_balance",
+      "sc1.tests.test_mission_balance",
+      "sc1.tests.test_qa25_broodwar_zerg",
+      "sc1.tests.test_checkpoint_maps",
+      "sc1.tests.test_rework_growth.ReworkGrowthTests.test_greedy_finite_caps_leave_three_same_tier_candidates"
+    ],
+    "seconds": 11.47,
+    "inherited_full_scope": "analysis/curse_qa26_20261019/python_validation.json",
+    "scope": "Rerun removed-curse cache replacement in both protocols, common-pool exhaustion, catalog/native package contracts and all map checkpoints. Other unchanged QA26 behavior retains its117-test coverage.",
+    "game_launched": false,
+    "personal_database_accessed": false
+  },
+  "host_groups": 300,
+  "host_checks": 1518181,
+  "map_count": 63,
+  "unchanged_maps": 63,
+  "baseline_wave_budget_percent": 120,
+  "retired_curses": [
+    "끈질긴 후미대",
+    "후속 예비대"
+  ],
+  "raid_counts": [
+    2,
+    6,
+    10
+  ],
+  "raid_max_choices": 3,
+  "reinforcement_increments": [
+    25,
+    30,
+    35
+  ],
+  "attack_hp_increments": [
+    10,
+    15,
+    20
+  ],
+  "unlimited_curse_slots": [
+    16,
+    17,
+    18
+  ],
+  "legendary_unlock": "campaign midpoint",
+  "legendary_reviewed": 20,
+  "legendary_changed": 4,
+  "old_local_distributions_removed": true,
+  "old_growth_databases_deleted": 34,
+  "initial_fresh_completed_mask": 0,
+  "growth_record_preserved": true,
+  "game_started": false,
+  "live_game_verified": false,
+  "readme_patch_notes": false,
+  "created_at_utc": "2026-10-19T08:23:08.783457+00:00"
+}
