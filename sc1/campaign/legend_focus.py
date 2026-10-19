@@ -1,9 +1,9 @@
 """QA39 single-target builds, utility demotions and explicit spell replacement."""
 REVISION=2026102039
-DRAGOON_REVISION=2026102044
+DRAGOON_REVISION=2026102045
 # ordinal,name,mode,base bonus,cadence,proc percent,ramp step,limit
 # Modes:0 steady,1 execute,2 periodic,3 ramp,4 active reflection,
-# 5 stored retaliation,6 armor erosion,7 moving hunt,8 giant hunter.
+# 5 stored retaliation,6 armor erosion,7 moving hunt,8 giant hunter,10 per-unit hit cycle.
 SPECS=(
  (49,'집행 저격',1,100,1,300,0,35),
  (54,'사냥꾼 주행 사격',7,200,1,100,0,0),
@@ -14,7 +14,7 @@ SPECS=(
  (90,'집중 독침',3,0,1,0,30,180),
  (96,'정밀 갈귀',9,50,1,0,0,0),
  (105,'집중 쐐기',0,200,1,0,0,0),
- (137,'과충전 위상탄',2,75,3,450,0,0),
+ (137,'과충전 위상탄',10,75,3,250,0,0),
  (139,'응축 보복',5,100,1,30,0,200),
  (141,'결전 갑충탄',0,400,1,0,0,0),
  (142,'거대 표적 사냥',8,75,1,200,0,0),
@@ -34,6 +34,7 @@ def decorate(catalog):
   if base:text.append(f'일반 공격 피해 +{base}%.')
   if mode==1:text.append(f'대상 체력이 {limit}% 이하면 피해 +{proc}% 추가.')
   if mode==2:text.append(f'같은 적을 {cadence}회 공격할 때마다 그 적에게 원래 공격의 {proc}% 추가 피해.')
+  if mode==10:text.append(f'공격이 {cadence}회 적중할 때마다 세 번째 대상에게 원래 공격의 {proc}% 추가 피해.')
   if mode==3:text.append(f'같은 적을 연속 공격하면 피해가 타격당 {step}%씩 최대 {limit}% 추가 증가. 표적 변경·3초 중단 시 초기화.')
   if mode==4:text.append(f'직접 공격 후 3초간 받은 일반 공격의 실제 체력 피해 {proc}%를 공격자에게 반사. 초당 최대 {limit}. 반사는 재반사되지 않습니다.')
   if mode==5:text.append(f'받은 일반 공격의 실제 체력·보호막 피해 {proc}%를 최대 {limit}까지 저장해 다음 직접 공격의 주 대상에게 돌려줍니다. 공격해야 방출됩니다.')
@@ -48,6 +49,7 @@ def decorate(catalog):
   item['effect'].update(qa_revision=DRAGOON_REVISION if ordinal==137 else REVISION,focus_legend=True,focus_mode=mode,base_bonus_percent=base,
    focus_cadence=cadence,focus_proc_percent=proc,focus_step_percent=step,focus_limit=limit,legacy_area_effect_disabled=True,
    design_role='single_target',reflection_requires_attacking=mode==4,reflection_only_releases_on_attack=mode==5)
+  if ordinal==137:item['effect'].update(focus_requires_same_target=False,focus_counter_scope='unit',focus_reset_on_target_change=False,focus_reset_on_idle=False)
  for ordinal in DEMOTIONS:
   item=by[ordinal];item['rarity']='epic';item['previous_rarity']='legendary';item['effect'].pop('rarity_promoted',None)
   item['effect']['qa_revision']=REVISION

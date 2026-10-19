@@ -34,6 +34,7 @@ inline void focus_hit(bw::Unit* u,bw::Unit* target,U32 amount,U32 weapon) {
  s->focus_hits=same?std::min(0xfffffffeu,s->focus_hits)+1:1;s->focus_last=now();s->focus_target=identity(target);
  for(auto r:legend_focus::rules)if(raw_rank(r.ordinal)&&focus_match(r,u)){
   if(r.mode==2&&s->focus_hits%r.cadence==0)weapon_hurt(target,U32(std::min<std::uint64_t>(0x7fffffffu,std::uint64_t(amount)*r.proc/100)),weapon,u,u->player);
+  if(r.mode==10&&s->dragoon_hits==0)weapon_hurt(target,U32(std::min<std::uint64_t>(0x7fffffffu,std::uint64_t(amount)*r.proc/100)),weapon,u,u->player);
   if(r.mode==5&&s->retaliation){const U32 stored=s->retaliation;s->retaliation=0;weapon_hurt(target,stored,weapon,u,u->player);}
   if(r.mode==6){if(t->erosion_owner!=u->player){t->erosion=0;t->erosion_owner=u->player;}if(t->erosion<0xfffffffeu)++t->erosion;}
  }

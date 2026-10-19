@@ -1,6 +1,6 @@
 # 개발과 빌드
 
-QA44: [새 재능 후보 전송과 승리 대기 수정](docs/qa44-choice-catalog-boundary.md). 이전 변경: [QA43](docs/qa43-energy-array-relocation.md), [QA42](docs/qa42-ability-subjects.md), [QA41](docs/qa41-noncombat-epics.md), [QA40](docs/qa40-effect-copy-and-manuals.md), [QA39](docs/qa39-legend-revision.md), [QA38](docs/qa38-unit-talents-and-waves.md).
+QA45: [드라군 누적 3타와 250% 추가 피해](docs/qa45-dragoon-hit-cycle.md). 이전 변경: [QA44](docs/qa44-choice-catalog-boundary.md), [QA43](docs/qa43-energy-array-relocation.md), [QA42](docs/qa42-ability-subjects.md).
 
 필수 환경: Windows x64, **CPython 3.11.8 x64(Tcl/Tk 포함)**, Visual Studio C++ Desktop 빌드 도구와 Windows SDK입니다. 빌드 도구는 `vswhere`로 찾고 `vcvars64.bat` 환경을 읽습니다. 개인 PC의 컴파일러 경로나 환경 파일은 필요하지 않습니다.
 

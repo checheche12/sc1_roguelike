@@ -272,7 +272,7 @@ struct UnitState {
     U32 last_fire_damage=0;bool fire_seen=false;
     U32 portal_buff_until=0,fleet_buff_until=0,shuttle_guard_until=0,observer_mark_until=0;
     U32 support_frame=~0u,support_hp=0,support_shields=0,mechanical_irradiate_timer=0;
-    Identity focus_target{};U32 focus_hits=0,focus_last=0,erosion=0,erosion_owner=12,retaliation=0;
+    Identity focus_target{};U32 focus_hits=0,focus_last=0,dragoon_hits=0,erosion=0,erosion_owner=12,retaliation=0;
     bool strong_ensnare=false,double_acid=false;U32 ensnare_due[2]{};double ensnare_factor[2]{1,1};
     bool shadow_active=false;U32 shadow_count=0,shadow_step=0,shadow_due=0,shadow_cooldown=0,shadow_invincible=0;int shadow_x=0,shadow_y=0;Identity shadow_targets[5]{};
 };
@@ -806,6 +806,9 @@ inline void ordinary_hit(bw::Unit* source,bw::Unit* target,U32 damage,U32 w,bool
     if(!own(source)||!valid_unit(target)||!is_enemy(target->player)||generated_depth||secondary)return;
     auto s=state(source),t=state(target);if(!s||!t)return;
     if(g.bullet_hit_context){if(s->last_effect_token==token)return;s->last_effect_token=token;}
+    // Count each primary hit before checking whether its victim survived.
+    // This unit-local cycle survives target changes and pauses between attacks.
+    if(talent_power::enabled&&raw_rank(137)&&in(source->unit_id,{66,78})&&damage)s->dragoon_hits=(s->dragoon_hits+1)%3;
     if(!g.bullet_hit_context&&s->launch_frame!=now()){
         s->streak=(s->target.p==target&&generation(s->target)&&now()-s->last_launch<=72) ? std::min(3u,s->streak+1):0;
         s->target=identity(target);s->last_launch=now();s->launch_frame=now();s->weapon=w;++s->shot_count;
