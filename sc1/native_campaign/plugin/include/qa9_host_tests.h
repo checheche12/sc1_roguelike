@@ -54,7 +54,7 @@ inline void qa9_all_unit_legendaries_and_native_damage(){
     using namespace rework_fixture;qa9_fixture::begin({105,106,144});
     for(U32 ordinal:{61u,62u,63u,64u,65u,66u,102u,103u,104u,105u,106u,107u,144u,145u,146u,147u,148u,149u})CHECK(talent_power::quarters(238+ordinal)==(ordinal==148?4u:16u));
     CHECK(talent_power::quarters(256)==4&&talent_power::quarters(257)==10&&talent_power::quarters(389)==4);
-    auto muta=unit(43,1,100,100),target=unit(43,6,150,100,true);auto b=bullet(muta,target,48);CHECK(rework_combat_v5::projectiles.at(b).percent==240);CHECK(rework_combat_v5::pending_shots.back().percent==240);
+    auto muta=unit(43,1,100,100),target=unit(43,6,150,100,true);auto b=bullet(muta,target,48);CHECK(rework_combat_v5::projectiles.at(b).percent==100);CHECK(rework_combat_v5::pending_shots.back().percent==100);
     auto devourer=unit(62,1,100,200);b=bullet(devourer,target,104);CHECK(rework_combat_v5::projectiles.at(b).percent==200);auto ground=unit(37,6,150,200);b=bullet(devourer,ground,104);CHECK(rework_combat_v5::projectiles.at(b).percent==400);
     auto templar=unit(67,1,100,300);b=bullet(templar,ground,84);CHECK(rework_combat_v5::projectiles.at(b).percent==200);qa9_fixture::end();
 }

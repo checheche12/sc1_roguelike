@@ -8935,7 +8935,7 @@
       "id": "051c93bb-ca5d-5a11-8728-e640cad23f20",
       "name": "쐐기 폭풍",
       "target": "뮤탈 일반 공격",
-      "description": "뮤탈이 쐐기벌레를 2발씩 쏩니다. 각 발은 240% 피해를 주며 따로 튕깁니다.",
+      "description": "뮤탈이 쐐기벌레를 2발씩 쏩니다. 각 발은 100% 피해를 주며 따로 튕깁니다.",
       "trigger": "",
       "numbers": "",
       "notes": "세부 적용: 원래 공격을 독립 쐐기벌레 2발로 교체, 발당 원래 피해의 60%. 각 발은 자기 튕김 규칙 유지. 한 발 내부 중복 표적·재귀 금지.",
@@ -8958,8 +8958,10 @@
         "type": "rework_v5",
         "ordinal": 105,
         "source_id": "051c93bb-ca5d-5a11-8728-e640cad23f20",
-        "qa_revision": 2026101610,
-        "benefit_power_quarters": 16
+        "qa_revision": 2026101932,
+        "benefit_power_quarters": 16,
+        "projectile_damage_percent": 100,
+        "projectile_count": 2
       },
       "target_units": [
         43,

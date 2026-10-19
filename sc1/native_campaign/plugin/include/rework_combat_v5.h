@@ -590,7 +590,7 @@ inline void launched(U32 w,bw::Unit* source,bw::Bullet* b) {
             if(rank(18)&&ordinary_weapon(w))queue(source,target,w,talent_power::v5(18,50));
             if(rank(53)&&in(source->unit_id,{0,20})&&ordinary_weapon(w)){p.percent=100;queue(source,target,w,35,2);queue(source,target,w,35,4);}
             if(!bc_battery_emission&&rank(65)&&in(source->unit_id,{12,27,28,29,102})&&ordinary_weapon(w)&&++s->bc_primary_attacks%4==0)queue(source,target,30,100,2);
-            if(rank(105)&&in(source->unit_id,{43,55})&&ordinary_weapon(w)){p.percent=talent_power::v5(105,60);queue(source,target,w,p.percent);}
+            if(rank(105)&&in(source->unit_id,{43,55})&&ordinary_weapon(w)){p.percent=100;queue(source,target,w,p.percent);}
             if((rank(57)&&source->unit_id==12)||(rank(56)&&in(effect_body(source)->unit_id,{3,17}))||(rank(139)&&in(source->unit_id,{68,76}))||(rank(148)&&source->unit_id==73)){
                 const U32 ordinal=source->unit_id==12?57u:source->unit_id==73?148u:in(source->unit_id,{68,76})?139u:56u;
                 const auto count=ordinal==56&&talent_power::enabled ? 2u:std::min(8u,talent_power::v5(ordinal,source->unit_id==12 ? 2u : 1u));
