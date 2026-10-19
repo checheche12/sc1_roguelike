@@ -3,6 +3,19 @@
 #include <cstdint>
 namespace sc1_native { namespace curse_scaling {
 using U32=std::uint32_t;
+// Shared by wire decoding and native application: the tail contains curse
+// counters rather than manual talent ranks. Validate both entry points alike.
+template<U32 RankCount,class Snapshot> inline bool valid_rank_storage(const Snapshot& s) noexcept {
+ static_assert(RankCount<=29,"Extended curse counters overlap manual ranks");
+ if(s.wire_version==1){for(U32 i=0;i<32;++i)if(s.talent_ranks[i])return false;return true;}
+ if(s.wire_version!=2)return false;
+ for(U32 i=RankCount;i<29;++i)if(s.talent_ranks[i])return false;
+ for(U32 slot=16;slot<=18;++slot){
+  const auto extended=s.talent_ranks[47-slot];
+  if(extended && U32(s.curse_counts[slot])!=std::min(extended,255u))return false;
+ }
+ return true;
+}
 // Snapshot tail rank slots29..31 are reserved for QA26 curse counters.
 // The original byte remains saturated so pre-QA26 snapshots remain readable.
 template<class Snapshot> inline U32 count(const Snapshot& s,U32 slot) noexcept {

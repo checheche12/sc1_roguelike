@@ -4,6 +4,7 @@
 #include "include/frozen_catalog.generated.h"
 #include "include/campaign_config.generated.h"
 #include "include/rework_catalog.generated.h"
+#include "include/curse_scaling.h"
 
 #define WIN32_LEAN_AND_MEAN
 #ifndef NOMINMAX
@@ -291,12 +292,6 @@ bool MailboxProtocol::accept_snapshot(const std::uint32_t (&words)[96]) noexcept
     for(std::size_t i=0;i<curse_count;i++)if(((words[28+i/4]>>((i%4)*8))&255u)>frozen::kCurseMaxStacks[i])return false;
     if(wire_version_==1)for(std::size_t bit=frozen::kLegacyTalentCount;bit<512;++bit)if((words[12+bit/32]>>(bit%32))&1u)return false;
     if(wire_version_==2) {
-        static_assert(rework_catalog::kRankCount<=29,"QA26 counter slots overlap manual ranks");
-        for(std::size_t i=rework_catalog::kRankCount;i<29;++i)if(words[44+i])return false;
-        for(std::size_t slot=16;slot<=18;++slot){
-            const auto extended=words[91-slot],byte=(words[28+slot/4]>>((slot%4)*8))&255u;
-            if(extended && byte!=std::min(extended,255u))return false;
-        }
         for(std::size_t i=76;i<96;++i)if(words[i])return false;
         for(std::size_t ordinal=0;ordinal<rework_catalog::kTalentCount;++ordinal){
             const auto slot=rework_catalog::kRankSlots[ordinal];if(slot<0)continue;
@@ -320,15 +315,16 @@ bool MailboxProtocol::accept_snapshot(const std::uint32_t (&words)[96]) noexcept
     for (std::size_t index = 0; index < curse_limit; ++index)
         snapshot.curse_counts[index] = static_cast<std::uint8_t>(words[28 + index / 4] >> ((index % 4) * 8));
     if(wire_version_==2)for(std::size_t index=0;index<32;++index)snapshot.talent_ranks[index]=words[44+index];
+    if(!curse_scaling::valid_rank_storage<rework_catalog::kRankCount>(snapshot))return false;
     if (applied_) {
         for (std::size_t index = 0; index < 16; ++index) {
             if ((snapshot.talent_bits[index] & snapshot_.talent_bits[index]) != snapshot_.talent_bits[index]
                 || snapshot.curse_counts[index] < snapshot_.curse_counts[index]) return false;
         }
         for(std::size_t index=0;index<curse_limit;++index)if(snapshot.curse_counts[index]<snapshot_.curse_counts[index])return false;
-        for(std::size_t slot=16;wire_version_==2 && slot<=18;++slot){
-            const auto current=std::max(std::uint32_t(snapshot.curse_counts[slot]),snapshot.talent_ranks[47-slot]);
-            const auto previous=std::max(std::uint32_t(snapshot_.curse_counts[slot]),snapshot_.talent_ranks[47-slot]);
+        for(std::uint32_t slot=16;wire_version_==2 && slot<=18;++slot){
+            const auto current=curse_scaling::count(snapshot,slot);
+            const auto previous=curse_scaling::count(snapshot_,slot);
             if(current<previous)return false;
         }
         for(std::uint32_t ordinal=0;ordinal<rework_catalog::kTalentCount;++ordinal)

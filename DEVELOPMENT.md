@@ -1,6 +1,6 @@
 # 개발과 빌드
 
-현재 QA27의 후속 예비대 삭제는 [QA27 개발 기록](docs/qa27-reserve-retirement.md)에, 이어받은 저주·전설 변경은 [QA26 기록](docs/qa26-curses-legendaries.md)에 정리했습니다. 후미대는 비활성화되었으며 원래 저장 위치는 호환성을 위해 남아 있습니다.
+?? QA28? ?? ?? ?? ??? [QA28 ?? ??](docs/qa28-growth-application.md)? ??????. ?? ??? [QA27 ??](docs/qa27-reserve-retirement.md), ????? ??? [QA26 ??](docs/qa26-curses-legendaries.md)? ?????.
 
 필수 환경: Windows x64, **CPython 3.11.8 x64(Tcl/Tk 포함)**, Visual Studio C++ Desktop 빌드 도구와 Windows SDK입니다. 빌드 도구는 `vswhere`로 찾고 `vcvars64.bat` 환경을 읽습니다. 개인 PC의 컴파일러 경로나 환경 파일은 필요하지 않습니다.
 

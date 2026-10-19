@@ -26,6 +26,7 @@
 #include "include/campaign_config.generated.h"
 #include "include/campaign_waves.generated.h"
 #include "mailbox_protocol.h"
+#include "include/curse_scaling.h"
 #include "wave_runtime.h"
 #include "include/wave_timer.h"
 #include "include/wave_progression.h"
@@ -600,7 +601,7 @@ bool apply_snapshot(void*,const GrowthSnapshot& s) noexcept {
     for(U32 i=0;i<16;i++){const U32 remaining=talent_limit>i*32 ? std::min(32u,talent_limit-i*32):0;const U32 allowed=remaining==32 ? 0xffffffffu:remaining ? (1u<<remaining)-1u:0u;if(s.talent_bits[i]&~allowed)return reject_growth("talent_bits");}
     for(U32 i=curse_limit;i<64;i++)if(s.curse_counts[i])return reject_growth("curse_slots");
     for(U32 i=0;i<curse_limit;i++)if(s.curse_counts[i]>frozen::kCurseMaxStacks[i])return reject_growth("curse_stack_limit");
-    for(U32 i=s.wire_version==1 ? 0u:rework_catalog::kRankCount;i<32;i++)if(s.talent_ranks[i])return reject_growth("rank_slots");
+    if(!sc1_native::curse_scaling::valid_rank_storage<rework_catalog::kRankCount>(s))return reject_growth("rank_slots");
     try {
         if(!g.weapon_cache){for(U32 id=0;id<228;id++)for(U32 field:{17u,19u}){auto table=table_for({0,field,id},false);if(!table)return false;const auto weapon=read_entry(table,id);if(weapon<130)g.ordinary_weapons[weapon]=true;}g.weapon_cache=true;}
         std::vector<Edit> friendly,enemy;
