@@ -450,7 +450,7 @@ struct Host {
 struct Fixture {
     Host host;
     MailboxProtocol protocol;
-    Fixture(bool phased = false,std::uint32_t wire=1,std::uint32_t capability=1) { CHECK(protocol.initialize(host.callbacks(), 101, phased,wire,capability)); }
+    Fixture(bool phased = false,std::uint32_t wire=1,std::uint32_t capability=1,std::uint32_t mission=101) { CHECK(protocol.initialize(host.callbacks(), mission, phased,wire,capability)); }
     Reply base(std::uint32_t status) {
         Reply reply{};
         const auto sequence = protocol.mailbox_words()[32];
@@ -720,8 +720,8 @@ void dump(Fixture& f) {
               << ' ' << f.protocol.victory_ack_ready() << '\n' << std::flush;
 }
 
-int wire_loop(bool phased = false,std::uint32_t wire=1,std::uint32_t capability=1) {
-    Fixture f(phased,wire,capability); dump(f);
+int wire_loop(bool phased = false,std::uint32_t wire=1,std::uint32_t capability=1,std::uint32_t mission=101) {
+    Fixture f(phased,wire,capability,mission); dump(f);
     std::string command;
     while (std::cin >> command) {
         if (command == "QUIT") return 0;
@@ -731,7 +731,7 @@ int wire_loop(bool phased = false,std::uint32_t wire=1,std::uint32_t capability=
         } else if (command == "TICK") f.protocol.tick();
         else if (command == "CHOOSE") { std::uint32_t slot; if (!(std::cin >> slot)) return 2; f.protocol.submit_choice(slot); }
         else if (command == "GOAL") f.protocol.on_goal_reached();
-        else if (command == "RESET") { if (!f.protocol.initialize(f.host.callbacks(), 101, phased,wire,capability)) return 2; }
+        else if (command == "RESET") { if (!f.protocol.initialize(f.host.callbacks(), mission, phased,wire,capability)) return 2; }
         else if (command == "PHASE") { std::uint32_t phase; if (!(std::cin >> phase)) return 2; f.protocol.request_phase(phase); }
         else if (command != "DUMP") return 2;
         dump(f);
@@ -1037,6 +1037,7 @@ int main(int argc, char** argv) {
         if (argc == 2 && std::string(argv[1]) == "--phase-wire") return wire_loop(true);
         if (argc == 2 && std::string(argv[1]) == "--rework-wire") return wire_loop(true,2);
         if (argc == 2 && std::string(argv[1]) == "--checkpoint-wire") return wire_loop(true,2,2);
+        if (argc == 3 && std::string(argv[1]) == "--checkpoint-wire") return wire_loop(true,2,2,static_cast<std::uint32_t>(std::stoul(argv[2])));
         if (argc == 2 && std::string(argv[1]) == "--phase-tests") return phase_tests();
         if (argc == 2 && std::string(argv[1]) == "--python-driver") { print_python_driver(); return 0; }
         const std::vector<std::function<void()>> tests = {

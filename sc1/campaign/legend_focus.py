@@ -1,5 +1,6 @@
 """QA39 single-target builds, utility demotions and explicit spell replacement."""
 REVISION=2026102039
+DRAGOON_REVISION=2026102044
 # ordinal,name,mode,base bonus,cadence,proc percent,ramp step,limit
 # Modes:0 steady,1 execute,2 periodic,3 ramp,4 active reflection,
 # 5 stored retaliation,6 armor erosion,7 moving hunt,8 giant hunter.
@@ -13,7 +14,7 @@ SPECS=(
  (90,'집중 독침',3,0,1,0,30,180),
  (96,'정밀 갈귀',9,50,1,0,0,0),
  (105,'집중 쐐기',0,200,1,0,0,0),
- (137,'과충전 위상탄',2,75,4,600,0,0),
+ (137,'과충전 위상탄',2,75,3,450,0,0),
  (139,'응축 보복',5,100,1,30,0,200),
  (141,'결전 갑충탄',0,400,1,0,0,0),
  (142,'거대 표적 사냥',8,75,1,200,0,0),
@@ -44,7 +45,7 @@ def decorate(catalog):
   if ordinal==148:text.append('캐리어의 요격기에 적용.')
   item['description']=' '.join(text)+' 주 대상만 타격하며 주변 추가 피해·튕김은 없습니다.'
   if ordinal==197:item['description']='기본 범위 공격은 유지합니다. 같은 공중 적을 6회 공격할 때마다 그 주 대상에게 원래 공격의 900% 추가 피해를 줍니다. 추가 타격은 주변에 퍼지지 않습니다.'
-  item['effect'].update(qa_revision=REVISION,focus_legend=True,focus_mode=mode,base_bonus_percent=base,
+  item['effect'].update(qa_revision=DRAGOON_REVISION if ordinal==137 else REVISION,focus_legend=True,focus_mode=mode,base_bonus_percent=base,
    focus_cadence=cadence,focus_proc_percent=proc,focus_step_percent=step,focus_limit=limit,legacy_area_effect_disabled=True,
    design_role='single_target',reflection_requires_attacking=mode==4,reflection_only_releases_on_attack=mode==5)
  for ordinal in DEMOTIONS:
@@ -70,7 +71,7 @@ def decorate(catalog):
  by[185]['effect'].update(qa_revision=REVISION,mode=11,bonus=100,cone_radius_pixels=96,cone_angle_degrees=120)
  by[149]['description']='스테이시스 필드 반경 1.5배. 해제된 아군은 체력·보호막을 완전히 회복합니다. 적에게는 기존 보호막400·체력300+최대체력25% 피해와 주변 감속을 줍니다.'
  by[149]['effect'].update(qa_revision=REVISION,stasis_radius_multiplier=1.5,stasis_friendly_full_health_shields=True)
- catalog['legend_focus_revision']=REVISION;catalog['single_target_legend_ordinals']=sorted(CONVERTED)
+ catalog['legend_focus_revision']=DRAGOON_REVISION;catalog['single_target_legend_ordinals']=sorted(CONVERTED)
  return catalog
 
 def generate_header(catalog,root):

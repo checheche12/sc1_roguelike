@@ -241,7 +241,14 @@ def choice_payload(request: Request, state: dict) -> bytes:
         raise BridgeError("Manager choice has an invalid candidate")
     indices = [checked_word(item.get("bit_index" if kind == 1 else "byte_index"), "candidate_index") + 1
                for item in candidates]
-    if len(set(indices)) != required or any(index > (512 if kind == 1 else (64 if request.growth_version==2 else 16)) for index in indices):
+    catalog = None
+    if request.growth_version == 2 and kind == 1:
+        from sc1.campaign.runtime_catalog import load_catalog
+        catalog = load_catalog(expected_version=2)
+    # Candidate IDs index the logical catalog. Packed ownership still uses
+    # 512 bits; unit growth can live in reserved rank fields beyond that ID.
+    limit = len(catalog['talents']) if catalog is not None else 512 if kind == 1 else 64 if request.growth_version==2 else 16
+    if len(set(indices)) != required or any(index > limit for index in indices):
         raise BridgeError("Choice candidate is not supported by this map catalog")
     counts = [0] * (64 if request.growth_version==2 else 16)
     for item in state.get("curses", []):
@@ -267,8 +274,6 @@ def choice_payload(request: Request, state: dict) -> bytes:
     if request.growth_version==2:payload.extend([0]*(95-len(payload)))
     if request.growth_version==2 and kind==1:
         from sc1.campaign.legendary_bundles import member_ids
-        from sc1.campaign.runtime_catalog import load_catalog
-        catalog=load_catalog(expected_version=2)
         by_id={item['id']:item for item in catalog['talents']}
         partners=[0]*4
         for i,item in enumerate(candidates):
