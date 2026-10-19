@@ -1,6 +1,6 @@
 # 개발과 빌드
 
-QA29: [air, Yamato and performance notes](docs/qa29-air-yamato-performance.md). Previous growth application fix: [QA28](docs/qa28-growth-application.md).
+QA30: [air audit and runtime performance](docs/qa30-air-runtime-performance.md). Earlier changes: [QA29](docs/qa29-air-yamato-performance.md), [QA28](docs/qa28-growth-application.md).
 
 필수 환경: Windows x64, **CPython 3.11.8 x64(Tcl/Tk 포함)**, Visual Studio C++ Desktop 빌드 도구와 Windows SDK입니다. 빌드 도구는 `vswhere`로 찾고 `vcvars64.bat` 환경을 읽습니다. 개인 PC의 컴파일러 경로나 환경 파일은 필요하지 않습니다.
 

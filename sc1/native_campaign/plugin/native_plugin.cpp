@@ -13,6 +13,7 @@
 #include <cstring>
 #include <cstdarg>
 #include <cmath>
+#include <deque>
 #include <limits>
 #include <numeric>
 #include <vector>
@@ -319,12 +320,22 @@ bool valid_unit(const bw::Unit* u) noexcept {
 #ifdef SC1_NATIVE_HOST_TEST
 std::uint64_t host_unit_scans=0,host_unit_visits=0;
 #endif
+// A scan may call native damage/creation and recursively scan again. Deque
+// elements keep stable references when a deeper call acquires its own buffer.
+namespace unit_scan_scratch {
+inline std::deque<std::vector<U8>> buffers;inline std::size_t depth=0;
+struct Lease {
+    std::vector<U8>& seen;
+    static std::vector<U8>& acquire(){if(depth==buffers.size())buffers.emplace_back();auto& result=buffers[depth];result.assign(g.units_count,0);++depth;return result;}
+    Lease():seen(acquire()){}~Lease(){--depth;}
+};
+}
 template<class F> void living_units(F fn) {
 #ifdef SC1_NATIVE_HOST_TEST
     ++host_unit_scans;
 #endif
     refresh_units();
-    std::vector<U8> seen(g.units_count,0);
+    unit_scan_scratch::Lease scratch;auto& seen=scratch.seen;
     for (auto head:{g.first_active,g.first_hidden}) {
         auto u=head ? head() : nullptr;
         for (std::size_t i=0;valid_unit(u) && i<g.units_count;i++) {
@@ -531,17 +542,20 @@ struct HallucinationCreationScope {
     ~HallucinationCreationScope(){if(enabled)--hallucination_creation_depth;}
 };
 #include "include/max_hp_runtime.h"
+#include "include/owner_dat_query.h"
 class OwnerDatScope {
     struct Saved {bw::DatTable* table;U32 id,value;};
     std::array<Saved,1024> saved_;std::size_t size_=0;
 public:
     OwnerDatScope(U32 unit_owner,U32 weapon_owner,bw::Unit* subject=nullptr) noexcept
         :OwnerDatScope(unit_owner,weapon_owner,subject,subject){}
-    OwnerDatScope(U32 unit_owner,U32 weapon_owner,bw::Unit* subject,bw::Unit* weapon_subject) noexcept {
+    OwnerDatScope(U32 unit_owner,U32 weapon_owner,bw::Unit* subject,bw::Unit* weapon_subject,bool query_only=false) noexcept {
         if(!g.active || !g.applied || GetCurrentThreadId()!=g.game_thread.load())return;
         if(hallucination(subject) || hallucination_creation_depth)unit_owner=12;
         if(hallucination(weapon_subject) || hallucination_creation_depth)weapon_owner=12;
-        for(const auto& e:g.owner_edits){
+        const auto& edits=query_only?owner_dat_query::values():g.owner_edits;
+        ++frame_profile::dat_scopes;if(query_only)++frame_profile::query_scopes;frame_profile::dat_entries+=edits.size();
+        for(const auto& e:edits){
             const U32 owner=e.key.table==1 ? weapon_owner : unit_owner;
             U32 next=owner==player_owner() ? e.friendly : is_enemy(owner) ? e.enemy : e.original;
             if(e.key.table==0 && e.key.field==48 && (e.key.id==11 || e.key.id==42 || e.key.id==57 || e.key.id==69))next=std::min(next,8u);
@@ -555,10 +569,10 @@ public:
             const U32 current=read_entry(e.table,e.key.id);
             if(current==next)continue;
             if(size_==saved_.size())break; // apply_snapshot enforces this bound.
-            saved_[size_++]={e.table,e.key.id,current};write_entry(e.table,e.key.id,next);
+            saved_[size_++]={e.table,e.key.id,current};write_entry(e.table,e.key.id,next);++frame_profile::dat_writes;
         }
         const auto t=existing_track(subject);
-        if(t && ((t->elite && regular_enemy(subject)) || (rework_curses::marked(subject) && rework_curses::hp_percent(subject)!=100)) && unit_owner==subject->player){
+        if(!query_only && t && ((t->elite && regular_enemy(subject)) || (rework_curses::marked(subject) && rework_curses::hp_percent(subject)!=100)) && unit_owner==subject->player){
             const Key key{0,8,subject->unit_id};auto table=table_for(key,false);
             if(table && size_<saved_.size()){
                 const U32 current=read_entry(table,key.id);saved_[size_++]={table,key.id,current};
@@ -641,7 +655,7 @@ bool apply_snapshot(void*,const GrowthSnapshot& s) noexcept {
         rework_economy_v5::before_snapshot();
         g.baseline=std::move(baseline);g.friendly_edits=std::move(friendly);g.enemy_edits=std::move(enemy);
         stat_lookup::reset();
-        g.owner_edits=std::move(owner_edits);g.applied=true;
+        g.owner_edits=std::move(owner_edits);owner_dat_query::reset();g.applied=true;
         max_hp_cache::publish(true);
         for(auto u:units){
             if(hallucination(u))continue;
@@ -783,8 +797,8 @@ bw::Bullet* __cdecl owner_bullet_create_hook(U32,int,int,U32,U32,bw::Unit*,Creat
 void __cdecl owner_unit_hook(bw::Unit* u,UnitFn original) noexcept;
 void __cdecl owner_order_hook(bw::Unit* u,UnitFn original) noexcept;
 void __cdecl owner_hp_hook(bw::Unit* u,std::int32_t hp,SetHp original) noexcept {OwnerDatScope scope(unit_owner(u),unit_owner(u),u);original(u,hp);}
-U32 __cdecl owner_range_hook(bw::Unit* u,U32 id,RangeFn original) noexcept {OwnerDatScope scope(unit_owner(u),unit_owner(u),u);return original(u,id);}
-U32 __cdecl owner_acquire_hook(bw::Unit* u,UnitValueFn original) noexcept {OwnerDatScope scope(unit_owner(u),unit_owner(u),u);return original(u);}
+U32 __cdecl owner_range_hook(bw::Unit* u,U32 id,RangeFn original) noexcept {OwnerDatScope scope(unit_owner(u),unit_owner(u),u,u,true);return original(u,id);}
+U32 __cdecl owner_acquire_hook(bw::Unit* u,UnitValueFn original) noexcept {OwnerDatScope scope(unit_owner(u),unit_owner(u),u,u,true);return original(u);}
 bw::Unit* verified_projectile_source(const ProjectileSource& source) noexcept {
     auto u=source.unit;
     return valid_unit(u) && u->unit_id==source.id && u->player==source.owner &&
@@ -842,7 +856,7 @@ struct DamageObservationScope {
 #include "include/rework_cargo_v5.h"
 #include "include/rework_carrier_v5.h"
 #include "include/campaign_research.h"
-U32 __cdecl owner_attack_range_hook(bw::Unit* u,U32 id,RangeFn original) noexcept {return rework_combat_v5::attack_range(u,owner_range_hook(u,id,original));}
+U32 __cdecl owner_attack_range_hook(bw::Unit* u,U32 id,RangeFn original) noexcept {return rework_combat_v5::attack_range(u,owner_range_hook(u,id,original),id);}
 U32 __cdecl owner_sight_range_hook(bw::Unit* u,U32 ignore_blind,RangeFn original) noexcept {return rework_combat_v5::sight_range(u,owner_range_hook(u,ignore_blind,original),ignore_blind);}
 void __cdecl owner_unit_hook(bw::Unit* u,UnitFn original) noexcept {
     OwnerDatScope scope(unit_owner(u),unit_owner(u),u);rework_cargo_v5::OrderScope cargo(u);if(!cargo.allow_original())return;rework_economy_v5::UnitScope economy(u);original(u);
@@ -1292,6 +1306,7 @@ void restore_baseline() noexcept {
     g.baseline.clear();
 }
 void abandon_session() noexcept {
+    owner_dat_query::reset();
     stat_lookup::reset();
     frame_profile::reset();
     g.survival_hint_shown=false;
@@ -1461,7 +1476,7 @@ void __cdecl frame() noexcept {
         frame_profile::mark(5);
         wave_targeting::step(ready,counter(kGoalCounter));
         g.dialog.set_wave_timer(sc1_native::wave_countdown_text(rework_waves::countdown(ready,counter(kGoalCounter))));
-        frame_profile::mark(6);frame_profile::finish(ready&&after_dialog,game->frame_count,g.units_count);
+        frame_profile::mark(6);frame_profile::finish(ready&&after_dialog,game->frame_count,g.units_count,rework_combat_v5::projectiles.size(),rework_combat_v5::pending_shots.size());
     } catch (...) {set_counter(kReadyCounter,0);set_counter(kAckCounter,0);abandon_session();message("본편 플러그인 실행 오류. 추가 공세와 승리 기록을 중단했습니다.");}
 }
 

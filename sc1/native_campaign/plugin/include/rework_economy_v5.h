@@ -66,6 +66,7 @@ inline bool start_box=false,scaled_resources=false,provided_applied=false,creati
 inline U32 next_mule=0;
 inline bool starting_bonus_credited=false;
 inline U32 starting_workers=0,starting_retry=0;
+inline std::vector<U32> larva_counts;
 inline UnitState* state(bw::Unit* u) {
     if(!valid_unit(u))return nullptr;
     if(state_base!=g.units || states.size()!=g.units_count){states.assign(g.units_count,{});state_base=g.units;}
@@ -335,19 +336,21 @@ inline void starting_bonus(const std::vector<bw::Unit*>& depots) {
 }
 inline void step() {
     if(!enabled())return;auto game=g.game();const auto second=game->elapsed_seconds,frame=game->frame_count;
+    if(rank(21))larva_counts.assign(g.units_count,0);
     std::vector<bw::Unit*> hatcheries;std::vector<bw::Unit*> minerals;std::vector<bw::Unit*> depots;std::vector<bw::Unit*> expired;
     living_units([&](bw::Unit* u){
         if(rank(2) && resource(u->unit_id)){auto s=state(u);if(s && !s->resource_scaled){amount(u,std::min(65535u,amount(u)*3));s->resource_scaled=true;}}
         if(in(u->unit_id,{176,177,178}) && amount(u))minerals.push_back(u);
         auto temporary=state(u);if(temporary && temporary->mule_expiry && second>=temporary->mule_expiry)expired.push_back(u);
         if(!own(u))return;
+        if(rank(21)&&u->unit_id==35&&valid_unit(u->related))++larva_counts[std::size_t(u->related-g.units)];
         if(depot(u->unit_id) && (u->flags&1u))depots.push_back(u);
         if(in(u->unit_id,{131,132,133}) && (u->flags&1u))hatcheries.push_back(u);
     });
     starting_bonus(depots);
     for(auto u:expired){auto s=state(u);if(s)s->mule_expiry=0;if(g.set_hp)g.set_hp(u,0);}
     if(rank(21))for(auto hatch:hatcheries){
-        auto s=state(hatch);if(!s)continue;U32 count=0;living_units([&](bw::Unit* u){if(own(u) && u->unit_id==35 && u->related==hatch)++count;});
+        auto s=state(hatch);if(!s)continue;const U32 count=larva_counts[std::size_t(hatch-g.units)];
         if(count>=6){s->larva_due=0;continue;}
         // Native cap3 remains intact. Below3, speed its verified larva timer;
         // at3..5, continue the same period through the public create API.
@@ -380,5 +383,5 @@ inline void step() {
         }}
     }
 }
-inline void reset() noexcept {states.clear();state_base=nullptr;start_box=scaled_resources=provided_applied=creating_mule=creating_twin=snapshot_seen=false;next_mule=0;starting_bonus_credited=false;starting_workers=starting_retry=0;active_command_scope=nullptr;}
+inline void reset() noexcept {larva_counts.clear();states.clear();state_base=nullptr;start_box=scaled_resources=provided_applied=creating_mule=creating_twin=snapshot_seen=false;next_mule=0;starting_bonus_credited=false;starting_workers=starting_retry=0;active_command_scope=nullptr;}
 }

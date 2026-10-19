@@ -120,7 +120,7 @@ DESCRIPTIONS.update({
  47:'레이스·발키리·배틀크루저(영웅 포함) 사거리 +1타일, 이동 속도 +20%. 레이스·배틀크루저는 이동 사격. 표적을 잃은 테란 유도탄은 4타일 안 적을 한 번 재추적.',
  65:'야마토 준비 동작 약 3배 가속. 일반 공격 4회마다 무료 야마토 1발. 지상·공중 포대는 따로 사격하며 추가 포대 피해 100%. 자동 야마토는 추가탄을 만들지 않습니다.',
  69:'저그 공중군 체력 중첩당 +28%, 최대 4회. 첫 선택에 가디언·디바우러(영웅 포함) 사거리 +1타일, 이동 속도 +20%. 기동 보너스 중첩 없음.',
- 110:'프로토스 공중군 체력·보호막 중첩당 +28%, 최대 4회. 첫 선택에 스카우트·캐리어·아비터(영웅 포함) 사거리 +1타일, 이동 속도 +20%. 기동 보너스 중첩 없음.',
+ 110:'공중군 체력·보호막 중첩당 +28%(최대 4회). 첫 선택: 스카우트·커세어·아비터 사거리 +1타일, 캐리어 교전 거리 +1타일. 스카우트·캐리어·아비터 이동 속도 +20%. 영웅 포함, 기동 보너스 중첩 없음.',
  112:'프로토스 공격 항공기와 인터셉터의 공격력 중첩당 +3, 공격 간격 -4.5%. 최대 4회.',
  153:'레이스·발키리·배틀크루저·과학선·드롭십의 생산 비용 -20%, 생산 시간 -20%.',
  157:'뮤탈·가디언·디바우러·스커지의 생산·변태 비용 -20%, 생산·변태 시간 -20%.',
@@ -145,7 +145,7 @@ def decorate(catalog):
             text=original
             for a,b in REPLACEMENTS.get(ordinal,[]):text=text.replace(a,b)
             item['description']=DESCRIPTIONS[5] if ordinal==5 else original if q==4 and ordinal not in (18,153,157,160) else DESCRIPTIONS.get(ordinal,text)
-            if item.get('max_rank')==4 and ordinal not in (8,9,29,30,31,70,111):
+            if item.get('max_rank')==4 and ordinal not in (8,9,29,30,31,69,70,110,111,112):
                 item['description']=item['description'].replace('반복해서 고를 수 있습니다.','')+' 중첩당 적용, 최대 4회 선택할 수 있습니다.'
             if ordinal in (18,85,107):item['effect']['qa_revision']=2026101816
             if ordinal==148:item['effect']['qa_revision']=2026101824
@@ -168,6 +168,11 @@ def decorate(catalog):
             if ordinal==14:item['effect']['retired']=True
             if ordinal in (36,76,118):
                 item['effect'].update(energy_grant_on_acquisition=True,energy_grant_on_production=True,energy_grant_once=True)
+            # Apply the latest revision last: QA13 health metadata must not
+            # overwrite the new fleet revision and block pinned-store refresh.
+            if ordinal in (69,110,135):item['effect']['qa_revision']=2026101930
+            if ordinal==110:item['effect'].update(corsair_range_tiles=1,corsair_speed_bonus=False,carrier_engagement_range_tiles=1)
+            if ordinal==135:item['effect'].update(attack_counter='primary_corsair_launch',spells_count_as_attacks=False,secondary_attacks_count=False)
         else:
             # Old set-valued cards depend on the map's original DAT values.
             # Keep that reference explicit rather than inventing a fixed total.

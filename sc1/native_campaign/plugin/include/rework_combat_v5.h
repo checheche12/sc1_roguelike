@@ -73,6 +73,9 @@ inline bool plan_stats(const GrowthSnapshot& s,std::vector<Edit>& edits) {
     const auto edit=[&](Key k,U32 op,U32 n,U32 d=1u){return plan_edit(edits,k,op,n,d);};
     const auto plus=[&](Key k,U32 n){return !n || edit(k,1,n);};
     if(talent_power::enabled && rank(s,64) && !edit({4,3,8},0,75))return false;
+    // Carriers have no weapon DAT slot. Their native launch/engagement range
+    // uses acquisition tiles, including the interceptor's parent leash query.
+    if(rank(s,110))for(U32 id:{72u,82u})if(!plus({0,23,id},1))return false;
     std::array<U32,130> fire{};std::array<bool,130> ranged{},air_ranges{};
     for(U32 id=0;id<228;id++){
         U32 health=0;
@@ -194,7 +197,7 @@ inline bw::Unit* resolve(const Identity& i) noexcept {return live(i.p) && i.p->u
 inline bw::Unit* generation(const Identity& i) noexcept {return valid_unit(i.p)&&i.p->unit_id==i.id&&i.p->minor_unique_index==i.unique ? i.p:nullptr;}
 struct UnitState {
     Identity who{},target{};U32 last_launch=0,launch_frame=~0u,weapon=130,streak=0,protection=0,mark=0,armor_mark=0,slow_until=0,slow_percent=100;
-    U32 shot_count=0,bc_primary_attacks=0,next_ground=0,next_air=0,last_damage=0,jump_due=0,last_order=0,stasis_owner=12,stasis_before=0;
+    U32 shot_count=0,bc_primary_attacks=0,corsair_primary_attacks=0,next_ground=0,next_air=0,last_damage=0,jump_due=0,last_order=0,stasis_owner=12,stasis_before=0;
     U32 storm_frame=~0u,storm_count=0;int storm_x=0,storm_y=0;
     U32 fractional[2]{},last_energy=0;bool energy_seen=false;U32 fade_until=0,saved_collision=0;
     bool mobility=false;U32 mobility_flags=0,mobility_speed=0;U8 mobility_type=2,mobility_turn=0,mobility_state=0;std::uint16_t mobility_acceleration=0;
@@ -250,10 +253,15 @@ inline bool visible(bw::Unit* u,U32 player) noexcept {
 }
 inline std::vector<bw::Unit*> around(int x,int y,U32 radius,bw::Unit* excluded,U32 limit,bool enemy=true,int layer=-1,bool bio=false) {
     std::vector<bw::Unit*> result;
+    ++frame_profile::nearby_queries;
+    if(!limit)return result;
+    result.reserve(std::min<std::size_t>(g.units_count,128));
     living_units([&](bw::Unit* u){if(u==excluded || !eligible(u) || (enemy ? !is_enemy(u->player) : u->player!=player_owner()) ||
         (layer>=0 && air(u)!=(layer!=0)) || (bio && !organic(u)) || dist(x,y,u->flingy.position.x,u->flingy.position.y)>std::uint64_t(radius)*radius)return;result.push_back(u);});
-    std::sort(result.begin(),result.end(),[&](bw::Unit* a,bw::Unit* b){const auto da=dist(x,y,a->flingy.position.x,a->flingy.position.y),db=dist(x,y,b->flingy.position.x,b->flingy.position.y);return da==db ? a<b : da<db;});
-    if(result.size()>limit)result.resize(limit);return result;
+    frame_profile::nearby_matches+=result.size();
+    const auto nearer=[&](bw::Unit* a,bw::Unit* b){const auto da=dist(x,y,a->flingy.position.x,a->flingy.position.y),db=dist(x,y,b->flingy.position.x,b->flingy.position.y);return da==db ? a<b : da<db;};
+    if(result.size()>limit){std::nth_element(result.begin(),result.begin()+limit,result.end(),nearer);result.resize(limit);}
+    std::sort(result.begin(),result.end(),nearer);return result;
 }
 inline U32 generated_depth=0,spell_depth=0;
 inline UnitFn native_kill=nullptr;
@@ -513,7 +521,7 @@ struct Projectile {
 };
 inline std::unordered_map<bw::Bullet*,Projectile> projectiles;
 struct PendingShot {Identity source{},target{};U32 weapon=130,percent=100,due=0;};
-inline std::vector<PendingShot> pending_shots;
+inline std::vector<PendingShot> pending_shots,pending_work;
 inline U32 emission_percent=100;inline bool emission_secondary=false,emission_primary=false;
 inline bool bc_battery_emission=false;
 struct BatteryEmissionScope {bool prior;explicit BatteryEmissionScope(bool value):prior(bc_battery_emission){bc_battery_emission=value;}~BatteryEmissionScope(){bc_battery_emission=prior;}};
@@ -576,6 +584,7 @@ inline void launched(U32 w,bw::Unit* source,bw::Bullet* b) {
         auto s=state(effect_body(source));if(s && (s->launch_frame!=now() || s->weapon!=w)){
             s->streak=(s->target.p==target && resolve(s->target) && now()-s->last_launch<=72) ? std::min(3u,s->streak+1) : 0;
             s->target=identity(target);s->last_launch=now();s->launch_frame=now();s->weapon=w;++s->shot_count;
+            if(in(source->unit_id,{60,98})&&w==100)++s->corsair_primary_attacks;
             if(rank(18)&&ordinary_weapon(w))queue(source,target,w,talent_power::v5(18,50));
             if(rank(53)&&in(source->unit_id,{0,20})&&ordinary_weapon(w)){p.percent=100;queue(source,target,w,35,2);queue(source,target,w,35,4);}
             if(!bc_battery_emission&&rank(65)&&in(source->unit_id,{12,27,28,29,102})&&ordinary_weapon(w)&&++s->bc_primary_attacks%4==0)queue(source,target,30,100,2);
@@ -598,7 +607,7 @@ inline void launched(U32 w,bw::Unit* source,bw::Bullet* b) {
     }
     if(rank(140)&&in(source->unit_id,{68,76})&&source->order==6)p.percent=p.percent*talent_power::v5(rank(140)&&in(p.source.id,{68,76})?140u:58u,60)/100;
     if(rank(131)&&in(source->unit_id,{66,78})){b->flingy.top_speed=U32(b->flingy.top_speed*talent_power::rate(131,1.5));b->flingy.current_speed=U32(b->flingy.current_speed*talent_power::rate(131,1.5));b->flingy.next_speed=U32(b->flingy.next_speed*talent_power::rate(131,1.5));}
-    if(auto s=state(effect_body(source)))p.token=s->shot_count;
+    if(auto s=state(effect_body(source)))p.token=in(source->unit_id,{60,98})&&w==100?s->corsair_primary_attacks:s->shot_count;
     projectiles[b]=p;
 }
 struct Persist {Identity target{},source{};U32 kind=0,until=0,due=0,remaining=0,ticks=0;int x=0,y=0;U32 owner=12;int destination_x=0,destination_y=0;};
@@ -686,12 +695,14 @@ inline void ordinary_hit(bw::Unit* source,bw::Unit* target,U32 damage,U32 w,bool
     if(!g.bullet_hit_context&&s->launch_frame!=now()){
         s->streak=(s->target.p==target&&generation(s->target)&&now()-s->last_launch<=72) ? std::min(3u,s->streak+1):0;
         s->target=identity(target);s->last_launch=now();s->launch_frame=now();s->weapon=w;++s->shot_count;
+        if(in(source->unit_id,{60,98})&&w==100)++s->corsair_primary_attacks;
     }
     if(rank(150)&&group(150,source->unit_id))s->protection=now()+talent_power::v5(150,72);
     if(rank(18)&&!g.bullet_hit_context)weapon_hurt(target,talent_power::v5(18,damage/2),w,source,source->player);
     if(rank(51)&&in(source->unit_id,{1,16,99,100,104}))t->armor_mark=now()+talent_power::v5(51,120);
     if(rank(94)&&in(source->unit_id,{44,56}))mark_slow(target,U32(talent_power::rate(in(source->unit_id,{44,56})?94u:135u,0.8)*100),talent_power::v5(in(source->unit_id,{44,56})?94u:135u,48));
-    if(rank(135)&&in(source->unit_id,{60,98})&&s->shot_count%4==0&&air(target))mark_slow(target,U32(talent_power::rate(in(source->unit_id,{44,56})?94u:135u,0.8)*100),talent_power::v5(in(source->unit_id,{44,56})?94u:135u,48));
+    const U32 corsair_attack=g.bullet_hit_context?token:s->corsair_primary_attacks;
+    if(rank(135)&&in(source->unit_id,{60,98})&&w==100&&corsair_attack&&corsair_attack%4==0&&air(target))mark_slow(target,U32(talent_power::rate(135,0.8)*100),talent_power::v5(135,48));
     if(rank(99)&&in(source->unit_id,{38,53}))attach(99,target,source,72,talent_power::v5(99,damage/5),3);
     if(rank(52)&&in(source->unit_id,{10,32})){
         auto old=std::find_if(persistent.begin(),persistent.end(),[&](const Persist& p){return p.kind==52&&p.source.p==source&&p.source.unique==source->minor_unique_index;});
@@ -846,8 +857,11 @@ inline void script_transform(U8* bytes,std::size_t size) noexcept {
 inline void bind(RankLookup lookup=nullptr) noexcept {
     rank_lookup=lookup;combat_effects::damage_enter=enter_damage;combat_effects::damage_leave=leave_damage;combat_effects::damage_filter=damage_allowed;combat_effects::damage_skip=skip_damage;movement_effects::ratio_extension=movement_extension;movement_effects::script_transform=script_transform;
 }
-inline U32 attack_range(bw::Unit* u,U32 value) noexcept {
+inline U32 attack_range(bw::Unit* u,U32 value,U32 weapon_id=130) noexcept {
     if(!own(u))return value;
+    // Keep the legacy Corsair-only shared-DAT exclusion for Raszagal. This
+    // separate fleet bonus explicitly includes both, and no spell weapon.
+    if(rank(110)&&in(u->unit_id,{60,98})&&weapon_id==100)value+=32;
     if(rank(34)&&((u->flags&0x20u)||u->unit_id==124))value+=talent_power::v5(34,32);
     if(air(u->order_target.unit)&&((rank(59)&&in(u->unit_id,{10,32}))||(rank(138)&&in(u->unit_id,{61,74,75}))))return std::max(talent_power::v5(in(u->unit_id,{10,32})?59u:138u,64),value);
     return value;
@@ -1190,7 +1204,7 @@ struct OrderScope {
 };
 inline void reset() noexcept {
     if(state_base==g.units&&states.size()==g.units_count)for(auto& s:states)if(auto u=generation(s.who)){restore_motion(u,s);if(s.fade_until)u->flags=(u->flags&~(0x200000u|0x8000u))|s.saved_collision|s.saved_attack_flag;}
-    irradiation::reset();states.clear();state_base=nullptr;storm_cells.clear();storm_cells_frame=~0u;acid_states.clear();acid_base=nullptr;matrices.clear();matrix_base=nullptr;projectiles.clear();pending_shots.clear();persistent.clear();morph_completions.clear();morph_rewarded.clear();generated_depth=spell_depth=0;DamageScope::current_percent=100;DamageScope::current_secondary=false;DamageScope::current_mobility_bonus=0;emission_percent=100;emission_secondary=false;
+    irradiation::reset();states.clear();state_base=nullptr;storm_cells.clear();storm_cells_frame=~0u;acid_states.clear();acid_base=nullptr;matrices.clear();matrix_base=nullptr;projectiles.clear();pending_shots.clear();pending_work.clear();persistent.clear();morph_completions.clear();morph_rewarded.clear();generated_depth=spell_depth=0;DamageScope::current_percent=100;DamageScope::current_secondary=false;DamageScope::current_mobility_bonus=0;emission_percent=100;emission_secondary=false;
 }
 inline void step() {
     if(!g.active||!g.applied||!g.game||GetCurrentThreadId()!=g.game_thread.load())return;
@@ -1205,15 +1219,16 @@ inline void step() {
         auto& p=it->second;auto b=it->first;
         if(frame-p.created>2400){it=projectiles.erase(it);continue;}
         auto source=resolve(p.source);
-        if(source&&!resolve(p.primary)&&!p.retargeted&&((rank(47)&&race_type(source->unit_id,0))||(rank(133)&&in(source->unit_id,{66,78})))&&original_stat({1,8,p.weapon})==1){
+        if(!p.impact&&source&&!resolve(p.primary)&&!p.retargeted&&((rank(47)&&race_type(source->unit_id,0))||(rank(133)&&in(source->unit_id,{66,78})))&&original_stat({1,8,p.weapon})==1){
             for(auto target:around(p.x,p.y,talent_power::v5(race_type(source->unit_id,0)?47u:133u,64),nullptr,32,true,int(p.layer)))if(target_ok(source,target,p.weapon,false)){
                 b->target.unit=target;b->target.x=target->flingy.position.x;b->target.y=target->flingy.position.y;p.primary=identity(target);p.retargeted=true;break;
             }
         }
         ++it;
     }
-    auto shots=std::move(pending_shots);pending_shots.clear();
-    for(auto& shot:shots){if(std::int32_t(frame-shot.due)<0){pending_shots.push_back(shot);continue;}auto source=resolve(shot.source),target=resolve(shot.target);if(source&&target)emit(source,target,shot.weapon,shot.percent);}
+    pending_work.clear();pending_work.swap(pending_shots);
+    for(auto& shot:pending_work){if(std::int32_t(frame-shot.due)<0){pending_shots.push_back(shot);continue;}auto source=resolve(shot.source),target=resolve(shot.target);if(source&&target)emit(source,target,shot.weapon,shot.percent);}
+    pending_work.clear();
     living_units([&](bw::Unit* u){auto s=state(u);if(!s)return;configure_motion(u,*s);
         if(!u->matrix_timer||!u->defensive_matrix_dmg)if(auto shield=matrix_state(u))shield->reserve=0;
         if(auto a=acid_state(u)){

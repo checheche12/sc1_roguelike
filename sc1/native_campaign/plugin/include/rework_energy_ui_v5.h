@@ -13,13 +13,16 @@ inline U32 identity(const bw::Unit* u) noexcept {return U32(u->unit_id)|(U32(u->
 inline void reset() noexcept {active.store(false,std::memory_order_release);unit_base.store(0);unit_count.store(0);}
 inline void publish() noexcept {
     if(!g.active || !g.applied || !g.units || g.units_count>capacity){reset();return;}
+    if(!(rework_combat_v5::rank(36)||rework_combat_v5::rank(76)||rework_combat_v5::rank(118))){reset();return;}
     unit_base.store(reinterpret_cast<std::uintptr_t>(g.units),std::memory_order_relaxed);unit_count.store(g.units_count,std::memory_order_relaxed);
     for(std::size_t i=0;i<g.units_count;i++){
         auto u=g.units+i;U32 current=0,bonus=0,id=0;
         if(rework_combat_v5::own(u) && (bonus=rework_combat_v5::energy_bonus(u))!=0){
             auto state=rework_combat_v5::state(u);if(state){current=U32(u->energy)+state->energy_reserve;id=identity(u);}
         }
-        auto& e=cache[i];e.sequence.fetch_add(1,std::memory_order_acq_rel);e.identity.store(id,std::memory_order_relaxed);
+        auto& e=cache[i];
+        if(e.identity.load(std::memory_order_relaxed)==id&&e.current.load(std::memory_order_relaxed)==current&&e.bonus.load(std::memory_order_relaxed)==bonus)continue;
+        e.sequence.fetch_add(1,std::memory_order_acq_rel);e.identity.store(id,std::memory_order_relaxed);
         e.current.store(current,std::memory_order_relaxed);e.bonus.store(bonus,std::memory_order_relaxed);e.sequence.fetch_add(1,std::memory_order_release);
     }
     active.store(true,std::memory_order_release);
