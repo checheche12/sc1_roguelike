@@ -18,7 +18,7 @@ inline Identity* identity(const bw::Unit* u) noexcept {
  return v.wave && v.unique==u->minor_unique_index && v.owner==u->player && v.type==u->unit_id?&v:nullptr;
 }
 inline bool marked(const bw::Unit* u) noexcept {u=body(u);auto v=identity(u);auto t=existing_track(u);return g.active && g.applied && g.mission && !g.mission->no_production && v && t && t->spawned && is_enemy(u->player) && !(u->flags&0x40000000u);}
-inline U32 count(U32 slot) noexcept {return slot==25?0u:sc1_native::curse_scaling::count(g.growth,slot);}
+inline U32 count(U32 slot) noexcept {return (slot==24 || slot==25)?0u:sc1_native::curse_scaling::count(g.growth,slot);}
 inline U32 hp_percent(const bw::Unit* u) noexcept {if(!marked(u))return 100;const auto v=identity(u);U32 p=sc1_native::curse_scaling::scale(100,sc1_native::curse_scaling::bonus(count(18),10));if(v->elite)p=sc1_native::curse_scaling::scale(p,60);return U32(std::min<std::uint64_t>(0xffffffffu,std::uint64_t(p)*v->hp/100));}
 inline U32 attack_percent(const bw::Unit* u) noexcept {if(!marked(u))return 100;const auto v=identity(u);U32 p=sc1_native::curse_scaling::scale(100,sc1_native::curse_scaling::bonus(count(17),10));if(v->elite)p=sc1_native::curse_scaling::scale(p,25);return U32(std::min<std::uint64_t>(0xffffffffu,std::uint64_t(p)*v->attack/100));}
 inline U32 speed_fortieths(const bw::Unit* u) noexcept {return marked(u)?40u+4u*std::min(3u,count(19)):40u;}
@@ -138,7 +138,7 @@ inline bw::Unit* finish_created(bw::Unit* u,U32 slot,U32 hp,U32 attack,int x,int
  ground_pulse(x,y,u->player,367);role_marker(u,0,-24,379);max_hp_cache::publish_unit(u);++unit_ordinal;return u;
 }
 inline bw::Unit* create(U32 id,U32 slot,U32 hp=100,U32 attack=100,bool alternate=false,U32 required_owner=12) {
- if(slot==policy::Rear)return nullptr;
+ if(slot==policy::Reserve || slot==policy::Rear)return nullptr;
  if(!enabled() || live_supply()+std::max(1u,original_stat({0,46,id}))>policy::live_supply_cap(g.mission->mission_id))return nullptr;
  // Explicit user exception: only worker-raid Mutalisks appear directly at the
  // mining line. Other waves retain the512px allied clearance at real origins.
@@ -283,19 +283,17 @@ inline void tick(bool ready,bool blocked,bool goal) {
   if(timeline.due(*current)){pending_kind=1;timeline.warn();pending_spawn_at=timeline.departure_at-4;select_specials();}
   else if(support_due && !reserve_at && timeline.second()>=opening_second() && (!support_last || timeline.second()-support_last>=60)){pending_kind=2;timeline.warn();pending_spawn_at=timeline.departure_at-4;support_due=false;support_last=timeline.second();selected={0,0};}
   else if(rework_curses::count(15) && !reserve_at && timeline.second()>=raid_next && (capabilities()&policy::AntiAir)){pending_kind=3;timeline.warn();pending_spawn_at=timeline.departure_at-4;raid_next=timeline.second()+current->interval;selected={0,0};}
-  else if(reserve_at && timeline.second()+4>=reserve_at){pending_kind=4;pending_spawn_at=reserve_at-4;timeline.departure_at=reserve_at;reserve_at=0;selected={0,0};}
-  if(pending_kind){primary=pending_kind==3?raid_owner():choose_origin(true);if(!primary&&pending_kind!=3)primary=choose_origin(false);if(!primary){pending_kind=0;timeline.finished(*current);return;}spawned_pending=false;unit_ordinal=0;g.wave_spawn_number=0;g.current_wave_id=++g.next_wave_id;log_event("V5 added wave warning kind=%u departure=%u normal_ordinal=%u",pending_kind,timeline.departure_at,timeline.ordinal+1);message(pending_kind==4?"후속 예비대가 모습을 드러냅니다. 모습을 드러낸 후 4초 뒤 출발합니다.":"추가 공세가 20초 뒤 모습을 드러냅니다. 모습을 드러낸 후 4초 뒤 출발합니다.");}
+  if(pending_kind){primary=pending_kind==3?raid_owner():choose_origin(true);if(!primary&&pending_kind!=3)primary=choose_origin(false);if(!primary){pending_kind=0;timeline.finished(*current);return;}spawned_pending=false;unit_ordinal=0;g.wave_spawn_number=0;g.current_wave_id=++g.next_wave_id;log_event("V5 added wave warning kind=%u departure=%u normal_ordinal=%u",pending_kind,timeline.departure_at,timeline.ordinal+1);message("추가 공세가 20초 뒤 모습을 드러냅니다. 모습을 드러낸 후 4초 뒤 출발합니다.");}
  }
  if(pending_kind && !spawned_pending && timeline.second()>=pending_spawn_at){
   spawned_pending=true;
   if(pending_kind==1)main_wave();
   else if(pending_kind==2)normal_units(18+8*(std::min(3u,rework_curses::count(20))-1));
   else if(pending_kind==3)count_spawn(43,policy::raid_count(rework_curses::count(15),rework_curses::count(16)),15);
-  else normal_units(reserve_supply,24);
-  if(unit_ordinal)add_detector(pending_kind==3?policy::Raid:pending_kind==4?policy::Reserve:0u);
+  if(unit_ordinal)add_detector(pending_kind==3?policy::Raid:0u);
   log_event("V5 added wave created kind=%u units=%u live_half_supply=%u active_second=%u",pending_kind,unit_ordinal,live_supply(),timeline.second());
  }
- if(pending_kind && timeline.second()>=timeline.departure_at){const auto kind=pending_kind;pending_kind=0;timeline.warning_at=timeline.departure_at=0;if(kind==1){timeline.finished(*current);if(rework_curses::count(24) && timeline.ordinal>=2){reserve_at=timeline.second()+15;reserve_supply=policy::reserve_budget(last_main_budget,rework_curses::count(24));}}primary=nullptr;}
+ if(pending_kind && timeline.second()>=timeline.departure_at){const auto kind=pending_kind;pending_kind=0;timeline.warning_at=timeline.departure_at=0;if(kind==1)timeline.finished(*current);primary=nullptr;}
 }
 inline sc1_native::WaveCountdown countdown(bool ready,bool goal) noexcept {
  if(!ready || goal || !g.mission || g.mission->no_production || !current || !current->enabled)return {};

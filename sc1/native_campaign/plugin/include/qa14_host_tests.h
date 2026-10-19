@@ -20,6 +20,7 @@ inline void qa14_rear_real_counts_and_departure_boundary(){
  rework_wave_tests::begin(101);g.growth.curse_counts[16]=255;g.growth.talent_ranks[31]=256;
  CHECK(rework_curses::count(16)==256);
  g.growth.curse_counts[17]=255;g.growth.talent_ranks[30]=1000;CHECK(rework_curses::count(17)==1000);
+ g.growth.curse_counts[24]=255;CHECK(rework_curses::count(24)==0&& !rework_waves::create(0,24));
  CHECK(p::raid_count(1)==2&&p::raid_count(2)==6&&p::raid_count(3)==10&&p::raid_count(255)==10);
  CHECK(p::raid_count(3,1)==12&&p::raid_count(3,2)==15);
 }

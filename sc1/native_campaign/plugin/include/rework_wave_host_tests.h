@@ -6,7 +6,7 @@ inline void qa_stack_counts_and_wave_budgets(){
  CHECK(p::reduced_amount(0)==0&&p::reduced_amount(1)==1&&p::reduced_amount(20)==17&&p::reduced_amount(32)==27&&p::reduced_amount(40)==34&&p::reduced_amount(128)==109);
  CHECK(p::normal_budget(0)==38&&p::normal_budget(1)==48&&p::normal_budget(12)==153&&p::normal_budget(100)==153);
  const U32 wanted[]={0,2,6,10,10,10,10,10};for(U32 i=0;i<std::size(wanted);i++)CHECK(p::raid_count(i)==wanted[i]);
- CHECK(p::raid_count(4,3)==19);CHECK(p::reserve_budget(40,1)==22&&p::reserve_budget(40,2)==44&&p::reserve_budget(40,3)==66&&p::reserve_budget(128,255)==480);
+ CHECK(p::raid_count(4,3)==19);
 }
 inline void begin(U32 mission=106){wave_target_tests::begin(mission);g.applied=true;g.growth={};g.growth.wire_version=2;rework_waves::reset();CHECK(rework_waves::enabled());}
 inline void advance_second(U32 second){game.frame_count=second*24;game.elapsed_seconds=second;rework_waves::tick(true,false,false);wave_targeting::step(true,false);}
@@ -84,17 +84,13 @@ inline void larger_raids_reserves_and_uncommon_stacks(){
   advance_second(second);
   if(second==rework_waves::current->first){living_units([&](bw::Unit* u){if(rework_curses::marked(u))u->flingy.position={std::int16_t(origin->target.x+96),std::int16_t(origin->target.y+96)};});}
  }
- CHECK(rework_waves::reserve_at==second_departure+15&&rework_waves::reserve_supply==52);
- // A simultaneously eligible raid/death support must not delay the promised
- // reserve departure beyond15sec after its main wave.
- g.growth.curse_counts[15]=1;rework_waves::raid_next=second_departure;rework_waves::support_due=true;
- living_units([&](bw::Unit* u){if(rework_curses::marked(u))u->flingy.position={std::int16_t(origin->target.x+96),std::int16_t(origin->target.y+96)};});
- for(U32 second=second_departure+1;second<second_departure+15;second++)advance_second(second);
- CHECK(rework_waves::pending_kind==4);U32 supply=0;std::array<bool,228> types{};
- living_units([&](bw::Unit* u){const auto v=rework_curses::identity(u);if(v&&v->slot==24){CHECK(rework_curses::appearing(u));supply+=wave_supply(u->unit_id);types[u->unit_id]=true;}});
- CHECK(supply>=41&&supply<=44);CHECK(std::count(types.begin(),types.end(),true)>1);
- advance_second(second_departure+15);CHECK(!rework_waves::pending_kind);
- living_units([&](bw::Unit* u){const auto v=rework_curses::identity(u);if(v&&v->slot==24)CHECK(!rework_curses::appearing(u)&&marching(u));});
+ CHECK(rework_waves::timeline.ordinal==2);
+ CHECK(rework_waves::reserve_at==0&&rework_waves::reserve_supply==0);
+ for(U32 second=second_departure+1;second<=second_departure+15;second++)advance_second(second);
+ CHECK(!rework_waves::pending_kind&&rework_waves::reserve_at==0);
+ living_units([&](bw::Unit* u){const auto v=rework_curses::identity(u);CHECK(!v || v->slot!=24);});
+ CHECK(!rework_waves::create(0,24)&&rework_curses::count(24)==0);
+
 }
 inline void profile_binding_and_readiness(){
  static_assert(std::size(p::kProfiles)==std::size(campaign_config::kMissions),"all original profiles are bound");
@@ -147,7 +143,7 @@ inline void detectors_cover_their_own_army(){
 inline void first_eligible_then_relative_cadence(){
  const p::Profile profile{1,true,true,300,120,180,480,600,720,360,480,600,0};
  for(const auto& r:p::kRosters){
-  p::Timeline t;t.home=true;t.ordinal=2;t.active_ticks=900*24;if(r.slot==p::Rear){CHECK(!t.eligible(profile,r,7));continue;}CHECK(t.eligible(profile,r,7));t.mark_delivered(r.slot);CHECK(!t.eligible(profile,r,0));
+  p::Timeline t;t.home=true;t.ordinal=2;t.active_ticks=900*24;if(r.slot==p::Rear || r.slot==p::Reserve){CHECK(!t.eligible(profile,r,7));continue;}CHECK(t.eligible(profile,r,7));t.mark_delivered(r.slot);CHECK(!t.eligible(profile,r,0));
   if(r.cadence>1){t.ordinal=3;CHECK(!t.eligible(profile,r,7));}
   t.ordinal=2+r.cadence;CHECK(t.eligible(profile,r,7));
   auto disabled=profile;disabled.enabled=false;CHECK(!t.eligible(disabled,r,7));
@@ -325,7 +321,7 @@ inline void uraj_shared_cap_and_capped_growth(){
  for(U32 slot:{0u,15u,20u,24u,25u,38u})CHECK(!rework_waves::create(0,slot));
  CHECK(std::memcmp(original,&untouched,sizeof(untouched))==0);
  living_units([&](bw::Unit* u){if(rework_curses::marked(u))u->flingy.hitpoints=0;});
- CHECK(rework_waves::live_supply()==0&&rework_waves::create(0,24));
+ CHECK(rework_waves::live_supply()==0&&!rework_waves::create(0,24)&&rework_waves::create(0,26));
 }
 inline void native_caster_orders_and_original_hero_exclusion(){
  begin(101);rework_waves::timeline.home=true;rework_waves::timeline.active_ticks=600*24;g.current_wave_id=8;

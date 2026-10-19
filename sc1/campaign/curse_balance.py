@@ -1,6 +1,7 @@
 """QA26 runtime overrides; frozen workshop inputs and wire slots stay intact."""
 REAR_ID = '09224f2f-b115-5c53-adb3-883bb36075cd'
-QA_REVISION = 2026101926
+RESERVE_ID = '9abf9771-866f-55b7-a4ba-ba28bb5e6faf'
+QA_REVISION = 2026101927
 
 
 def decorate(catalog):
@@ -23,8 +24,8 @@ def decorate(catalog):
              {'damage_reduction_percent': 28}),
         23: ('추가 공세 병력이 일반 공격으로 준 실제 체력 피해의 12%/중첩을 회복합니다. 최대 2중첩.',
              {'lifesteal_percent_per_stack': 12}),
-        24: ('두 번째 공세부터 15초 뒤 혼합 예비대가 옵니다. 규모는 중첩당 본 공세의 55%입니다.',
-             {'main_wave_budget_percent_per_stack': 55}),
+        24: ('삭제된 저주입니다. 새 선택지에 등장하지 않으며 기존 획득 기록의 효과도 비활성화됩니다.',
+             {'retired': True, 'runtime_disabled': True}),
         25: ('삭제된 저주입니다. 새 선택지에 등장하지 않으며 기존 획득 기록의 효과도 비활성화됩니다.',
              {'retired': True, 'runtime_disabled': True}),
     }

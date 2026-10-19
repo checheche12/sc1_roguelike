@@ -3,7 +3,7 @@ from pathlib import Path
 from contextlib import closing
 from sc1.campaign import rework_growth,progression,talent_campaign_policy as policy
 from sc1.campaign.runtime_catalog import load_catalog,encode_growth,GrowthError
-from sc1.campaign.curse_balance import REAR_ID
+from sc1.campaign.curse_balance import REAR_ID,RESERVE_ID
 from sc1.manager.store import CampaignStore,GrowthChoicesPending
 
 class QA26Curses(unittest.TestCase):
@@ -43,6 +43,7 @@ class QA26Curses(unittest.TestCase):
   self.assertEqual(raid['effect']['units_sequence'],[2,6,10])
   encode_growth(self.catalog,[],{raid['id']:4})
   self.assertFalse(rework_growth.curse_eligible(self.catalog['curses'][25],101))
+  self.assertFalse(rework_growth.curse_eligible(self.catalog['curses'][24],101))
 
  def test_legendary_unlocks_at_campaign_midpoint_for_every_branch(self):
   for first in (101,201,301,401,501,601):
@@ -53,7 +54,7 @@ class QA26Curses(unittest.TestCase):
   self.assertEqual(rework_growth.curse_tier(105,2),'legendary')
 
  def test_pending_retired_curse_reissued_and_archived_in_both_protocols(self):
-  for phase_version in (1,2):
+  for phase_version,retired_slot in ((1,24),(2,24),(1,25),(2,25)):
    with self.subTest(phase_version=phase_version),tempfile.TemporaryDirectory(prefix='sc1-qa26-disposable-') as tmp:
     path=Path(tmp)/'synthetic.sqlite3';store=CampaignStore(path,new_profile='original')
     def load():
@@ -62,11 +63,11 @@ class QA26Curses(unittest.TestCase):
     state=load()
     while state['offer']['kind']!='curse':
      offer=state['offer'];state=store.choose_growth_phase_slot(offer['offer_id'],1,offer['revision'],101,2,choice_kind=1,phase=1,phase_version=phase_version)
-    offer=state['offer'];oldid=offer['offer_id'];saved=json.dumps([self.catalog['curses'][25]],ensure_ascii=False)
+    offer=state['offer'];oldid=offer['offer_id'];saved=json.dumps([self.catalog['curses'][retired_slot]],ensure_ascii=False)
     with closing(sqlite3.connect(path)) as conn,conn:
      conn.execute('UPDATE growth_offers SET candidates_json=? WHERE offer_id=?',(saved,oldid))
     fresh=load();self.assertNotEqual(fresh['offer']['offer_id'],oldid)
-    self.assertNotIn(REAR_ID,[x['id'] for x in fresh['offer']['candidates']])
+    self.assertTrue({REAR_ID,RESERVE_ID}.isdisjoint(x['id'] for x in fresh['offer']['candidates']))
     with closing(sqlite3.connect(path)) as conn:
      self.assertEqual(conn.execute('SELECT candidates_json FROM growth_offer_retirement_history WHERE offer_id=?',(oldid,)).fetchone()[0],saved)
 

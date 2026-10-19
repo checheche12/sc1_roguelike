@@ -4,7 +4,7 @@ import copy
 import json
 from . import progression, talent_campaign_policy as policy, rank_policy
 from .runtime_catalog import GrowthError, load_catalog, validate_catalog, encode_growth
-from .curse_balance import REAR_ID
+from .curse_balance import REAR_ID, RESERVE_ID
 
 SKIPPED_CURSE='__no_future_added_waves__'
 SKIPPED_FINAL='__campaign_clear_no_final_reward__'
@@ -12,7 +12,7 @@ RETIRED_TALENTS=frozenset(('bbf067dc-0ced-5875-a519-2c0443580c8d',))
 
 
 def retired(item):
-    return item['id'] in RETIRED_TALENTS or item['id']==REAR_ID or bool(item.get('effect',{}).get('retired'))
+    return item['id'] in RETIRED_TALENTS or item['id'] in (REAR_ID,RESERVE_ID) or bool(item.get('effect',{}).get('retired'))
 
 
 def enabled(catalog):
