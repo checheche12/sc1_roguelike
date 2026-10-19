@@ -57,12 +57,14 @@ inline void power_epic_legendary_projectiles_and_qualitative(){
         unit(37,6,140,100);unit(43,6,150,100,true);unit(37,6,160,100);unit(37,1,125,100);
         const auto w=rework_combat_v5::weapon(interceptor,false);CHECK(w<130);
         bullet(interceptor,primary,w);pulse(100);
-        CHECK(multi_fixture::shots.size()==(learned?2u:1u));
+        CHECK(multi_fixture::shots.size()==(learned?3u:1u));
         if(learned){
             const auto& shot=multi_fixture::shots[1];CHECK(shot.target==extra&&shot.target!=primary&&shot.secondary);
             auto extra_bullet=&multi_fixture::bullets[1];CHECK(rework_combat_v5::projectiles.at(extra_bullet).percent==100);
+            const auto& second=multi_fixture::shots[2];CHECK(second.target!=extra&&second.target!=primary&&second.target->unit_id==37&&second.target->player==6&&second.secondary);
+            CHECK(rework_combat_v5::projectiles.at(&multi_fixture::bullets[2]).percent==100);
         }
-        pulse(101);CHECK(multi_fixture::shots.size()==(learned?2u:1u));
+        pulse(101);CHECK(multi_fixture::shots.size()==(learned?3u:1u));
         CHECK(rework_combat_v5::pending_shots.empty());finish();
     }
 }

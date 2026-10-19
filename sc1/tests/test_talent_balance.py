@@ -6,13 +6,15 @@ from sc1.campaign.runtime_catalog import load_catalog
 from sc1.native_campaign.build_native_runtime import catalog_inputs
 
 class TalentBalanceTests(unittest.TestCase):
-    def test_carrier_legend_has_one_additional_target(self):
+    def test_carrier_legend_has_two_additional_targets(self):
         item=load_catalog(expected_version=2)['talents'][238+148]
         self.assertEqual(item['id'],'e021408c-a180-5275-9f8b-1792e28b2524')
         self.assertEqual(item['effect']['benefit_power_quarters'],4)
-        self.assertEqual(item['effect']['qa_revision'],2026101824)
+        self.assertEqual(item['effect']['qa_revision'],2026101933)
+        self.assertEqual(item['effect']['additional_targets'],2)
+        self.assertEqual(item['effect']['additional_target_damage_percent'],100)
         self.assertEqual(item['description'],balance.DESCRIPTIONS[148])
-        self.assertIn('다른 적 1기',item['description'])
+        self.assertIn('다른 적 2기',item['description'])
         self.assertEqual(balance.historical(item)['description'],item['pre_balance_description'])
 
     def test_wire_and_frozen_mechanics_remain_recoverable(self):

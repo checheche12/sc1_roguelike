@@ -17,6 +17,17 @@ U32 effective_max_hp(const bw::Unit* unit) noexcept {
         std::uint64_t(base)*(elite ? 3u:2u)/2u));
 }
 
+U32 effective_max_shields(const bw::Unit* unit) noexcept {
+    if(!valid_unit(unit) || unit->unit_id>=228)return 0;
+    const Key enabled{0,6,unit->unit_id},maximum{0,7,unit->unit_id};
+    if(!g.active || !g.applied || hallucination(unit) || hallucination_creation_depth)
+        return original_stat(enabled)?original_stat(maximum):0u;
+    if(!owner_stat(unit->player,enabled))return 0;
+    const U32 base=owner_stat(unit->player,maximum);
+    // Only the health curse extends shields, not unrelated elite/roster HP.
+    return static_cast<U32>(std::min<std::uint64_t>(65535u,std::uint64_t(base)*rework_curses::shield_percent(unit)/100));
+}
+
 // Render callbacks must not traverse vectors or read mutable growth state.
 // A single simulation-thread writer publishes atomic values. A reader retries
 // no locks and falls back to the engine value during a concurrent publication.
@@ -38,6 +49,7 @@ std::array<std::atomic<U32>,2*130> original_weapon_values{};
 std::array<std::atomic<U32>,12*2*130> owner_weapon_values{};
 std::array<std::atomic<bool>,228> regular_values{};
 std::array<std::atomic<std::uint64_t>,capacity> elite_values{};
+std::array<std::atomic<std::uint64_t>,capacity> shield_values{};
 std::uintptr_t writer_base=0;std::size_t writer_count=0;U32 writer_signature=0xffffffffu;
 U32 identity(const bw::Unit* unit) noexcept {
     return U32(unit->unit_id)|(U32(unit->player)<<16)|(U32(unit->minor_unique_index)<<24);
@@ -46,12 +58,13 @@ void reset() noexcept {
     enabled.store(false,std::memory_order_release);sequence.fetch_add(1,std::memory_order_acq_rel);
     array_base.store(0,std::memory_order_relaxed);array_count.store(0,std::memory_order_relaxed);
     for(auto& value:elite_values)value.store(0,std::memory_order_relaxed);
+    for(auto& value:shield_values)value.store(0,std::memory_order_relaxed);
     writer_base=0;writer_count=0;writer_signature=0xffffffffu;
     sequence.fetch_add(1,std::memory_order_release);
 }
 void forget(const bw::Unit* unit) noexcept {
     if(!valid_unit(unit))return;const auto index=static_cast<std::size_t>(unit-g.units);
-    if(index<capacity)elite_values[index].store(0,std::memory_order_release);
+    if(index<capacity){elite_values[index].store(0,std::memory_order_release);shield_values[index].store(0,std::memory_order_release);}
 }
 void publish_unit(const bw::Unit* unit) noexcept {
     if(!valid_unit(unit))return;const auto index=static_cast<std::size_t>(unit-g.units);if(index>=capacity)return;
@@ -59,6 +72,8 @@ void publish_unit(const bw::Unit* unit) noexcept {
     if(g.active && g.applied && track && ((track->elite && regular_enemy(unit)) || (rework_curses::marked(unit) && rework_curses::hp_percent(unit)!=100)))
         value=(std::uint64_t(identity(unit))<<32)|effective_max_hp(unit);
     elite_values[index].store(value,std::memory_order_release);
+    value=rework_curses::shield_percent(unit)!=100 ? (std::uint64_t(identity(unit))<<32)|effective_max_shields(unit):0;
+    shield_values[index].store(value,std::memory_order_release);
 }
 void begin_transform(const bw::Unit* unit) noexcept {
     if(!valid_unit(unit))return;const auto index=static_cast<std::size_t>(unit-g.units);if(index>=capacity)return;
@@ -68,6 +83,7 @@ void begin_transform(const bw::Unit* unit) noexcept {
     // the published owner table. Noncombat forms never inherit that role.
     if(g.active && g.applied && track && ((track->elite && regular_enemy(unit)) || (rework_curses::marked(unit) && rework_curses::hp_percent(unit)!=100)))
         elite_values[index].store(std::uint64_t((identity(unit)&0xffff0000u)|0xffffu)<<32,std::memory_order_release);
+    shield_values[index].store(0,std::memory_order_release);
 }
 bool publish(bool force=false) noexcept {
     if(!g.active || !g.applied || !g.units || g.units_count>capacity){reset();return false;}
@@ -77,6 +93,7 @@ bool publish(bool force=false) noexcept {
     if(bulk)sequence.fetch_add(1,std::memory_order_acq_rel);
     if(writer_base!=base || writer_count!=g.units_count){
         for(auto& value:elite_values)value.store(0,std::memory_order_relaxed);
+        for(auto& value:shield_values)value.store(0,std::memory_order_relaxed);
         writer_base=base;writer_count=g.units_count;force=true;
     }
     array_base.store(base,std::memory_order_relaxed);array_count.store(g.units_count,std::memory_order_relaxed);
@@ -116,7 +133,11 @@ bool read_values(const bw::Unit* unit,U32& maximum_q8,U32* shields_whole,U32* or
     const bool illusion=(unit->flags&0x40000000u)!=0;
     const U32 original=original_values[id].load(std::memory_order_relaxed);
     U32 result=illusion?original:owner_values[owner*228+id].load(std::memory_order_relaxed);
-    const U32 shield=illusion?original_shields[id].load(std::memory_order_relaxed):owner_shields[owner*228+id].load(std::memory_order_relaxed);
+    U32 shield=illusion?original_shields[id].load(std::memory_order_relaxed):owner_shields[owner*228+id].load(std::memory_order_relaxed);
+    if(shields_whole && !illusion){
+        const auto instance=shield_values[index].load(std::memory_order_acquire);
+        if(instance && static_cast<U32>(instance>>32)==key)shield=static_cast<U32>(instance);
+    }
     const auto elite=elite_values[index].load(std::memory_order_acquire);const U32 elite_key=static_cast<U32>(elite>>32);
     if(!illusion && elite && elite_key==key)result=static_cast<U32>(elite);
     else if(!illusion && elite && elite_key==((key&0xffff0000u)|0xffffu) && regular_values[id].load(std::memory_order_relaxed))

@@ -27,6 +27,7 @@ class FourCommonCurseTests(unittest.TestCase):
             self.assertEqual(item['effect']['increment_step_percent'], step)
             self.assertTrue(item['effect']['unlimited_stacks'])
         self.assertTrue(self.catalog['curses'][19]['effect']['attack_and_movement_speed'])
+        self.assertTrue(self.catalog['curses'][18]['effect']['health_and_shields'])
         self.assertNotIn('speed_percent_per_stack', self.catalog['curses'][19]['effect'])
         manuals = [item for item in self.catalog['talents'] if item.get('repeatable')]
         self.assertTrue(all(item['rank_slot'] < 28 for item in manuals))
@@ -42,8 +43,12 @@ class FourCommonCurseTests(unittest.TestCase):
                 self.assertEqual(words[33 + item['rank_slot']], 2)
             self.assertEqual(words[22], 0)
 
-    def test_old_pin_refreshes_haste_rarity_cap_and_metadata_without_reindexing(self):
+    def test_old_pin_refreshes_haste_and_health_shields_without_reindexing(self):
         old = copy.deepcopy(self.catalog)
+        health = old['curses'][18]
+        health['description'] = 'Previous health-only description'
+        health['effect']['qa_revision'] = 2026101931
+        health['effect'].pop('health_and_shields')
         haste = old['curses'][19]
         haste['rarity'] = 'uncommon'
         haste['max_stacks'] = 3
@@ -59,3 +64,4 @@ class FourCommonCurseTests(unittest.TestCase):
             current = next(item for item in updated['curses'] if item['id'] == haste['id'])
             self.assertEqual(current, self.catalog['curses'][19])
             self.assertEqual(current['source_description'], haste['source_description'])
+            self.assertEqual(updated['curses'][18], self.catalog['curses'][18])

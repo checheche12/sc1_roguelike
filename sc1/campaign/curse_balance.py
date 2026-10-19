@@ -12,8 +12,9 @@ def decorate(catalog):
              {'first_increment_percent': 20, 'increment_step_percent': 4, 'unlimited_stacks': True}),
         17: ('추가 공세 병력의 일반 공격력이 선택할 때마다 기본 공격력 대비 +8%, +12%, +16%…씩 누적 증가합니다. 중첩 상한 없음. 1/2/3중첩 누적 +8/+20/+36%.',
              {'first_increment_percent': 8, 'increment_step_percent': 4, 'unlimited_stacks': True}),
-        18: ('추가 공세 병력의 최대 체력이 선택할 때마다 기본 체력 대비 +8%, +12%, +16%…씩 누적 증가합니다. 중첩 상한 없음. 1/2/3중첩 누적 +8/+20/+36%.',
-             {'first_increment_percent': 8, 'increment_step_percent': 4, 'unlimited_stacks': True}),
+        18: ('추가 공세 병력의 최대 체력과 최대 보호막이 선택할 때마다 각각 기본 수치 대비 +8%, +12%, +16%…씩 누적 증가합니다. 중첩 상한 없음. 1/2/3중첩 누적 각각 +8/+20/+36%.',
+             {'first_increment_percent': 8, 'increment_step_percent': 4, 'unlimited_stacks': True,
+              'health_and_shields': True}),
         19: ('추가 공세 병력의 일반 공격 속도와 이동 속도가 선택할 때마다 각각 기본 속도 대비 +5%, +6%, +7%…씩 누적 증가합니다. 중첩 상한 없음. 1/2/3중첩 누적 각각 +5/+11/+18%. 마법 시전 속도는 바뀌지 않습니다.',
              {'first_increment_percent': 5, 'increment_step_percent': 1, 'unlimited_stacks': True,
               'attack_and_movement_speed': True}),
@@ -53,4 +54,6 @@ def decorate(catalog):
                 item['description'] += note
             effect['roster_hp_percent'] = 110
         effect['qa_revision'] = QA_REVISION
+        if slot == 18:
+            effect['qa_revision'] = 2026101933
     return catalog

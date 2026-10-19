@@ -1,6 +1,6 @@
 # 개발과 빌드
 
-QA32: [Mutalisk legendary damage](docs/qa32-mutalisk-legend-damage.md). Earlier changes: [QA31](docs/qa31-opening-legend-and-curses.md), [QA30](docs/qa30-air-runtime-performance.md), [QA29](docs/qa29-air-yamato-performance.md).
+QA33: [Carrier legendary targets and wave shields](docs/qa33-carrier-legend-targets.md). Earlier changes: [QA32](docs/qa32-mutalisk-legend-damage.md), [QA31](docs/qa31-opening-legend-and-curses.md), [QA30](docs/qa30-air-runtime-performance.md).
 
 필수 환경: Windows x64, **CPython 3.11.8 x64(Tcl/Tk 포함)**, Visual Studio C++ Desktop 빌드 도구와 Windows SDK입니다. 빌드 도구는 `vswhere`로 찾고 `vcvars64.bat` 환경을 읽습니다. 개인 PC의 컴파일러 경로나 환경 파일은 필요하지 않습니다.
 

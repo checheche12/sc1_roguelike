@@ -580,6 +580,13 @@ public:
                 write_entry(table,key.id,effective_max_hp(subject));
             }
         }
+        if(!query_only && valid_unit(subject) && unit_owner==subject->player){
+            const Key key{0,7,subject->unit_id};auto table=table_for(key,false);
+            if(table && size_<saved_.size()){
+                const U32 current=read_entry(table,key.id),next=effective_max_shields(subject);
+                if(current!=next){saved_[size_++]={table,key.id,current};write_entry(table,key.id,next);}
+            }
+        }
     }
     void include_transform_type(const bw::Unit* subject,U32 id) noexcept {
         // Native TransformUnit computes newMax / oldMax directly from DAT.
@@ -594,6 +601,12 @@ public:
         saved_[size_++]={table,id,current};
         const U32 percent=rework_curses::marked(subject) ? rework_curses::hp_percent(subject):150u;
         write_entry(table,id,static_cast<U32>(std::min<std::uint64_t>(0x7fffffffu,std::uint64_t(base)*percent/100)));
+        const Key shield_key{0,7,id};auto shield_table=table_for(shield_key,false);
+        if(shield_table && size_<saved_.size()){
+            const U32 shield=read_entry(shield_table,id);saved_[size_++]={shield_table,id,shield};
+            const U32 shield_base=owner_stat(subject->player,{0,6,id})?owner_stat(subject->player,shield_key):0u;
+            write_entry(shield_table,id,static_cast<U32>(std::min<std::uint64_t>(65535u,std::uint64_t(shield_base)*rework_curses::shield_percent(subject)/100)));
+        }
     }
     ~OwnerDatScope(){while(size_){const auto& e=saved_[--size_];write_entry(e.table,e.id,e.value);}}
     OwnerDatScope(const OwnerDatScope&)=delete;OwnerDatScope& operator=(const OwnerDatScope&)=delete;
@@ -638,6 +651,14 @@ bool apply_snapshot(void*,const GrowthSnapshot& s) noexcept {
             if(!regular_combat_type(id))continue;
             const Key key{0,8,id};auto t=table_for(key,true);if(!t)return false;
             if(read_entry(t,id) && !plan_edit(enemy,key,4,10+s.curse_counts[2],10))return false;
+        }
+        // Pin originals before per-instance shield scopes can touch the DAT.
+        // These owner edits are no-ops; only marked additional waves scale.
+        if(s.wire_version==2 && sc1_native::curse_scaling::count(s,18))for(U32 id=0;id<228;id++){
+            auto enabled=table_for({0,6,id},false);if(!enabled)return false;
+            if(!read_entry(enabled,id))continue;
+            const Key key{0,7,id};auto table=table_for(key,false);if(!table)return false;
+            if(!plan_edit(enemy,key,0,read_entry(table,id),1))return false;
         }
         if(!verify_stat_engine_after_dat())return reject_growth("stat_engine_patch_changed");
         auto game=g.game();if(!game)return reject_growth("game_null");
@@ -966,7 +987,7 @@ void __cdecl owner_give_hook(bw::Unit* u,U32 player,UnitIdFn original) noexcept 
     if(track && track->base_speed && u->flingy.top_speed==track->applied_speed)u->flingy.top_speed=track->base_speed;
     const U32 old_owner=unit_owner(u),id=u->unit_id;
     const U32 before=effective_max_hp(u),after=owner_stat(player,{0,8,id});
-    const U32 shield_before=owner_stat(old_owner,{0,7,id}),shield_after=owner_stat(player,{0,7,id});
+    const U32 shield_before=effective_max_shields(u),shield_after=owner_stat(player,{0,6,id})?owner_stat(player,{0,7,id}):0u;
     const U32 mule_expiry=rework_economy_v5::expiry(u);
     const U32 old_supply=old_owner==player_owner() && mule_expiry ? 0u:owner_stat(old_owner,{0,46,id}),new_supply=owner_stat(player,{0,46,id});
     const U32 old_provided=owner_stat(old_owner,{0,45,id}),new_provided=owner_stat(player,{0,45,id});

@@ -20,6 +20,7 @@ inline Identity* identity(const bw::Unit* u) noexcept {
 inline bool marked(const bw::Unit* u) noexcept {u=body(u);auto v=identity(u);auto t=existing_track(u);return g.active && g.applied && g.mission && !g.mission->no_production && v && t && t->spawned && is_enemy(u->player) && !(u->flags&0x40000000u);}
 inline U32 count(U32 slot) noexcept {return (slot==24 || slot==25)?0u:sc1_native::curse_scaling::count(g.growth,slot);}
 inline U32 hp_percent(const bw::Unit* u) noexcept {if(!marked(u))return 100;const auto v=identity(u);U32 p=sc1_native::curse_scaling::scale(100,sc1_native::curse_scaling::bonus(count(18),8,4));if(v->elite)p=sc1_native::curse_scaling::scale(p,60);return U32(std::min<std::uint64_t>(0xffffffffu,std::uint64_t(p)*v->hp/100));}
+inline U32 shield_percent(const bw::Unit* u) noexcept {return marked(u)?sc1_native::curse_scaling::scale(100,sc1_native::curse_scaling::bonus(count(18),8,4)):100u;}
 inline U32 attack_percent(const bw::Unit* u) noexcept {if(!marked(u))return 100;const auto v=identity(u);U32 p=sc1_native::curse_scaling::scale(100,sc1_native::curse_scaling::bonus(count(17),8,4));if(v->elite)p=sc1_native::curse_scaling::scale(p,25);return U32(std::min<std::uint64_t>(0xffffffffu,std::uint64_t(p)*v->attack/100));}
 inline U32 speed_percent(const bw::Unit* u) noexcept {return marked(u)?sc1_native::curse_scaling::scale(100,sc1_native::curse_scaling::bonus(count(19),5,1)):100u;}
 inline U32 lifesteal_percent(const bw::Unit* u) noexcept {return marked(u)?12u*std::min(2u,count(23)):0u;}
@@ -134,6 +135,7 @@ inline bw::Unit* finish_created(bw::Unit* u,U32 slot,U32 hp,U32 attack,int x,int
  constexpr U32 arrival_flags=0x04009000u;v.saved_flags=u->flags&arrival_flags;v.appearance_until=timeline.second()+4;
  if(g.order)g.order(u,23,x,y,nullptr,228);u->flags|=arrival_flags;
  if(u->flingy.hitpoints>0 && g.set_hp)g.set_hp(u,static_cast<std::int32_t>(std::min<std::uint64_t>(0x7fffffffu,std::uint64_t(original_stat({0,8,u->unit_id}))*rework_curses::hp_percent(u)/100u)));
+ const U32 shields=effective_max_shields(u);if(shields)u->shields=static_cast<std::int32_t>(shields*256u);
  if(original_stat({0,22,u->unit_id})&0x200000u)u->energy=std::max<std::uint16_t>(u->energy,200*256);
  ground_pulse(x,y,u->player,367);role_marker(u,0,-24,379);max_hp_cache::publish_unit(u);++unit_ordinal;return u;
 }

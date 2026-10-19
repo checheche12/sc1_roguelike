@@ -3,6 +3,7 @@
 namespace rework_curses {
 bool marked(const bw::Unit*) noexcept;
 U32 hp_percent(const bw::Unit*) noexcept;
+U32 shield_percent(const bw::Unit*) noexcept;
 U32 attack_percent(const bw::Unit*) noexcept;
 U32 speed_percent(const bw::Unit*) noexcept;
 U32 lifesteal_percent(const bw::Unit*) noexcept;

@@ -593,7 +593,7 @@ inline void launched(U32 w,bw::Unit* source,bw::Bullet* b) {
             if(rank(105)&&in(source->unit_id,{43,55})&&ordinary_weapon(w)){p.percent=100;queue(source,target,w,p.percent);}
             if((rank(57)&&source->unit_id==12)||(rank(56)&&in(effect_body(source)->unit_id,{3,17}))||(rank(139)&&in(source->unit_id,{68,76}))||(rank(148)&&source->unit_id==73)){
                 const U32 ordinal=source->unit_id==12?57u:source->unit_id==73?148u:in(source->unit_id,{68,76})?139u:56u;
-                const auto count=ordinal==56&&talent_power::enabled ? 2u:std::min(8u,talent_power::v5(ordinal,source->unit_id==12 ? 2u : 1u));
+                const auto count=(ordinal==56||ordinal==148)&&talent_power::enabled ? 2u:std::min(8u,talent_power::v5(ordinal,source->unit_id==12 ? 2u : 1u));
                 auto others=around(source->flingy.position.x,source->flingy.position.y,1024,target,64,true,(rank(65)&&source->unit_id==12) ? int(air(target)) : -1);
                 U32 made=0;for(auto other:others)if(target_ok(source,other,weapon(source,air(other)))){const auto additional_weapon=weapon(source,air(other));for(U32 hit=0;hit<multi_target::factor(additional_weapon);hit++)queue(source,other,additional_weapon,100);if(++made==count)break;}
             }

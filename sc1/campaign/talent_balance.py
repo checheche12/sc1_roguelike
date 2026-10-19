@@ -93,7 +93,7 @@ DESCRIPTIONS[70]='저글링·브루들링의 공격력 중첩당 +1.5(중첩 합
 
 DESCRIPTIONS[89]='잠복 후 3초간 공격하거나 맞지 않으면 초당 최대 체력의 6%를 추가 회복합니다.'
 
-DESCRIPTIONS[148]='인터셉터가 주변의 다른 적 1기도 공격합니다. 각 대상에게 원래 피해를 줍니다.'
+DESCRIPTIONS[148]='인터셉터가 주변의 다른 적 2기도 공격합니다. 각 대상에게 원래 피해를 줍니다.'
 
 DESCRIPTIONS.update({
  14:'삭제된 재능입니다. 더 이상 선택하거나 효과를 받을 수 없습니다.',
@@ -145,11 +145,11 @@ def decorate(catalog):
             ordinal=item['effect_ordinal']
             text=original
             for a,b in REPLACEMENTS.get(ordinal,[]):text=text.replace(a,b)
-            item['description']=DESCRIPTIONS[5] if ordinal==5 else original if q==4 and ordinal not in (18,153,157,160) else DESCRIPTIONS.get(ordinal,text)
+            item['description']=DESCRIPTIONS[5] if ordinal==5 else original if q==4 and ordinal not in (18,148,153,157,160) else DESCRIPTIONS.get(ordinal,text)
             if item.get('max_rank')==4 and ordinal not in (8,9,29,30,31,69,70,72,110,111,112):
                 item['description']=item['description'].replace('반복해서 고를 수 있습니다.','')+' 중첩당 적용, 최대 4회 선택할 수 있습니다.'
             if ordinal in (18,85,107):item['effect']['qa_revision']=2026101816
-            if ordinal==148:item['effect']['qa_revision']=2026101824
+            if ordinal==148:item['effect'].update(qa_revision=2026101933,additional_targets=2,additional_target_damage_percent=100)
             if ordinal==53:item['effect'].update(qa_revision=2026101929,primary_attack_percent=100,extra_attack_percent=35,extra_attack_count=2,total_attack_percent=170)
             if ordinal in (47,65,69,110,112,153,157,160):item['effect']['qa_revision']=2026101929
             if ordinal in (47,69,110):item['effect'].update(air_control_range_tiles=1,air_control_speed_percent=20,air_control_stacks=False)
