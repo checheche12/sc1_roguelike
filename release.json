@@ -1,0 +1,85 @@
+{
+  "version": "v2026.10.19-qa31",
+  "file": "SC1_Roguelike_20261019_QA31.zip",
+  "sha256": "28584831bb4b59018069f03c7742fe014d7142150836479a12fd5e2b819826f4",
+  "bytes": 24634070,
+  "runtime_source_commit": "3857847a087e2b13ab2d4ecb4b12941d60451453",
+  "native_dll_sha256": "7faea18506a31db6c7b3c33a3f39e2d346dc5b8813b5219afb892340f74bc70c",
+  "opening_legendary_phase": 1,
+  "opening_legendary_ordinal": 1,
+  "opening_bundle_options": 4,
+  "legendary_effects_per_bundle": 2,
+  "midpoint_guarantee_moved": true,
+  "total_reward_entitlements_unchanged": true,
+  "issued_offers_preserved": true,
+  "frozen_snapshots_preserved": true,
+  "unlimited_curse_slots": [
+    16,
+    17,
+    18,
+    19
+  ],
+  "curse_increment_curves": {
+    "quantity": [
+      20,
+      24,
+      28
+    ],
+    "attack": [
+      8,
+      12,
+      16
+    ],
+    "health": [
+      8,
+      12,
+      16
+    ],
+    "attack_speed": [
+      5,
+      6,
+      7
+    ]
+  },
+  "attack_and_movement_speed": true,
+  "python_regression_scope": {
+    "passed": true,
+    "tests": 95,
+    "failures": 0,
+    "errors": 0,
+    "modules": [
+      "sc1.tests.test_qa31_curses",
+      "sc1.tests.test_qa31_guardian",
+      "sc1.tests.test_qa31_opening_legend",
+      "sc1.tests.test_talent_campaign_policy",
+      "sc1.tests.test_qa16_balance",
+      "sc1.tests.test_qa10_ranks",
+      "sc1.tests.test_qa26_curses",
+      "sc1.tests.test_rework_growth",
+      "sc1.tests.test_rework_packaging",
+      "sc1.tests.test_phased_growth",
+      "sc1.tests.test_phased_bridge"
+    ],
+    "seconds": 365.22,
+    "inherited_full_scope": "analysis/curse_qa26_20261019/python_validation.json",
+    "scope": "Opening legendary bundles, all-six full progression, immutable issued offers and frozen checkpoints, four common unlimited counters, haste attack/movement migration, Guardian display migration, packaging and bridge regressions.",
+    "game_launched": false,
+    "personal_database_accessed": false
+  },
+  "arbiter_escort_rejoin_fixed": true,
+  "guardian_manual_attack_per_rank": 6,
+  "area_visual_geometry_scaling": true,
+  "area_visual_actual_screen_verified": false,
+  "haste_iscript_movement_fixed": true,
+  "host_groups": 333,
+  "host_checks": 1526747,
+  "map_count": 63,
+  "unchanged_maps": 63,
+  "player_record_preserved": true,
+  "player_record_reset": false,
+  "installed_by_agent": false,
+  "game_started": false,
+  "live_game_verified": false,
+  "readme_patch_notes": false,
+  "created_at_utc": "2026-10-19T13:08:23.250873+00:00"
+}
