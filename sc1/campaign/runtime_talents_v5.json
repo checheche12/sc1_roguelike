@@ -30559,7 +30559,7 @@
       "id": "93d7201b-f0e9-5e54-87d5-28ffa9da3519",
       "name": "유도탄 재탐색",
       "target": "테란 일반 유도 미사일",
-      "description": "테란 유도탄의 표적이 죽으면 4타일 안 같은 공격층의 다른 적을 한 번 추적합니다.",
+      "description": "레이스·발키리·배틀크루저(영웅 포함) 사거리 +1타일, 이동 속도 +20%. 레이스·배틀크루저는 이동 사격. 표적을 잃은 테란 유도탄은 4타일 안 적을 한 번 재추적.",
       "trigger": "",
       "numbers": "",
       "notes": "",
@@ -30569,7 +30569,7 @@
       "category": "combat",
       "source": "proposal",
       "baseline": "",
-      "rarity": "rare",
+      "rarity": "uncommon",
       "kind": "talent",
       "bit_index": 285,
       "implemented": true,
@@ -30582,8 +30582,12 @@
         "type": "rework_v5",
         "ordinal": 47,
         "source_id": "93d7201b-f0e9-5e54-87d5-28ffa9da3519",
-        "qa_revision": 2026101610,
-        "benefit_power_quarters": 8
+        "qa_revision": 2026101929,
+        "benefit_power_quarters": 8,
+        "air_control_range_tiles": 1,
+        "air_control_speed_percent": 20,
+        "air_control_stacks": false,
+        "moving_air_primary_attack_percent": 100
       },
       "target_units": [
         4,
@@ -30982,7 +30986,7 @@
       "id": "a6e806d8-2677-5c80-b35c-a6629160aeb8",
       "name": "삼점사 소총",
       "target": "마린 일반 공격",
-      "description": "마린이 한 번에 3점사합니다. 탄환마다 원래 피해의 150%를 줍니다.",
+      "description": "마린·짐 레이너(마린)가 한 번 공격할 때 기본탄 100% 한 발과 추가탄 35% 두 발을 쏩니다. 총 피해 170%.",
       "trigger": "",
       "numbers": "",
       "notes": "개편 효과 제안: 원래 공격 주기마다 0.08초 간격 3발, 탄당 원래 피해의 60%. 주 공격은 별도 유지하지 않음. 추가 공격 재발동 금지.",
@@ -31005,8 +31009,12 @@
         "type": "rework_v5",
         "ordinal": 53,
         "source_id": "a6e806d8-2677-5c80-b35c-a6629160aeb8",
-        "qa_revision": 2026101610,
-        "benefit_power_quarters": 10
+        "qa_revision": 2026101929,
+        "benefit_power_quarters": 10,
+        "primary_attack_percent": 100,
+        "extra_attack_percent": 35,
+        "extra_attack_count": 2,
+        "total_attack_percent": 170
       },
       "target_units": [
         0,
@@ -31710,7 +31718,7 @@
       "id": "b8a603b2-ca89-5cf0-bdab-f5b7549480e4",
       "name": "삼중 야마토",
       "target": "배틀크루저 야마토",
-      "description": "야마토 3발이 각각 200% 피해를 줍니다. 총 에너지 75. 추가탄은 4타일 안 다른 적을 우선하며 부족하면 주 대상에 집중합니다. 탄착지 3타일 안 다른 적 최대 6기에 기본 야마토의 50% 폭발 피해. 직접 피격 대상 제외, 중복 폭발 없음.",
+      "description": "야마토 준비 동작 약 3배 가속. 3발 각각 200% 피해, 에너지 75. 추가탄은 4타일 안 다른 적 우선, 부족하면 주 대상 집중. 탄착지 3타일 안 다른 적 최대 6기에 기본 야마토의 50% 폭발 피해(직격 대상 제외·중복 없음).",
       "trigger": "",
       "numbers": "",
       "notes": "세부 적용: 주 표적 원래 피해, 반경 3타일 내 다른 적 최대 2기에 각각 원래 피해의 50%. 비용·주 시전 1회, 동일 대상 중복 금지.",
@@ -31733,11 +31741,14 @@
         "type": "rework_v5",
         "ordinal": 64,
         "source_id": "b8a603b2-ca89-5cf0-bdab-f5b7549480e4",
-        "qa_revision": 2026101926,
+        "qa_revision": 2026101929,
         "benefit_power_quarters": 16,
         "blast_radius_pixels": 96,
         "blast_targets_per_cast": 6,
-        "blast_native_damage_percent": 50
+        "blast_native_damage_percent": 50,
+        "yamato_prelaunch_wait_frames": 0,
+        "yamato_cast_speed_approx_multiplier": 3,
+        "yamato_cast_speed_stacks": false
       },
       "target_units": [
         12,
@@ -31782,7 +31793,7 @@
       "id": "e2575cd1-1d24-5048-addd-b0eccccbccd9",
       "name": "전방위 전함",
       "target": "배틀크루저 일반 공격",
-      "description": "배틀크루저가 지상·공중을 동시에 공격합니다. 추가 공격층의 피해는 400%입니다.",
+      "description": "야마토 준비 동작 약 3배 가속. 일반 공격 4회마다 무료 야마토 1발. 지상·공중 포대는 따로 사격하며 추가 포대 피해 100%. 자동 야마토는 추가탄을 만들지 않습니다.",
       "trigger": "",
       "numbers": "",
       "notes": "세부 적용: 지상 무기와 공중 무기가 각각 적합한 주 표적을 독립 공격. 각 무기의 원래 주기 유지. 분산 포격이 있으면 각 층 최대 3기, 중복 대상·재귀 금지.",
@@ -31805,8 +31816,15 @@
         "type": "rework_v5",
         "ordinal": 65,
         "source_id": "e2575cd1-1d24-5048-addd-b0eccccbccd9",
-        "qa_revision": 2026101610,
-        "benefit_power_quarters": 16
+        "qa_revision": 2026101929,
+        "benefit_power_quarters": 16,
+        "auto_yamato_every_primary_attacks": 4,
+        "auto_yamato_percent": 100,
+        "auto_yamato_energy": 0,
+        "secondary_layer_percent": 100,
+        "yamato_prelaunch_wait_frames": 0,
+        "yamato_cast_speed_approx_multiplier": 3,
+        "yamato_cast_speed_stacks": false
       },
       "target_units": [
         12,
@@ -32074,7 +32092,7 @@
       "id": "0acfc640-2141-5dbb-aef3-59b6d96fd8b6",
       "name": "비행 군체 외피",
       "target": "저그 공중 병력·영웅",
-      "description": "저그 공중 병력과 영웅의 최대 체력 +28%. 퀸·오버로드도 포함됩니다. 중첩당 적용, 최대 4회 선택할 수 있습니다.",
+      "description": "저그 공중군 체력 중첩당 +28%, 최대 4회. 첫 선택에 가디언·디바우러(영웅 포함) 사거리 +1타일, 이동 속도 +20%. 기동 보너스 중첩 없음. 중첩당 적용, 최대 4회 선택할 수 있습니다.",
       "trigger": "",
       "numbers": "",
       "notes": "모든 공중 병력은 이 카드에만 포함됩니다. 퀸·오버로드 포함, 지상 갑각 카드와 겹치지 않습니다.",
@@ -32099,6 +32117,9 @@
         "source_id": "0acfc640-2141-5dbb-aef3-59b6d96fd8b6",
         "qa_revision": 2026101713,
         "benefit_power_quarters": 7,
+        "air_control_range_tiles": 1,
+        "air_control_speed_percent": 20,
+        "air_control_stacks": false,
         "health_percent_per_rank": 28
       },
       "target_units": [
@@ -35098,7 +35119,7 @@
       "id": "6e8a9b64-74d6-573f-a944-94a9c5e0d0bd",
       "name": "함대 동체 강화",
       "target": "프로토스 공중 병력·영웅",
-      "description": "프로토스 공중 병력과 영웅의 최대 체력·보호막 +28%. 중첩당 적용, 최대 4회 선택할 수 있습니다.",
+      "description": "프로토스 공중군 체력·보호막 중첩당 +28%, 최대 4회. 첫 선택에 스카우트·캐리어·아비터(영웅 포함) 사거리 +1타일, 이동 속도 +20%. 기동 보너스 중첩 없음. 중첩당 적용, 최대 4회 선택할 수 있습니다.",
       "trigger": "",
       "numbers": "",
       "notes": "인터셉터 탄약 제외.",
@@ -35123,6 +35144,9 @@
         "source_id": "6e8a9b64-74d6-573f-a944-94a9c5e0d0bd",
         "qa_revision": 2026101713,
         "benefit_power_quarters": 7,
+        "air_control_range_tiles": 1,
+        "air_control_speed_percent": 20,
+        "air_control_stacks": false,
         "health_percent_per_rank": 28,
         "shield_percent_per_rank": 28
       },
@@ -35256,7 +35280,7 @@
       "id": "a217d71f-2e7d-5655-a8ca-3f2e7e0acbca",
       "name": "함대 화력 교범",
       "target": "프로토스 공격 항공기",
-      "description": "프로토스 공격 항공기와 인터셉터의 공격력 +3.  중첩당 적용, 최대 4회 선택할 수 있습니다.",
+      "description": "프로토스 공격 항공기와 인터셉터의 공격력 중첩당 +3, 공격 간격 -4.5%. 최대 4회. 중첩당 적용, 최대 4회 선택할 수 있습니다.",
       "trigger": "",
       "numbers": "선택 횟수 제한 없음. 같은 창에서는 동일 재능 1개만 표시. 공격주기 = 원래 주기 × 0.97^중첩 수(해당 교범에만 적용). 엔진 최소 1틱, 매 단계 원본에서 다시 계산.",
       "notes": "일반 병력 교범은 보유 후에도 재등장합니다. 공격력·방어력은 중첩당 수치를 합산하고, 이동 속도는 원래 속도 × (1 + 0.03 × 중첩 수)로 계산합니다. 일꾼·건물·탄약은 제외하며, 인터셉터는 함대 교범의 공격력만 캐리어를 통해 1회 상속합니다. 지상/공중 분류는 겹치지 않습니다. 자폭·튀김의 타격 수와 마법 피해는 늘리지 않습니다. 기존 발급 선택과 과거 기록은 재해석하지 않습니다.",
@@ -35279,7 +35303,7 @@
         "type": "rework_v5",
         "ordinal": 112,
         "source_id": "a217d71f-2e7d-5655-a8ca-3f2e7e0acbca",
-        "qa_revision": 2026101610,
+        "qa_revision": 2026101929,
         "benefit_power_quarters": 6
       },
       "target_units": [
@@ -38094,7 +38118,7 @@
       "id": "ed7dc56a-5a05-54b3-9587-33b53b9462c1",
       "name": "항공 공동 조달",
       "target": "레이스·발키리·배틀크루저·과학선·드롭십",
-      "description": "레이스·발키리·배틀크루저·과학선·드롭십의 생산 비용 -20%.",
+      "description": "레이스·발키리·배틀크루저·과학선·드롭십의 생산 비용 -20%, 생산 시간 -20%.",
       "trigger": "",
       "numbers": "",
       "notes": "별도 경제 선택에서만 등장하며 경제 보상은 캠페인 전체 5회입니다. 직접 생산·변태할 때 실제로 지불하는 미네랄과 가스에 20% 할인을 적용합니다. 양수 비용은 80%를 올림하여 최소 1, 원래 0은 0입니다. 저글링·스커지 한 알의 묶음 가격과 변태 시 추가 지불액을 기준으로 하며, 이미 지불한 이전 형태 비용은 환급하지 않습니다. 취소 환급은 실제 지불액 기준. 일꾼·건물·영웅·스캐럽·인터셉터·무료 합체·구출·트리거 생성은 제외합니다. 인구·생산 시간은 그대로입니다. 큐 삽입·취소·변태마다 중복 환급하지 않습니다.",
@@ -38117,8 +38141,9 @@
         "type": "rework_v5",
         "ordinal": 153,
         "source_id": "ed7dc56a-5a05-54b3-9587-33b53b9462c1",
-        "qa_revision": 2026101610,
-        "benefit_power_quarters": 4
+        "qa_revision": 2026101929,
+        "benefit_power_quarters": 4,
+        "production_time_reduction_percent": 20
       },
       "target_units": [
         8,
@@ -38373,7 +38398,7 @@
       "id": "5ec00495-8218-5c6c-9580-2ab4bf35a601",
       "name": "비행 군체 배양",
       "target": "뮤탈리스크·가디언·디바우러·스커지",
-      "description": "뮤탈·가디언·디바우러·스커지의 생산·변태 비용 -20%.",
+      "description": "뮤탈·가디언·디바우러·스커지의 생산·변태 비용 -20%, 생산·변태 시간 -20%.",
       "trigger": "",
       "numbers": "",
       "notes": "별도 경제 선택에서만 등장하며 경제 보상은 캠페인 전체 5회입니다. 직접 생산·변태할 때 실제로 지불하는 미네랄과 가스에 20% 할인을 적용합니다. 양수 비용은 80%를 올림하여 최소 1, 원래 0은 0입니다. 저글링·스커지 한 알의 묶음 가격과 변태 시 추가 지불액을 기준으로 하며, 이미 지불한 이전 형태 비용은 환급하지 않습니다. 취소 환급은 실제 지불액 기준. 일꾼·건물·영웅·스캐럽·인터셉터·무료 합체·구출·트리거 생성은 제외합니다. 인구·생산 시간은 그대로입니다. 큐 삽입·취소·변태마다 중복 환급하지 않습니다.",
@@ -38396,8 +38421,9 @@
         "type": "rework_v5",
         "ordinal": 157,
         "source_id": "5ec00495-8218-5c6c-9580-2ab4bf35a601",
-        "qa_revision": 2026101610,
-        "benefit_power_quarters": 4
+        "qa_revision": 2026101929,
+        "benefit_power_quarters": 4,
+        "production_time_reduction_percent": 20
       },
       "target_units": [
         43,
@@ -38571,7 +38597,7 @@
       "id": "3e5f0fa1-e055-5e5a-b2b7-57c939efe61b",
       "name": "함대 공동 소환",
       "target": "스카우트·커세어·캐리어·아비터·셔틀·옵저버",
-      "description": "스카우트·커세어·캐리어·아비터·셔틀·옵저버의 생산 비용 -20%.",
+      "description": "스카우트·커세어·캐리어·아비터·셔틀·옵저버의 생산 비용 -20%, 생산 시간 -20%.",
       "trigger": "",
       "numbers": "",
       "notes": "별도 경제 선택에서만 등장하며 경제 보상은 캠페인 전체 5회입니다. 직접 생산·변태할 때 실제로 지불하는 미네랄과 가스에 20% 할인을 적용합니다. 양수 비용은 80%를 올림하여 최소 1, 원래 0은 0입니다. 저글링·스커지 한 알의 묶음 가격과 변태 시 추가 지불액을 기준으로 하며, 이미 지불한 이전 형태 비용은 환급하지 않습니다. 취소 환급은 실제 지불액 기준. 일꾼·건물·영웅·스캐럽·인터셉터·무료 합체·구출·트리거 생성은 제외합니다. 인구·생산 시간은 그대로입니다. 큐 삽입·취소·변태마다 중복 환급하지 않습니다.",
@@ -38594,8 +38620,9 @@
         "type": "rework_v5",
         "ordinal": 160,
         "source_id": "3e5f0fa1-e055-5e5a-b2b7-57c939efe61b",
-        "qa_revision": 2026101610,
-        "benefit_power_quarters": 4
+        "qa_revision": 2026101929,
+        "benefit_power_quarters": 4,
+        "production_time_reduction_percent": 20
       },
       "target_units": [
         60,

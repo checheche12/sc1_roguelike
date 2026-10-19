@@ -64,11 +64,16 @@ inline U32 manual_base(U32 ordinal,U32 id) noexcept {
 }
 // QA13: shared defense manuals grant +0.5 armor and +28% health per rank.
 inline std::uint64_t armor_eighths(U32 stacks) noexcept {return std::uint64_t(stacks)*4u;}
+inline bool air_control(const GrowthSnapshot& snapshot,U32 id) noexcept {
+    return (rank(snapshot,47)&&in(id,{8,12,21,27,28,29,58,102})) ||
+        (rank(snapshot,69)&&in(id,{44,56,62})) ||
+        (rank(snapshot,110)&&in(id,{70,71,72,80,82,86,88}));
+}
 inline bool plan_stats(const GrowthSnapshot& s,std::vector<Edit>& edits) {
     const auto edit=[&](Key k,U32 op,U32 n,U32 d=1u){return plan_edit(edits,k,op,n,d);};
     const auto plus=[&](Key k,U32 n){return !n || edit(k,1,n);};
     if(talent_power::enabled && rank(s,64) && !edit({4,3,8},0,75))return false;
-    std::array<U32,130> fire{};std::array<bool,130> ranged{};
+    std::array<U32,130> fire{};std::array<bool,130> ranged{},air_ranges{};
     for(U32 id=0;id<228;id++){
         U32 health=0;
         for(U32 ord:{26u,27u,28u,67u,68u,69u,108u,109u,110u})if(rank(s,ord) && group(ord,id))health=ord+1;
@@ -80,6 +85,7 @@ inline bool plan_stats(const GrowthSnapshot& s,std::vector<Edit>& edits) {
         }
         for(U32 field:{17u,19u}){
             const U32 weapon=original_stat({0,field,id});if(weapon>=130)continue;
+            if(air_control(s,id))air_ranges[weapon]=true;
             if(soldier(id) && original_stat({1,5,weapon})>32)ranged[weapon]=true;
             for(U32 ord:{30u,31u,70u,71u,72u,111u,112u})if(group(ord,id))
                 fire[weapon]=std::max(fire[weapon],talent_power::v5(ord,std::uint64_t(rank(s,ord))*manual_base(ord,id)));
@@ -89,6 +95,7 @@ inline bool plan_stats(const GrowthSnapshot& s,std::vector<Edit>& edits) {
     // carry the ordinary attack. The shared scarab weapon is still edited once.
     fire[82]=std::max(fire[82],talent_power::v5(111,std::uint64_t(rank(s,111))*manual_base(111,85)));
     for(U32 weapon=0;weapon<130;weapon++){
+        if(air_ranges[weapon]&&!plus({1,5,weapon},32))return false;
         if(!plus({1,14,weapon},fire[weapon]))return false;
         if(rank(s,10) && ranged[weapon] && !plus({1,5,weapon},talent_power::v5(10,32)))return false;
     }
@@ -167,12 +174,27 @@ inline bool fixed_nuclear_warning(movement_effects::Image* image) noexcept {
     return true;
 }
 inline U32 now() noexcept;
+inline void accelerate_yamato(bw::Unit* u) noexcept {
+    if(!own(u)||!in(u->unit_id,{12,27,28,29,102})||!(rank(64)||rank(65))||u->order!=113||u->order_state!=2||u->lockdown_timer||u->stasis_timer||u->maelstrom_timer)return;
+    auto sprite=static_cast<bw::SpriteScr*>(u->flingy.sprite);if(!sprite)return;
+    // BC CastSpell creates image543, script314 Init. Its 22 pre-launch
+    // waits of2 take three frames each. Keep every native frame/sound/castspell
+    // command, but resume those waits at the next image step (one frame).
+    // Do not touch the post-launch waits or synthesize a launch/order signal.
+    const auto& code=movement_effects::data::kIscript;
+    for(auto image=static_cast<movement_effects::Image*>(sprite->first_image);image;image=static_cast<movement_effects::Image*>(image->next)){
+        if(image->parent!=sprite||image->image_id!=543||image->script.header!=4512||image->script.animation!=0)continue;
+        const U32 pos=image->script.pos;
+        if(pos>=4533&&pos<=4638&&(pos-4533)%5==0&&image->script.wait<=2&&code[pos-2]==5&&code[pos-1]==2&&code[4641]==39)
+            image->script.wait=0;
+    }
+}
 inline Identity identity(bw::Unit* u) noexcept {return valid_unit(u) ? Identity{u,u->unit_id,u->player,u->minor_unique_index} : Identity{};}
 inline bw::Unit* resolve(const Identity& i) noexcept {return live(i.p) && i.p->unit_id==i.id && i.p->player==i.owner && i.p->minor_unique_index==i.unique ? i.p : nullptr;}
 inline bw::Unit* generation(const Identity& i) noexcept {return valid_unit(i.p)&&i.p->unit_id==i.id&&i.p->minor_unique_index==i.unique ? i.p:nullptr;}
 struct UnitState {
     Identity who{},target{};U32 last_launch=0,launch_frame=~0u,weapon=130,streak=0,protection=0,mark=0,armor_mark=0,slow_until=0,slow_percent=100;
-    U32 shot_count=0,next_ground=0,next_air=0,last_damage=0,jump_due=0,last_order=0,stasis_owner=12,stasis_before=0;
+    U32 shot_count=0,bc_primary_attacks=0,next_ground=0,next_air=0,last_damage=0,jump_due=0,last_order=0,stasis_owner=12,stasis_before=0;
     U32 storm_frame=~0u,storm_count=0;int storm_x=0,storm_y=0;
     U32 fractional[2]{},last_energy=0;bool energy_seen=false;U32 fade_until=0,saved_collision=0;
     bool mobility=false;U32 mobility_flags=0,mobility_speed=0;U8 mobility_type=2,mobility_turn=0,mobility_state=0;std::uint16_t mobility_acceleration=0;
@@ -457,6 +479,7 @@ inline double speed_ratio(bw::Unit* u) {
         if(rank(32) && group(32,u->unit_id))value*=talent_power::rate(32,1.15);
         if((rank(33)&&u->unit_id==11)||(rank(74)&&in(u->unit_id,{42,57}))||(rank(115)&&u->unit_id==69))value*=talent_power::rate(u->unit_id==11?33u:u->unit_id==69?115u:74u,1.2);
         if(rank(136)&&u->unit_id==73)value*=talent_power::rate(136,1.5);
+        if(air_control(g.growth,u->unit_id))value*=1.2;
         if(rank(75)&&!air(u)&&soldier(u->unit_id)&&race_type(u->unit_id,1)&&get_tiles){
             auto game=g.game ? g.game():nullptr;auto tiles=get_tiles();const U32 x=U32(u->flingy.position.x)/32,y=U32(u->flingy.position.y)/32;
             if(game&&tiles&&x<game->map_width_tiles&&y<game->map_height_tiles&&(tiles[y*game->map_width_tiles+x]&0x40400000u))value*=talent_power::rate(75,1.25);
@@ -468,7 +491,8 @@ inline double speed_ratio(bw::Unit* u) {
 }
 inline double cooldown_ratio(bw::Unit* u,U32) {
     if(!own(u))return 1;
-    U32 stacks=0;for(U32 ord:{29u,30u,31u,70u,71u,72u,111u})if(group(ord,u->unit_id))stacks+=rank(ord);
+    U32 stacks=0;for(U32 ord:{29u,30u,31u,70u,71u,72u,111u,112u})if(group(ord,u->unit_id))stacks+=rank(ord);
+    if(in(u->unit_id,{72,82}))stacks+=rank(112); // Carrier itself has no weapon.
     double value=std::pow(talent_power::rate(29,0.97),double(stacks));auto s=state(effect_body(u));
     if(rank(16)&&s && now()-s->last_launch<=72)value*=talent_power::rate(16,1-0.1*std::min(3u,s->streak));
     return std::max(1.0/65536.0,value);
@@ -491,6 +515,8 @@ inline std::unordered_map<bw::Bullet*,Projectile> projectiles;
 struct PendingShot {Identity source{},target{};U32 weapon=130,percent=100,due=0;};
 inline std::vector<PendingShot> pending_shots;
 inline U32 emission_percent=100;inline bool emission_secondary=false,emission_primary=false;
+inline bool bc_battery_emission=false;
+struct BatteryEmissionScope {bool prior;explicit BatteryEmissionScope(bool value):prior(bc_battery_emission){bc_battery_emission=value;}~BatteryEmissionScope(){bc_battery_emission=prior;}};
 inline bw::Unit* attack_unit(bw::Unit* u) noexcept {
     if(valid_unit(u)&&valid_unit(u->subunit)&&effect_body(u->subunit)==u&&original_stat({0,17,u->unit_id})>=130&&original_stat({0,19,u->unit_id})>=130)return u->subunit;
     return u;
@@ -551,7 +577,8 @@ inline void launched(U32 w,bw::Unit* source,bw::Bullet* b) {
             s->streak=(s->target.p==target && resolve(s->target) && now()-s->last_launch<=72) ? std::min(3u,s->streak+1) : 0;
             s->target=identity(target);s->last_launch=now();s->launch_frame=now();s->weapon=w;++s->shot_count;
             if(rank(18)&&ordinary_weapon(w))queue(source,target,w,talent_power::v5(18,50));
-            if(rank(53)&&in(source->unit_id,{0,20})&&ordinary_weapon(w)){p.percent=talent_power::v5(53,60);queue(source,target,w,p.percent,2);queue(source,target,w,p.percent,4);}
+            if(rank(53)&&in(source->unit_id,{0,20})&&ordinary_weapon(w)){p.percent=100;queue(source,target,w,35,2);queue(source,target,w,35,4);}
+            if(!bc_battery_emission&&rank(65)&&in(source->unit_id,{12,27,28,29,102})&&ordinary_weapon(w)&&++s->bc_primary_attacks%4==0)queue(source,target,30,100,2);
             if(rank(105)&&in(source->unit_id,{43,55})&&ordinary_weapon(w)){p.percent=talent_power::v5(105,60);queue(source,target,w,p.percent);}
             if((rank(57)&&source->unit_id==12)||(rank(56)&&in(effect_body(source)->unit_id,{3,17}))||(rank(139)&&in(source->unit_id,{68,76}))||(rank(148)&&source->unit_id==73)){
                 const U32 ordinal=source->unit_id==12?57u:source->unit_id==73?148u:in(source->unit_id,{68,76})?139u:56u;
@@ -1220,6 +1247,7 @@ inline void step() {
         }
         if(!own(u))return;
         grant_reserve_energy(u,*s);
+        accelerate_yamato(u);
         if(rank(46)&&u->unit_id==14&&u->order==125&&u->order_state==4&&valid_unit(u->related)&&u->related->player==u->player&&in(u->related->unit_id,{1,16,99,100,104})&&!s->nuke_adjusted){
             auto sprite=static_cast<bw::SpriteScr*>(u->flingy.sprite);auto image=sprite ? static_cast<movement_effects::Image*>(sprite->main_image):nullptr;
             if(fixed_nuclear_warning(image))s->nuke_adjusted=true;
@@ -1291,6 +1319,19 @@ inline void step() {
         }
         refill_energy(u,*s);s->last_energy=u->energy;s->energy_seen=true;
         const bool moving=u->order==6;
+        if(moving&&rank(47)&&in(u->unit_id,{8,12,21,27,28,29,102})&&can_fire(u)){
+            const auto due=std::max({s->next_ground,s->next_air,U32(u->ground_cooldown)+frame,U32(u->air_cooldown)+frame});
+            if(std::int32_t(frame-due)>=0){
+                for(auto target:around(u->flingy.position.x,u->flingy.position.y,1024,nullptr,64,true)){
+                    const U32 layer=air(target)?1u:0u,w=weapon(u,layer!=0);if(w>=130||!target_ok(u,target,w))continue;
+                    const U32 period=fractional_period(u,layer,multi_target::period(u,w),cooldown_ratio(u,w));
+                    s->next_ground=s->next_air=frame+period;
+                    u->ground_cooldown=u->air_cooldown=U8(std::min(255u,period));
+                    for(U32 hit=0;hit<multi_target::factor(w);++hit)emit(u,target,w,100,-1,-1,true);
+                    break;
+                }
+            }
+        }
         const bool movefire=moving&&((rank(54)&&in(u->unit_id,{2,19}))||(rank(140)&&in(u->unit_id,{68,76})));
         const bool dual=(rank(65)&&in(u->unit_id,{12,27,28,29,102}))||(rank(142)&&in(u->unit_id,{70,80,88}));
         if((movefire||dual)&&can_fire(u))for(U32 layer=0;layer<2;layer++){
@@ -1299,7 +1340,7 @@ inline void step() {
             auto w=weapon(u,layer!=0);if(w>=130)continue;
             auto primary=u->order_target.unit;if(dual&&live(primary)&&air(primary)==(layer!=0)&&multi_target::attack_order(u->order))continue;
             for(auto target:around(u->flingy.position.x,u->flingy.position.y,1024,nullptr,64,true,int(layer)))if(target_ok(u,target,w)){
-                due=frame+fractional_period(u,layer,multi_target::period(u,w),cooldown_ratio(u,w));for(U32 hit=0;hit<multi_target::factor(w);hit++)emit(u,target,w,talent_power::enabled?(movefire&&in(u->unit_id,{2,19})?talent_power::v5(54,100):dual?talent_power::v5(rank(65)&&in(u->unit_id,{12,27,28,29,102})?65u:142u,100):100u):100u,-1,-1,true);
+                due=frame+fractional_period(u,layer,multi_target::period(u,w),cooldown_ratio(u,w));BatteryEmissionScope battery(dual&&rank(65)&&in(u->unit_id,{12,27,28,29,102}));for(U32 hit=0;hit<multi_target::factor(w);hit++)emit(u,target,w,talent_power::enabled?(movefire&&in(u->unit_id,{2,19})?talent_power::v5(54,100):dual&&!(rank(65)&&in(u->unit_id,{12,27,28,29,102}))?talent_power::v5(142,100):100u):100u,-1,-1,true);
                 break;
             }
         }

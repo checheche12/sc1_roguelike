@@ -191,6 +191,8 @@ void visible_failure(const wchar_t* text) noexcept {
 U32 u32(const U8* p) noexcept { U32 v; std::memcpy(&v,p,4); return v; }
 std::uint16_t u16(const U8* p) noexcept { std::uint16_t v; std::memcpy(&v,p,2); return v; }
 bool same(Key a,Key b) noexcept {return a.table==b.table && a.field==b.field && a.id==b.id;}
+#include "include/stat_lookup.h"
+#include "include/frame_profile.h"
 
 U32 player_owner() noexcept { return g.mission ? g.mission->owner : kOwner; }
 bool is_enemy(U32 owner) noexcept {
@@ -531,7 +533,7 @@ struct HallucinationCreationScope {
 #include "include/max_hp_runtime.h"
 class OwnerDatScope {
     struct Saved {bw::DatTable* table;U32 id,value;};
-    std::array<Saved,1024> saved_{};std::size_t size_=0;
+    std::array<Saved,1024> saved_;std::size_t size_=0;
 public:
     OwnerDatScope(U32 unit_owner,U32 weapon_owner,bw::Unit* subject=nullptr) noexcept
         :OwnerDatScope(unit_owner,weapon_owner,subject,subject){}
@@ -638,6 +640,7 @@ bool apply_snapshot(void*,const GrowthSnapshot& s) noexcept {
         const auto previous_friendly=g.friendly_edits,previous_enemy=g.enemy_edits;
         rework_economy_v5::before_snapshot();
         g.baseline=std::move(baseline);g.friendly_edits=std::move(friendly);g.enemy_edits=std::move(enemy);
+        stat_lookup::reset();
         g.owner_edits=std::move(owner_edits);g.applied=true;
         max_hp_cache::publish(true);
         for(auto u:units){
@@ -679,13 +682,14 @@ bool apply_snapshot(void*,const GrowthSnapshot& s) noexcept {
 }
 
 U32 original_stat(Key key) noexcept {
-    for(const auto& e:g.baseline)if(same(e.key,key))return e.before;
+    if(const auto edit=stat_lookup::baseline.find(g.baseline,key))return edit->before;
     auto t=table_for(key,false);return t ? read_entry(t,key.id) : 0;
 }
 U32 owner_stat(U32 owner,Key key) noexcept {
     const U32 original=original_stat(key);
-    return owner==player_owner() ? effect_value(g.friendly_edits,key,original) :
-        is_enemy(owner) ? effect_value(g.enemy_edits,key,original) : original;
+    const auto edit=owner==player_owner() ? stat_lookup::friendly.find(g.friendly_edits,key) :
+        is_enemy(owner) ? stat_lookup::enemy.find(g.enemy_edits,key) : nullptr;
+    return edit ? edit->after:original;
 }
 UnitTrack* track_unit(bw::Unit* u) {
     if(!valid_unit(u))return nullptr;
@@ -1288,6 +1292,8 @@ void restore_baseline() noexcept {
     g.baseline.clear();
 }
 void abandon_session() noexcept {
+    stat_lookup::reset();
+    frame_profile::reset();
     g.survival_hint_shown=false;
     g.campaign_clear_shown=false;
     campaign_visibility::reset();yamato_cost_ui::reset();rework_energy_ui::reset();rework_economy_ui::reset();rework_shield_ui_v5::reset();enemy_progression::reset();rework_waves::reset();rework_combat_v5::reset();rework_economy_v5::reset();rework_cargo_v5::reset();rework_carrier_v5::reset();
@@ -1399,6 +1405,7 @@ void __cdecl frame() noexcept {
         if (g.last_frame==game->frame_count) return;
         g.last_frame=game->frame_count;
         if (!g.mission || game->campaign_mission!=g.campaign_index || g.multiplayer() || g.replay()) {abandon_session();return;}
+        frame_profile::begin();
         campaign_visibility::step();
         update_original_goal();protocol_pump(nullptr);
         if (!g.active) return;
@@ -1437,10 +1444,13 @@ void __cdecl frame() noexcept {
         mirror_handshake();
         enemy_progression::step(g.protocol.growth_applied() && g.applied && !g.protocol.failed(),!after_dialog,counter(kGoalCounter));
         enemy_detection::step(g.protocol.growth_applied()&&g.applied&&!g.protocol.failed(),!after_dialog,counter(kGoalCounter));
+        frame_profile::mark(0);
         apply_unit_motion();
+        frame_profile::mark(1);
         max_hp_cache::publish();
+        frame_profile::mark(2);
         multi_target::step();
-        rework_combat_v5::step();rework_economy_v5::step();rework_cargo_v5::step();rework_energy_ui::publish();yamato_cost_ui::publish();rework_economy_ui::publish(false);rework_shield_ui_v5::publish(false);
+        rework_combat_v5::step();frame_profile::mark(3);rework_economy_v5::step();rework_cargo_v5::step();rework_energy_ui::publish();yamato_cost_ui::publish();rework_economy_ui::publish(false);rework_shield_ui_v5::publish(false);frame_profile::mark(4);
         bool ready=g.protocol.growth_applied() && g.applied && !g.protocol.failed();
         if(ready && after_dialog && !g.survival_hint_shown){
             if(g.mission->mission_id==103)message("추가 승리 조건: 적 기지의 모든 건물을 파괴하면 남은 시간과 관계없이 승리합니다.");
@@ -1448,8 +1458,10 @@ void __cdecl frame() noexcept {
             g.survival_hint_shown=true;
         }
         rework_waves::tick(ready,!after_dialog,counter(kGoalCounter));regenerate_waves(game->elapsed_seconds);
+        frame_profile::mark(5);
         wave_targeting::step(ready,counter(kGoalCounter));
         g.dialog.set_wave_timer(sc1_native::wave_countdown_text(rework_waves::countdown(ready,counter(kGoalCounter))));
+        frame_profile::mark(6);frame_profile::finish(ready&&after_dialog,game->frame_count,g.units_count);
     } catch (...) {set_counter(kReadyCounter,0);set_counter(kAckCounter,0);abandon_session();message("본편 플러그인 실행 오류. 추가 공세와 승리 기록을 중단했습니다.");}
 }
 
@@ -1505,6 +1517,7 @@ bool bind_api(const samase::PluginApi* api) noexcept {
 #include "include/samase_status_ui.h"
 #include "include/samase_weapon_ui.h"
 #include "include/samase_armor_ui.h"
+#include "include/campaign_ultra_armor.h"
 namespace {
 #include "include/rework_lighting_v5.h"
 #include "include/rework_energy_ui_v5.h"
@@ -1512,6 +1525,7 @@ namespace {
 #include "include/yamato_cost_ui.h"
 #include "include/rework_shield_ui_v5.h"
 bool verify_stat_engine_after_dat() noexcept {
+    if(campaign_ultra_armor::queued&&!campaign_ultra_armor::verify_installation())return false;
     if(yamato_cost_ui::queued && !yamato_cost_ui::verify_installation())return false;
     if(max_hp_engine::hooks[0].queued && !max_hp_engine::verify_installation())return false;
     if(samase_armor_ui::queued && !samase_armor_ui::verify_installation()){
@@ -1532,7 +1546,7 @@ bool verify_stat_engine_after_dat() noexcept {
 void __cdecl verify_registered_engine_hooks() noexcept {
     g.hooks_ready=false;
     if(!rework_lighting_v5::verify_ready()){log_event("Lighting synchronization verification failed: stage=%s",rework_lighting_v5::last_error);visible_failure(L"그래픽 보호 기능을 확인하지 못했습니다. sc1_native.log를 확인하세요.");return;}
-    if(!combat_effects::verify_installation() || !max_hp_engine::verify_installation() || !samase_status_ui::verify_installation() || !samase_weapon_ui::verify_installation() || !samase_armor_ui::verify_installation()){
+    if(!combat_effects::verify_installation() || !max_hp_engine::verify_installation() || !samase_status_ui::verify_installation() || !samase_weapon_ui::verify_installation() || !samase_armor_ui::verify_installation() || !campaign_ultra_armor::verify_installation()){
         log_event("Engine patch verification failed: stage=%s error=%lu weapon_ui=%s armor_ui=%s",native_engine_hooks::last_install.stage,native_engine_hooks::last_install.win32_error,samase_weapon_ui::last_error,samase_armor_ui::last_error);
         visible_failure(L"게임 패치의 실제 적용을 확인하지 못했습니다. 플러그인을 활성화하지 않습니다. sc1_native.log를 확인하세요.");return;
     }
@@ -1573,6 +1587,7 @@ extern "C" __declspec(dllexport) void __cdecl samase_plugin_init(const samase::P
         visible_failure(L"유닛 방어력 표시 기능을 연결하지 못했습니다. sc1_native.log를 확인하세요.");return;
     }
     if(!rework_shield_ui_v5::bind(api)){log_event("Shield armor display registration failed: stage=%s",rework_shield_ui_v5::last_error);visible_failure(L"보호막 방어력 표시를 연결하지 못했습니다. sc1_native.log를 확인하세요.");return;}
+    if(!campaign_ultra_armor::bind(api)){visible_failure(L"울트라리스크 방어력 업그레이드를 연결하지 못했습니다. sc1_native.log를 확인하세요.");return;}
     if (!register_owner_hooks(api)) {visible_failure(L"성장 효과의 소유자 분리 기능을 등록하지 못했습니다. 플러그인을 활성화하지 않습니다.");return;}
     if(!rework_combat_v5::bind_motion_commands(api)){visible_failure(L"잠복 이동 명령을 연결하지 못했습니다. sc1_native.log를 확인하세요.");return;}
     if(!rework_economy_v5::bind_commands(api)){visible_failure(L"생산 비용 기능을 연결하지 못했습니다. sc1_native.log를 확인하세요.");return;}

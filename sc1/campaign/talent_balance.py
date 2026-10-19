@@ -9,6 +9,7 @@ UNIT_LEGENDARIES = frozenset((61,62,63,64,65,66,102,103,104,105,106,107,144,145,
 POWER_QUARTERS = dict(common=6, uncommon=7, rare=8, epic=10, legendary=10)
 
 def power_quarters(item):
+    if item.get('rework_revision')==5 and item.get('effect_ordinal')==47:return 8
     if item.get("rework_revision")==5 and item.get("effect_ordinal") in (18,148):return 4
     if item.get("rework_revision")==5 and item.get("effect_ordinal") in UNIT_LEGENDARIES:return 16
     patches=item.get('effect',{}).get('patches',[])
@@ -48,6 +49,7 @@ REPLACEMENTS = {
  161:[('8초','20초'),('8 피해','20 피해')],
 }
 DESCRIPTIONS = {
+ 53:'마린·짐 레이너(마린)가 한 번 공격할 때 기본탄 100% 한 발과 추가탄 35% 두 발을 쏩니다. 총 피해 170%.',
  5:'임무 시작 시 보유 저주 수 × 37.5만큼 미네랄·가스를 받습니다. 총합의 소수점은 버립니다.',
  19:'아군 일반 공격이 적의 체력 방어력과 보호막 방어력을 모두 무시합니다.',
  44:'과학선의 EMP 반경이 100% 넓어집니다. 아군도 맞습니다.',
@@ -114,12 +116,24 @@ DESCRIPTIONS.update({
  107:'퀸이 인페스트로 체력 50% 이하인 적 전투 유닛을 120초간 조종합니다. 성공하면 4타일 안 조건을 만족하는 다른 적 1기도 추가 지배합니다.',
 })
 
+DESCRIPTIONS.update({
+ 47:'레이스·발키리·배틀크루저(영웅 포함) 사거리 +1타일, 이동 속도 +20%. 레이스·배틀크루저는 이동 사격. 표적을 잃은 테란 유도탄은 4타일 안 적을 한 번 재추적.',
+ 65:'야마토 준비 동작 약 3배 가속. 일반 공격 4회마다 무료 야마토 1발. 지상·공중 포대는 따로 사격하며 추가 포대 피해 100%. 자동 야마토는 추가탄을 만들지 않습니다.',
+ 69:'저그 공중군 체력 중첩당 +28%, 최대 4회. 첫 선택에 가디언·디바우러(영웅 포함) 사거리 +1타일, 이동 속도 +20%. 기동 보너스 중첩 없음.',
+ 110:'프로토스 공중군 체력·보호막 중첩당 +28%, 최대 4회. 첫 선택에 스카우트·캐리어·아비터(영웅 포함) 사거리 +1타일, 이동 속도 +20%. 기동 보너스 중첩 없음.',
+ 112:'프로토스 공격 항공기와 인터셉터의 공격력 중첩당 +3, 공격 간격 -4.5%. 최대 4회.',
+ 153:'레이스·발키리·배틀크루저·과학선·드롭십의 생산 비용 -20%, 생산 시간 -20%.',
+ 157:'뮤탈·가디언·디바우러·스커지의 생산·변태 비용 -20%, 생산·변태 시간 -20%.',
+ 160:'스카우트·커세어·캐리어·아비터·셔틀·옵저버의 생산 비용 -20%, 생산 시간 -20%.',
+})
+
 def decorate(catalog):
     catalog['balance_revision']=9
     catalog.pop('talent_power_halves',None)
     catalog['talent_power_quarters']=POWER_QUARTERS.copy()
     catalog['economy_talents_scaled']=False
     for item in catalog['talents']:
+        if item.get('rework_revision')==5 and item.get('effect_ordinal')==47:item['rarity']='uncommon'
         if item.get('balance_revision')==9:continue
         original=item['description'];q=power_quarters(item)
         item['balance_revision']=9
@@ -130,11 +144,17 @@ def decorate(catalog):
             ordinal=item['effect_ordinal']
             text=original
             for a,b in REPLACEMENTS.get(ordinal,[]):text=text.replace(a,b)
-            item['description']=DESCRIPTIONS[5] if ordinal==5 else original if q==4 and ordinal!=18 else DESCRIPTIONS.get(ordinal,text)
+            item['description']=DESCRIPTIONS[5] if ordinal==5 else original if q==4 and ordinal not in (18,153,157,160) else DESCRIPTIONS.get(ordinal,text)
             if item.get('max_rank')==4 and ordinal not in (8,9,29,30,31,70,111):
                 item['description']=item['description'].replace('반복해서 고를 수 있습니다.','')+' 중첩당 적용, 최대 4회 선택할 수 있습니다.'
             if ordinal in (18,85,107):item['effect']['qa_revision']=2026101816
             if ordinal==148:item['effect']['qa_revision']=2026101824
+            if ordinal==53:item['effect'].update(qa_revision=2026101929,primary_attack_percent=100,extra_attack_percent=35,extra_attack_count=2,total_attack_percent=170)
+            if ordinal in (47,65,69,110,112,153,157,160):item['effect']['qa_revision']=2026101929
+            if ordinal in (47,69,110):item['effect'].update(air_control_range_tiles=1,air_control_speed_percent=20,air_control_stacks=False)
+            if ordinal==47:item['effect']['moving_air_primary_attack_percent']=100
+            if ordinal==65:item['effect'].update(auto_yamato_every_primary_attacks=4,auto_yamato_percent=100,auto_yamato_energy=0,secondary_layer_percent=100,yamato_prelaunch_wait_frames=0,yamato_cast_speed_approx_multiplier=3,yamato_cast_speed_stacks=False)
+            if ordinal in (153,157,160):item['effect']['production_time_reduction_percent']=20
             if ordinal==18:item['effect']['extra_attack_percent']=50
             if ordinal in (85,107):item['effect']['energy_cost']=0
             if ordinal in (11,12):item['effect']['armor_per_rank']=0.5

@@ -49,7 +49,7 @@ class TalentBalanceTests(unittest.TestCase):
         self.assertEqual(len(economy),25)
         for item in economy:
             self.assertEqual(balance.power_quarters(item),4)
-            if item.get('effect_ordinal')==5:self.assertEqual(item['description'],balance.DESCRIPTIONS[5])
+            if item.get('effect_ordinal') in (5,153,157,160):self.assertEqual(item['description'],balance.DESCRIPTIONS[item['effect_ordinal']])
             else:self.assertEqual(item['description'],item['pre_balance_description'])
         for bit in (15,56,65,79,84):
             self.assertEqual(balance.power_quarters(current['talents'][bit]),4)

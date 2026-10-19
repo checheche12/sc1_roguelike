@@ -39,6 +39,9 @@ inline bool plan_stats(const GrowthSnapshot& s,std::vector<Edit>& edits) {
         const U32 flags=original_stat({0,44,id});
         if((flags&16u) && ((rank(s,20) && (flags&2u)) || (rank(s,22) && (flags&4u))))time=std::max(1u,ceiling(time,1,2));
         if(rank(s,117) && in(id,{73,85}))time=std::max(1u,ceiling(time,1,2));
+        if((rank(s,153)&&in(id,{8,9,11,12,58})) ||
+           (rank(s,157)&&in(id,{43,44,47,62})) ||
+           (rank(s,160)&&in(id,{60,69,70,71,72,84})))time=std::max(1u,ceiling(time,4,5));
         if(rank(s,4) && in(id,{109,42,156}))time=72;
         if(time!=base_time && !set(42,id,time))return false;
         if(rank(s,4) && in(id,{109,42,156}) && !plan_edit(edits,{0,45,id},1,16,1))return false;

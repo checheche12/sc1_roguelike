@@ -164,8 +164,8 @@ inline void rework_half_armor_native_health_callback(){
 }
 inline void rework_projectile_counts_and_moving_orders(){
     using namespace rework_fixture;begin({53});auto marine=unit(0,1,100,100),target=unit(37,6,120,100);marine->order=10;
-    auto b=bullet(marine,target,0);CHECK(rework_combat_v5::projectiles.at(b).percent==60);CHECK(multi_fixture::shots.size()==1);pulse(102);CHECK(multi_fixture::shots.size()==2);pulse(104);CHECK(multi_fixture::shots.size()==3);pulse(105);CHECK(multi_fixture::shots.size()==3);
-    for(const auto& entry:rework_combat_v5::projectiles)CHECK(entry.second.percent==60);CHECK(rework_combat_v5::pending_shots.empty());
+    auto b=bullet(marine,target,0);CHECK(rework_combat_v5::projectiles.at(b).percent==100);CHECK(multi_fixture::shots.size()==1);pulse(102);CHECK(multi_fixture::shots.size()==2);pulse(104);CHECK(multi_fixture::shots.size()==3);pulse(105);CHECK(multi_fixture::shots.size()==3);
+    U32 sum=0;for(const auto& entry:rework_combat_v5::projectiles)sum+=entry.second.percent;CHECK(sum==170);CHECK(rework_combat_v5::pending_shots.empty());
     begin({54});auto vulture=unit(2,1,100,100);target=unit(37,6,120,100);vulture->order=6;vulture->order_target={600,700,nullptr};const auto saved=vulture->order_target;
     pulse(100);CHECK(multi_fixture::shots.size()==1);CHECK(vulture->order==6&&vulture->order_target.x==saved.x&&vulture->order_target.y==saved.y&&vulture->order_target.unit==nullptr);pulse(101);CHECK(multi_fixture::shots.size()==1);
     vulture->lockdown_timer=1;pulse(200);CHECK(multi_fixture::shots.size()==1);finish();

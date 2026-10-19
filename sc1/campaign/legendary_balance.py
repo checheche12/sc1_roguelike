@@ -1,8 +1,8 @@
 """Bounded battlefield effects for the less expressive legendary cards."""
 def decorate(catalog):
     notes = {
-        64: ('야마토 3발이 각각 200% 피해를 줍니다. 총 에너지 75. 추가탄은 4타일 안 다른 적을 우선하며 부족하면 주 대상에 집중합니다. 탄착지 3타일 안 다른 적 최대 6기에 기본 야마토의 50% 폭발 피해. 직접 피격 대상 제외, 중복 폭발 없음.',
-             {'blast_radius_pixels': 96, 'blast_targets_per_cast': 6, 'blast_native_damage_percent': 50}),
+        64: ('야마토 준비 동작 약 3배 가속. 3발 각각 200% 피해, 에너지 75. 추가탄은 4타일 안 다른 적 우선, 부족하면 주 대상 집중. 탄착지 3타일 안 다른 적 최대 6기에 기본 야마토의 50% 폭발 피해(직격 대상 제외·중복 없음).',
+             {'blast_radius_pixels': 96, 'blast_targets_per_cast': 6, 'blast_native_damage_percent': 50, 'yamato_prelaunch_wait_frames': 0, 'yamato_cast_speed_approx_multiplier': 3, 'yamato_cast_speed_stacks': False}),
         103: ('다크 스웜이 아군 공중 유닛도 보호하고 범위가 최소 10타일로 늘어납니다. 안의 아군 전투 병력은 초당 최대 체력 1% 회복. 겹친 군체 회복은 중복되지 않으며 마법·광역 예외는 유지됩니다.',
               {'swarm_max_hp_regen_percent_per_second': 1, 'overlapping_regen_stacks': False}),
         147: ('환영의 일반 공격이 원래 피해의 100%를 실제로 줍니다. 환영 소멸 시 3타일 안 적 최대 4기에 환영 최대 체력의 25%(최대 100) 폭발 피해를 줍니다.',
@@ -15,5 +15,5 @@ def decorate(catalog):
         if item.get('rework_revision')!=5 or ordinal not in notes:continue
         text,effect=notes[ordinal]
         item['description']=text
-        item['effect'].update(effect,qa_revision=2026101926)
+        item['effect'].update(effect,qa_revision=2026101929 if ordinal==64 else 2026101926)
     return catalog
