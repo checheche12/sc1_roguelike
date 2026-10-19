@@ -129,14 +129,15 @@ inline void qa38_irradiation_mechanical_damage_and_six_tile_infection(){
 inline void qa38_native_original_energy_cell_precheck_deduction_and_nested_owners(){
  using namespace qa12_fixture;begin(64,false);g.applied=false;CHECK(apply_snapshot(nullptr,talent(64)));
  auto memory=static_cast<U8*>(VirtualAlloc(nullptr,0x1000000,MEM_COMMIT|MEM_RESERVE,PAGE_READWRITE));CHECK(memory);
- const std::uint16_t original=150;std::memcpy(memory+native_tech_cost_view::energy_array+16,&original,2);auto previous=native_tech_cost_view::yamato;
+ const std::uint16_t original=150;std::memcpy(memory+native_tech_cost_view::energy_array+16,&original,2);auto previous=native_tech_cost_view::yamato;auto previous_image=native_tech_cost_view::image;
+ for(U32 i=0;i<3;i++){std::memcpy(memory+native_tech_cost_view::sites[i],native_tech_cost_view::prefixes[i],5);std::memcpy(memory+native_tech_cost_view::sites[i]+5,&native_tech_cost_view::energy_array,4);}
  CHECK(native_tech_cost_view::bind(memory)&&native_tech_cost_view::verify_after_dat());auto caster=produce(12),enemy=produce(12,6);complete(caster,50);complete(enemy,149);
  owner_unit_hook(caster,qa38_fixture::native_cost);CHECK(qa38_fixture::paid&&caster->energy==0&&*native_tech_cost_view::yamato==150);
  complete(caster,49);owner_order_hook(caster,qa38_fixture::native_cost);CHECK(!qa38_fixture::paid&&caster->energy==49*256);
  owner_unit_hook(enemy,qa38_fixture::native_cost);CHECK(!qa38_fixture::paid&&enemy->energy==149*256);
  complete(enemy,150);owner_unit_hook(enemy,qa38_fixture::native_cost);CHECK(qa38_fixture::paid&&enemy->energy==0);
  {OwnerDatScope own(1,1,caster);CHECK(*native_tech_cost_view::yamato==50&&raw_value(4,3,8)==50);{OwnerDatScope foe(6,6,enemy);CHECK(*native_tech_cost_view::yamato==150);}CHECK(*native_tech_cost_view::yamato==50);}
- CHECK(*native_tech_cost_view::yamato==150);native_tech_cost_view::yamato=previous;CHECK(VirtualFree(memory,0,MEM_RELEASE));end();
+ CHECK(*native_tech_cost_view::yamato==150);native_tech_cost_view::yamato=previous;native_tech_cost_view::image=previous_image;CHECK(VirtualFree(memory,0,MEM_RELEASE));end();
 }
 inline void qa38_wave_strength_and_global_limits(){
  namespace p=sc1_native::rework_wave;

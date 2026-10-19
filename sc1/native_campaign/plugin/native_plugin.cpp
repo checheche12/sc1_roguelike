@@ -1571,11 +1571,21 @@ namespace {
 #include "include/rework_shield_ui_v5.h"
 #include "include/carrier_weapon_ui.h"
 bool verify_stat_engine_after_dat() noexcept {
-    if(native_tech_cost_view::yamato&&!native_tech_cost_view::verify_after_dat())return false;
-    if(carrier_weapon_ui::queued&&!carrier_weapon_ui::verify_installation())return false;
-    if(campaign_ultra_armor::queued&&!campaign_ultra_armor::verify_installation())return false;
-    if(yamato_cost_ui::queued && !yamato_cost_ui::verify_installation())return false;
-    if(max_hp_engine::hooks[0].queued && !max_hp_engine::verify_installation())return false;
+    if(native_tech_cost_view::yamato&&!native_tech_cost_view::verify_after_dat()){
+        log_event("Native energy array changed after DAT mutation: stage=%s",native_tech_cost_view::last_error);return false;
+    }
+    if(carrier_weapon_ui::queued&&!carrier_weapon_ui::verify_installation()){
+        log_event("Carrier weapon display changed after DAT mutation: stage=%s",carrier_weapon_ui::last_error);return false;
+    }
+    if(campaign_ultra_armor::queued&&!campaign_ultra_armor::verify_installation()){
+        log_event("Ultra armor patch changed after DAT mutation.");return false;
+    }
+    if(yamato_cost_ui::queued && !yamato_cost_ui::verify_installation()){
+        log_event("Yamato tooltip patch changed after DAT mutation.");return false;
+    }
+    if(max_hp_engine::hooks[0].queued && !max_hp_engine::verify_installation()){
+        log_event("Maximum-health patch changed after DAT mutation: stage=%s",native_engine_hooks::last_install.stage);return false;
+    }
     if(samase_armor_ui::queued && !samase_armor_ui::verify_installation()){
         log_event("Armor display changed after DAT mutation: stage=%s",samase_armor_ui::last_error);
         return false;
