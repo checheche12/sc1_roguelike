@@ -1,6 +1,5 @@
 #pragma once
-// Exact native energy-tooltip store. Read-only published owner/talent state;
-// native techdata owner views perform the real precheck and energy deduction.
+// Native spell-energy tooltip, using the same published cost as client checks.
 namespace yamato_cost_ui {
 inline std::atomic<U32> owner{12};
 inline std::atomic<std::uintptr_t> units{0};inline std::atomic<std::size_t> count{0};
@@ -11,13 +10,18 @@ inline constexpr U8 original[]={0x66,0x44,0x89,0x0d,0x9d,0x56,0xcb,0x00};
 inline void reset() noexcept {owner.store(12,std::memory_order_release);units.store(0,std::memory_order_release);count.store(0,std::memory_order_release);}
 inline void publish() noexcept {
  owner.store(12,std::memory_order_release);
- if(!g.active || !g.applied || !talent_power::enabled || !rework_catalog::rank(g.growth,64) || !g.units || g.units_count>65536)return;
+ spell_energy_check::publish();
+ if(!g.active || !g.applied || !g.units || g.units_count>65536)return;
  units.store(reinterpret_cast<std::uintptr_t>(g.units),std::memory_order_relaxed);count.store(g.units_count,std::memory_order_relaxed);owner.store(player_owner(),std::memory_order_release);
 }
 inline U32 value(const bw::Unit* u,U32 tech,U32 fallback) noexcept {
  const U32 own=owner.load(std::memory_order_acquire);const auto base=units.load(std::memory_order_relaxed),address=reinterpret_cast<std::uintptr_t>(u);
- if(tech!=8 || own>=8 || !base || address<base || (address-base)%sizeof(bw::Unit) || (address-base)/sizeof(bw::Unit)>=count.load(std::memory_order_relaxed))return fallback;
- return u->player==own && !(u->flags&0x40000000u) ? 50u:150u;
+ if(tech>=44 || own>=8 || !base || address<base || (address-base)%sizeof(bw::Unit) || (address-base)/sizeof(bw::Unit)>=count.load(std::memory_order_relaxed))return fallback;
+ if(u->player!=own || (u->flags&0x40000000u))return fallback;
+ if(rework_combat_v5::in(u->unit_id,{12,27,28,29,102})&&tech!=8)return fallback;
+ // Native tooltip storage is whole energy; round fractional requirements up.
+ // Requirement and deduction retain their exact Q8 fraction.
+ return (spell_energy_check::required(u,fallback*256u)+255u)/256u;
 }
 inline void __cdecl store(U32 tech,U32 energy) noexcept {
  const bw::Unit* selected=nullptr;

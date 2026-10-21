@@ -48,16 +48,26 @@ inline void qa56_pinned_client_precheck_real_call_relay_and_cheat_policy(){
  using namespace qa56_fixture;namespace check=spell_energy_check;
  auto memory=static_cast<U8*>(VirtualAlloc(nullptr,0x1100000,MEM_COMMIT|MEM_RESERVE,PAGE_EXECUTE_READWRITE));CHECK(memory);
  CHECK(!check::register_at(memory,qa12_extra::write));
- std::memcpy(memory+check::site,check::original_call,5);std::memcpy(memory+check::checker,check::original_checker,sizeof(check::original_checker));
- const U8 prologue[]={0x48,0x83,0xec,0x28},epilogue[]={0x48,0x83,0xc4,0x28,0xc3};std::memcpy(memory+check::site-4,prologue,4);std::memcpy(memory+check::site+5,epilogue,5);
+ std::memcpy(memory+check::checker,check::original_checker,sizeof(check::original_checker));
+ const U8 prologue[]={0x48,0x83,0xec,0x28},epilogue[]={0x48,0x83,0xc4,0x28,0xc3};
+ for(U32 i=0;i<4;i++){std::memcpy(memory+check::sites[i],check::calls[i],5);std::memcpy(memory+check::sites[i]-4,prologue,4);std::memcpy(memory+check::sites[i]+5,epilogue,5);}
  CHECK(check::register_at(memory,qa12_extra::write)&&check::verify_installation());auto native=reinterpret_cast<check::Requirement>(memory+check::site-4);
  for(auto c:cases){auto u=begin(c);check::publish();const U32 cost=net(u,c);u->energy=std::uint16_t(cost);
-  CHECK(check::required(u,c.cost*256)==cost&&native(u,c.cost*256)==0);
-  if(cost){u->energy=std::uint16_t(cost-1);CHECK(native(u,c.cost*256)==1);}
-  u->player=6;u->energy=0;CHECK(check::required(u,c.cost*256)==c.cost*256&&native(u,c.cost*256)==1);qa9_fixture::end();
+  for(U32 site:check::sites){auto client=reinterpret_cast<check::Requirement>(memory+site-4);u->energy=std::uint16_t(cost);
+   CHECK(check::required(u,c.cost*256)==cost&&client(u,c.cost*256)==0);
+   if(cost){u->energy=std::uint16_t(cost-1);CHECK(client(u,c.cost*256)==1);}
+   u->player=6;u->energy=0;CHECK(check::required(u,c.cost*256)==c.cost*256&&client(u,c.cost*256)==1);u->player=1;
+  }qa9_fixture::end();
  }
  auto u=begin({38,1,115,100});check::publish();u->energy=0;auto cheat=reinterpret_cast<U32*>(memory+0x1053e30);*cheat=0x800;CHECK(native(u,100*256)==0);*cheat=0;CHECK(native(u,100*256)==1);
- memory[check::site]^=1;CHECK(!check::verify_installation());memory[check::site]^=1;CHECK(check::verify_installation());
+ // Recreate QA58's three unpatched client calls: the native checker rejects
+ // the correctly discounted40 energy before any order can be submitted.
+ u->energy=40*256;
+ for(U32 i=0;i<3;i++){auto client=reinterpret_cast<check::Requirement>(memory+check::sites[i]-4);
+  std::memcpy(memory+check::sites[i],check::calls[i],5);CHECK(client(u,100*256)==1);
+  std::memcpy(memory+check::sites[i],check::branches[i],5);CHECK(client(u,100*256)==0);
+ }
+ for(U32 site:check::sites){memory[site]^=1;CHECK(!check::verify_installation());memory[site]^=1;CHECK(check::verify_installation());}
  CHECK(VirtualFree(check::code,0,MEM_RELEASE));check::code=check::module=nullptr;check::queued=false;check::original_requirement=nullptr;check::reset();CHECK(VirtualFree(memory,0,MEM_RELEASE));qa9_fixture::end();
 }
 inline void run_qa56_groups(){qa56_exact_discount_energy_spends_once_and_one_q8_less_fails();qa56_cancel_validation_and_nested_owners_leave_no_energy();qa56_targeted_packet_validation_and_actual_cast_share_cost();qa56_recall_zero_cost_stacking_and_reserves_are_not_minted();qa56_pinned_client_precheck_real_call_relay_and_cheat_policy();}

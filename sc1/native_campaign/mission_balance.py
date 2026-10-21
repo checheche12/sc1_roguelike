@@ -166,16 +166,33 @@ def _zerg01(chk,row):
         depot_grid_policy='Zerg01 main field only: closer minerals may restrict nearby hypothetical depot sites; existing depot rebuilds preserved',
         native_mining_verified=False)
 
+def _terran03_gas(chk,row):
+    """Raise only the original third mission's starting-base geyser reserve."""
+    raw=records(chk);points=list(map(info,raw))
+    assert (320,2704,106,row['owner']) in points, 'Terran03 starting command center changed'
+    gases=[i for i,(x,y,u,p) in enumerate(points)
+           if u==188 and math.dist((320,2704),(x,y))<=512]
+    assert len(gases)==1, ('Terran03 starting geyser is ambiguous',gases)
+    i=gases[0];before=struct.unpack_from('<I',raw[i],20)[0]
+    assert before==1000, ('Unexpected Terran03 starting reserve',before)
+    r=bytearray(raw[i]);struct.pack_into('<I',r,20,5000);raw[i]=bytes(r)
+    chk.setsection('UNIT',b''.join(raw))
+    return [dict(index=i,unit=188,position=list(points[i][:2]),before=before,after=5000)]
+
+
 def apply(chk,row,difficulty):
     before=chk.getsection('UNIT');before_records=records(chk)
     guards=_garrisons(chk,row,difficulty)
     opening=_zerg01(chk,row) if row['mission_id']==201 else None
+    amounts=_terran03_gas(chk,row) if row['mission_id']==103 else []
     after=chk.getsection('UNIT')
-    return dict(revision=REVISION,mission_id=row['mission_id'],
+    report=dict(revision=REVISION,mission_id=row['mission_id'],
         requested_garrison=GARRISONS[row['mission_id']],garrison_added=len(guards),garrisons=guards,
         opening=opening,before_unit_sha256=sha(before),after_unit_sha256=sha(after),
         base_unit_count=len(before_records),appended_records=[r.hex() for r in records(chk)[len(before_records):]],
         ordinary_enemies=True,registered_as_added_wave=False,live_gameplay_verified=False)
+    if amounts:report.update(revision=2026102201,resource_amount_changes=amounts)
+    return report
 
 def undo(chk,report):
     """Recover the exact generic-layout input, then let the caller replay both passes."""
@@ -183,6 +200,9 @@ def undo(chk,report):
     raw=records(chk);count=report['base_unit_count']
     assert [r.hex() for r in raw[count:]]==report['appended_records']
     raw=raw[:count]
+    for change in report.get('resource_amount_changes',[]):
+        r=bytearray(raw[change['index']]);assert struct.unpack_from('<I',r,20)[0]==change['after']
+        struct.pack_into('<I',r,20,change['before']);raw[change['index']]=bytes(r)
     for move in (report.get('opening') or {}).get('mineral_moves',[]):
         r=bytearray(raw[move['index']]);assert list(struct.unpack_from('<HH',r,4))==move['after']
         struct.pack_into('<HH',r,4,*move['before']);raw[move['index']]=bytes(r)

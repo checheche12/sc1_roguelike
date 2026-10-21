@@ -29,8 +29,9 @@ class MissionBalanceTests(unittest.TestCase):
    chk=balance_map(row);raw=balance.records(chk);r=row['mission_balance']
    baseline=maps.CHK(chk.save());balance.undo(baseline,r);old=balance.records(baseline)
    moved={m['index'] for m in (r.get('opening') or {}).get('mineral_moves',[])}
+   changed_amounts={m['index'] for m in r.get('resource_amount_changes',[])}
    for i,v in enumerate(old):
-    if i not in moved:self.assertEqual(v,raw[i])
+    if i not in moved|changed_amounts:self.assertEqual(v,raw[i])
    for index,guard in enumerate(r['garrisons'],r['base_unit_count']):
     source=old[guard['source_record']];actual=raw[index]
     self.assertEqual(source[8:],actual[8:]);self.assertEqual(guard['unit'],balance.info(actual)[2])
@@ -63,6 +64,26 @@ class MissionBalanceTests(unittest.TestCase):
    raw=balance_map(row).save();chk=maps.CHK(raw);balance.undo(chk,row['mission_balance'])
    report=balance.apply(chk,self.missions[row['mission_id']],row['difficulty'])
    self.assertEqual(report,row['mission_balance']);self.assertEqual(chk.save(),raw)
+ def test_terran03_only_starting_geyser_reserve_changes(self):
+  row=next(r for r in self.rows if r['mission_id']==103);chk=balance_map(row)
+  current=chk.getsection('UNIT');baseline=maps.CHK(chk.save());balance.undo(baseline,row['mission_balance'])
+  changes=row['mission_balance']['resource_amount_changes'];self.assertEqual(len(changes),1)
+  change=changes[0];self.assertEqual(change,dict(index=166,unit=188,position=[320,2528],before=1000,after=5000))
+  # Remove appended guards when comparing the reversible mission-specific pass.
+  old=baseline.getsection('UNIT');patched=bytearray(current[:len(old)])
+  struct.pack_into('<I',patched,change['index']*36+20,1000)
+  self.assertEqual(bytes(patched),old)
+  self.assertEqual(struct.unpack_from('<I',current,35*36+20)[0],5000)
+  self.assertEqual(struct.unpack_from('<I',current,89*36+20)[0],1500)
+ def test_terran03_receipt_cannot_authorize_a_different_reserve(self):
+  row=copy.deepcopy(next(r for r in self.rows if r['mission_id']==103))
+  chk=balance_map(row);raw=bytearray(chk.getsection('UNIT'));struct.pack_into('<I',raw,166*36+20,4000)
+  chk.setsection('UNIT',bytes(raw));row['mission_balance']['after_unit_sha256']=balance.sha(raw)
+  row['mission_balance']['resource_amount_changes'][0]['after']=4000
+  balance.undo(chk,row['mission_balance'])
+  replay=balance.apply(chk,self.missions[103],row['difficulty'])
+  self.assertNotEqual(replay,row['mission_balance'])
+  self.assertEqual(struct.unpack_from('<I',chk.getsection('UNIT'),166*36+20)[0],5000)
  def test_receipt_cannot_authorize_a_different_guard(self):
   row=copy.deepcopy(next(r for r in self.rows if r['mission_balance']['garrison_added']))
   output=maps.CHK(Path(row['output']).read_bytes());source=maps.CHK(Path(row['source']).read_bytes())

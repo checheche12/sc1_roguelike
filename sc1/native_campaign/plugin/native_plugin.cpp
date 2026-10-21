@@ -1575,12 +1575,15 @@ namespace {
 #include "include/rework_lighting_v5.h"
 #include "include/rework_energy_ui_v5.h"
 #include "include/rework_economy_ui_v5.h"
-#include "include/yamato_cost_ui.h"
 #include "include/spell_energy_check.h"
+#include "include/yamato_cost_ui.h"
 #include "include/siege_move_ui.h"
 #include "include/rework_shield_ui_v5.h"
 #include "include/carrier_weapon_ui.h"
 bool verify_stat_engine_after_dat() noexcept {
+    if(spell_energy_check::queued&&!spell_energy_check::verify_installation()){
+        log_event("Spell energy client checks changed after DAT mutation.");return false;
+    }
     if(siege_move_ui::queued&&!siege_move_ui::verify_installation()){
         log_event("Siege movement button patch changed after DAT mutation.");return false;
     }
@@ -1624,7 +1627,7 @@ void __cdecl verify_registered_engine_hooks() noexcept {
         log_event("Engine patch verification failed: stage=%s error=%lu weapon_ui=%s armor_ui=%s",native_engine_hooks::last_install.stage,native_engine_hooks::last_install.win32_error,samase_weapon_ui::last_error,samase_armor_ui::last_error);
         visible_failure(L"게임 패치의 실제 적용을 확인하지 못했습니다. 플러그인을 활성화하지 않습니다. sc1_native.log를 확인하세요.");return;
     }
-    if(!siege_move_ui::verify_installation() || !yamato_cost_ui::verify_installation() || !rework_relocation::bind() || !rework_cargo_v5::bind_native() || !campaign_visibility::bind_native() || !rework_energy_ui::verify_installation()){visible_failure(L"이동·에너지 기능을 연결하지 못했습니다. sc1_native.log를 확인하세요.");return;}
+    if(!siege_move_ui::verify_installation() || !spell_energy_check::verify_installation() || !yamato_cost_ui::verify_installation() || !rework_relocation::bind() || !rework_cargo_v5::bind_native() || !campaign_visibility::bind_native() || !rework_energy_ui::verify_installation()){visible_failure(L"이동·에너지 기능을 연결하지 못했습니다. sc1_native.log를 확인하세요.");return;}
     if(!rework_economy_ui::verify_installation()){log_event("Production tooltip verification failed: stage=%s",rework_economy_ui::last_error);visible_failure(L"생산 비용 표시를 연결하지 못했습니다. sc1_native.log를 확인하세요.");return;}
     if(!rework_shield_ui_v5::verify_installation()){log_event("Shield armor display verification failed: stage=%s",rework_shield_ui_v5::last_error);visible_failure(L"보호막 방어력 표시를 연결하지 못했습니다. sc1_native.log를 확인하세요.");return;}
     g.hooks_ready=true;log_event("Required engine patch verified after loader; init_units/step_objects hooks ready.");
