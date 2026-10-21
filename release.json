@@ -1,0 +1,17 @@
+{
+  "version": "v2026.10.22-qa58",
+  "file": "SC1_Roguelike_20261022_QA58.zip",
+  "sha256": "13b40abb3f9332eb69907d7b5b3b39d52a14a529429d628e70af702eba36d172",
+  "bytes": 24787148,
+  "runtime_source_commit": "f8dfdbc5c989e88165a957189d320f7fae38d835",
+  "native_dll_sha256": "a2dfc5aa8dc149488c050fd93f7aa8bb1a7e0f38020212545b60f91e65daafc4",
+  "created_at_utc": "2026-10-21T16:42:34.702414+00:00",
+  "native_display_fields_matched": 1830,
+  "native_catalog_regenerated_before_compile": true,
+  "changed_names": 1,
+  "changed_descriptions": 2,
+  "mechanics_changed": false,
+  "unchanged_maps": 63,
+  "personal_database_included": false,
+  "live_gameplay_verified": false
+}
