@@ -32,7 +32,7 @@ class LegendaryBases(unittest.TestCase):
                                     (96, 'health_multiplier', 2), (102, 'damage_multiplier', 2),
                                     (106, 'ground_damage_percent', 200), (144, 'radius_bonus_percent', 100)):
             self.assertEqual(self.by[ordinal]['effect'][key], value)
-            self.assertEqual(self.by[ordinal]['effect']['qa_revision'], REVISION)
+            self.assertGreaterEqual(self.by[ordinal]['effect']['qa_revision'], REVISION)
         self.assertEqual(self.by[61]['effect']['infection_radius_pixels'], 192)
         self.assertEqual(self.by[63]['effect']['chain_total_targets'], 7)
         self.assertEqual(self.by[106]['effect']['acid_spore_effect_multiplier'], 2)

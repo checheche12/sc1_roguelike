@@ -1037,8 +1037,10 @@ void __cdecl owner_commands_hook(const void* data,U32 len,U32 replay,CommandFn o
 using GuiFn=void (__cdecl*)(void*);
 void __cdecl owner_rclick_hook(void* event,GuiFn original) noexcept {
     // Right-click chooses the default order BEFORE ProcessCommands. Native
-    // burrowed-Lurker predicates reject movement at both boundaries.
-    if(g.active&&g.applied){rework_combat_v5::CommandScope combat(player_owner(),true,false);original(event);}
+    // burrowed-Lurker predicates reject movement at both boundaries. The GUI
+    // also reads units.dat RightClickAction before a command reaches the
+    // owner-scoped parser; mobile siege tanks need the same owner DAT view.
+    if(g.active&&g.applied){OwnerDatScope scope(player_owner(),player_owner());rework_combat_v5::CommandScope combat(player_owner(),true,false);original(event);}
     else original(event);
 }
 bool register_owner_hooks(const samase::PluginApi* api) noexcept {

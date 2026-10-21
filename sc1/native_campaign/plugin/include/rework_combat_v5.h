@@ -537,7 +537,7 @@ struct CommandScope {
 };
 using CommandNext=void (__cdecl*)(const U8*,U32);
 inline void __cdecl motion_command(const U8* data,U32 length,U32 player,U32,CommandNext original){
-    SpellCommandEnergyScope energy(player,data,length);CommandScope motion(player,true,false);original(data,length);
+    OwnerDatScope owner(player,player);SpellCommandEnergyScope energy(player,data,length);CommandScope motion(player,true,false);original(data,length);
 }
 inline bool bind_motion_commands(const samase::PluginApi* api) noexcept {
     if(!api||!api->hook_ingame_command)return false;
@@ -652,6 +652,16 @@ inline bw::Bullet* emit(bw::Unit* source,bw::Unit* target,U32 w,U32 percent,int 
     emission_percent=saved_percent;emission_secondary=saved_secondary;emission_primary=saved_primary;return b;
 }
 inline void queue(bw::Unit* source,bw::Unit* target,U32 w,U32 percent,U32 delay=0) {pending_shots.push_back({identity(source),identity(target),w,percent,now()+delay});}
+inline bool lockdown_committed(bw::Unit* target) {
+    // Prefer fresh targets across consecutive casts, including the interval
+    // between scheduling, native projectile creation and its actual impact.
+    const auto pending=[&](const PendingShot& shot){return shot.weapon==32&&shot.source.owner==player_owner()&&resolve(shot.target)==target;};
+    if(std::any_of(pending_shots.begin(),pending_shots.end(),pending)||std::any_of(pending_work.begin(),pending_work.end(),pending))return true;
+    for(const auto& entry:projectiles){const auto& p=entry.second;
+        if(p.weapon==32&&p.source.owner==player_owner()&&!p.impact&&now()-p.created<=2400&&resolve(p.primary)==target)return true;
+    }
+    return false;
+}
 inline void launched(U32 w,bw::Unit* source,bw::Bullet* b) {
     if(!b)return;projectiles.erase(b);
     if(!valid_unit(effect_body(source)))return;
@@ -702,8 +712,11 @@ inline void launched(U32 w,bw::Unit* source,bw::Bullet* b) {
     // A witnessed native Lockdown projectile confirms a real cast. Extra
     // projectiles keep native travel/impact and never re-enter the cast order.
     if(talent_power::enabled&&rank(63)&&w==32&&!p.secondary&&target){
-        U32 made=0;for(auto extra:around(target->flingy.position.x,target->flingy.position.y,192,target,65536)){
-            if(!soldier(extra->unit_id)||extra->lockdown_timer||protected_objective_unit(extra)||!target_ok(source,extra,32,false))continue;
+        auto choices=around(target->flingy.position.x,target->flingy.position.y,192,target,65536);
+        choices.erase(std::remove_if(choices.begin(),choices.end(),[&](bw::Unit* extra){return !soldier(extra->unit_id)||extra->lockdown_timer||protected_objective_unit(extra)||!target_ok(source,extra,32,false);}),choices.end());
+        // Stable partition preserves nearest-first selection within each tier.
+        std::stable_partition(choices.begin(),choices.end(),[](bw::Unit* extra){return !lockdown_committed(extra);});
+        U32 made=0;for(auto extra:choices){
             queue(source,extra,32,100);if(++made==6)break;
         }
     }

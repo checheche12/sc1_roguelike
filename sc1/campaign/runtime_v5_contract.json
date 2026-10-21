@@ -6094,7 +6094,7 @@
       "id": "dee1eebb-31d8-526f-b895-9785e0f2f5b0",
       "name": "생체 신경 봉쇄",
       "target": "고스트 락다운",
-      "description": "고스트: 락다운이 생체 전투 유닛에도 적용되며 생체 대상 지속 시간이 최대 2배가 됩니다. 주 대상 주변 6타일 안의 다른 적 전투 유닛 최대 6기도 봉쇄합니다. 주 대상을 포함해 최대 7기입니다.",
+      "description": "고스트: 락다운은 생체 전투 유닛에도 적용되며 생체 대상 지속 시간이 최대 2배가 됩니다. 주 대상 주변 6타일 안 다른 적 최대 6기 추가 봉쇄. 아직 봉쇄되지 않고 락다운 탄도 향하지 않는 적 우선.",
       "trigger": "",
       "numbers": "",
       "notes": "건물·원본 면역 대상은 제외.",
@@ -6117,11 +6117,12 @@
         "type": "rework_v5",
         "ordinal": 63,
         "source_id": "dee1eebb-31d8-526f-b895-9785e0f2f5b0",
-        "qa_revision": 2026102046,
+        "qa_revision": 2026102260,
         "benefit_power_quarters": 16,
         "chain_radius_pixels": 192,
         "chain_total_targets": 7,
-        "organic_duration_multiplier": 2
+        "organic_duration_multiplier": 2,
+        "prefer_unlocked_unclaimed_targets": true
       },
       "target_units": [
         1,
@@ -6163,7 +6164,7 @@
       },
       "bundle_family": 1,
       "effect_subject": "고스트",
-      "description_revision": 2026102042
+      "description_revision": 2026102260
     },
     {
       "id": "b8a603b2-ca89-5cf0-bdab-f5b7549480e4",
@@ -15680,7 +15681,7 @@
       "race": "terran",
       "rarity": "legendary",
       "target": "레이스·톰 카잔스키",
-      "description": "레이스가 일반 공격 시 명중 지점 4타일 안 같은 공격층의 다른 적 최대 2기도 원래 피해로 공격합니다.",
+      "description": "레이스의 일반 공격 피해 +100%. 명중 지점 4타일 안 같은 공격층의 다른 적 최대 3기에도 기본 공격의 200% 피해를 줍니다.",
       "source_description": "레이스가 일반 공격 시 명중 지점 4타일 안 같은 공격층의 다른 적 최대 2기도 원래 피해로 공격합니다. 지상·공중 무기는 각각 원래 피해와 공격 횟수를 사용합니다.",
       "bit_index": 424,
       "category": "combat",
@@ -15692,15 +15693,15 @@
       "repeatable": false,
       "effect": {
         "mode": 1,
-        "bonus": 0,
-        "percent": 100,
-        "count": 2,
+        "bonus": 100,
+        "percent": 200,
+        "count": 3,
         "cadence": 1,
         "radius": 128,
         "type": "rework_v5",
         "ordinal": 186,
         "source_id": "4d1b3973-af6c-5ffb-9e38-f579810743e8",
-        "qa_revision": 2026102038,
+        "qa_revision": 2026102260,
         "benefit_power_quarters": 4
       },
       "target_units": [
@@ -15749,7 +15750,7 @@
       },
       "bundle_family": 8,
       "effect_subject": "레이스",
-      "description_revision": 2026102042
+      "description_revision": 2026102260
     },
     {
       "id": "ee80c7d5-a57e-5d02-8aba-98fcd9dcc349",
