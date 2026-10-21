@@ -465,8 +465,10 @@ inline U32 __cdecl can_infest_hook(bw::Unit* target,UnitValueFn original) noexce
     if(!g.active||!g.applied||!own(active_caster)||!rank(85)||!live(target)||target->unit_id!=106||U32(target->flingy.hitpoints)>effective_max_hp(target)*3/4)return original(target);
     const auto hp=target->flingy.hitpoints;target->flingy.hitpoints=std::min(hp,std::int32_t(effective_max_hp(target)/2));const auto result=original(target);target->flingy.hitpoints=hp;return result;
 }
+#include "spell_energy_requirements.h"
 inline U32 __cdecl order_target_hook(bw::Unit* caster,U32 order,bw::Unit* target,U32 x,U32 y,std::uint16_t* error,OrderTargetFn original) noexcept {
     if(rework_curses::spell_disabled(caster)&&in(order,{122,141,143}))return 0;
+    SpellEnergyRequirementScope energy_requirement(caster,order);
     OwnerDatScope cost_owner(caster ? caster->player:12u,caster ? caster->player:12u,caster);
     if(!g.active||!g.applied||!own(caster)||!live(target))return original(caster,order,target,x,y,error);
     if(state_base==g.units&&states.size()==g.units_count&&states[std::size_t(caster-g.units)].fade_until>now())return 0;
@@ -535,7 +537,7 @@ struct CommandScope {
 };
 using CommandNext=void (__cdecl*)(const U8*,U32);
 inline void __cdecl motion_command(const U8* data,U32 length,U32 player,U32,CommandNext original){
-    CommandScope motion(player,true,false);original(data,length);
+    SpellCommandEnergyScope energy(player,data,length);CommandScope motion(player,true,false);original(data,length);
 }
 inline bool bind_motion_commands(const samase::PluginApi* api) noexcept {
     if(!api||!api->hook_ingame_command)return false;
@@ -1317,13 +1319,7 @@ struct OrderScope {
         // A successful native cast actually spent energy; merely entering a
         // cast order, canceling it or failing validation cannot grant a refund.
         if(u->energy<energy && order!=6){
-            const U32 spent=energy-u->energy;U32 refund=0;
-            if(group(38,u->unit_id)&&rank(38))refund=spent*std::min(90u,talent_power::v5(38,30))/100;
-            if(group(78,u->unit_id)&&rank(78))refund=spent*talent_power::v5(group(78,u->unit_id)?78u:120u,25)/100;
-            if(group(120,u->unit_id)&&rank(120))refund=spent*talent_power::v5(group(78,u->unit_id)?78u:120u,25)/100;
-            // Native Recall order ID137. Additional discount applies to the
-            // residual cost after generic casting efficiency, never twice.
-            if(order==137&&rank(126))refund=std::min(spent,refund+talent_power::v5(126,75*256));
+            const U32 spent=energy-u->energy,refund=cast_energy_refund(u,order,spent);
             effective_cast_spent=spent-refund;
             u->energy=std::uint16_t(std::min(65535u,U32(u->energy)+refund));
             if(order==182&&rank(125))u->shields=std::int32_t(std::min(shields,talent_power::v5(125,shields/2)));

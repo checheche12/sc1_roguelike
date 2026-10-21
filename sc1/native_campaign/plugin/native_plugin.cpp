@@ -147,6 +147,7 @@ namespace rework_combat_v5 {bool plan_stats(const GrowthSnapshot&,std::vector<Ed
 namespace rework_economy_v5 {bool plan_stats(const GrowthSnapshot&,std::vector<Edit>&);void before_snapshot();void after_snapshot();double motion_ratio(bw::Unit*) noexcept;}
 namespace campaign_visibility {void reset() noexcept;}
 namespace yamato_cost_ui {void reset() noexcept;void publish() noexcept;}
+namespace spell_energy_check {void reset() noexcept;void publish() noexcept;}
 namespace siege_move_ui {void reset() noexcept;void publish() noexcept;}
 namespace rework_energy_ui {void reset() noexcept;void publish() noexcept;}
 namespace rework_economy_ui {void reset() noexcept;bool publish(bool) noexcept;}
@@ -715,7 +716,7 @@ bool apply_snapshot(void*,const GrowthSnapshot& s) noexcept {
         g.growth=s;g.wave_stacks=s.curse_counts[0];g.applied_phase=phase;
         rework_combat_v5::growth_applied(previous_growth,s);
         rework_economy_v5::after_snapshot();
-        rework_economy_ui::publish(true);yamato_cost_ui::publish();siege_move_ui::publish();
+        rework_economy_ui::publish(true);yamato_cost_ui::publish();spell_energy_check::publish();siege_move_ui::publish();
         rework_shield_ui_v5::publish(true);
         log_event("Owner-isolated cumulative growth: mission=%u phase=%u fields=%zu",g.mission ? g.mission->mission_id : 0,phase,g.owner_edits.size());
         return true;
@@ -895,6 +896,7 @@ void __cdecl owner_timer_hook(bw::Unit* u,UnitFn original) noexcept {
     rework_combat_v5::ExpiryScope expiry(u);owner_unit_hook(u,original);
 }
 void __cdecl owner_order_hook(bw::Unit* u,UnitFn original) noexcept {
+    rework_combat_v5::SpellEnergyRequirementScope energy_requirement(u,u?u->order:0);
     campaign_research::Scope research(u);HallucinationCreationScope creation(u && u->order==148);rework_carrier_v5::LaunchScope launch(u);rework_carrier_v5::BurstScope burst(u);rework_combat_v5::OrderScope rework(u,original);if(!rework.handled()){owner_unit_hook(u,original);burst.finish([&]{owner_unit_hook(u,original);});}
 }
 void __cdecl owner_secondary_hook(bw::Unit* u,UnitFn original) noexcept {owner_unit_hook(u,original);}
@@ -1346,7 +1348,7 @@ void abandon_session() noexcept {
     frame_profile::reset();
     g.survival_hint_shown=false;
     g.campaign_clear_shown=false;
-    area_visuals::reset();campaign_visibility::reset();yamato_cost_ui::reset();siege_move_ui::reset();rework_energy_ui::reset();rework_economy_ui::reset();rework_shield_ui_v5::reset();enemy_progression::reset();rework_waves::reset();rework_combat_v5::reset();rework_economy_v5::reset();rework_cargo_v5::reset();rework_carrier_v5::reset();
+    area_visuals::reset();campaign_visibility::reset();yamato_cost_ui::reset();spell_energy_check::reset();siege_move_ui::reset();rework_energy_ui::reset();rework_economy_ui::reset();rework_shield_ui_v5::reset();enemy_progression::reset();rework_waves::reset();rework_combat_v5::reset();rework_economy_v5::reset();rework_cargo_v5::reset();rework_carrier_v5::reset();
     max_hp_cache::reset();
     wave_targeting::reset();enemy_detection::reset();
     movement_effects::reset();combat_effects::reset_melee();g.objective_units.clear();
@@ -1500,7 +1502,7 @@ void __cdecl frame() noexcept {
         max_hp_cache::publish();
         frame_profile::mark(2);
         multi_target::step();
-        rework_combat_v5::step();frame_profile::mark(3);rework_economy_v5::step();rework_cargo_v5::step();rework_energy_ui::publish();yamato_cost_ui::publish();siege_move_ui::publish();rework_economy_ui::publish(false);rework_shield_ui_v5::publish(false);frame_profile::mark(4);
+        rework_combat_v5::step();frame_profile::mark(3);rework_economy_v5::step();rework_cargo_v5::step();rework_energy_ui::publish();yamato_cost_ui::publish();spell_energy_check::publish();siege_move_ui::publish();rework_economy_ui::publish(false);rework_shield_ui_v5::publish(false);frame_profile::mark(4);
         bool ready=g.protocol.growth_applied() && g.applied && !g.protocol.failed();
         if(ready && after_dialog && !g.survival_hint_shown){
             if(g.mission->mission_id==103)message("추가 승리 조건: 적 기지의 모든 건물을 파괴하면 남은 시간과 관계없이 승리합니다.");
@@ -1574,6 +1576,7 @@ namespace {
 #include "include/rework_energy_ui_v5.h"
 #include "include/rework_economy_ui_v5.h"
 #include "include/yamato_cost_ui.h"
+#include "include/spell_energy_check.h"
 #include "include/siege_move_ui.h"
 #include "include/rework_shield_ui_v5.h"
 #include "include/carrier_weapon_ui.h"
@@ -1592,6 +1595,9 @@ bool verify_stat_engine_after_dat() noexcept {
     }
     if(yamato_cost_ui::queued && !yamato_cost_ui::verify_installation()){
         log_event("Yamato tooltip patch changed after DAT mutation.");return false;
+    }
+    if(spell_energy_check::queued&&!spell_energy_check::verify_installation()){
+        log_event("Spell energy requirement patch changed after DAT mutation.");return false;
     }
     if(max_hp_engine::hooks[0].queued && !max_hp_engine::verify_installation()){
         log_event("Maximum-health patch changed after DAT mutation: stage=%s",native_engine_hooks::last_install.stage);return false;
@@ -1645,7 +1651,7 @@ extern "C" __declspec(dllexport) void __cdecl samase_plugin_init(const samase::P
     }
     if(!rework_energy_ui::bind(api)){visible_failure(L"에너지 표시 기능을 연결하지 못했습니다. sc1_native.log를 확인하세요.");return;}
     if(!siege_move_ui::bind(api)){visible_failure(L"공성 전차 이동 명령 표시를 연결하지 못했습니다.");return;}
-    if(!yamato_cost_ui::bind(api)||!native_tech_cost_view::bind(native_engine_hooks::verified_base)){visible_failure(L"야마토 에너지 표시와 실제 비용을 연결하지 못했습니다.");return;}
+    if(!yamato_cost_ui::bind(api)||!native_tech_cost_view::bind(native_engine_hooks::verified_base)||!spell_energy_check::bind(api)){visible_failure(L"마법 에너지 시전 조건과 실제 비용을 연결하지 못했습니다.");return;}
     if(!rework_economy_ui::bind(api)){log_event("Production tooltip registration failed: stage=%s",rework_economy_ui::last_error);visible_failure(L"생산 비용 표시를 연결하지 못했습니다. sc1_native.log를 확인하세요.");return;}
     if (!samase_weapon_ui::bind(api)) {
         log_event("SAMASE weapon display registration failed: stage=%s",samase_weapon_ui::last_error);
