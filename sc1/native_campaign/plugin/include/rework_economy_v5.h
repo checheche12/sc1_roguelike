@@ -309,10 +309,26 @@ inline void after_snapshot() {
         }});provided_applied=true;
     }
 }
+// BW Zerg6 starts with several deliberately overrun Hatcheries. Only the
+// Lair/Hatchery on the actual player island may receive the one-time support.
+inline constexpr int bwz6_support_x=4160,bwz6_support_y=1424;
+inline constexpr U32 bwz6_support_radius=384;
+inline std::uint64_t bwz6_support_distance(const bw::Unit* u) noexcept {
+    const auto dx=std::int64_t(u->flingy.position.x)-bwz6_support_x,dy=std::int64_t(u->flingy.position.y)-bwz6_support_y;
+    return std::uint64_t(dx*dx+dy*dy);
+}
 inline void starting_bonus(const std::vector<bw::Unit*>& depots) {
     auto game=g.game();if(!g.mission || g.mission->no_production || game->frame_count<48 || starting_workers>=4 || game->frame_count<starting_retry)return;
     bw::Unit* base=nullptr;
-    for(auto candidate:depots){auto mineral=nearest_mineral(candidate);if(!(candidate->flags&4u) && mineral && distance(candidate,mineral)<=768u*768u){base=candidate;break;}}
+    const bool bwz6=g.mission->mission_id==606;
+    for(auto candidate:depots){
+        if(bwz6&&bwz6_support_distance(candidate)>std::uint64_t(bwz6_support_radius)*bwz6_support_radius)continue;
+        auto mineral=nearest_mineral(candidate);
+        if(!(candidate->flags&4u)&&mineral&&distance(candidate,mineral)<=768u*768u){
+            if(!base||bwz6_support_distance(candidate)<bwz6_support_distance(base))base=candidate;
+            if(!bwz6)break;
+        }
+    }
     if(!base)return;
     const U32 race=base->unit_id==106?1u:base->unit_id==154?2u:0u;
     const U32 id=race==1?7u:race==2?64u:41u;
