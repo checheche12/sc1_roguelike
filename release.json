@@ -1,0 +1,22 @@
+{
+  "version": "v2026.10.21-qa56",
+  "file": "SC1_Roguelike_20261021_QA56.zip",
+  "sha256": "c39c8abecbdaa940f4b9b335b832a730d1fb41adb2f4c13123a1abff710369c0",
+  "bytes": 24786791,
+  "runtime_source_commit": "89083c6864419656aa9a328d3ecabd074902444d",
+  "native_dll_sha256": "1ac05d1a1c704c869664f0b24cea2e37a9147f2327e6be8ce1ce7b1430a86ac7",
+  "created_at_utc": "2026-10-21T11:03:45.242825+00:00",
+  "common_manual_bundle_size": 3,
+  "goliath_primary_percent": 100,
+  "goliath_additional_targets": 3,
+  "goliath_secondary_percent": 50,
+  "additional_vessel_energy": 0,
+  "personal_database_included": false,
+  "live_gameplay_verified": false,
+  "discounted_spell_precheck": true,
+  "exact_fractional_energy_preserved": true,
+  "zero_energy_recall": true,
+  "native_host_groups": 409,
+  "native_host_checks": 1555705,
+  "unchanged_maps": 63
+}
