@@ -1,0 +1,19 @@
+{
+  "version": "v2026.10.22-qa59",
+  "file": "SC1_Roguelike_20261022_QA59.zip",
+  "sha256": "58133cbdfbc11a7ebc168d3e66559562bcd41e0932f49d5afd2ad52ddadd8c5a",
+  "bytes": 24787603,
+  "runtime_source_commit": "66d88251123eac007561e4554469e9dc3d1098ae",
+  "native_dll_sha256": "09e8c68dad603a85d072e48987b82d74d14994a0892f718d2b974798a47c1dea",
+  "created_at_utc": "2026-10-21T17:17:50.354024+00:00",
+  "client_energy_checks_patched": 4,
+  "discounted_tooltip": true,
+  "terran03_starting_gas": 5000,
+  "unchanged_maps": 62,
+  "changed_maps": [
+    103
+  ],
+  "launcher_source_changed": false,
+  "personal_database_included": false,
+  "live_gameplay_verified": false
+}
