@@ -1,0 +1,20 @@
+{
+  "version": "v2026.10.22-qa60",
+  "file": "SC1_Roguelike_20261022_QA60.zip",
+  "sha256": "849d264f9016608dd7d7d1ed7256b2467e852f5147c1da08a54557fa9a2442b4",
+  "bytes": 24789886,
+  "runtime_source_commit": "743e267985720454e9c786a2be94e4df4743db96",
+  "native_dll_sha256": "fc4dda4fd646b3583b400a57c3dd1e288498acfdaf68e75bbf611d5bcab7416a",
+  "created_at_utc": "2026-10-21T17:50:30.209212+00:00",
+  "wraith_primary_bonus_percent": 100,
+  "wraith_additional_damage_percent": 200,
+  "wraith_additional_targets": 3,
+  "lockdown_prefer_unlocked_unclaimed": true,
+  "siege_rightclick_owner_view": true,
+  "terran03_starting_gas": 5000,
+  "unchanged_maps": 63,
+  "changed_maps": [],
+  "launcher_source_changed": false,
+  "personal_database_included": false,
+  "live_gameplay_verified": false
+}
