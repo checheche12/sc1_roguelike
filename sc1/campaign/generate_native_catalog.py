@@ -5,7 +5,8 @@ from .runtime_catalog import load_catalog
 from .build_runtime_catalog import UNIT_FIELDS, WEAPON_FIELDS, RARITY_LABELS, REGULAR_COMBAT_UNITS
 ROOT=Path(__file__).resolve().parents[2]
 
-def generate(catalog=None):
+def render(catalog=None):
+    """Return the complete native contract, including current UI copy."""
     from .effect_copy import describe_effect
     catalog=catalog or load_catalog(expected_version=2)
     talents=sorted(catalog['talents'],key=lambda x:x['bit_index'])
@@ -51,8 +52,12 @@ def generate(catalog=None):
             lines.append('inline constexpr const char* '+prefix+'_'+key+'[] = {'+', '.join(json.dumps(x,ensure_ascii=False) for x in vals)+'};')
     lines.extend(['inline constexpr int home[2] = {232,376};','inline constexpr int slots[4][2] = {{88,264},{184,264},{280,264},{376,264}};',
       'inline constexpr int center[2] = {232,312};','inline constexpr char marker[] = "SC1_NATIVE_ALL_V1_R469_C1";','}'])
+    return '\n'.join(lines)+'\n'
+
+
+def generate(catalog=None):
     target=ROOT/'sc1/native_campaign/plugin/include/frozen_catalog.generated.h'
-    target.write_text('\n'.join(lines)+'\n',encoding='utf-8')
+    target.write_text(render(catalog),encoding='utf-8')
     return target
 
 if __name__=='__main__':print(generate())

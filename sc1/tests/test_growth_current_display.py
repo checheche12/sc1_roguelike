@@ -10,6 +10,7 @@ from unittest.mock import patch
 
 from sc1.campaign import growth,rework_growth,talent_balance
 from sc1.campaign.display_text import concise_description,current_owned_descriptions
+from sc1.campaign.effect_copy import describe_effect
 from sc1.campaign.runtime_catalog import load_catalog
 from sc1.manager.store import CampaignStore,GrowthChoicesPending
 
@@ -42,14 +43,14 @@ class CurrentGrowthDisplayTests(unittest.TestCase):
         self.assertEqual(by_id[self.manual['id']]['stacks'],3)
         self.assertEqual(by_id[self.curse['id']]['stacks'],2)
         for canonical in (self.manual,self.economy,self.curse,self.current['talents'][0]):
-            self.assertEqual(concise_description(by_id[canonical['id']]),canonical['description'])
+            self.assertEqual(concise_description(by_id[canonical['id']]),describe_effect(canonical))
         self.assertIn('+15%',concise_description(by_id[self.manual['id']]))
         self.assertIn('2 더',concise_description(by_id[self.economy['id']]))
 
     def test_current_description_beats_source_and_old_summary(self):
         for item in self.current['talents']+self.current['curses'][15:]:
             if item.get('rework_revision')==5 or item['effect'].get('qa_revision'):
-                self.assertEqual(concise_description(item),item['description'])
+                self.assertEqual(concise_description(item),describe_effect(item))
 
     def test_incompatible_or_newer_pin_never_gets_reinterpreted(self):
         saved=self.store.growth_status()

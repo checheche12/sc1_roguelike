@@ -67,6 +67,13 @@ def validate_catalog_bundle(original,legacy,rework,*,require_implemented=True):
                 implemented_curses=sum(x['implemented'] for x in rework['curses']))
 
 
+def validate_native_catalog(catalog, frozen):
+    """Reject stale native text and mechanics even when wire indices match."""
+    from sc1.campaign.generate_native_catalog import render
+    if frozen != render(catalog):
+        raise ValueError('Generated native catalog differs from the release catalog; regenerate native names, rarities, descriptions and patches')
+
+
 def catalog_inputs(*,require_implemented=True):
     from sc1.campaign.talent_balance import power_quarters
     paths={name:ROOT.parent/'campaign'/name for name in CATALOG_NAMES}
@@ -78,6 +85,7 @@ def catalog_inputs(*,require_implemented=True):
     if actual_power!=[power_quarters(x) for x in rework['talents']]:
         raise ValueError('Native talent strength differs from the release catalog')
     frozen=(PLUGIN/'include/frozen_catalog.generated.h').read_text(encoding='utf8')
+    validate_native_catalog(rework,frozen)
     ranks=(PLUGIN/'include/rework_catalog.generated.h').read_text(encoding='utf8')
     expected_masks=[0]*16
     for item in rework['talents']:
@@ -152,6 +160,8 @@ def run(argv, environment, log_name):
 
 def build(*, receipt=RECEIPT, protocol=True):
     sys.path.insert(0,str(WORKSPACE))
+    from sc1.campaign.generate_native_catalog import generate
+    generate(read_json(ROOT.parent/'campaign/runtime_talents_v5.json'))
     growth_contract,catalog_pins=catalog_inputs()
     from sc1.build_environment import msvc_environment
     compiler, environment = msvc_environment(WORKSPACE)

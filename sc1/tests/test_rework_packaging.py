@@ -27,6 +27,33 @@ class ReworkPackagingTests(unittest.TestCase):
         self.assertEqual((contract['mailbox_words'],contract['snapshot_words'],contract['manual_rank_slots_used']),(128,65,21))
         self.assertEqual(contract['legacy_wire_versions'],[1])
 
+    def test_native_copy_matches_the_catalog_used_by_the_manager(self):
+        from sc1.campaign.generate_native_catalog import render
+        header=(native.PLUGIN/'include/frozen_catalog.generated.h').read_text(encoding='utf8')
+        native.validate_native_catalog(self.rework,header)
+        self.assertEqual(header,render(self.rework))
+
+    def test_qa57_goliath_and_tank_stale_descriptions_block_release(self):
+        from sc1.campaign.generate_native_catalog import render
+        for index,old_text in ((293,'시즈 탱크가 같은 적을 2회 공격할 때마다 그 적에게 원래 공격의 700% 추가 피해. 공성 모드로 이동하며 정지 시 사격합니다.'),
+                               (294,'골리앗의 일반 공격 피해 +100%.')):
+            with self.subTest(index=index):
+                old=copy.deepcopy(self.rework)
+                old['talents'][index]['description']=old_text
+                with self.assertRaisesRegex(ValueError,'Generated native catalog differs'):
+                    native.validate_native_catalog(self.rework,render(old))
+
+    def test_all_native_display_fields_block_release_when_stale(self):
+        from sc1.campaign.generate_native_catalog import render
+        for kind in ('talents','curses'):
+            for field,value in (('name','stale name'),('description','stale effect'),('rarity','common')):
+                with self.subTest(kind=kind,field=field):
+                    old=copy.deepcopy(self.rework)
+                    item=next(x for x in old[kind] if x.get('rework_revision')==5 and x['rarity']!='common')
+                    item[field]=value
+                    with self.assertRaisesRegex(ValueError,'Generated native catalog differs'):
+                        native.validate_native_catalog(self.rework,render(old))
+
     def test_pending_effect_or_rewritten_old_meaning_cannot_publish(self):
         for kind,change in (('talents',lambda x:x.update(implemented=False)),
                             ('curses',lambda x:x.update(implemented=False))):

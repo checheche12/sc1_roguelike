@@ -83,14 +83,15 @@ class DisplayTextTests(unittest.TestCase):
                 validate_catalog(changed)
 
     def test_header_contains_current_text_and_multi_target_contract(self):
+        from sc1.campaign.effect_copy import describe_effect
+        catalog=load_catalog(expected_version=2)
         header = (HERE.parent/'native_campaign/plugin/include/frozen_catalog.generated.h').read_text(encoding='utf8')
         self.assertIn('{104,3,0,2}', header)
         self.assertIn('{105,12,1,3}', header)
-        self.assertIn('kTalentCount = 400', header)
+        self.assertIn('kTalentCount = '+str(len(catalog['talents'])), header)
         self.assertIn('kLegacyTalentCount = 238', header)
-        catalog=load_catalog(expected_version=2)
         for item in catalog['talents'] + catalog['curses']:
-            self.assertIn(json.dumps(item['description'], ensure_ascii=False), header)
+            self.assertIn(json.dumps(describe_effect(item), ensure_ascii=False), header)
 
 class AddedTalentAndCurseRotationTests(unittest.TestCase):
     def setUp(self):
