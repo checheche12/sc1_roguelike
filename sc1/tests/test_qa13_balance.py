@@ -1,6 +1,7 @@
 import unittest
 from sc1.campaign.runtime_catalog import load_catalog
 from sc1.campaign import talent_balance
+from sc1.campaign import effect_copy
 
 
 class Qa13BalanceTests(unittest.TestCase):
@@ -23,12 +24,14 @@ class Qa13BalanceTests(unittest.TestCase):
     def test_supply_box_reduced_without_rescaling_economy(self):
         catalog=load_catalog(expected_version=2)
         box=catalog['talents'][243]
-        self.assertEqual(box['effect']['resources_per_curse'],37.5)
+        self.assertEqual(box['effect']['resources_per_curse'],25)
         self.assertEqual(box['effect']['resource_total_rounding'],'floor')
-        self.assertIn('37.5',box['description'])
+        self.assertIn('25씩',box['description'])
         self.assertIn('50씩',box['pre_balance_description'])
         self.assertEqual(box['effect']['benefit_power_quarters'],4)
         self.assertFalse(catalog['economy_talents_scaled'])
         for item in catalog['talents']:
             if item.get('category')=='economy' and item.get('effect_ordinal')!=5:
-                self.assertEqual(item['description'],item['pre_balance_description'])
+                ordinal=item.get('effect_ordinal')
+                description=talent_balance.DESCRIPTIONS[ordinal] if ordinal in (153,157,160) else item['pre_balance_description']
+                self.assertEqual(item['description'],effect_copy.with_subject(item,description))

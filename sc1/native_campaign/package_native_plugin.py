@@ -398,7 +398,7 @@ def native_inputs(plain_receipt_path, dll_receipt_path):
         'dialog_assets/plain_panel_templates.generated.h',
         'dialog_assets/wave_timer_statfluf.ui.json',
         'iscript_effects/iscript.bin', 'iscript_effects/iscript_effects_evidence.json',
-        'objective_guards_evidence.json',
+        'objective_guards_evidence.json', 'build_island_routes.py', 'island_routes_evidence.json',
     )}
     generated_inputs.add((SC1 / 'build_environment.py').resolve())
     for entry in dll['sources']:

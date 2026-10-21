@@ -29,12 +29,12 @@ class OpeningLegendTests(unittest.TestCase):
         return (progression.item_eligible(item, mission, 'talent')
                 and bool(units & set(item['target_units'])))
 
-    def test_only_first_main_campaign_phase_has_guarantee(self):
-        for first in STARTS:
+    def test_opening_and_midpoint_first_phase_have_guarantees(self):
+        for first, midpoint in zip(STARTS, (106, 206, 306, 405, 505, 606)):
             actual = [(mission, phase) for mission in progression.campaign_missions(first)
                       for phase in (1, 2, 3)
                       if policy.reward_policy(mission, phase).guaranteed_legendary]
-            self.assertEqual(actual, [(first, 1)])
+            self.assertEqual(actual, [(first, 1), (midpoint, 1)] + ([(515, 1)] if first==501 else []))
             self.assertFalse(policy.reward_policy(first, 2).guaranteed_legendary)
         self.assertFalse(any(policy.reward_policy(611, phase).guaranteed_legendary
                              for phase in (1, 2, 3)))

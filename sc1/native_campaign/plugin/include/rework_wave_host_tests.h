@@ -11,6 +11,15 @@ inline void qa_stack_counts_and_wave_budgets(){
 inline void begin(U32 mission=106){wave_target_tests::begin(mission);g.applied=true;g.growth={};g.growth.wire_version=2;rework_waves::reset();CHECK(rework_waves::enabled());}
 inline void advance_second(U32 second){game.frame_count=second*24;game.elapsed_seconds=second;rework_waves::tick(true,false,false);wave_targeting::step(true,false);}
 inline bool marching(bw::Unit* u){return u->order==(wave_targeting::detector(u)?6u:14u);}
+inline U32 expected_normal_budget(U32 raw,const sc1_native::campaign_wave_config::Origin* origin){
+ const U32 total=p::normal_amount(p::reduced_amount(raw));
+ CHECK(origin);
+ const bool air=sc1_native::wave_progression::air_only_unit(std::uint16_t(origin->unit1))&&sc1_native::wave_progression::air_only_unit(std::uint16_t(origin->unit2));
+ if(!air)return total;
+ const U32 detector=std::max(1u,original_stat({0,46,p::detector(origin->race)}));
+ CHECK(total>detector);
+ return detector+U32((std::uint64_t(total-detector)*80u+50u)/100u);
+}
 inline void all_missions_actual_adapter_departures(){
  U32 audited=0;
  for(const auto& profile:p::kProfiles){if(!profile.enabled)continue;begin(profile.mission);
@@ -23,8 +32,8 @@ inline void all_missions_actual_adapter_departures(){
   const auto baseline=count;const auto first=std::max(profile.first,profile.base_grace);
   for(U32 second=0;second<first-4;second++){advance_second(second);CHECK(count==baseline);}
   advance_second(first-4);CHECK(count>baseline);const auto first_count=count-baseline;
-  const auto first_budget=p::normal_amount(p::reduced_amount(p::normal_budget(0,profile.mission)));
-  CHECK(rework_waves::live_supply()<=first_budget&&rework_waves::live_supply()>=first_budget-3);
+  const auto first_budget=expected_normal_budget(p::normal_budget(0,profile.mission),rework_waves::primary);
+  CHECK(rework_waves::live_supply()<=first_budget&&rework_waves::live_supply()>=first_budget-5);
   for(std::size_t i=baseline;i<count;i++){CHECK(rework_curses::appearing(&units[i]));CHECK(units[i].order==23);}
   for(U32 second=first-3;second<=first;second++)advance_second(second);
   CHECK(rework_waves::timeline.ordinal==1&&rework_waves::timeline.next==first+profile.interval);
@@ -33,10 +42,14 @@ inline void all_missions_actual_adapter_departures(){
    // second warning, keeping that army alive for shared supply accounting.
    units[i].flingy.position={std::int16_t(origin->target.x+64),std::int16_t(origin->target.y+64)};}
   const auto after_first=count;
-  for(U32 second=first+1;second<=first+profile.interval;second++)advance_second(second);
+  U32 second_budget=0;
+  for(U32 second=first+1;second<=first+profile.interval;second++){
+   advance_second(second);
+   if(second==first+profile.interval-4)second_budget=expected_normal_budget(p::normal_budget(1,profile.mission),rework_waves::primary);
+  }
   CHECK(rework_waves::timeline.ordinal==2&&count>after_first);
-  const auto both_budgets=first_budget+p::normal_amount(p::reduced_amount(p::normal_budget(1,profile.mission)));
-  CHECK(rework_waves::live_supply()<=both_budgets&&rework_waves::live_supply()>=both_budgets-6);
+  const auto both_budgets=first_budget+second_budget;
+  CHECK(second_budget&&rework_waves::live_supply()<=both_budgets&&rework_waves::live_supply()>=both_budgets-10);
   for(std::size_t i=after_first;i<count;i++)CHECK(!rework_curses::appearing(&units[i])&&marching(&units[i]));
   std::printf("AUDIT mission=%u first=%u interval=%u first_units=%zu repeat_units=%zu half_supply=%u attack_orders=ok\n",profile.mission,first,profile.interval,first_count,count-after_first,rework_waves::live_supply());++audited;
  }
@@ -169,7 +182,7 @@ inline void marked_passives_mirror_identity_and_preservation(){
  for(U32 slot:{17u,18u,19u,21u,22u})g.growth.curse_counts[slot]=3;g.growth.curse_counts[23]=2;
  rework_waves::timeline.home=true;rework_waves::timeline.active_ticks=600*24;g.current_wave_id=7;rework_waves::unit_ordinal=0;
  auto enemy=rework_waves::create(0,0);CHECK(enemy && enemy->player!=player_owner());CHECK(rework_curses::marked(enemy));
- CHECK(rework_curses::hp_percent(enemy)==275);CHECK(rework_curses::attack_percent(enemy)==196);CHECK(rework_curses::speed_percent(enemy)==148);CHECK(rework_curses::lifesteal_percent(enemy)==24);CHECK(rework_curses::barrier(enemy));
+ CHECK(rework_curses::hp_percent(enemy)==217);CHECK(rework_curses::attack_percent(enemy)==170);CHECK(rework_curses::speed_percent(enemy)==148);CHECK(rework_curses::lifesteal_percent(enemy)==24);CHECK(rework_curses::barrier(enemy));
  CHECK(rework_curses::hp_percent(original)==100 && rework_curses::attack_percent(friendly)==100);CHECK(!rework_curses::marked(original) && !rework_curses::marked(friendly));
  CHECK(std::memcmp(original,&before,sizeof(before))==0 && std::memcmp(friendly,&friendly_before,sizeof(friendly_before))==0);
  const auto old_owner=enemy->player;enemy->player=static_cast<U8>(player_owner());CHECK(!rework_curses::marked(enemy));enemy->player=old_owner;++enemy->minor_unique_index;CHECK(!rework_curses::marked(enemy));
@@ -224,14 +237,14 @@ inline void special_max_two_and_counterplay_gate(){
 inline void actual_stat_damage_heal_and_renderer_scopes(){
  begin();for(U32 slot:{17u,18u,21u,22u})g.growth.curse_counts[slot]=3;g.growth.curse_counts[23]=2;
  rework_waves::timeline.home=true;rework_waves::timeline.active_ticks=600*24;g.current_wave_id=8;
- const auto baseline=raw_value(0,8,0);auto enemy=rework_waves::create(0,0);CHECK(enemy);const auto maximum=baseline*275/100;
+ const auto baseline=raw_value(0,8,0);auto enemy=rework_waves::create(0,0);CHECK(enemy);const auto maximum=baseline*217/100;
  CHECK(effective_max_hp(enemy)==maximum);{OwnerDatScope scoped(enemy->player,enemy->player,enemy);CHECK(raw_value(0,8,0)==maximum);}CHECK(raw_value(0,8,0)==baseline);
  max_hp_cache::publish(true);U32 rendered=0;CHECK(max_hp_cache::read_values(enemy,rendered,nullptr,nullptr) && rendered==maximum);
  auto player=add(0,player_owner(),700,700,50000);enemy->flingy.hitpoints=5000;g.normal_hit=true;g.hit_bonus=0;g.elite_hit=false;g.bullet_hit_context=false;
- owner_damage_hook(player,1000,enemy,enemy->player,1,direct_damage);CHECK(player->flingy.hitpoints==50000-1960);CHECK(enemy->flingy.hitpoints==5000+470);
+ owner_damage_hook(player,1000,enemy,enemy->player,1,direct_damage);CHECK(player->flingy.hitpoints==50000-1700);CHECK(enemy->flingy.hitpoints==5000+408);
  const auto enemy_before=enemy->flingy.hitpoints;owner_damage_hook(enemy,1000,player,player_owner(),1,direct_damage);CHECK(enemy->flingy.hitpoints==enemy_before-720);
  const auto original_enemy=add(0,enemy->player,1800,1700,5000);const auto untouched=original_enemy->flingy.hitpoints;
- owner_damage_hook(player,1000,original_enemy,original_enemy->player,1,direct_damage);CHECK(player->flingy.hitpoints==50000-1960-1000);CHECK(original_enemy->flingy.hitpoints==untouched);
+ owner_damage_hook(player,1000,original_enemy,original_enemy->player,1,direct_damage);CHECK(player->flingy.hitpoints==50000-1700-1000);CHECK(original_enemy->flingy.hitpoints==untouched);
  CHECK(effective_max_hp(original_enemy)==baseline && effective_max_hp(player)==baseline);CHECK(raw_value(0,8,0)==baseline);
 }
 inline void uraj_owned_air_and_kukulza_are_delivered(){

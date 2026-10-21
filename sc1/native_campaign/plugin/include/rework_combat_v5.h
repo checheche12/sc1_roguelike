@@ -8,6 +8,7 @@ void __cdecl owner_give_hook(bw::Unit*,U32,void (__cdecl*)(bw::Unit*,U32)) noexc
 #include "unit_legend_expansion.generated.h"
 #include "unit_growth.generated.h"
 #include "legend_focus.generated.h"
+#include "legend_base_balance.generated.h"
 namespace rework_combat_v5 {
 inline U32 expansion_static_bonus(const bw::Unit*,U32) noexcept;
 inline U32 focus_base(const bw::Unit*) noexcept;
@@ -176,9 +177,9 @@ inline bool plan_stats(const GrowthSnapshot& s,std::vector<Edit>& edits) {
     }
     if(rank(s,44)||(talent_power::enabled&&rank(s,62)))for(U32 f:{11u,12u,13u})if(!edit({1,f,33},4,rank(s,44)?100+talent_power::v5(44,50):200,100))return false;
     if(talent_power::enabled&&rank(s,104)){if(!edit({0,8,40},4,2,1))return false;const U32 weapon=original_stat({0,17,40});if(weapon<130&&!edit({1,14,weapon},4,2,1))return false;}
-    if(rank(s,144))for(U32 f:{11u,12u,13u})if(!edit({1,f,84},4,100+talent_power::v5(144,50),100))return false;
+    if(rank(s,144))for(U32 f:{11u,12u,13u})if(!edit({1,f,84},4,100+(talent_power::enabled?legend_base_balance::storm_radius_bonus_percent:talent_power::v5(144,50)),100))return false;
     if(rank(s,55))for(U32 id:{25u,30u})if(!edit({0,28,id},0,1))return false;
-    if(talent_power::enabled&&(rank_lookup?rank_lookup(s,96):rework_catalog::rank(s,96))&&!edit({0,8,47},4,3,1))return false;
+    if(talent_power::enabled&&(rank_lookup?rank_lookup(s,96):rework_catalog::rank(s,96))&&!edit({0,8,47},4,legend_base_balance::scourge_health_multiplier,1))return false;
     // QA35 replaces extra hangar capacity: exact x2 after other owner bonuses.
     if(rank(s,130)&&(!edit({0,8,73},4,2,1)||!edit({0,7,73},4,2,1)))return false;
     return true;
@@ -465,6 +466,7 @@ inline U32 __cdecl can_infest_hook(bw::Unit* target,UnitValueFn original) noexce
     const auto hp=target->flingy.hitpoints;target->flingy.hitpoints=std::min(hp,std::int32_t(effective_max_hp(target)/2));const auto result=original(target);target->flingy.hitpoints=hp;return result;
 }
 inline U32 __cdecl order_target_hook(bw::Unit* caster,U32 order,bw::Unit* target,U32 x,U32 y,std::uint16_t* error,OrderTargetFn original) noexcept {
+    if(rework_curses::spell_disabled(caster)&&in(order,{122,141,143}))return 0;
     OwnerDatScope cost_owner(caster ? caster->player:12u,caster ? caster->player:12u,caster);
     if(!g.active||!g.applied||!own(caster)||!live(target))return original(caster,order,target,x,y,error);
     if(state_base==g.units&&states.size()==g.units_count&&states[std::size_t(caster-g.units)].fade_until>now())return 0;
@@ -549,6 +551,9 @@ inline bool source_blocked(bw::Unit*) noexcept;
 inline bool allow_primary(bw::Unit* source) noexcept {
     if(source_blocked(source))return false;
     auto main=effect_body(source);if(!own(main))return true;
+    // The moving siege cannon is emitted through the native bullet path below.
+    // Only that scoped emission may bypass the natural moving-shot suppression.
+    if(rank(55)&&in(main->unit_id,{25,30})&&multi_target::secondary())return true;
     return !((main->order==6||main->flingy.current_speed>0)&&((rank(55)&&in(main->unit_id,{25,30}))||(rank(91)&&main->unit_id==103&&(main->flags&0x10u))));
 }
 inline double speed_ratio(bw::Unit* u) {
@@ -654,7 +659,7 @@ inline void launched(U32 w,bw::Unit* source,bw::Bullet* b) {
     // Suicide weapons may kill and detach their native parent during creation.
     // Layer damage belongs to this witnessed launch, including a dead source.
     if(p.source.owner==player_owner()){
-        if(talent_power::enabled&&rank(106)&&p.source.id==62)p.percent=p.layer ? p.percent*2:talent_power::v5(106,p.percent);
+        if(talent_power::enabled&&rank(106)&&p.source.id==62)p.percent=p.layer ? p.percent*2:p.percent*legend_base_balance::devourer_ground_damage_percent/100;
         if(talent_power::enabled&&rank(60)&&p.source.id==13&&p.layer)p.percent=p.percent*150/100;
         if(talent_power::enabled&&rank(97)&&p.source.id==103&&p.layer)p.percent=p.percent;
         if(rank(58)&&p.source.id==58&&!p.layer)p.percent=p.percent*(talent_power::enabled&&rank(140)&&in(p.source.id,{68,76})?100u:talent_power::v5(rank(140)&&in(p.source.id,{68,76})?140u:58u,60))/100;
@@ -674,6 +679,15 @@ inline void launched(U32 w,bw::Unit* source,bw::Bullet* b) {
             if(rank(53)&&in(source->unit_id,{0,20})&&ordinary_weapon(w)){p.percent=100;queue(source,target,w,35,2);queue(source,target,w,35,4);}
             if(!bc_battery_emission&&rank(65)&&in(source->unit_id,{12,27,28,29,102})&&ordinary_weapon(w)&&++s->bc_primary_attacks%4==0)queue(source,target,30,100,2);
             if(rank(105)&&in(source->unit_id,{43,55})&&ordinary_weapon(w)){p.percent=100;queue(source,target,w,p.percent);}
+            // One fan-out per native attack; air attacks retain both missiles.
+            // Secondary projectiles cannot re-enter this primary-only branch.
+            if(talent_power::enabled&&raw_rank(56)&&in(effect_body(source)->unit_id,{3,17})&&ordinary_weapon(w)&&eligible(target)){
+                U32 made=0;for(auto other:around(target->flingy.position.x,target->flingy.position.y,96,target,65536,true,int(air(target)))){
+                    if(!target_ok(source,other,w))continue;
+                    for(U32 hit=0;hit<multi_target::factor(w);++hit)queue(source,other,w,50);
+                    if(++made==3)break;
+                }
+            }
             const bool fleet=in(source->unit_id,{12,27,28,29,102});
             if((rank(57)&&fleet)||(rank(56)&&in(effect_body(source)->unit_id,{3,17}))||(rank(139)&&in(source->unit_id,{68,76}))||(rank(148)&&source->unit_id==73)){
                 const U32 ordinal=fleet?57u:source->unit_id==73?148u:in(source->unit_id,{68,76})?139u:56u;
@@ -703,6 +717,15 @@ inline void launched(U32 w,bw::Unit* source,bw::Bullet* b) {
     projectiles[b]=p;
 }
 struct Persist {Identity target{},source{};U32 kind=0,until=0,due=0,remaining=0,ticks=0;int x=0,y=0;U32 owner=12;int destination_x=0,destination_y=0;};
+inline void recall_portal_visual(const Persist& portal) noexcept {
+    // Original Recall Field: sprites379 -> images391 -> finite iscript305.
+    // Each copied endpoint owns only a short-lived native visual, no unit or
+    // retained sprite pointer. Repeat at the existing transfer cadence.
+    if(!g.lone_sprite||!g.game||portal.owner>=12)return;
+    const auto game=g.game();if(!game)return;
+    const auto pulse=[&](int x,int y){if(x>=0&&y>=0&&x<int(game->map_width_tiles)*32&&y<int(game->map_height_tiles)*32)g.lone_sprite(379,x,y,portal.owner);};
+    pulse(portal.x,portal.y);pulse(portal.destination_x,portal.destination_y);
+}
 inline std::vector<Persist> persistent;
 struct MorphCompletion {Identity who;bool eligible=false;};
 inline std::vector<MorphCompletion> morph_completions;
@@ -886,7 +909,7 @@ struct DamageScope {
             const auto level=upgrade_level(target->player,15);shield_upgrade.begin(target->player,15,U8(std::min(255u,level+talent_power::v5(113,1))));
         }
         // The missile scope exposes its per-launch scale through current_hit.
-        if(talent_power::enabled&&w==34&&rank(61)&&combat_effects::damage_player==player_owner())damage=std::int32_t(std::min<std::int64_t>(0x7fffffff,std::int64_t(damage)*3));
+        if(talent_power::enabled&&w==34&&rank(61)&&combat_effects::damage_player==player_owner())damage=std::int32_t(std::min<std::int64_t>(0x7fffffff,std::int64_t(damage)*legend_base_balance::irradiate_damage_multiplier));
         secondary=current_secondary;damage=std::int32_t(std::int64_t(damage)*current_percent/100);
         if(current_bounce_divisor>1)damage/=std::int32_t(current_bounce_divisor);
         if(normal){
@@ -1001,6 +1024,8 @@ inline void bind(RankLookup lookup=nullptr) noexcept {
 }
 inline U32 attack_range(bw::Unit* u,U32 value,U32 weapon_id=130) noexcept {
     if(!own(u))return value;
+    auto body=effect_body(u);
+    if(rank(55)&&own(body)&&in(body->unit_id,{25,30})&&in(u->unit_id,{25,26,30,31})&&weapon_id==weapon(body,false))value+=96;
     // Keep the legacy Corsair-only shared-DAT exclusion for Raszagal. This
     // separate fleet bonus explicitly includes both, and no spell weapon.
     if(rank(110)&&in(u->unit_id,{60,98})&&weapon_id==100)value+=32;
@@ -1234,7 +1259,7 @@ struct MissileScope {
                     if(rank(102)&&plagued)attach(102,u,source,U32(u->plague_timer)*8,0,u->plague_timer);
                     if(talent_power::enabled&&raw_rank(82)&&p.weapon==58&&ensnared&&s&&is_enemy(u->player))s->strong_ensnare=true;
                     if(rank(80)&&ensnared)u->ensnare_timer=U8(std::min(255u,talent_power::duration(80,u->ensnare_timer)));
-                    if(rank(63)&&talent_power::enabled&&organic(u)&&u->lockdown_timer>old.lockdown)u->lockdown_timer=U8(std::min(255u,talent_power::v5(63,u->lockdown_timer)));
+                    if(rank(63)&&talent_power::enabled&&organic(u)&&u->lockdown_timer>old.lockdown)u->lockdown_timer=U8(std::min(255u,legend_base_balance::organic_lockdown_duration_multiplier*u->lockdown_timer));
                     if(rank(45)&&u->lockdown_timer>old.lockdown)u->lockdown_timer=U8(std::min(255u,talent_power::duration(45,u->lockdown_timer)));
                     if(rank(124)&&u->maelstrom_timer>old.maelstrom)u->maelstrom_timer=U8(std::min(255u,talent_power::duration(124,u->maelstrom_timer)));
                     if(rank(127)&&u->stasis_timer>old.stasis)u->stasis_timer=U8(std::min(255u,talent_power::duration(127,u->stasis_timer)));
@@ -1501,15 +1526,21 @@ inline void step() {
                 }
             }
         }
-        const bool movefire=moving&&((rank(54)&&in(u->unit_id,{2,19}))||(rank(140)&&in(u->unit_id,{68,76})));
+        const bool siege_fire=moving&&rank(55)&&in(u->unit_id,{25,30});
+        const bool movefire=siege_fire||(moving&&((rank(54)&&in(u->unit_id,{2,19}))||(rank(140)&&in(u->unit_id,{68,76}))));
         const bool dual=(rank(65)&&in(u->unit_id,{12,27,28,29,102}))||(rank(142)&&in(u->unit_id,{70,80,88}));
         if((movefire||dual)&&can_fire(u))for(U32 layer=0;layer<2;layer++){
-            if(movefire&&in(u->unit_id,{2,19})&&layer)continue;
+            if(movefire&&(siege_fire||in(u->unit_id,{2,19}))&&layer)continue;
             U32& due=layer ? s->next_air:s->next_ground;if(std::int32_t(frame-due)<0)continue;
+            // Natural stopped fire and moving fire share the native turret clock.
+            auto spawner=attack_unit(u);
+            if(siege_fire&&(u->ground_cooldown||spawner->ground_cooldown))continue;
             auto w=weapon(u,layer!=0);if(w>=130)continue;
             auto primary=u->order_target.unit;if(dual&&live(primary)&&air(primary)==(layer!=0)&&multi_target::attack_order(u->order))continue;
             for(auto target:around(u->flingy.position.x,u->flingy.position.y,1024,nullptr,64,true,int(layer)))if(target_ok(u,target,w)){
-                due=frame+fractional_period(u,layer,multi_target::period(u,w),cooldown_ratio(u,w));BatteryEmissionScope battery(dual&&rank(65)&&in(u->unit_id,{12,27,28,29,102}));for(U32 hit=0;hit<multi_target::factor(w);hit++)emit(u,target,w,talent_power::enabled?(movefire&&in(u->unit_id,{2,19})?(talent_power::enabled?100u:talent_power::v5(54,100)):dual&&!(rank(65)&&in(u->unit_id,{12,27,28,29,102}))?talent_power::v5(142,100):100u):100u,-1,-1,true);
+                const U32 period=fractional_period(u,layer,multi_target::period(u,w),cooldown_ratio(u,w));due=frame+period;
+                if(siege_fire)u->ground_cooldown=spawner->ground_cooldown=U8(std::min(255u,period));
+                BatteryEmissionScope battery(dual&&rank(65)&&in(u->unit_id,{12,27,28,29,102}));for(U32 hit=0;hit<multi_target::factor(w);hit++)emit(u,target,w,talent_power::enabled?(movefire&&in(u->unit_id,{2,19})?(talent_power::enabled?100u:talent_power::v5(54,100)):dual&&!(rank(65)&&in(u->unit_id,{12,27,28,29,102}))?talent_power::v5(142,100):100u):100u,-1,-1,true);
                 break;
             }
         }
@@ -1525,6 +1556,7 @@ inline void step() {
             else if(p.kind==52){for(auto other:around(p.x,p.y,24,nullptr,65536,true,0))if(auto fs=state(other))if(!fs->fire_seen||frame-fs->last_fire_damage>=12){hurt(other,talent_power::v5(52,2*256),source,p.owner);fs->fire_seen=true;fs->last_fire_damage=frame;}p.due+=12;}
             else if(p.kind==143){for(auto other:around(p.x,p.y,80,nullptr,65536,true,0))mark_slow(other,U32(talent_power::rate(143,0.7)*100),p.until-frame);p.due=frame+1;}
             else if(p.kind==145){
+                recall_portal_visual(p);
                 for(auto friend_unit:around(p.x,p.y,talent_power::enabled?128u:64u,nullptr,65536,false)){
                     if(building(friend_unit)||hallucination(friend_unit)||(friend_unit->flags&(0x10u|0x20u|0x40u))||in(friend_unit->unit_id,{35,36,97}))continue;
                     if(rework_relocation::move(friend_unit,p.destination_x,p.destination_y,64,false)&&talent_power::enabled)portal_buff(friend_unit);
@@ -1534,7 +1566,7 @@ inline void step() {
                 // Follow the native eight-frame timer transition. A freshly
                 // applied plague or a Restoration reset is not a damage tick.
                 if(U32(target->plague_timer)+1==p.ticks){
-                    if(talent_power::enabled)hurt(target,talent_power::v5(102,damage)-damage,source,p.owner);
+                    if(talent_power::enabled)hurt(target,(legend_base_balance::plague_damage_multiplier-1)*damage,source,p.owner);
                     else if(U32(target->flingy.hitpoints)<=damage)hurt(target,damage,source,p.owner);
                 }
                 p.ticks=target->plague_timer;p.due=frame+1;

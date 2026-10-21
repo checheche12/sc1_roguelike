@@ -21,6 +21,7 @@ struct ChoiceOffer {
     std::uint32_t count{};                // v1: 4 talent; v2: 1..4 talent; 3 curse
     std::uint32_t candidates[4]{};        // catalog bit/byte index + 1
     std::uint32_t partners[4]{};          // optional second legendary, same index encoding
+    std::uint32_t thirds[4]{};            // optional third common unit manual (BND2)
     std::uint32_t token_words[4]{};       // UUID.bytes, read as little-endian DWORDs
     std::uint32_t revision{};
     std::uint32_t pending_talents{};
@@ -79,6 +80,7 @@ public:
     std::uint32_t completed_phase() const noexcept { return completed_phase_; }
     std::uint32_t state() const noexcept { return state_; }
     std::uint32_t error_code() const noexcept { return error_; }
+    const char* rejection_message() const noexcept { return rejection_message_; }
     std::uint32_t campaign_revision() const noexcept { return campaign_revision_; }
     std::uint32_t completed_mask() const noexcept { return completed_mask_; }
     const ChoiceOffer& current_offer() const noexcept { return offer_; }
@@ -111,6 +113,7 @@ private:
     std::uint32_t campaign_revision_{};
     std::uint32_t completed_mask_{};
     std::uint32_t error_{};
+    char rejection_message_[333]{};
     std::uint32_t requested_phase_{};
     std::uint32_t completed_phase_{};
     std::uint32_t wire_version_{1};

@@ -51,7 +51,7 @@ REPLACEMENTS = {
 }
 DESCRIPTIONS = {
  53:'마린·짐 레이너(마린)가 한 번 공격할 때 기본탄 100% 한 발과 추가탄 35% 두 발을 쏩니다. 총 피해 170%.',
- 5:'임무 시작 시 보유 저주 수 × 37.5만큼 미네랄·가스를 받습니다. 총합의 소수점은 버립니다.',
+ 5:'임무 시작 시 보유 저주 중첩당 미네랄·가스를 25씩 받습니다.',
  19:'아군 일반 공격이 적의 체력 방어력과 보호막 방어력을 모두 무시합니다.',
  44:'과학선의 EMP 반경이 100% 넓어집니다. 아군도 맞습니다.',
  46:'고스트 핵의 낙하 경고가 5초로 줄고, 적에게 주는 핵 피해가 50% 늘어납니다.',
@@ -163,8 +163,9 @@ def decorate(catalog):
             if ordinal in (11,12):item['effect']['armor_per_rank']=0.5
             if ordinal in (26,27,28,67,68,69,108,109,110):item['effect']['health_percent_per_rank']=28
             if ordinal in (108,109,110):item['effect']['shield_percent_per_rank']=28
-            if ordinal==5:item['effect'].update(resources_per_curse=37.5,resource_total_rounding='floor')
+            if ordinal==5:item['effect'].update(resources_per_curse=25,resource_total_rounding='floor')
             if ordinal in (5,11,12,26,27,28,67,68,69,108,109,110):item['effect']['qa_revision']=2026101713
+            if ordinal==5:item['effect']['qa_revision']=2026102052
             if ordinal==29:item['effect']['weapon_damage_percent_per_rank']=15
             if ordinal==51:item['effect']['armor_mark_frames']=300
             if ordinal in (14,36,64,76,118):item['effect']['qa_revision']=2026101712

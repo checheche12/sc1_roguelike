@@ -3,7 +3,7 @@
 // All state is keyed by native slot + unique byte + owner + type, never type alone.
 // Include rework_wave_profiles.generated.h at global scope before this header.
 namespace rework_curses {
-struct Identity {U8 unique=0,owner=12;std::uint16_t type=228;U32 wave=0,slot=0,hp=100,attack=100,appearance_until=0,saved_flags=0,last_spell=0,last_scan=0;U32 cast_order=0,cast_begin=0,cast_fired=0;bool cast_launched=false;bool elite=false,barrier=false;};
+struct Identity {U8 unique=0,owner=12;std::uint16_t type=228;U32 wave=0,slot=0,hp=100,attack=100,appearance_until=0,saved_flags=0,last_spell=0,last_scan=0;U32 cast_order=0,cast_begin=0,cast_fired=0;U32 siege_scan=~0u,siege_contact_frame=0,siege_change_frame=0;bool siege_contact=false,siege_changed=false;bool cast_launched=false;bool elite=false,barrier=false,transport_hold=false;};
 inline std::vector<Identity> identities;
 inline const bw::Unit* body(const bw::Unit* u) noexcept {
  if(!valid_unit(u))return nullptr;U32 main=228;
@@ -18,14 +18,16 @@ inline Identity* identity(const bw::Unit* u) noexcept {
  return v.wave && v.unique==u->minor_unique_index && v.owner==u->player && v.type==u->unit_id?&v:nullptr;
 }
 inline bool marked(const bw::Unit* u) noexcept {u=body(u);auto v=identity(u);auto t=existing_track(u);return g.active && g.applied && g.mission && !g.mission->no_production && v && t && t->spawned && is_enemy(u->player) && !(u->flags&0x40000000u);}
+inline bool spell_disabled(const bw::Unit* u) noexcept {return valid_unit(u)&&(u->unit_id==9||u->unit_id==22)&&marked(u);}
 inline U32 count(U32 slot) noexcept {return (slot==24 || slot==25)?0u:sc1_native::curse_scaling::count(g.growth,slot);}
-inline U32 hp_percent(const bw::Unit* u) noexcept {if(!marked(u))return 100;const auto v=identity(u);U32 p=sc1_native::curse_scaling::scale(100,sc1_native::curse_scaling::bonus(count(18),20,4));if(v->elite)p=sc1_native::curse_scaling::scale(p,60);return U32(std::min<std::uint64_t>(0xffffffffu,std::uint64_t(p)*v->hp/100));}
-inline U32 shield_percent(const bw::Unit* u) noexcept {return marked(u)?sc1_native::curse_scaling::scale(100,sc1_native::curse_scaling::bonus(count(18),20,4)):100u;}
-inline U32 attack_percent(const bw::Unit* u) noexcept {if(!marked(u))return 100;const auto v=identity(u);U32 p=sc1_native::curse_scaling::scale(100,sc1_native::curse_scaling::bonus(count(17),15,4));if(v->elite)p=sc1_native::curse_scaling::scale(p,25);return U32(std::min<std::uint64_t>(0xffffffffu,std::uint64_t(p)*v->attack/100));}
+inline U32 hp_percent(const bw::Unit* u) noexcept {if(!marked(u))return 100;const auto v=identity(u);U32 p=sc1_native::curse_scaling::scale(100,sc1_native::curse_scaling::bonus(count(18),10,2));if(v->elite)p=sc1_native::curse_scaling::scale(p,60);return U32(std::min<std::uint64_t>(0xffffffffu,std::uint64_t(p)*v->hp/100));}
+inline U32 shield_percent(const bw::Unit* u) noexcept {return marked(u)?sc1_native::curse_scaling::scale(100,sc1_native::curse_scaling::bonus(count(18),10,2)):100u;}
+inline U32 attack_percent(const bw::Unit* u) noexcept {if(!marked(u))return 100;const auto v=identity(u);U32 p=sc1_native::curse_scaling::scale(100,sc1_native::curse_scaling::bonus(count(17),10,2));if(v->elite)p=sc1_native::curse_scaling::scale(p,25);return U32(std::min<std::uint64_t>(0xffffffffu,std::uint64_t(p)*v->attack/100));}
 inline U32 speed_percent(const bw::Unit* u) noexcept {return marked(u)?sc1_native::curse_scaling::scale(100,sc1_native::curse_scaling::bonus(count(19),15,1)):100u;}
 inline U32 lifesteal_percent(const bw::Unit* u) noexcept {return marked(u)?12u*std::min(2u,count(23)):0u;}
 inline bool barrier(const bw::Unit* u) noexcept {const auto v=identity(u);const auto t=existing_track(u);return marked(u) && v && v->barrier && t && g.game()->elapsed_seconds-t->spawn_second<20;}
 inline bool appearing(const bw::Unit* u) noexcept {const auto v=identity(u);return marked(u) && v && v->appearance_until!=0;}
+inline bool transport_hold(const bw::Unit* u) noexcept {const auto v=identity(u);return marked(u)&&v&&v->transport_hold;}
 inline void forget(bw::Unit* u) noexcept {
  if(!valid_unit(u) || identities.size()!=g.units_count)return;
  auto& v=identities[static_cast<std::size_t>(u-g.units)];if(v.wave && v.unique==u->minor_unique_index && v.type==u->unit_id){if(v.appearance_until)u->flags=(u->flags&~0x04009000u)|v.saved_flags;v={};}
@@ -41,6 +43,8 @@ inline void transformed(bw::Unit* u,U32 old_id) noexcept {
 }
 namespace rework_waves {
 void reset_spells() noexcept;
+void reset_islands() noexcept;
+bool island_available();
 namespace policy=sc1_native::rework_wave;
 inline policy::Timeline timeline;
 inline const policy::Profile* current=nullptr;
@@ -50,7 +54,7 @@ inline U32 last_main_budget=0,reserve_supply=0;
 inline std::array<U32,2> selected{{0,0}};
 inline const sc1_native::campaign_wave_config::Origin* primary=nullptr;
 inline bw::Unit* raid_worker=nullptr;inline U8 raid_worker_unique=0;inline U32 raid_worker_frame=0;inline bool raid_worker_sampled=false;
-inline void reset() noexcept {reset_spells();if(g.units && rework_curses::identities.size()==g.units_count)for(std::size_t i=0;i<g.units_count;i++)rework_curses::forget(&g.units[i]);timeline.reset();current=nullptr;pending_kind=pending_spawn_at=raid_next=support_kills=support_last=reserve_at=unit_ordinal=0;last_main_budget=reserve_supply=0;support_due=spawned_pending=false;selected={0,0};primary=nullptr;raid_worker=nullptr;raid_worker_sampled=false;raid_worker_frame=0;raid_worker_unique=0;rework_curses::identities.clear();}
+inline void reset() noexcept {reset_spells();reset_islands();if(g.units && rework_curses::identities.size()==g.units_count)for(std::size_t i=0;i<g.units_count;i++)rework_curses::forget(&g.units[i]);timeline.reset();current=nullptr;pending_kind=pending_spawn_at=raid_next=support_kills=support_last=reserve_at=unit_ordinal=0;last_main_budget=reserve_supply=0;support_due=spawned_pending=false;selected={0,0};primary=nullptr;raid_worker=nullptr;raid_worker_sampled=false;raid_worker_frame=0;raid_worker_unique=0;rework_curses::identities.clear();}
 inline bool enabled() noexcept {return g.mission && !g.mission->no_production && (current=policy::profile(g.mission->mission_id)) && current->enabled;}
 inline U32 opening_second() noexcept {
  if(!current)return 0;
@@ -68,6 +72,7 @@ inline U32 capabilities() {
  living_units([&](bw::Unit* u){if(u->player!=player_owner() || !(u->flags&1u) || u->flingy.hitpoints<=0)return;
   const auto flags=original_stat({0,22,u->unit_id});auto gun=effect_body(u);if(valid_unit(gun)&&valid_unit(gun->subunit)&&gun->subunit->subunit==gun)gun=gun->subunit;
   if((u->flags&1u)&&!(u->flags&(0x40u|0x40000000u))&&(owner_stat(u->player,{0,19,u->unit_id})<130||(valid_unit(gun)&&owner_stat(u->player,{0,19,gun->unit_id})<130)))value|=policy::AntiAir;if(flags&0x8000u)value|=policy::Detection;});
+ if((value&policy::AntiAir)&&!(value&policy::GroundPath)&&island_available())value|=policy::TransportPath;
  return value;
 }
 inline bool major_original_assault() {
@@ -136,9 +141,11 @@ inline bw::Unit* finish_created(bw::Unit* u,U32 slot,U32 hp,U32 attack,int x,int
  if(g.order)g.order(u,23,x,y,nullptr,228);u->flags|=arrival_flags;
  if(u->flingy.hitpoints>0 && g.set_hp)g.set_hp(u,static_cast<std::int32_t>(std::min<std::uint64_t>(0x7fffffffu,std::uint64_t(original_stat({0,8,u->unit_id}))*rework_curses::hp_percent(u)/100u)));
  const U32 shields=effective_max_shields(u);if(shields)u->shields=static_cast<std::int32_t>(shields*256u);
- if(original_stat({0,22,u->unit_id})&0x200000u)u->energy=std::max<std::uint16_t>(u->energy,200*256);
+ if(rework_curses::spell_disabled(u))u->energy=0;
+ else if(original_stat({0,22,u->unit_id})&0x200000u)u->energy=std::max<std::uint16_t>(u->energy,200*256);
  ground_pulse(x,y,u->player,367);role_marker(u,0,-24,379);max_hp_cache::publish_unit(u);++unit_ordinal;return u;
 }
+#include "island_convoys.h"
 inline bw::Unit* create(U32 id,U32 slot,U32 hp=100,U32 attack=100,bool alternate=false,U32 required_owner=12) {
  if(slot==policy::Reserve || slot==policy::Rear)return nullptr;
  if(!enabled() || live_supply()+std::max(1u,original_stat({0,46,id}))>policy::live_supply_cap(g.mission->mission_id))return nullptr;
@@ -152,7 +159,8 @@ inline bw::Unit* create(U32 id,U32 slot,U32 hp=100,U32 attack=100,bool alternate
    OwnerDatScope scope(owner->owner,owner->owner);auto u=spawn(id,x,y,owner->owner);if(u)return finish_created(u,slot,hp,attack,x,y);
   }return nullptr;
  }
- const bool ground=!(original_stat({0,22,id})&4u);auto preferred=choose_origin(ground,alternate);if(!preferred && alternate)preferred=choose_origin(ground);if(!preferred)return nullptr;
+ const bool ground=!(original_stat({0,22,id})&4u);auto preferred=choose_origin(ground,alternate);if(!preferred && alternate)preferred=choose_origin(ground);
+ if(!preferred)return ground&&island_slot(slot)?island_create(id,slot,hp,attack,required_owner):nullptr;
  for(U32 pass=0;pass<2;pass++)for(const auto& candidate:sc1_native::campaign_wave_config::kOrigins){
  const auto origin=&candidate;if((pass==0)!=(origin==preferred) || !origin_safe(*origin))continue;
  if(required_owner<12&&origin->owner!=required_owner)continue;
@@ -179,7 +187,8 @@ inline void normal_units(U32 half_supply,U32 slot=0) {
  // stored main/reserve budgets unscaled to avoid reducing reserves twice.
  half_supply=policy::normal_amount(policy::reduced_amount(half_supply));
  const U32 race=primary?primary->race:g.mission->race;U32 used=0;const bool anti_air=(capabilities()&policy::AntiAir)!=0;
- if(!anti_air&&primary&&sc1_native::wave_progression::air_only_unit(std::uint16_t(primary->unit1))&&sc1_native::wave_progression::air_only_unit(std::uint16_t(primary->unit2)))return;
+ const bool air_only=primary&&sc1_native::wave_progression::air_only_unit(static_cast<std::uint16_t>(primary->unit1))&&sc1_native::wave_progression::air_only_unit(static_cast<std::uint16_t>(primary->unit2));
+ if(!anti_air&&air_only)return;
  const U32 detection_cost=std::max(1u,original_stat({0,46,policy::detector(race)}));
  if(half_supply<=detection_cost)return;
  // Reserve a real cell for detection before the combat units fill an origin.
@@ -187,7 +196,7 @@ inline void normal_units(U32 half_supply,U32 slot=0) {
  auto detection=add_detector(slot);
  if(!detection)detection=create(policy::detector(race),slot,100,100,false,primary?primary->owner:12u);
  if(detection)half_supply-=detection_cost;
- const bool air_only=primary&&sc1_native::wave_progression::air_only_unit(static_cast<std::uint16_t>(primary->unit1))&&sc1_native::wave_progression::air_only_unit(static_cast<std::uint16_t>(primary->unit2));
+ half_supply=policy::normal_combat_amount(half_supply,air_only);
  for(U32 i=0;i<480 && used<half_supply;i++){
   const auto pick=sc1_native::wave_progression::select(race,air_only,timeline.second(),timeline.ordinal,i,half_supply-used,wave_supply,anti_air);if(!pick.valid)break;
   if(!create(pick.unit_id,slot))break;used+=pick.supply;}
@@ -252,6 +261,7 @@ inline void ammunition(bw::Unit* u) {
  if(valid_unit(child) && child->player==u->player && child->unit_id==fighter && !(child->flags&1u))child->remaining_build_time=std::min<std::uint16_t>(child->remaining_build_time,1);
 }
 #include "enemy_spell_runtime.h"
+#include "enemy_tank_runtime.h"
 inline void caster_order(bw::Unit* u,rework_curses::Identity& v) {auto_spell(u,v);}
 inline void release_and_orders() {
  std::array<bw::Unit*,spell_search::casters_per_frame> due{};
@@ -260,9 +270,11 @@ inline void release_and_orders() {
   if(rework_curses::identities.size()==g.units_count){const auto& raw=rework_curses::identities[static_cast<std::size_t>(u-g.units)];if(raw.wave && raw.unique==u->minor_unique_index && raw.type==u->unit_id && raw.owner!=u->player)rework_curses::forget(u);}
   auto v=rework_curses::identity(u);if(!v)return;
   if(!is_enemy(u->player)){rework_curses::forget(u);return;}
+  if(rework_curses::spell_disabled(u))u->energy=0;
   ammunition(u);
   if(v->appearance_until && timeline.second()>=v->appearance_until){u->flags=(u->flags&~0x04009000u)|v->saved_flags;v->appearance_until=0;wave_targeting::issue(u);}
-  if(v->appearance_until)return;resume_yamato(u,*v);
+  if(v->appearance_until||v->transport_hold)return;resume_yamato(u,*v);
+  tank_tactics(u,*v);
   if(spell_due(u,*v))for(std::size_t i=0;i<due.size();i++){
    auto other=due[i];auto previous=other?rework_curses::identity(other):nullptr;
    if(!previous||v->last_scan<previous->last_scan||(v->last_scan==previous->last_scan&&u<other)){
@@ -279,6 +291,7 @@ inline void tick(bool ready,bool blocked,bool goal) {
  if(!enabled() || goal){if(current || timeline.initialized)reset();return;}
  const bool home=usable_home();const bool busy=blocked || g.dialog.open() || major_original_assault();
  timeline.advance(*current,g.game()->frame_count,ready,busy,home);release_and_orders();
+ if(ready&&!busy)island_step();
  if(!home){pending_kind=pending_spawn_at=raid_next=reserve_at=support_kills=0;last_main_budget=reserve_supply=0;support_due=false;primary=nullptr;return;}
  if(!ready || busy || !home)return;
  if(!raid_next)raid_next=std::max(current->first,timeline.ready_at+current->base_grace);

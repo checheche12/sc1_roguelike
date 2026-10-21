@@ -1,0 +1,81 @@
+{
+  "passed": true,
+  "routes": 20,
+  "missions": [
+    {
+      "mission": 108,
+      "map": "C:\\Users\\chech\\Desktop\\SC2 Custom Campaign Manager v1.05r\\self_made\\analysis\\github_publish_20261016\\repo\\sc1\\native_campaign\\build\\qa18_joint_resources\\108\\scenario.chk",
+      "map_sha256": "3cd0feaa7835b5e3dec436b8f017573a821f0d6d5dda84c18aa6f6679a9f9bac",
+      "terrain": {
+        "tileset": "platform",
+        "cv5_sha256": "48c5fe78082aca0436874634c001dadcbde657db07b2e4995f4c60c76c4dd60b",
+        "vf4_sha256": "22185f7ad524acbdbf3387736377fd473cbe1e02611dfeec521ecd523b0c9e0c",
+        "center_terrain_clearance_pixels": 24,
+        "native_pathfinder_verified": false
+      },
+      "landing_cells": 25,
+      "routes": 4
+    },
+    {
+      "mission": 204,
+      "map": "C:\\Users\\chech\\Desktop\\SC2 Custom Campaign Manager v1.05r\\self_made\\analysis\\github_publish_20261016\\repo\\sc1\\native_campaign\\build\\qa18_joint_resources\\204\\scenario.chk",
+      "map_sha256": "8dacacaa1baa224f7abdb98e1e12315b5ea2f582a17dfe954e742424c88aec97",
+      "terrain": {
+        "tileset": "ashworld",
+        "cv5_sha256": "46aa1b12241c8cbd50d179626b938438782f0f7a4bdeb9564d9f435990910aa0",
+        "vf4_sha256": "9f5154fecbd229975212e6ad55a42388e1c30eb3bd1e379b75c082fd1f535323",
+        "center_terrain_clearance_pixels": 24,
+        "native_pathfinder_verified": false
+      },
+      "landing_cells": 64,
+      "routes": 4
+    },
+    {
+      "mission": 305,
+      "map": "C:\\Users\\chech\\Desktop\\SC2 Custom Campaign Manager v1.05r\\self_made\\analysis\\github_publish_20261016\\repo\\sc1\\native_campaign\\build\\qa18_joint_resources\\305\\scenario.chk",
+      "map_sha256": "7482446da31d43a0fda5b2b875416f92a287bc188e01aa9aeeac289478451063",
+      "terrain": {
+        "tileset": "ashworld",
+        "cv5_sha256": "46aa1b12241c8cbd50d179626b938438782f0f7a4bdeb9564d9f435990910aa0",
+        "vf4_sha256": "9f5154fecbd229975212e6ad55a42388e1c30eb3bd1e379b75c082fd1f535323",
+        "center_terrain_clearance_pixels": 24,
+        "native_pathfinder_verified": false
+      },
+      "landing_cells": 64,
+      "routes": 4
+    },
+    {
+      "mission": 503,
+      "map": "C:\\Users\\chech\\Desktop\\SC2 Custom Campaign Manager v1.05r\\self_made\\analysis\\github_publish_20261016\\repo\\sc1\\native_campaign\\build\\qa18_joint_resources\\503\\scenario.chk",
+      "map_sha256": "1bf958c705a1ffd2aacabc1d9e920bddd956b7fc9895d666d8d4849f965099de",
+      "terrain": {
+        "tileset": "badlands",
+        "cv5_sha256": "fe04afb2b483a7144b7f1c8fb6a06297d93eab2c034011069005c9ed1a6757da",
+        "vf4_sha256": "87f478ee1a1b19657ad1811e76ae372b658d14f026ff5f36e58f6bde968ec5d8",
+        "center_terrain_clearance_pixels": 24,
+        "native_pathfinder_verified": false
+      },
+      "landing_cells": 6,
+      "routes": 4
+    },
+    {
+      "mission": 606,
+      "map": "C:\\Users\\chech\\Desktop\\SC2 Custom Campaign Manager v1.05r\\self_made\\analysis\\github_publish_20261016\\repo\\sc1\\native_campaign\\build\\qa18_joint_resources\\606\\scenario.chk",
+      "map_sha256": "20d324ed9394554decb59ab62ea4ab0357fad95d42aa456e14353a7808fe60aa",
+      "terrain": {
+        "tileset": "badlands",
+        "cv5_sha256": "fe04afb2b483a7144b7f1c8fb6a06297d93eab2c034011069005c9ed1a6757da",
+        "vf4_sha256": "87f478ee1a1b19657ad1811e76ae372b658d14f026ff5f36e58f6bde968ec5d8",
+        "center_terrain_clearance_pixels": 24,
+        "native_pathfinder_verified": false
+      },
+      "landing_cells": 64,
+      "routes": 4
+    }
+  ],
+  "header": "C:\\Users\\chech\\Desktop\\SC2 Custom Campaign Manager v1.05r\\self_made\\analysis\\github_publish_20261016\\repo\\sc1\\native_campaign\\plugin\\include\\island_routes.generated.h",
+  "header_sha256": "2a7d55cba6444f3eb88fb932fc36c6e18632349ef7b25140da3f304ed13f19a6",
+  "source_sha256": "d5acffbe1ec50303099af7300309491a1c4e0468834a6d3e7b4cc9464fe0e7c3",
+  "game_accessed": false,
+  "scope": "Offline pinned terrain and map occupancy. Runtime must recheck owner, occupancy and native path regions."
+}

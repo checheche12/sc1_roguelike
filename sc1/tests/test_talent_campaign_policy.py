@@ -37,13 +37,14 @@ class TalentCampaignPolicyTests(unittest.TestCase):
                     self.assertFalse(mission["final"], mission)
                     self.assertFalse(reward.guaranteed_legendary)
 
-    def test_legendary_once_at_campaign_opening_phase_one(self):
+    def test_legendary_at_opening_and_first_mission_beyond_halfway(self):
         for mission, ordinal in ((101, 1), (201, 1), (301, 1),
                                  (401, 1), (501, 1), (601, 1)):
             schedule = policy.campaign_schedule(mission)
             guaranteed = [x for x in schedule if x.guaranteed_legendary]
-            self.assertEqual(len(guaranteed), 1)
+            self.assertEqual(len(guaranteed), 2)
             self.assertEqual((guaranteed[0].ordinal, guaranteed[0].phase), (ordinal, 1))
+            self.assertEqual((guaranteed[1].ordinal, guaranteed[1].phase), (policy.logical_mission_count(mission)//2+1, 1))
             self.assertEqual(guaranteed[0].category, "military")
 
     def test_branch_variants_share_policy_without_inflating_logical_totals(self):

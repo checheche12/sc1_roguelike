@@ -163,7 +163,7 @@ def run_connected(memory, active, store_factory, *, stopped, deadline=None, poll
                 last_stable = clock()
             except RequestRejected as exc:
                 rejected = event = {"status": "map_request_rejected", "error_code": exc.code,
-                                    "message": str(exc)}
+                                    "message": exc.user_message, "progress": exc.details}
                 last_stable = clock()
             except UnstableMailbox:
                 if clock() - last_stable > 3:

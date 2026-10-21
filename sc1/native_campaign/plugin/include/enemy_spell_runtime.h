@@ -29,6 +29,7 @@ inline bool spell_reserved(U32 tech,U32 owner,bw::Unit* target,bool area,U32 fra
  return false;
 }
 inline bool spell_due(bw::Unit* u,const rework_curses::Identity& v) noexcept {
+ if(rework_curses::spell_disabled(u))return false;
  if(!native_tech_target||!g.order||!rework_curses::marked(u)||u->flingy.hitpoints<=0||!u->order||
     u->lockdown_timer||u->stasis_timer||u->maelstrom_timer||u->spell_cooldown||(u->flags&(0x1000u|0x40u)))return false;
  const U32 frame=g.game()->frame_count;

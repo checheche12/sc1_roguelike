@@ -68,19 +68,21 @@ class UnitGrowth(unittest.TestCase):
    for item in rework_growth.candidates(c,109,2,[],random.Random(seed)):
     self.assertNotIn(item.get('effect_ordinal'),OLD_MANUALS)
     if item.get('bundle_family') is not None:
-     members=member_ids(item,c);self.assertEqual(len(members),2)
-     a,b=[next(x for x in c['talents'] if x['id']==m) for m in members]
-     self.assertEqual(a['rarity'],b['rarity']);self.assertTrue(compatible(a,b))
+     members=member_ids(item,c);self.assertEqual(len(members),3 if item['rarity']=='common' else 2)
+     rows=[next(x for x in c['talents'] if x['id']==m) for m in members]
+     for i,a in enumerate(rows):
+      for b in rows[i+1:]:
+       self.assertEqual(a['rarity'],b['rarity']);self.assertTrue(compatible(a,b))
      seen.add(item['rarity'])
   self.assertTrue(seen&{'uncommon','rare','epic'})
 
  def test_curse_start_and_sequences_match_requested_values(self):
   rows=self.catalog['curses']
-  for slot,first,step in ((16,20,4),(18,20,4),(17,15,4),(19,15,1)):
+  for slot,first,step in ((16,20,4),(18,10,2),(17,10,2),(19,15,1)):
    self.assertEqual(rows[slot]['effect']['first_increment_percent'],first)
    self.assertEqual(rows[slot]['effect']['increment_step_percent'],step)
-  self.assertIn('+20/+44/+72%',rows[18]['description'])
-  self.assertIn('+15/+34/+57%',rows[17]['description'])
+  self.assertIn('+10/+22/+36%',rows[18]['description'])
+  self.assertIn('+10/+22/+36%',rows[17]['description'])
   self.assertIn('+15/+31/+48%',rows[19]['description'])
 
 if __name__=='__main__':unittest.main()

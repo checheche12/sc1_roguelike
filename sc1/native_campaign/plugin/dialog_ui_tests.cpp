@@ -547,6 +547,24 @@ void bundled_legendary_pages_test() {
     }
 }
 void checkpoint_v2_small_curse_lists_test() {
+    // Triple manuals retain the pair UI and show every full effect before save.
+    {
+        ++groups;unsigned members[3]{};
+        for(auto a:legendary_bundles::entries)if(a.manual)for(auto b:legendary_bundles::entries)if(b.manual&&legendary_bundles::compatible(a.index,b.index))for(auto c:legendary_bundles::entries)
+            if(c.manual&&legendary_bundles::compatible(a.index,c.index)&&legendary_bundles::compatible(b.index,c.index)){members[0]=a.index;members[1]=b.index;members[2]=c.index;break;}
+        check(members[2]!=0,"three compatible manuals found");
+        Host h;bind_api(h);check(h.ui.initialize(&h.api,h.callbacks()),"triple UI initialized");h.show();
+        h.offer.wire_version=2;h.offer.count=2;h.offer.candidates[0]=members[0];h.offer.partners[0]=members[1];h.offer.thirds[0]=members[2];h.offer.candidates[1]=257;
+        for(unsigned i=2;i<4;i++)h.offer.candidates[i]=0;h.ui.show(h.offer);
+        h.actions=[&]{
+            h.preview(1);
+            for(unsigned i=0;i<3;i++){
+                check(no_spaces(h.paint(-1)).find(no_spaces(frozen::talent_effects[members[i]-1]))!=std::string::npos,"triple member full description");
+                check(h.submits==0,"no partial triple submission");h.confirm();
+            }
+            check(h.submits==1&&h.last_slot==1,"third page confirms one choice");h.finish();
+        };open(h);
+    }
     ++groups;
     for(unsigned count=1;count<=3;++count) {
         Host h;bind_api(h);check(h.ui.initialize(&h.api,h.callbacks()),"checkpoint UI hooks installed");

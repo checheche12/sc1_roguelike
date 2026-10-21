@@ -28,8 +28,9 @@ PROBE_REWARDS = {mission.mission_id: mission.reward for mission in missions_for_
 
 
 class ProtocolError(ValueError):
-    def __init__(self, code: str, message: str):
+    def __init__(self, code: str, message: str, *, details=None):
         self.code = code
+        self.details = details or {}
         super().__init__(message)
 
 
@@ -351,10 +352,18 @@ class CampaignStore:
         """Reject locked LOAD before issuing any candidates or migration rows."""
         state = conn.execute("SELECT * FROM campaign WHERE id=1").fetchone()
         if state["completed_mask"] & entry.required_mask != entry.required_mask:
-            raise ProtocolError("mission_locked", "Complete the preceding mission before loading this map")
+            self._raise_mission_locked(entry, state['completed_mask'])
         attempt = conn.execute("SELECT * FROM attempts WHERE mission=?", (entry.mission_id,)).fetchone()
         if attempt and attempt["state"] != "complete" and (self._campaign_advanced(conn, entry.mission_id, attempt["start_revision"]) if entry.profile == ORIGINAL_PROFILE else attempt["start_revision"] != state["revision"]):
             raise ProtocolError("stale_attempt", "Campaign changed after this attempt was issued")
+
+    @staticmethod
+    def _raise_mission_locked(entry, completed_mask):
+        if entry.profile == ORIGINAL_PROFILE:
+            from sc1.campaign.mission_progress import locked_progress
+            progress = locked_progress(entry.mission_id, completed_mask)
+            raise ProtocolError('mission_locked', progress['message'], details=progress)
+        raise ProtocolError('mission_locked', '선행 임무를 완료한 뒤 이 임무를 시작해 주세요.')
 
     def _restore_response(self, conn, entry, protocol_version):
         mission = entry.mission_id
@@ -368,7 +377,7 @@ class CampaignStore:
             return {**self._snapshot(state), "nonce": attempt["nonce"], "mission": mission,
                     "duplicate": False, "already_completed": True}
         if state["completed_mask"] & entry.required_mask != entry.required_mask:
-            raise ProtocolError("mission_locked", "Complete the preceding mission before loading this map")
+            self._raise_mission_locked(entry, state['completed_mask'])
         if attempt is None:
             nonce = secrets.token_hex(16)
             conn.execute("""INSERT INTO attempts

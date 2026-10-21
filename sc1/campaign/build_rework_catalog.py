@@ -159,7 +159,9 @@ def build(coverage=None):
     from .talent_retirement import decorate as retire_talents
     retire_talents(catalog)
     from .legend_focus import decorate as focus_legends,generate_header as generate_focus
-    focus_legends(catalog);generate_focus(catalog,ROOT)
+    focus_legends(catalog)
+    from .legend_base_balance import decorate as balance_legend_bases, generate_header as generate_legend_bases
+    balance_legend_bases(catalog);generate_legend_bases(catalog,ROOT);generate_focus(catalog,ROOT)
     from .wave_balance import decorate as decorate_wave_balance
     decorate_wave_balance(catalog, ROOT)
     from .effect_copy import decorate as clean_effect_copy

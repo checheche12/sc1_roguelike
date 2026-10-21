@@ -43,8 +43,10 @@ class BridgeError(RuntimeError):
 
 class RequestRejected(BridgeError):
     """A durable store rejection has already been delivered to this map."""
-    def __init__(self, code, message):
+    def __init__(self, code, message, *, details=None):
         self.code = code
+        self.user_message = message
+        self.details = details or {}
         super().__init__(f"Manager rejected request ({code}): {message}")
 
 
@@ -276,10 +278,13 @@ def choice_payload(request: Request, state: dict) -> bytes:
         from sc1.campaign.legendary_bundles import member_ids
         by_id={item['id']:item for item in catalog['talents']}
         partners=[0]*4
+        thirds=[0]*4
         for i,item in enumerate(candidates):
             members=member_ids(item,catalog)
-            if len(members)==2:partners[i]=by_id[members[1]]['bit_index']+1
-        if any(partners):payload[31:36]=[*partners,0x424E4431]
+            if len(members)>=2:partners[i]=by_id[members[1]]['bit_index']+1
+            if len(members)==3:thirds[i]=by_id[members[2]]['bit_index']+1
+        if any(partners):payload[31:36]=[*partners,0x424E4432 if any(thirds) else 0x424E4431]
+        if any(thirds):payload[36:40]=thirds
     return struct.pack(f"<{len(payload)}I",*payload)
 
 
@@ -429,6 +434,10 @@ class Dispatcher:
             # it cannot continue. Storage exceptions propagate without SAVED.
             payload = struct.pack("<10I", 3, request.sequence, 0,
                                   *struct.unpack("<4I", bytes.fromhex(request.nonce)), 0, 0, 1)
+            details = getattr(exc, 'details', {})
+            if request.growth_version == 2 and details.get('native_message'):
+                text = details['native_message'].encode('utf8')[:332].decode('utf8', errors='ignore').encode('utf8')
+                payload = (payload + struct.pack('<2I', 0x45525231, len(text)) + text).ljust(380, b'\0')
             publish_response(self.memory, self.address, request, payload)
             code = getattr(exc, "code", "rejected_request")
-            raise RequestRejected(code, str(exc)) from exc
+            raise RequestRejected(code, str(exc), details=details) from exc

@@ -93,7 +93,10 @@ inline bool reorderable(U32 order) noexcept {
 inline bool detector(const bw::Unit* u) noexcept {return valid_unit(u) && u->unit_id<228 && (original_stat({0,22,u->unit_id})&0x8001u)==0x8000u;}
 inline bool escort(const bw::Unit* u) noexcept {return detector(u) || (valid_unit(u) && (u->unit_id==71 || u->unit_id==86));}
 inline void issue(bw::Unit* u) {
-    if(!g.order || !g.active || counter(kGoalCounter) || !marked(u) || rework_curses::appearing(u))return;
+    if(!g.order || !g.active || counter(kGoalCounter) || !marked(u) || rework_curses::appearing(u) || rework_curses::transport_hold(u))return;
+    // Deployed tanks keep their native firing/guard order until the tactical
+    // controller requests Unsieging. AttackMove cannot move a deployed tank.
+    if((u->unit_id==30 || u->unit_id==25)&&rework_curses::marked(u))return;
     refresh();if(!target.valid)return;
     auto raid=rework_curses::raid_target(u);int aim_x=raid?raid->flingy.position.x:target.x,aim_y=raid?raid->flingy.position.y:target.y;
     const auto game=g.game();const U32 frame=game->frame_count;auto t=existing_track(u);if(!t)return;

@@ -98,11 +98,11 @@ def with_subject(item,text=None):
 def describe_effect(item):
  """Saved bundles keep their stored text while each member gains its actor."""
  identities=item.get('bundled_talent_ids')
- if isinstance(identities,list) and len(identities)==2:
+ if isinstance(identities,list) and len(identities) in (2,3):
   from .runtime_catalog import load_catalog
   by_id={x['id']:x for x in load_catalog(expected_version=2)['talents']}
   lines=str(item.get('description') or '').splitlines()
-  if len(lines)==2 and all(identity in by_id for identity in identities):
+  if len(lines)==len(identities) and all(identity in by_id for identity in identities):
    result=[]
    for identity,line in zip(identities,lines):
     title,sep,body=line.partition(':')

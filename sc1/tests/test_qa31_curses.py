@@ -16,7 +16,7 @@ class FourCommonCurseTests(unittest.TestCase):
         self.catalog = load_catalog(expected_version=2)
 
     def test_four_curves_caps_and_native_wire_storage_do_not_overlap(self):
-        curves = {16: (20, 4), 17: (15, 4), 18: (20, 4), 19: (15, 1)}
+        curves = {16: (20, 4), 17: (10, 2), 18: (10, 2), 19: (15, 1)}
         ids = {}
         for slot, (first, step) in curves.items():
             item = self.catalog['curses'][slot]

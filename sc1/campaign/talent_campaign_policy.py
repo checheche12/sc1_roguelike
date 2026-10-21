@@ -66,6 +66,13 @@ def legendary_ordinal(mission: int) -> int | None:
     return 1
 
 
+def midpoint_legendary_ordinal(mission: int) -> int | None:
+    """First logical mission beyond halfway; branches share one entitlement."""
+    if progression.metadata(mission)['campaign_id'] not in ECONOMY_ORDINALS:
+        return None
+    return logical_mission_count(mission) // 2 + 1
+
+
 def progress_band(mission: int) -> int:
     """0/1/2 for logical campaign thirds; branch assets do not advance time."""
     ordinal = progression.metadata(mission)["ordinal"]
@@ -211,7 +218,7 @@ def reward_policy(mission: int, phase: int) -> RewardPolicy:
                and ordinal in ECONOMY_ORDINALS.get(campaign, ()))
     if economy and entry.get("no_production"):
         raise ValueError("An economic reward cannot be scheduled without production")
-    guaranteed = (phase == 1 and ordinal == legendary_ordinal(mission))
+    guaranteed = (phase == 1 and ordinal in (legendary_ordinal(mission), midpoint_legendary_ordinal(mission)))
     return RewardPolicy(
         campaign, ordinal, phase, "economy" if economy else "military",
         guaranteed, 0 if economy or guaranteed else ORDINARY_LEGENDARY_PER_10000)

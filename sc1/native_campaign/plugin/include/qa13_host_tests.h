@@ -48,7 +48,7 @@ inline void qa13_supply_box_reduction_total_rounding_and_once(){
   begin();auto s=snapshot(5);U32 remaining=total;
   for(U32 i=0;i<50&&remaining;i++){const U32 n=std::min(remaining,U32(frozen::kCurseMaxStacks[i]));s.curse_counts[i]=U8(n);remaining-=n;}
   CHECK(!remaining);game.minerals[1]=1000;game.gas[1]=500;game.minerals[6]=700;game.gas[6]=800;
-  CHECK(apply_snapshot(nullptr,s));const U32 bonus=total*75/2;CHECK(game.minerals[1]==1000+bonus && game.gas[1]==500+bonus);CHECK(game.minerals[6]==700&&game.gas[6]==800);
+  CHECK(apply_snapshot(nullptr,s));const U32 bonus=total*25;CHECK(game.minerals[1]==1000+bonus && game.gas[1]==500+bonus);CHECK(game.minerals[6]==700&&game.gas[6]==800);
   rework_economy_v5::after_snapshot();CHECK(game.minerals[1]==1000+bonus);s.completed_phase=2;CHECK(apply_snapshot(nullptr,s));CHECK(game.minerals[1]==1000+bonus&&game.gas[1]==500+bonus);end();
  }
  begin();auto s=economy_snapshot({});s.curse_counts[0]=2;CHECK(apply_snapshot(nullptr,s));s=snapshot(5);s.completed_phase=2;s.curse_counts[0]=2;CHECK(apply_snapshot(nullptr,s));CHECK(game.minerals[1]==0&&game.gas[1]==0);end();

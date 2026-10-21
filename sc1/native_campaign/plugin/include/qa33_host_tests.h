@@ -18,7 +18,7 @@ inline void __cdecl give(bw::Unit* u,U32 player){u->player=static_cast<U8>(playe
 }
 inline void qa33_health_curse_scales_spawned_shields_and_display(){
  for(U32 rank=0;rank<4;++rank)for(U32 id:{65u,66u,70u,72u}){
-  qa33_fixture::begin(rank);const U32 base=original_stat({0,7,id}),percent=100+sc1_native::curse_scaling::bonus(rank,20,4);
+  qa33_fixture::begin(rank);const U32 base=original_stat({0,7,id}),percent=100+sc1_native::curse_scaling::bonus(rank,10,2);
   auto enemy=qa33_fixture::wave(id);const U32 expected=base*percent/100;
   CHECK(rework_curses::marked(enemy)&&rework_curses::shield_percent(enemy)==percent);
   CHECK(effective_max_shields(enemy)==expected&&enemy->shields==std::int32_t(expected*256));
@@ -54,7 +54,7 @@ inline void qa33_shield_regen_capture_and_slot_reuse(){
 inline void qa33_shield_overflow_disabled_and_roster_isolation(){
  for(U32 rank:{256u,1000u,0xffffffffu}){
   qa33_fixture::begin(rank);auto enemy=qa33_fixture::wave();const U32 base=original_stat({0,7,65});
-  const U32 expected=U32(std::min<std::uint64_t>(65535u,std::uint64_t(base)*sc1_native::curse_scaling::scale(100,sc1_native::curse_scaling::bonus(rank,20,4))/100));
+  const U32 expected=U32(std::min<std::uint64_t>(65535u,std::uint64_t(base)*sc1_native::curse_scaling::scale(100,sc1_native::curse_scaling::bonus(rank,10,2))/100));
   CHECK(effective_max_shields(enemy)==expected&&enemy->shields==std::int32_t(expected*256));
  }
  qa33_fixture::begin(0);g.growth.curse_counts[21]=3;rework_waves::unit_ordinal=0;

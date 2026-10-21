@@ -26,12 +26,12 @@ inline void qa9_irradiate_native_damage_outer_ring_and_cure(){
     using namespace rework_fixture;qa9_fixture::begin({61});auto vessel=unit(9,1,600,900),root=unit(37,6,1000,1000),ring=unit(37,6,1110,1000),distant=unit(37,6,1300,1000);
     const U32 tick=original_stat({1,14,34})*256/std::max(1u,original_stat({1,16,34}));
     const auto hp=root->flingy.hitpoints;
-    combat_effects::weapon_damage(root,int(tick),34,1,0,vessel,1,qa9_fixture::damage);CHECK(root->flingy.hitpoints==hp-int(tick*3));CHECK(combat_effects::damage_player==12);
+    combat_effects::weapon_damage(root,int(tick),34,1,0,vessel,1,qa9_fixture::damage);CHECK(root->flingy.hitpoints==hp-int(tick*2));CHECK(combat_effects::damage_player==12);
     auto b=bullet(vessel,root,34);{rework_combat_v5::MissileScope scope(b);root->irradiate_timer=75;}
     const auto ring_hp=ring->flingy.hitpoints,far_hp=distant->flingy.hitpoints;
     const auto saved=combat_effects::original_weapon_damage;combat_effects::original_weapon_damage=nullptr;
-    --root->irradiate_timer;pulse(108);CHECK(ring->flingy.hitpoints==ring_hp-int(tick*3));CHECK(distant->flingy.hitpoints==far_hp);
-    pulse(109);CHECK(ring->flingy.hitpoints==ring_hp-int(tick*3));
+    --root->irradiate_timer;pulse(108);CHECK(ring->flingy.hitpoints==ring_hp-int(tick*2));CHECK(distant->flingy.hitpoints==far_hp);
+    pulse(109);CHECK(ring->flingy.hitpoints==ring_hp-int(tick*2));
     root->irradiate_timer=0;rework_combat_v5::death(root);CHECK(!ring->irradiate_timer);
     combat_effects::original_weapon_damage=saved;qa9_fixture::end();
 }
@@ -39,10 +39,10 @@ inline void qa9_goliath_three_targets_infinite_fire_bundle(){
     using namespace rework_fixture;qa9_fixture::begin({56,18});auto body=unit(3,1,100,100),turret=unit(4,1,100,100);body->subunit=turret;turret->subunit=body;
     auto target=unit(43,6,150,100,true);for(U32 i=0;i<5;i++)unit(43,6,160+int(i)*10,100,true);
     bullet(turret,target,8);bullet(turret,target,8);
-    const auto& shots=rework_combat_v5::pending_shots;CHECK(shots.size()==1);
+    const auto& shots=rework_combat_v5::pending_shots;CHECK(shots.size()==7);
     CHECK(shots[0].percent==50&&shots[0].target.p==target);
-    CHECK(rework_combat_v5::focus_base(body)==200);
-    pulse(101);CHECK(rework_combat_v5::pending_shots.empty());CHECK(multi_fixture::shots.size()==3);qa9_fixture::end();
+    CHECK(rework_combat_v5::focus_base(body)==0);
+    pulse(101);CHECK(rework_combat_v5::pending_shots.empty());CHECK(multi_fixture::shots.size()==9);qa9_fixture::end();
 }
 inline void qa9_emp_hits_energyless_enemies_only(){
     using namespace rework_fixture;qa9_fixture::begin({62});install();auto vessel=unit(9,1,100,100),primary=unit(37,6,150,100),other=unit(37,6,200,100),ally=unit(37,1,150,120),distant=unit(37,6,500,500);
@@ -55,7 +55,7 @@ inline void qa9_all_unit_legendaries_and_native_damage(){
     for(U32 ordinal:{61u,62u,63u,64u,65u,66u,102u,103u,104u,105u,106u,107u,144u,145u,146u,147u,148u,149u})CHECK(talent_power::quarters(238+ordinal)==(ordinal==148?4u:16u));
     CHECK(talent_power::quarters(256)==4&&talent_power::quarters(257)==10&&talent_power::quarters(389)==4);
     auto muta=unit(43,1,100,100),target=unit(43,6,150,100,true);auto b=bullet(muta,target,48);CHECK(rework_combat_v5::projectiles.at(b).percent==100);CHECK(rework_combat_v5::pending_shots.empty()&&b->bounces_remaining==0);
-    auto devourer=unit(62,1,100,200);b=bullet(devourer,target,104);CHECK(rework_combat_v5::projectiles.at(b).percent==200);auto ground=unit(37,6,150,200);b=bullet(devourer,ground,104);CHECK(rework_combat_v5::projectiles.at(b).percent==400);
+    auto devourer=unit(62,1,100,200);b=bullet(devourer,target,104);CHECK(rework_combat_v5::projectiles.at(b).percent==200);auto ground=unit(37,6,150,200);b=bullet(devourer,ground,104);CHECK(rework_combat_v5::projectiles.at(b).percent==200);
     auto templar=unit(67,1,100,300);b=bullet(templar,ground,84);CHECK(rework_combat_v5::projectiles.at(b).percent==200);qa9_fixture::end();
 }
 inline void qa9_air_wave_requires_real_counter(){
@@ -100,10 +100,10 @@ inline void qa9_lockdown_extra_projectiles_follow_real_launch(){
     for(U32 i=0;i<5;i++)unit(37,6,170+int(i)*10,100);
     ghost->energy=100*256;auto shot=bullet(ghost,primary,32);
     CHECK(rework_combat_v5::pending_shots.size()==5);
-    {rework_combat_v5::MissileScope impact(shot);primary->lockdown_timer=30;}CHECK(primary->lockdown_timer==120);
+    {rework_combat_v5::MissileScope impact(shot);primary->lockdown_timer=30;}CHECK(primary->lockdown_timer==60);
     pulse(101);CHECK(rework_combat_v5::pending_shots.empty());CHECK(multi_fixture::shots.size()==6&&ghost->energy==100*256);
     for(std::size_t i=1;i<6;i++){auto b=&multi_fixture::bullets[i];CHECK(b->weapon_id==32);auto target=b->target.unit;
-        {rework_combat_v5::MissileScope impact(b);target->lockdown_timer=30;}CHECK(target->lockdown_timer==120);
+        {rework_combat_v5::MissileScope impact(b);target->lockdown_timer=30;}CHECK(target->lockdown_timer==60);
     }
     CHECK(rework_combat_v5::pending_shots.empty());qa9_fixture::end();
 }

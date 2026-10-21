@@ -12,6 +12,31 @@ DEFAULT_DATABASE = DATA_DIRECTORY / "original.sqlite3"
 PREFERENCES_PATH = DATA_DIRECTORY / "manager_preferences.json"
 
 
+def _previous_release_database(preferences_path: Path) -> Path | None:
+    """Carry the last selection across sibling portable releases, never read saves."""
+    release = preferences_path.resolve().parent.parent.parent
+    if not release.name.startswith('SC1_Roguelike_'):
+        return None
+    candidates = []
+    for sibling in release.parent.glob('SC1_Roguelike_*'):
+        if sibling == release or not sibling.is_dir():
+            continue
+        path = sibling / 'sc1/data/manager_preferences.json'
+        try:
+            if path.stat().st_size > 16384:
+                continue
+            value = json.loads(path.read_text(encoding='utf8'))
+            selected = value.get('last_database')
+            if value.get('version') != 1 or not isinstance(selected, str) or not selected:
+                continue
+            database = Path(selected)
+            if database.is_absolute() and database.is_file():
+                candidates.append((path.stat().st_mtime_ns, str(path), database.resolve()))
+        except (OSError, ValueError, AttributeError):
+            continue
+    return max(candidates)[2] if candidates else None
+
+
 def startup_database(explicit: Path | None = None, *, preferences_path: Path = PREFERENCES_PATH) -> Path:
     if explicit is not None:
         return Path(explicit).resolve()
@@ -20,7 +45,7 @@ def startup_database(explicit: Path | None = None, *, preferences_path: Path = P
         with path.open("rb") as stream:
             raw = stream.read(16385)
     except FileNotFoundError:
-        return DEFAULT_DATABASE.resolve()
+        return _previous_release_database(path) or DEFAULT_DATABASE.resolve()
     try:
         if len(raw) > 16384:
             raise ValueError("oversized preferences")

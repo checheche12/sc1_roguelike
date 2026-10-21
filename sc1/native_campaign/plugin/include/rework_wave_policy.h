@@ -9,7 +9,7 @@ struct Profile {U32 mission;bool enabled,starting_hq;U32 first,interval,base_gra
 enum Slot:U32 {Raid=15,Reinforcements=16,Attack=17,Health=18,Haste=19,DeathSupport=20,Elite=21,Barrier=22,Lifesteal=23,
  Reserve=24,Rear=25,Heavy=26,Flank=27,Ground=28,Air=29,Lurkers=30,Carriers=31,Siege=32,Fleet=33,Hunters=34,Vanguard=35,
  Alliance=36,Catastrophe=37,Raynor=38,Duke=39,Fenix=40,Kukulza=41,Magellan=42,Tassadar=43,Hyperion=44,Kerrigan=45,Zeratul=46,Twilight=47,Skies=48,ThreeHeroes=49};
-enum Requirement:U32 {GroundPath=1,AntiAir=2,Detection=4};
+enum Requirement:U32 {GroundPath=1,AntiAir=2,Detection=4,TransportPath=8};
 struct Member {std::uint16_t unit;U32 count;bool hero=false;};
 struct Roster {U32 slot,cadence,grade,requirements,hp_percent,attack_percent;std::array<Member,6> units;};
 // grade0 common/uncommon,1 rare,2 epic,3 legendary. QA38 scales heroes too.
@@ -45,6 +45,10 @@ inline constexpr Roster kRosters[]={
 // unit/half-supply so small groups remain usable and zero stays zero.
 inline constexpr U32 reduced_amount(U32 amount) noexcept {return U32((std::uint64_t(amount)*85u+50u)/100u);}
 inline constexpr U32 normal_amount(U32 amount) noexcept {return U32(std::min<std::uint64_t>(0xffffffffu,(std::uint64_t(amount)*115u+50u)/100u));}
+// Basic air armies use80% of their existing combat budget. Apply after the
+// detector reservation and curse scaling, once per dispatch. Ground/mixed
+// armies and the separate special-curse rosters keep their existing amounts.
+inline constexpr U32 normal_combat_amount(U32 amount,bool air_only) noexcept {return air_only?U32((std::uint64_t(amount)*80u+50u)/100u):amount;}
 inline constexpr U32 graded_amount(U32 amount,U32 grade) noexcept {
  const U32 percent=grade==1?150u:grade==2?175u:grade>=3?200u:115u;
  return U32(std::min<std::uint64_t>(0xffffffffu,(std::uint64_t(amount)*percent+50u)/100u));
@@ -75,7 +79,8 @@ struct Timeline {
    return std::max(nominal,(!p.starting_hq || ready_at)?ready_at+grace:0u);
  }
  bool eligible(const Profile& p,const Roster& r,U32 capabilities) const noexcept {
-   if(!p.enabled || !home || (r.requirements&capabilities)!=r.requirements || (p.blocked_heroes&(1u<<(r.slot-24))))return false;
+   const U32 available=capabilities|((r.grade&&(capabilities&TransportPath))?GroundPath:0u);
+   if(!p.enabled || !home || (r.requirements&available)!=r.requirements || (p.blocked_heroes&(1u<<(r.slot-24))))return false;
    if(r.slot==Reserve || r.slot==Rear)return false; // Retained wire slot; removed curse never spawns.
    // Selection occurs at the warning, but eligibility belongs to the actual
    // departure. An unlock exactly on that departure joins this first wave.

@@ -1,14 +1,15 @@
 """QA39 single-target builds, utility demotions and explicit spell replacement."""
 REVISION=2026102039
 DRAGOON_REVISION=2026102045
+TANK_REVISION=2026102054
 # ordinal,name,mode,base bonus,cadence,proc percent,ramp step,limit
 # Modes:0 steady,1 execute,2 periodic,3 ramp,4 active reflection,
 # 5 stored retaliation,6 armor erosion,7 moving hunt,8 giant hunter,10 per-unit hit cycle.
 SPECS=(
  (49,'집행 저격',1,100,1,300,0,35),
  (54,'사냥꾼 주행 사격',7,200,1,100,0,0),
- (55,'결전 공성포',2,0,2,700,0,0),
- (56,'삼중 집중 조준',0,200,1,0,0,0),
+ (55,'결전 공성포',2,0,2,250,0,0),
+ (56,'분산 조준',0,0,1,0,0,0),
  (57,'집중 전함 포격',2,100,3,600,0,0),
  (60,'대형 성형 지뢰',0,500,1,0,0,0),
  (90,'집중 독침',3,0,1,0,30,180),
@@ -42,7 +43,7 @@ def decorate(catalog):
   if mode==7:text.append(f'이동 사격 유지. 이동 중 피해 +{proc}% 추가(총400%). 정지 시 총300%.')
   if mode==8:text.append(f'대형 유닛·건물에게 피해 +{proc}% 추가.')
   if mode==9:text.append('최대 체력3배. 공중 적을 추격할 때 받는 일반 공격 피해75% 감소. 과잉 자폭을 피하도록 주변 표적을 분배합니다. 지상 공격은 없습니다.')
-  if ordinal==55:text.append('공성 모드 이동 유지. 이동 중 공격 불가.')
+  if ordinal==55:text=['탱크 모드: 같은 적을 2회 공격할 때마다 원래 공격의 250% 추가 피해. 공성 모드: 이동하면서 사격하며 사거리 +3타일. 공성 모드에는 주기적 추가 피해가 없습니다.']
   if ordinal==148:text.append('캐리어의 요격기에 적용.')
   item['description']=' '.join(text)+' 주 대상만 타격하며 주변 추가 피해·튕김은 없습니다.'
   if ordinal==197:item['description']='기본 범위 공격은 유지합니다. 같은 공중 적을 6회 공격할 때마다 그 주 대상에게 원래 공격의 900% 추가 피해를 줍니다. 추가 타격은 주변에 퍼지지 않습니다.'
@@ -50,6 +51,10 @@ def decorate(catalog):
    focus_cadence=cadence,focus_proc_percent=proc,focus_step_percent=step,focus_limit=limit,legacy_area_effect_disabled=True,
    design_role='single_target',reflection_requires_attacking=mode==4,reflection_only_releases_on_attack=mode==5)
   if ordinal==137:item['effect'].update(focus_requires_same_target=False,focus_counter_scope='unit',focus_reset_on_target_change=False,focus_reset_on_idle=False)
+  if ordinal==55:item['effect'].update(qa_revision=TANK_REVISION,focus_target_units=[5,6,23,24],siege_periodic_damage_percent=0,siege_moving_fire=True,siege_range_bonus_tiles=3)
+  if ordinal==56:
+   item['description']='골리앗·앨런 셰자르의 주 대상에게 원래 공격의 100% 피해를 주고, 주 대상의 3타일 안 같은 공격층의 다른 적 최대 3기에게 각각 50% 피해를 줍니다. 추가 대상도 시야·사거리 조건을 만족해야 하며 추가 공격은 다시 퍼지지 않습니다.'
+   item['effect'].update(qa_revision=2026102155,design_role='multi_target',primary_damage_percent=100,additional_targets=3,additional_target_damage_percent=50,additional_target_radius_pixels=96)
  for ordinal in DEMOTIONS:
   item=by[ordinal];item['rarity']='epic';item['previous_rarity']='legendary';item['effect'].pop('rarity_promoted',None)
   item['effect']['qa_revision']=REVISION
@@ -73,16 +78,17 @@ def decorate(catalog):
  by[185]['effect'].update(qa_revision=REVISION,mode=11,bonus=100,cone_radius_pixels=96,cone_angle_degrees=120)
  by[149]['description']='스테이시스 필드 반경 1.5배. 해제된 아군은 체력·보호막을 완전히 회복합니다. 적에게는 기존 보호막400·체력300+최대체력25% 피해와 주변 감속을 줍니다.'
  by[149]['effect'].update(qa_revision=REVISION,stasis_radius_multiplier=1.5,stasis_friendly_full_health_shields=True)
- catalog['legend_focus_revision']=DRAGOON_REVISION;catalog['single_target_legend_ordinals']=sorted(CONVERTED)
+ catalog['legend_focus_revision']=2026102155;catalog['single_target_legend_ordinals']=sorted(CONVERTED-{56})
  return catalog
 
 def generate_header(catalog,root):
  by={x['effect_ordinal']:x for x in catalog['talents'] if x.get('rework_revision')==5}
  lines=['#pragma once','namespace legend_focus {','struct Rule {unsigned ordinal,mode,base,cadence,proc,step,limit;unsigned units[8];};','inline constexpr Rule rules[]={']
  for spec in SPECS:
-  ordinal=spec[0];units=([73] if ordinal==148 else [85] if ordinal==141 else by[ordinal]['target_units']);mask=[0]*8
+  ordinal=spec[0];units=([73] if ordinal==148 else [85] if ordinal==141 else by[ordinal]['effect'].get('focus_target_units',by[ordinal]['target_units']));mask=[0]*8
   for unit in units:mask[unit//32]|=1<<(unit%32)
-  values=[ordinal,*spec[2:]]
+  effect=by[ordinal]['effect']
+  values=[ordinal,*(effect[key] for key in ('focus_mode','base_bonus_percent','focus_cadence','focus_proc_percent','focus_step_percent','focus_limit'))]
   lines.append('{'+','.join(str(n)+'u' for n in values)+',{'+','.join(str(x)+'u' for x in mask)+'}},')
  lines+=['};','inline constexpr bool converted(unsigned ordinal) noexcept {for(auto r:rules)if(r.ordinal==ordinal)return true;return false;}','}']
  (root/'sc1/native_campaign/plugin/include/legend_focus.generated.h').write_text('\n'.join(lines)+'\n',encoding='utf8')

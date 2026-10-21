@@ -301,7 +301,7 @@ inline void after_snapshot() {
         living_units([&](bw::Unit* u){if(!resource(u->unit_id))return;auto s=state(u);if(s && !s->resource_scaled){amount(u,std::min(65535u,amount(u)*3));s->resource_scaled=true;}});
         scaled_resources=true;
     }
-    if(rank(5) && !start_box && first_snapshot){U32 curses=0;for(auto n:g.growth.curse_counts)curses+=n;const U32 bonus=talent_power::enabled?curses*75/2:curses*50;credit(bonus,bonus);start_box=true;}
+    if(rank(5) && !start_box && first_snapshot){U32 curses=0;for(auto n:g.growth.curse_counts)curses+=n;const U32 bonus=talent_power::enabled?curses*25:curses*50;credit(bonus,bonus);start_box=true;}
     if(rank(23) && !next_mule){const auto second=g.game()->elapsed_seconds;next_mule=second<120 ? 120u:(second/120+1)*120;}
     if(rank(4) && !provided_applied){
         auto game=g.game();living_units([&](bw::Unit* u){if(own(u) && (u->flags&1u) && in(u->unit_id,{109,42,156})){

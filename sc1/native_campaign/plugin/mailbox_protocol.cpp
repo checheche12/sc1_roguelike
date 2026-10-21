@@ -65,6 +65,7 @@ bool MailboxProtocol::initialize(const MailboxCallbacks& callbacks, std::uint32_
     mission_ = mission;
     state_ = operation_ = request_sequence_ = last_response_ = gold_ = selected_slot_ = 0;
     campaign_revision_ = completed_mask_ = error_ = 0;
+    rejection_message_[0] = 0;
     request_slot_ = 0;
     std::memset(nonce_, 0, sizeof(nonce_));
     applied_ = already_complete_ = goal_reached_ = offer_active_ = false;
@@ -245,19 +246,26 @@ bool MailboxProtocol::accept_offer(const std::uint32_t (&words)[96]) noexcept {
             if (candidate == next.candidates[other]) return false;
     }
     if(wire_version_==2){
-        const bool paired=words[36]==0x424e4431u;
-        for(std::size_t index=paired?37u:32u;index<96;++index)if(words[index])return false;
+        const bool triple=words[36]==0x424e4432u;
+        const bool paired=triple||words[36]==0x424e4431u;
+        for(std::size_t index=triple?41u:paired?37u:32u;index<96;++index)if(words[index])return false;
         if(paired){
             if(next.kind!=1)return false;
-            bool any=false;
+            bool any=false,any_third=false;
             for(std::size_t i=0;i<4;i++){
                 next.partners[i]=words[32+i];
+                next.thirds[i]=triple?words[37+i]:0;
+                if(next.thirds[i]){
+                    if(i>=next.count||!next.partners[i]||!legendary_bundles::manual(next.candidates[i])||!legendary_bundles::manual(next.partners[i])||!legendary_bundles::manual(next.thirds[i])||
+                       !legendary_bundles::compatible(next.candidates[i],next.thirds[i])||!legendary_bundles::compatible(next.partners[i],next.thirds[i]))return false;
+                    any_third=true;
+                }
                 if(!next.partners[i])continue;
                 if(i>=next.count||!legendary_bundles::compatible(next.candidates[i],next.partners[i]))return false;
                 for(std::size_t j=0;j<i;j++)if(next.candidates[i]==next.partners[j]&&next.partners[i]==next.candidates[j])return false;
                 any=true;
             }
-            if(!any)return false;
+            if(!any||(triple&&!any_third))return false;
         }
     }
     for(std::size_t index=next.count;index<4;++index)if(next.candidates[index])return false;
@@ -369,7 +377,12 @@ void MailboxProtocol::tick() noexcept {
     std::uint32_t words[96]{};
     if (!read_response(words)) return;
     last_response_ = words[0];
-    if (words[1] == 3) { fail(MailboxError::ManagerRejected); return; }
+    if (words[1] == 3) {
+        if(wire_version_==2 && words[11]==0x45525231u && words[12]>0 && words[12]<=332u){
+            std::memcpy(rejection_message_,words+13,words[12]);rejection_message_[words[12]]=0;
+        }
+        fail(MailboxError::ManagerRejected); return;
+    }
     if (state_ == 1 && words[1] == 4) {
         if (!accept_offer(words)) fail(MailboxError::InvalidOffer);
     } else if (state_ == 1 && words[1] == 1) {
@@ -752,6 +765,24 @@ void qa16_bundle_numeric_offer_validation() {
         if(!invalid)CHECK(f.host.offer.partners[0]==302&&f.protocol.submit_choice(1));
     }
 }
+void qa55_three_manual_offer_validation() {
+    std::uint32_t members[3]{};
+    for(auto a:legendary_bundles::entries)if(a.manual)for(auto b:legendary_bundles::entries)if(b.manual&&legendary_bundles::compatible(a.index,b.index))for(auto c:legendary_bundles::entries)
+        if(c.manual&&legendary_bundles::compatible(a.index,c.index)&&legendary_bundles::compatible(b.index,c.index)){members[0]=a.index;members[1]=b.index;members[2]=c.index;break;}
+    CHECK(members[2]);
+    for(unsigned invalid=0;invalid<7;invalid++){
+        Fixture f(true,2);auto r=f.offer();r[23]=1;r[24]=0;r[26]=0x50484331;r[27]=1;r[28]=1;r[29]=0;r[30]=3;
+        r[14]=1;r[15]=members[0];r[16]=r[17]=r[18]=0;r[32]=members[1];r[36]=0x424e4432;r[37]=members[2];
+        if(invalid==1)r[37]=members[0];
+        if(invalid==2)r[37]=members[1];
+        if(invalid==3)r[37]=300; // legendary cannot be a third common manual
+        if(invalid==4)r[32]=0;
+        if(invalid==5)r[38]=members[2]; // absent candidate slot
+        if(invalid==6)r[36]=0x424e4431; // historical marker cannot carry third
+        f.send(r);CHECK(invalid?f.protocol.failed():f.protocol.offer_active());
+        if(!invalid)CHECK(f.host.offer.thirds[0]==members[2]&&f.protocol.submit_choice(1));
+    }
+}
 void rework_v2_extended_snapshot_and_single_offer() {
     // QA26 counters cross byte255 without spilling into adjacent curse bytes.
     for(std::uint32_t count:{4u,255u,256u,1000u,0xffffffffu}){
@@ -1050,7 +1081,7 @@ int main(int argc, char** argv) {
             reset_quarantines_old_mailbox_and_rejects_old_ack,
             destruction_never_calls_host_but_explicit_shutdown_does, slots_and_request_ownership,
             unsupported_mission_and_corrupt_request_fail_closed, maximum_supported_snapshot_is_valid,
-            qa16_bundle_numeric_offer_validation,rework_v2_extended_snapshot_and_single_offer,qa10_health_bit_fallback_and_capped_phase_transition,rework_v2_rejects_rank_bit_mismatch_and_reserved_payload
+            qa55_three_manual_offer_validation,qa16_bundle_numeric_offer_validation,rework_v2_extended_snapshot_and_single_offer,qa10_health_bit_fallback_and_capped_phase_transition,rework_v2_rejects_rank_bit_mismatch_and_reserved_payload
         };
         for (const auto& test : tests) test();
         std::cout << "{\"cpp_tests\":" << tests.size() << ",\"passed\":true,\"game_accessed\":false,\"database_accessed\":false}\n";

@@ -65,7 +65,7 @@ def enable(conn, catalog_path=None):
                 if new[index] in positions:raise GrowthError('catalog_incompatible','새 재능의 전송 위치가 기존 기록과 충돌합니다.')
                 pinned[kind].append(copy.deepcopy(new));known.add(new['id']);positions.add(new[index]);changed=True
     if changed:
-        for field in ('balance_revision','talent_power_quarters','economy_talents_scaled','legendary_expansion_revision','legendary_common_offer_probability','wave_balance_revision','wave_count_multiplier_percent','wave_roster_review','unit_growth_revision','unit_growth_summary','talent_retirement_revision','legend_focus_revision','single_target_legend_ordinals','effect_description_revision'):
+        for field in ('balance_revision','talent_power_quarters','economy_talents_scaled','legendary_expansion_revision','legendary_common_offer_probability','wave_balance_revision','wave_count_multiplier_percent','wave_roster_review','unit_growth_revision','unit_growth_summary','talent_retirement_revision','legend_focus_revision','legend_base_balance_revision','single_target_legend_ordinals','effect_description_revision'):
             if field in catalog:pinned[field]=copy.deepcopy(catalog[field])
         if 'talent_power_quarters' in catalog:pinned.pop('talent_power_halves',None)
         validate_catalog(pinned,2)
@@ -198,7 +198,7 @@ def recent_manuals(conn,mission,offer_id):
 
 
 def candidates(catalog,mission,phase,owned,rng,*,recent_manuals=(),rank_counts=None):
-    from .legendary_bundles import paired_unit,compatible,pair_options
+    from .legendary_bundles import paired_unit,can_bundle,pair_options
     reward=policy.reward_policy(mission,phase)
     available=[]
     by_id={}
@@ -230,7 +230,7 @@ def candidates(catalog,mission,phase,owned,rng,*,recent_manuals=(),rank_counts=N
         by_id[item['id']]=item
     usable_legends=[by_id[x.id] for x in available]
     available=[x for x in available if not paired_unit(by_id[x.id])
-               or any(compatible(by_id[x.id],other) for other in usable_legends)]
+               or can_bundle(by_id[x.id],usable_legends)]
     try:
         if reward.guaranteed_legendary:
             shared=[x for x in available if x.rarity=='legendary' and by_id[x.id]['race']=='shared' and x.usable]

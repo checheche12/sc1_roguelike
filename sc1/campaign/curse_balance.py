@@ -2,6 +2,8 @@
 REAR_ID = '09224f2f-b115-5c53-adb3-883bb36075cd'
 RESERVE_ID = '9abf9771-866f-55b7-a4ba-ba28bb5e6faf'
 QA_REVISION = 2026102038
+HEALTH_REVISION = 2026102048
+ATTACK_REVISION = 2026102049
 
 
 def decorate(catalog):
@@ -10,10 +12,10 @@ def decorate(catalog):
              {'units_formula': '2,6,10 (capped at3)', 'units_sequence': [2, 6, 10]}),
         16: ('추가 공세 병력 수가 선택할 때마다 기본 편성 대비 +20%, +24%, +28%…씩 누적 증가합니다. 중첩 상한 없음. 1/2/3중첩 누적 +20/+44/+72%.',
              {'first_increment_percent': 20, 'increment_step_percent': 4, 'unlimited_stacks': True}),
-        17: ('추가 공세 병력의 일반 공격력이 선택할 때마다 기본 공격력 대비 +15%, +19%, +23%…씩 누적 증가합니다. 중첩 상한 없음. 1/2/3중첩 누적 +15/+34/+57%.',
-             {'first_increment_percent': 15, 'increment_step_percent': 4, 'unlimited_stacks': True}),
-        18: ('추가 공세 병력의 최대 체력과 최대 보호막이 선택할 때마다 각각 기본 수치 대비 +20%, +24%, +28%…씩 누적 증가합니다. 중첩 상한 없음. 1/2/3중첩 누적 각각 +20/+44/+72%.',
-             {'first_increment_percent': 20, 'increment_step_percent': 4, 'unlimited_stacks': True,
+        17: ('추가 공세 병력의 일반 공격력이 선택할 때마다 기본 공격력 대비 +10%, +12%, +14%…씩 누적 증가합니다. 중첩 상한 없음. 1/2/3중첩 누적 +10/+22/+36%. 5중첩 누적 +70%.',
+             {'first_increment_percent': 10, 'increment_step_percent': 2, 'unlimited_stacks': True}),
+        18: ('추가 공세 병력의 최대 체력과 최대 보호막이 선택할 때마다 각각 기본 수치 대비 +10%, +12%, +14%…씩 누적 증가합니다. 중첩 상한 없음. 1/2/3중첩 누적 각각 +10/+22/+36%. 5중첩 누적 +70%.',
+             {'first_increment_percent': 10, 'increment_step_percent': 2, 'unlimited_stacks': True,
               'health_and_shields': True}),
         19: ('추가 공세 병력의 일반 공격 속도와 이동 속도가 선택할 때마다 각각 기본 속도 대비 +15%, +16%, +17%…씩 누적 증가합니다. 중첩 상한 없음. 1/2/3중첩 누적 각각 +15/+31/+48%. 마법 시전 속도는 바뀌지 않습니다.',
              {'first_increment_percent': 15, 'increment_step_percent': 1, 'unlimited_stacks': True,
@@ -55,5 +57,7 @@ def decorate(catalog):
             effect['roster_hp_percent'] = 110
         effect['qa_revision'] = QA_REVISION
         if slot == 18:
-            effect['qa_revision'] = QA_REVISION
+            effect['qa_revision'] = HEALTH_REVISION
+        elif slot == 17:
+            effect['qa_revision'] = ATTACK_REVISION
     return catalog

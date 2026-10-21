@@ -66,7 +66,7 @@ inline void step(){
         const U32 owner=it->second.owner;auto source=rework_combat_v5::generation(it->second.source);
         for(const auto& id:nearby(target->flingy.position.x,target->flingy.position.y,128)){auto other=resolve(id);
             if(!other||other==target||!organic(other)||building(other)||in(other->unit_id,{35,36,97})||(other->flags&(0x10u|0x40u)))continue;
-            const auto d=box_distance(target,other);if(d>32ull*32&&d<=128ull*128)weapon_hurt(other,tick*3,34,source,owner);
+            const auto d=box_distance(target,other);if(d>32ull*32&&d<=128ull*128)weapon_hurt(other,tick*legend_base_balance::irradiate_damage_multiplier,34,source,owner);
         }
     }
     for(auto it=roots.begin();it!=roots.end();)if(!it->second.active)it=roots.erase(it);else ++it;

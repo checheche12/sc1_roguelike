@@ -82,7 +82,7 @@ inline void qa39_acid_spore_damage_and_slow_are_doubled(){
  auto marine=unit(0,1,120,100);g.normal_hit=true;{std::int32_t amount=1000;rework_combat_v5::DamageScope scope(enemy,marine,0,1,amount);CHECK(amount==1000+3*256);}qa9_fixture::end();
 }
 inline void qa39_scourge_damage_health_survival_and_smart_target(){
- using namespace rework_fixture;qa9_fixture::begin({96});install();CHECK(owner_stat(1,{0,8,47})==original_stat({0,8,47})*3);CHECK(owner_stat(1,{0,17,47})>=130);
+ using namespace rework_fixture;qa9_fixture::begin({96});install();CHECK(owner_stat(1,{0,8,47})==original_stat({0,8,47})*2);CHECK(owner_stat(1,{0,17,47})>=130);
  auto u=unit(47,1,100,100,true),other=unit(47,1,101,100,true),a=unit(43,6,160,100,true),b=unit(43,6,180,100,true),enemy=unit(0,6,130,100);a->flingy.hitpoints=10*256;multi_fixture::target(u,a);multi_fixture::target(other,a);
  g.normal_hit=true;{std::int32_t amount=1000;rework_combat_v5::DamageScope scope(u,enemy,0,1,amount);CHECK(amount==250);}game.frame_count=104;auto s=rework_combat_v5::state(u);auto saved_order=g.order;g.order=qa39_fixture::targeted_order;rework_combat_v5::focus_tick(u,*s);CHECK(u->order_target.unit==b);g.order=saved_order;qa9_fixture::end();
 }

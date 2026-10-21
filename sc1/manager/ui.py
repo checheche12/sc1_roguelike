@@ -720,6 +720,8 @@ class ManagerWindow:
         }
         if event.get("status") in statuses:
             text = statuses[event["status"]]
+            if event.get('status') == 'map_request_rejected' and event.get('error_code') == 'mission_locked':
+                text = event.get('message') or '현재 선택한 기록에는 이전 임무 완료 내역이 없습니다. 기존에 진행하던 기록을 열고 임무를 다시 시작하세요.'
             self.connection.set(text)
         elif event.get("event") == "scan" and not event.get("candidates"):
             self.connection.set("지원 지도가 아직 감지되지 않았습니다. 현재 기록에 맞는 지도를 시작해 주세요.")

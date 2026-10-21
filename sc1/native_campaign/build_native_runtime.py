@@ -118,7 +118,8 @@ def source_entries():
               ROOT / "dialog_assets/wave_timer_statfluf.ui.json",
               ROOT / "build_effect_iscript.py",ROOT / "iscript_effects/iscript.bin",
               ROOT / "iscript_effects/iscript_effects_evidence.json",
-              ROOT / "build_objective_guards.py",ROOT / "objective_guards_evidence.json"]
+              ROOT / "build_objective_guards.py",ROOT / "objective_guards_evidence.json",
+              ROOT / "build_island_routes.py",ROOT / "island_routes_evidence.json"]
     return [{"path": str(path.resolve()), "sha256": digest(path)} for path in sorted(set(files))]
 
 

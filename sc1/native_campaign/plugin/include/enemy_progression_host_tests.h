@@ -79,7 +79,7 @@ inline void all_spell_roles_use_real_order_numbers(){
  struct Case{U32 unit,tech,order,victim;};
  for(const auto& c:std::array<Case,12>{{{67,19,142,0},{9,7,143,0},{71,22,147,0},{12,8,113,0},{1,1,115,5},{45,13,121,0},{46,15,144,0},{63,29,184,9},{60,25,181,0},{34,30,185,9},{63,31,186,0},{63,27,182,12}}}){
   begin();ep::research(4,c.tech);auto u=caster(c.unit);auto a=target(c.victim,1940,1600,200);target(c.victim,1960,1620);target(c.victim,1940,1640);a->energy=100*256;
-  rework_waves::auto_spell(u,*rework_curses::identity(u));CHECK(u->order==c.order&&u->order_target.unit==a&&u->energy==200*256);
+  rework_waves::auto_spell(u,*rework_curses::identity(u));if(c.unit==9)CHECK(u->order==14&&u->energy==0);else CHECK(u->order==c.order&&u->order_target.unit==a&&u->energy==200*256);
  }
  begin();ep::research(4,17);auto queen=caster(45);target();target(0,1960,1620);target(0,1940,1640);rework_waves::auto_spell(queen,*rework_curses::identity(queen));CHECK(queen->order==146);
 }
@@ -96,9 +96,9 @@ inline bw::Unit* ally(U32 id,int x=1900,int y=1600){auto u=add(id,4,x,y);u->flag
 inline void support_spells_consume_and_native_target_denial(){
  begin();ep::research(4,14);auto defiler=caster(46);auto front=ally(37);target();rework_waves::auto_spell(defiler,*rework_curses::identity(defiler));CHECK(defiler->order==119&&defiler->order_target.unit==front);
  begin();ep::research(4,16);defiler=caster(46);defiler->energy=50*256;auto original=add(37,4,1870,1600);original->flags=1;auto food=ally(37);rework_waves::auto_spell(defiler,*rework_curses::identity(defiler));CHECK(defiler->order==145&&defiler->order_target.unit==food&&original->flingy.hitpoints>0);
- begin();ep::research(4,6);auto vessel=caster(9);front=ally(5);target();rework_waves::auto_spell(vessel,*rework_curses::identity(vessel));CHECK(vessel->order==141&&vessel->order_target.unit==front);
+ begin();ep::research(4,6);auto vessel=caster(9);front=ally(5);target();rework_waves::auto_spell(vessel,*rework_curses::identity(vessel));CHECK(vessel->order==14&&vessel->energy==0);
  begin();ep::research(4,24);auto medic=caster(34);front=ally(5);front->lockdown_timer=10;rework_waves::auto_spell(medic,*rework_curses::identity(medic));CHECK(medic->order==180&&medic->order_target.unit==front);
- begin();ep::research(4,2);vessel=caster(9);auto templar=target(67);templar->energy=100*256;rework_waves::auto_spell(vessel,*rework_curses::identity(vessel));CHECK(vessel->order==122);
+ begin();ep::research(4,2);vessel=caster(9);auto templar=target(67);templar->energy=100*256;rework_waves::auto_spell(vessel,*rework_curses::identity(vessel));CHECK(vessel->order==14&&vessel->energy==0);
  begin();ep::research(4,27);auto archon=caster(63);target(12,1940,1600,250);rework_waves::native_tech_target=deny;rework_waves::auto_spell(archon,*rework_curses::identity(archon));CHECK(archon->order==14);rework_waves::native_tech_target=allow_tech;
 }
 }

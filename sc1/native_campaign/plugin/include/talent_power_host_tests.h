@@ -78,7 +78,7 @@ inline void power_acid_fifteen_and_enemy_curses_unchanged(){
     rework_combat_v5::attach(102,victim,caster,600,0,75);
     const U32 tick=original_stat({1,14,60})*256/76;
     victim->flingy.hitpoints-=int(tick);--victim->plague_timer;pulse(101);
-    CHECK(victim->flingy.hitpoints==30*256-int(talent_power::v5(102,tick)));
+    CHECK(victim->flingy.hitpoints==30*256-int(tick*2));
     const auto hp=victim->flingy.hitpoints;pulse(102);CHECK(victim->flingy.hitpoints==hp);finish();
     reset();GrowthSnapshot s{};s.curse_counts[1]=1;s.curse_counts[2]=1;CHECK(apply_snapshot(nullptr,s));
     CHECK(owner_stat(6,{1,14,35})==6&&owner_stat(6,{0,8,37})==9856);

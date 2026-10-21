@@ -4,7 +4,9 @@
 
 ## 다운로드
 
-[최신 버전 받기 — v2026.10.20-qa45](https://github.com/checheche12/sc1_roguelike/raw/refs/tags/asset-v2026.10.20-qa45/SC1_Roguelike_20261020_QA45.zip)
+[최신 버전 받기 — v2026.10.21-qa55](https://github.com/checheche12/sc1_roguelike/raw/refs/tags/asset-v2026.10.21-qa55/SC1_Roguelike_20261021_QA55.zip)
+
+QA55는 일반 교범을 세 유닛 계열 묶음으로 늘리고, 골리앗의 분산 공격과 추가 공세 베슬의 에너지 0 제한을 반영했어요. [변경 내용](docs/qa55-goliath-manuals-vessels.md)을 확인할 수 있어요.
 
 Windows 64비트·스타크래프트 리마스터용입니다. ZIP 전체를 압축 해제한 뒤 `Start_Campaign.exe`를 실행하세요. Python은 따로 설치하지 않아도 됩니다.
 
@@ -13,6 +15,8 @@ Windows 64비트·스타크래프트 리마스터용입니다. ZIP 전체를 압
 실행 중인 스타크래프트를 종료하고, ZIP 전체를 원하는 폴더에 압축 해제해 주세요. 그다음 `Start_Campaign.exe`를 실행하면 아래 화면이 나와요.
 
 ![실행기에서 기록 선택, 설치 경로 지정, 패치 설치, 게임 시작을 누르는 순서](docs/images/install-guide.png)
+
+**저주 개수도 조절할 수 있어요.** 실행기의 **난이도 · 임무당 저주 선택**에서 0~4회를 고른 뒤 게임을 시작해 주세요. 기본값은 3회이며, 재능은 그대로 임무당 3회를 받습니다. 자세한 적용 시점은 아래 [저주 난이도](#저주-난이도)에 정리했어요.
 
 1. `새 캠페인 기록…`으로 기록을 만들거나, `다른 기록 열기…`로 기존 기록을 골라 주세요.
 
