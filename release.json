@@ -1,0 +1,13 @@
+{
+  "version": "v2026.10.23-qa71",
+  "file": "SC1_Roguelike_20261023_QA71.zip",
+  "sha256": "098e4216b45b7128af2f34833bbe3ffbb0f676f45db7b4b3f7c86de519bfd558",
+  "bytes": 24940717,
+  "runtime_source_commit": "11a64831fd2cce9199ef9ebe0d467bbb60331e4a",
+  "native_dll_sha256": "bf87047a104807279cded11afa36e5cd9354f8dcf1afbf9e2e04bad87e64efe6",
+  "nuclear_warning_frames": 36,
+  "nuclear_build_frames": 720,
+  "nuclear_supply": 2,
+  "all_talent_actual_condition_audit_complete": false,
+  "personal_database_included": false
+}
