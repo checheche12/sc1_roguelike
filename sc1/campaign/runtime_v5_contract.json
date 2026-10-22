@@ -9291,7 +9291,7 @@
       "id": "1e9dba99-6b7c-5d98-b71f-0e1aa412cfa1",
       "name": "폭증하는 무리",
       "target": "퀸 스폰 브루들링",
-      "description": "퀸: 스폰 브루들링이 대상당 6기를 만듭니다. 주 대상 4타일 안의 시전 가능한 적 최대 3기도 추가 공격해 총 4기에서 최대 24기를 만듭니다. 브루들링 최대 체력·공격력 2배.",
+      "description": "퀸·마이트리아크: 스폰 브루들링 에너지 소모 100. 주 대상과 그 주위 4타일 안의 시전 가능한 적 최대 3기를 함께 공격합니다. 대상당 브루들링 6기, 총 최대 24기를 생성하며 브루들링의 최대 체력·공격력은 2배가 됩니다.",
       "trigger": "",
       "numbers": "",
       "notes": "원래 수명·비용·대상 제한 유지.",
@@ -9314,11 +9314,13 @@
         "type": "rework_v5",
         "ordinal": 104,
         "source_id": "1e9dba99-6b7c-5d98-b71f-0e1aa412cfa1",
-        "qa_revision": 2026102039,
+        "qa_revision": 2026102263,
         "benefit_power_quarters": 16,
         "broodlings_per_target": 6,
         "additional_cast_targets": 3,
-        "additional_cast_radius_pixels": 128
+        "additional_cast_radius_pixels": 128,
+        "broodling_energy_cost": 100,
+        "additional_cast_targeting": "native_weapon_flags"
       },
       "target_units": [
         45,
@@ -9363,7 +9365,7 @@
       },
       "bundle_family": 45,
       "effect_subject": "퀸",
-      "description_revision": 2026102042
+      "description_revision": 2026102264
     },
     {
       "id": "051c93bb-ca5d-5a11-8728-e640cad23f20",
@@ -16001,7 +16003,7 @@
       "race": "zerg",
       "rarity": "legendary",
       "target": "저글링·포식자",
-      "description": "저글링의 공격마다 대상의 체력 방어력을 0.33씩 낮춥니다. 방어력이 0 아래로 내려간 누적분은 저글링의 추가 피해가 됩니다.",
+      "description": "저글링·브루들링의 공격마다 대상의 체력 방어력을 0.33씩 낮춥니다. 방어력이 0 아래로 내려간 누적분은 해당 유닛의 추가 피해가 됩니다.",
       "source_description": "저글링의 세 번째 일반 공격마다 주 대상에게 200% 추가 피해, 주변 1.5타일의 다른 지상 적 최대 3기에 100% 피해를 줍니다.",
       "bit_index": 428,
       "category": "combat",
@@ -16021,7 +16023,7 @@
         "type": "rework_v5",
         "ordinal": 190,
         "source_id": "2545a24c-42c8-5235-84e5-c185789687b2",
-        "qa_revision": 2026102262,
+        "qa_revision": 2026102263,
         "benefit_power_quarters": 4,
         "focus_legend": true,
         "focus_mode": 6,
@@ -16036,7 +16038,12 @@
         "reflection_only_releases_on_attack": false,
         "armor_erosion_numerator": 33,
         "armor_erosion_denominator": 100,
-        "armor_erosion_per_hit": 0.33
+        "armor_erosion_per_hit": 0.33,
+        "focus_target_units": [
+          37,
+          40,
+          54
+        ]
       },
       "target_units": [
         37,
@@ -16090,7 +16097,7 @@
       },
       "bundle_family": 37,
       "effect_subject": "저글링",
-      "description_revision": 2026102263
+      "description_revision": 2026102264
     },
     {
       "id": "34bb2ee1-4cb6-5d80-a042-61e97dfb2603",

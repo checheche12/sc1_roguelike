@@ -21,7 +21,8 @@ inline void publish() noexcept {
     const auto rate=[](U32 ordinal,U32 base){return rework_combat_v5::rank(ordinal)?talent_power::v5(ordinal,base):0u;};
     const std::uint64_t value=std::min(90u,rate(38,30))|(std::uint64_t(rate(78,25))<<8)|
         (std::uint64_t(rate(120,25))<<16)|(std::uint64_t(rate(126,75*256))<<24)|
-        (std::uint64_t(talent_power::enabled&&rework_combat_v5::rank(64)?1:0)<<56);
+        (std::uint64_t(talent_power::enabled&&rework_combat_v5::rank(64)?1:0)<<56)|
+        (std::uint64_t(talent_power::enabled&&rework_combat_v5::rank(104)?1:0)<<57);
     if(!value)return;
     units.store(reinterpret_cast<std::uintptr_t>(g.units),std::memory_order_relaxed);count.store(g.units_count,std::memory_order_relaxed);policy.store(value,std::memory_order_relaxed);owner.store(player_owner(),std::memory_order_release);
 }
@@ -30,6 +31,9 @@ inline U32 required(const bw::Unit* u,U32 base) noexcept {
     if(own>=8||!start||address<start||(address-start)%sizeof(bw::Unit)||(address-start)/sizeof(bw::Unit)>=count.load(std::memory_order_relaxed)||u->player!=own||(u->flags&0x40000000u))return base;
     const auto value=policy.load(std::memory_order_relaxed);U32 rate=0;
     if((value&(1ull<<56))&&rework_combat_v5::in(u->unit_id,{12,27,28,29,102}))base=std::min(base,50*256u);
+    // Spawn Broodlings is the Queen/Matriarch's only150-energy spell.
+    // Publish the legend's base100 before applying general caster efficiency.
+    if((value&(1ull<<57))&&rework_combat_v5::in(u->unit_id,{45,49})&&base==150*256u)base=100*256u;
     if(rework_combat_v5::group(38,u->unit_id))rate=U32(value&255u);
     if(rework_combat_v5::group(78,u->unit_id))rate=U32(value>>8)&255u;
     if(rework_combat_v5::group(120,u->unit_id))rate=U32(value>>16)&255u;

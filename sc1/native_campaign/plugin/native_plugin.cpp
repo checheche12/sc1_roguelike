@@ -1557,6 +1557,7 @@ bool bind_api(const samase::PluginApi* api) noexcept {
     g.damage=function<DamageFn>(api,samase::FuncId::DamageUnit);
     rework_waves::native_tech_target=function<rework_waves::TechTargetFn>(api,samase::FuncId::CheckTechTargeting);
     rework_combat_v5::native_tech_target=rework_waves::native_tech_target;
+    rework_combat_v5::native_weapon_target=function<rework_combat_v5::WeaponTargetFn>(api,samase::FuncId::CheckWeaponTargetingFlags);
     const auto can_attack=function<multi_target::CanAttackFn>(api,samase::FuncId::CanAttackUnit);
     const auto outside_range=function<multi_target::OutsideRangeFn>(api,samase::FuncId::IsOutsideAttackRange);
     const auto create_bullet=reinterpret_cast<CreateBulletFn>(reinterpret_cast<GenericFn (__cdecl*)()>(api->create_bullet)());
@@ -1564,7 +1565,7 @@ bool bind_api(const samase::PluginApi* api) noexcept {
     log_event("Area visual renderer: registered=%u",area_visuals::bind(api)?1u:0u);
     return g.game && g.first_active && g.first_hidden && g.unit_array && g.create && g.finish_pre &&
            g.finish_post && g.order && g.text && g.read_map && g.multiplayer && g.replay &&
-            g.set_hp && g.damage && rework_waves::native_tech_target && can_attack && outside_range && create_bullet && g.lone_sprite && g.add_overlay && g.dat_getters[0] && g.dat_getters[1] && g.dat_getters[2] && g.dat_getters[4] && (!g.extended_count || g.extended);
+            g.set_hp && g.damage && rework_waves::native_tech_target && rework_combat_v5::native_weapon_target && can_attack && outside_range && create_bullet && g.lone_sprite && g.add_overlay && g.dat_getters[0] && g.dat_getters[1] && g.dat_getters[2] && g.dat_getters[4] && (!g.extended_count || g.extended);
 }
 }
 

@@ -39,7 +39,7 @@ def decorate(catalog):
   if mode==3:text.append(f'같은 적을 연속 공격하면 피해가 타격당 {step}%씩 최대 {limit}% 추가 증가. 표적 변경·3초 중단 시 초기화.')
   if mode==4:text.append(f'직접 공격 후 3초간 받은 일반 공격의 실제 체력 피해 {proc}%를 공격자에게 반사. 초당 최대 {limit}. 반사는 재반사되지 않습니다.')
   if mode==5:text.append(f'받은 일반 공격의 실제 체력·보호막 피해 {proc}%를 최대 {limit}까지 저장해 다음 직접 공격의 주 대상에게 돌려줍니다. 공격해야 방출됩니다.')
-  if mode==6:text.append('저글링의 공격마다 그 적의 체력 방어력을 0.33씩 끝없이 깎습니다. 0 아래의 누적분은 저글링의 추가 피해가 됩니다. 대상이 죽거나 소유자가 바뀌면 초기화.')
+  if mode==6:text.append('저글링·브루들링의 공격마다 그 적의 체력 방어력을 0.33씩 끝없이 깎습니다. 0 아래의 누적분은 해당 유닛의 추가 피해가 됩니다. 대상이 죽거나 소유자가 바뀌면 초기화.')
   if mode==7:text.append(f'이동 사격 유지. 이동 중 피해 +{proc}% 추가(총400%). 정지 시 총300%.')
   if mode==8:text.append(f'대형 유닛·건물에게 피해 +{proc}% 추가.')
   if mode==9:text.append('최대 체력3배. 공중 적을 추격할 때 받는 일반 공격 피해75% 감소. 과잉 자폭을 피하도록 주변 표적을 분배합니다. 지상 공격은 없습니다.')
@@ -50,7 +50,7 @@ def decorate(catalog):
   item['effect'].update(qa_revision=DRAGOON_REVISION if ordinal==137 else REVISION,focus_legend=True,focus_mode=mode,base_bonus_percent=base,
    focus_cadence=cadence,focus_proc_percent=proc,focus_step_percent=step,focus_limit=limit,legacy_area_effect_disabled=True,
    design_role='single_target',reflection_requires_attacking=mode==4,reflection_only_releases_on_attack=mode==5)
-  if ordinal==190:item['effect'].update(qa_revision=2026102262,armor_erosion_numerator=33,armor_erosion_denominator=100,armor_erosion_per_hit=0.33)
+  if ordinal==190:item['effect'].update(qa_revision=2026102263,focus_target_units=[37,40,54],armor_erosion_numerator=33,armor_erosion_denominator=100,armor_erosion_per_hit=0.33)
   if ordinal==137:item['effect'].update(focus_requires_same_target=False,focus_counter_scope='unit',focus_reset_on_target_change=False,focus_reset_on_idle=False)
   if ordinal==55:item['effect'].update(qa_revision=TANK_REVISION,focus_target_units=[5,6,23,24],siege_periodic_damage_percent=0,siege_moving_fire=True,siege_range_bonus_tiles=3)
   if ordinal==56:
@@ -68,7 +68,7 @@ def decorate(catalog):
  item=by[82];item['name']='마비성 인스네어';item['description']='퀸의 인스네어에 걸린 적의 공격 속도·이동 속도가 각각 85% 감소합니다. 기본 감속에 85%를 더 곱하지 않고 최종 속도를 15%로 맞춥니다. 범위·지속 시간 강화와 함께 적용됩니다.'
  item['effect'].update(qa_revision=REVISION,broodling_extra_disabled=True,ensnare_attack_speed_reduction_percent=85,ensnare_movement_speed_reduction_percent=85)
  by[104]['description']=by[104]['description'].replace(' 증식 브루들링과 합쳐도 대상당 최대 6기.','')
- by[104]['effect']['qa_revision']=REVISION
+ by[104]['effect'].update(qa_revision=2026102263,broodling_energy_cost=100,additional_cast_targeting='native_weapon_flags')
  by[106]['description']='디바우러가 지상 적도 공격합니다. 지상 피해400%, 공중 피해200%. 이 디바우러가 묻힌 산성 포자의 중첩당 추가 피해·공격 속도 저하 효과가2배가 됩니다.'
  by[106]['effect'].update(qa_revision=REVISION,acid_spore_effect_multiplier=2)
  by[92]['description']='울트라의 주 대상 공격에 더해 전방의 다른 지상 적 최대3기에게 원래 공격의70% 피해를 줍니다. 주 대상·추가 타격으로 실제 깎은 체력·보호막만큼 자신의 체력을 회복합니다. 방어막 흡수·초과 피해는 제외.'

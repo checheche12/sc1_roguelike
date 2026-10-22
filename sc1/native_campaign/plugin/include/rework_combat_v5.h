@@ -144,6 +144,7 @@ inline bool plan_stats(const GrowthSnapshot& s,std::vector<Edit>& edits) {
         const U32 w=original_stat({0,17,id});if(w<130&&!edit({1,7,w},0,3u))return false;
     }
     if(talent_power::enabled && rank(s,64) && !edit({4,3,8},0,50))return false;
+    if(talent_power::enabled && rank(s,104) && !edit({4,3,13},0,100))return false;
     // Carriers have no weapon DAT slot. Their native launch/engagement range
     // uses acquisition tiles, including the interceptor's parent leash query.
     if(rank(s,110))for(U32 id:{72u,82u})if(!plus({0,23,id},1))return false;
@@ -364,6 +365,8 @@ using HallucinationFn=void (__cdecl*)(bw::Unit*,U32,U32,bw::Unit*);
 using TechTargetFn=U32 (__cdecl*)(bw::Unit*,U32,bw::Unit*,U32,U32,U32,std::uint16_t*);
 using OrderTargetFn=U32 (__cdecl*)(bw::Unit*,U32,bw::Unit*,U32,U32,std::uint16_t*);
 inline TechTargetFn native_tech_target=nullptr;
+using WeaponTargetFn=U32 (__cdecl*)(bw::Unit*,U32,bw::Unit*);
+inline WeaponTargetFn native_weapon_target=nullptr;
 inline GiveFn native_give=nullptr;
 using WriteVars=void (__cdecl*)(const std::uint16_t*,const std::size_t*,std::size_t);
 inline ReadVars script_context_read=nullptr;inline WriteVars script_context_write=nullptr;
@@ -652,12 +655,12 @@ inline bool target_ok(bw::Unit* source,bw::Unit* target,U32 w,bool range=true) n
     if(!can_fire(source) || !eligible(target) || !is_enemy(target->player) || !visible(target,source->player) || w>=130)return false;
     auto spawner=attack_unit(source);if(!can_fire(spawner))return false;
     OwnerDatScope view(source->player,source->player,spawner);
-    // A Queen has no ordinary weapon. Extra Broodling casts must use native
-    // spell targeting rather than CanAttackUnit, including during emission.
+    // CheckTechTargeting does not implement tech13: native orders validate
+    // Spawn Broodlings through weapon57 targeting flags. Queens also have no
+    // ordinary weapon, so CanAttackUnit cannot validate these extra missiles.
     if(w==57&&rank(104)&&in(source->unit_id,{45,49})){
         if(air(target)||building(target)||protected_objective_unit(target)||(original_stat({0,22,target->unit_id})&(0x4000u|0x40u)))return false;
-        if(native_tech_target){std::uint16_t error=0;return native_tech_target(spawner,13,target,228,target->flingy.position.x,target->flingy.position.y,&error)!=0;}
-        return true;
+        return native_weapon_target&&native_weapon_target(spawner,57,target)!=0;
     }
     return multi_target::can_attack && multi_target::can_attack(spawner,target,1) &&
         (!range || (multi_target::outside_range && !multi_target::outside_range(spawner,target)));
@@ -997,7 +1000,7 @@ struct DamageScope {
                     else if(type!=3)numerator=0;
                     erosion_armor_reduction=U32((numerator+denominator/2)/denominator);had_shield=target->shields>=256;
                 }}
-                if(in(source->unit_id,{37,54})&&raw_rank(190)&&erosion>total_scaled)
+                if(erosion_source(source)&&erosion>total_scaled)
                     damage=std::int32_t(std::min<std::uint64_t>(0x7fffffffu,std::uint64_t(std::max(0,damage))+(std::uint64_t(erosion)-total_scaled)*256u/scale));
             }
             if(ignore){

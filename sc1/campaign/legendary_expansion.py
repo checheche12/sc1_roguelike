@@ -104,7 +104,7 @@ def decorate(catalog):
   64:('야마토 준비 동작 약 3배 가속. 3발 각각 200% 피해, 에너지 50. 추가탄은 4타일 안 다른 적 우선, 부족하면 주 대상 집중. 탄착지 3타일 안 다른 적 최대 6기에 기본 야마토의 50% 폭발 피해(직격 대상 제외·중복 없음).',dict(energy_cost=50)),
   102:('플레이그가 적을 죽일 수 있으며 체력 피해가 4배, 반경은 기본의 2배가 됩니다. 아군 피해도 유지됩니다.',dict(radius_multiplier=2)),
   103:('다크 스웜이 아군 공중 유닛도 보호하고 범위가 최소 10타일로 늘어납니다. 안의 아군 전투 병력은 초당 최대 체력 3% 회복. 겹친 군체 회복은 중복되지 않으며 마법·광역 예외는 유지됩니다.',dict(swarm_max_hp_regen_percent_per_second=3)),
-  104:('스폰 브루들링이 대상당 6기를 만듭니다. 주 대상 4타일 안의 시전 가능한 적 최대 3기도 추가 공격해 총 4기에서 최대 24기를 만듭니다. 브루들링 최대 체력·공격력 2배. 증식 브루들링과 합쳐도 대상당 최대 6기.',dict(broodlings_per_target=6,additional_cast_targets=3,additional_cast_radius_pixels=128)),
+  104:('스폰 브루들링이 대상당 6기를 만듭니다. 주 대상 4타일 안의 시전 가능한 적 최대 3기도 추가 공격해 총 4기에서 최대 24기를 만듭니다. 브루들링 최대 체력·공격력 2배. 스폰 브루들링 에너지 소모 100.',dict(broodlings_per_target=6,additional_cast_targets=3,additional_cast_radius_pixels=128,broodling_energy_cost=100,additional_cast_targeting='native_weapon_flags')),
   146:('다크 아콘이 마인드 컨트롤한 적의 4타일 안 다른 적 최대 4기도 지배합니다. 대상 인구수 제한 없이 주 대상을 포함해 최대 5기를 지배합니다.',dict(chain_total_targets=5,additional_target_supply_limit=False)),
  }
  for ordinal,(description,effect) in changes.items():

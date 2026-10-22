@@ -1,6 +1,10 @@
 #pragma once
 // Included inside rework_combat_v5 after weapon_hurt and before ordinary_hit.
 inline bool focus_match(const legend_focus::Rule& r,const bw::Unit* u) noexcept {return valid_unit(u)&&u->unit_id<256&&(r.units[u->unit_id/32]&(1u<<(u->unit_id%32)));}
+inline bool erosion_source(bw::Unit* u) noexcept {
+ if(!talent_power::enabled||!valid_unit(u)||u->player!=player_owner()||hallucination(u)||!raw_rank(190))return false;
+ for(const auto& r:legend_focus::rules)if(r.ordinal==190)return focus_match(r,u);return false;
+}
 inline bool flame_cone(bw::Unit* u,bw::Unit* target,bw::Unit* other) noexcept {
  if(!eligible(other)||air(other)||!is_enemy(other->player)||other==target||dist(u,other)>96u*96u)return false;
  const auto dx=std::int64_t(target->flingy.position.x)-u->flingy.position.x,dy=std::int64_t(target->flingy.position.y)-u->flingy.position.y;
