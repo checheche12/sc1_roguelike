@@ -1,0 +1,17 @@
+{
+  "version": "v2026.10.22-qa67",
+  "file": "SC1_Roguelike_20261022_QA67.zip",
+  "sha256": "a986a344f831fe7c014284a5ee1b3c87bd1a1acda494067af125f8931bec25ce",
+  "bytes": 24937972,
+  "runtime_source_commit": "80e9456f2fdb842cb93beb83cc79bc597c52b1ad",
+  "native_dll_sha256": "84eb1d46e9d8fbb7407d8ba73bfc46772155ce016bd0b489f1b7fffe0c215c47",
+  "swarm_radius_tiles": 5,
+  "swarm_regen_percent_per_second": 3,
+  "valkyrie_ground_splash_layer_fixed": true,
+  "lurker_repeated_air_spines_fixed": true,
+  "actual_engine_attack_cases": 16,
+  "all_talent_actual_condition_audit_complete": false,
+  "visual_screenshot_verified": false,
+  "personal_database_included": false,
+  "created_at_utc": "2026-10-22T11:38:33.843128+00:00"
+}
