@@ -41,7 +41,9 @@ struct SpellEnergyRequirementScope {
 };
 inline U32 targeted_spell_order(const U8* data,U32 length) noexcept {
     // Native TargetedOrder packet: command,x,y,target,fow-unit,order,queued.
-    return data&&length==11&&data[0]==0x15 ? data[9]:0;
+    if(!data)return 0;
+    if(length==11&&data[0]==0x15)return data[9];
+    return length==13&&data[0]==0x61 ? data[11]:0;
 }
 struct SpellCommandEnergyScope {
     std::vector<SpellEnergyAdvance> advances;

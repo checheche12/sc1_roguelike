@@ -387,10 +387,20 @@ struct ScriptSourceScope {
     ~ScriptSourceScope(){if(changed)script_context_write(script_context_ids,saved,3);}
 };
 inline bw::Unit* active_caster=nullptr;
+// Native splash queries pass the prospective victim as both unit arguments.
+// Its owner must not replace the witnessed projectile's weapon owner/layer.
+inline U32 impact_weapon=130,impact_owner=12,impact_layer=2;
 inline void __cdecl hallucination_hit_hook(bw::Unit*,U32,U32,bw::Unit*,HallucinationFn) noexcept;
 inline U32 __cdecl order_target_hook(bw::Unit*,U32,bw::Unit*,U32,U32,std::uint16_t*,OrderTargetFn) noexcept;
 inline U32 __cdecl can_infest_hook(bw::Unit*,UnitValueFn) noexcept;
 inline U32 __cdecl weapon_target_hook(bw::Unit* source,U32 weapon,bw::Unit* target,WeaponTargetFn original) noexcept {
+    if(weapon==impact_weapon&&impact_owner<12&&impact_layer<2){
+        if(!valid_unit(target)||air(target)!=(impact_layer!=0))return 0;
+        OwnerDatScope view(valid_unit(source)?source->player:12u,impact_owner,source);
+        auto flags=table_for({1,3,weapon},false);if(!flags)return 0;
+        const auto saved=read_entry(flags,weapon);write_entry(flags,weapon,(saved&~3u)|(impact_layer?1u:2u));
+        const auto result=original(source,weapon,target);write_entry(flags,weapon,saved);return result;
+    }
     OwnerDatScope view(valid_unit(source)?source->player:12u,valid_unit(source)?source->player:12u,source);
     return original(source,weapon,target);
 }
@@ -582,9 +592,9 @@ inline bool bind_motion_commands(const samase::PluginApi* api) noexcept {
     using Length=U32 (__cdecl*)(const U8*,U32);
     using Register=U32 (__cdecl*)(U32,Hook,Length);
     auto bind=reinterpret_cast<Register>(api->hook_ingame_command);
-    // Native packet14=right click,15=targeted order (including AttackMove).
+    // Classic14/15 and Remastered60/61 carry right click/targeted orders.
     // Do not mask burrow/unburrow or unrelated packets in ProcessCommands.
-    return bind(0x14,motion_command,nullptr)&&bind(0x15,motion_command,nullptr);
+    return bind(0x14,motion_command,nullptr)&&bind(0x15,motion_command,nullptr)&&bind(0x60,motion_command,nullptr)&&bind(0x61,motion_command,nullptr);
 }
 inline bool source_blocked(bw::Unit*) noexcept;
 inline bool allow_primary(bw::Unit* source) noexcept {
@@ -639,6 +649,7 @@ struct Projectile {
     int x=0,y=0;U32 layer=0;
     U32 token=0,infantry_rank=0,mobility_bonus=0;
     bool bounce_adjusted=false,legend_bounce=false;
+    std::vector<Identity> air_spine_hits;
 };
 inline U32 mutal_bounce_numerator=0; // Per native impact, restored for nested dispatch.
 inline std::unordered_map<bw::Bullet*,Projectile> projectiles;
@@ -847,7 +858,7 @@ inline bool zone_contains(const Persist& p,bw::Unit* u) noexcept {
 inline bool swarm_protects(bw::Unit* target,U32 w) noexcept {
     if(!live(target)||building(target)||!ordinary_weapon(w)||original_stat({1,10,w})!=1||original_stat({1,5,w})<=32)return false;
     for(const auto& p:persistent)if(p.kind==83&&zone_contains(p,target)&&
-        (air(target) ? rank(103)&&target->player==p.owner : rank(83)!=0))return true;
+        (air(target) ? rank(103)&&target->player==p.owner : rank(83)||rank(103)))return true;
     return false;
 }
 inline bool source_blocked(bw::Unit* source) noexcept {
@@ -1183,10 +1194,14 @@ struct MissileScope {
     U32 previous_bounce_divisor=1,previous_mutal_numerator=0;U8 saved_bounces=0;bool native_bounce_scoped=false;
     U32 previous_infantry_rank=0,previous_mobility_bonus=0;bool previous_projectile=false;
     struct Before {Identity who;U32 hp,shields,energy,reserve,plague,stasis,ensnare,irradiate,matrix,lockdown,maelstrom,acid,matrix_reserve;std::array<U8,9> spores;bool timer_sentinel=false,timer_recast=false;};std::vector<Before> before;
+    struct AirSpineBefore {Identity who;U32 hp,shields,matrix,reserve;};std::vector<AirSpineBefore> air_spine_before;
     bw::DatTable* layer_flags=nullptr;U32 saved_layer_flags=0;
+    U32 previous_impact_weapon=130,previous_impact_owner=12,previous_impact_layer=2;
     BulletFn dispatch=nullptr;U32 timer_base=0;
     U8* recast_timer(bw::Unit* u) const noexcept {return p.weapon==58 ? &u->ensnare_timer:p.weapon==60 ? &u->plague_timer:p.weapon==34 ? &u->irradiate_timer:nullptr;}
     MissileScope(bw::Bullet* bullet,BulletFn original=nullptr):b(bullet),dispatch(original){
+        previous_impact_weapon=impact_weapon;previous_impact_owner=impact_owner;previous_impact_layer=impact_layer;
+        impact_weapon=130;impact_owner=12;impact_layer=2;
         previous_mutal_numerator=mutal_bounce_numerator;mutal_bounce_numerator=0;
         previous_percent=DamageScope::current_percent;previous_secondary=DamageScope::current_secondary;previous_token=DamageScope::current_token;previous_primary=DamageScope::current_primary;previous_bounce_divisor=DamageScope::current_bounce_divisor;
         previous_infantry_rank=DamageScope::current_infantry_rank;previous_mobility_bonus=DamageScope::current_mobility_bonus;previous_projectile=DamageScope::current_projectile;
@@ -1210,8 +1225,19 @@ struct MissileScope {
             ((p.layer&&((p.source.id==103&&rank(97))||(in(p.source.id,{10,32})&&rank(59))||(p.source.id==13&&rank(60))||(in(p.source.id,{61,74,75})&&rank(138))))||
              (!p.layer&&((p.source.id==58&&rank(58))||(p.source.id==47&&rank(96))||(p.source.id==62&&rank(106)))));
         if(gained_layer){
+            impact_weapon=p.weapon;impact_owner=p.source.owner;impact_layer=p.layer;
             layer_flags=table_for({1,3,p.weapon},false);if(layer_flags){saved_layer_flags=read_entry(layer_flags,p.weapon);write_entry(layer_flags,p.weapon,(saved_layer_flags&~3u)|(p.layer ? 1u:2u));}
         }
+        // Native109 still enumerates ground victims even with air targeting
+        // flags. Observe each real spine step and fill only its missing air hit.
+        if(p.source.owner==player_owner()&&p.source.id==103&&p.weapon==109&&p.layer&&rank(97))living_units([&](bw::Unit* u){
+            if(!eligible(u)||!air(u)||!is_enemy(u->player)||!visible(u,p.source.owner))return;
+            const auto bounds=multi_target::dimensions(u->unit_id);const int x=u->flingy.position.x,y=u->flingy.position.y;
+            const int sx=b->flingy.position.x,sy=b->flingy.position.y;
+            if(sx<x-int(bounds.left)-16||sx>x+int(bounds.right)+16||sy<y-int(bounds.top)-16||sy>y+int(bounds.bottom)+16)return;
+            for(const auto& old:p.air_spine_hits)if(generation(old)==u)return;
+            const auto matrix=matrix_state(u);air_spine_before.push_back({identity(u),U32(u->flingy.hitpoints),U32(u->shields),u->defensive_matrix_dmg,matrix?matrix->reserve:0u});
+        });
         if(p.source.owner==player_owner()){
             if((p.weapon==58&&(rank(80)||(talent_power::enabled&&raw_rank(82))))||(p.weapon==60&&(rank(84)||rank(102))))timer_base=75;
             if(p.weapon==34&&(rank(43)||rank(61)))timer_base=std::min(255u,original_stat({1,16,34}));
@@ -1268,7 +1294,11 @@ struct MissileScope {
             for(const auto& old:persistent)if(old.target.p==u&&old.target.unique==u->minor_unique_index&&in(old.kind,{83,128}))return;
             if(p.weapon==101)u->death_timer=std::uint16_t(std::min(65535u,talent_power::duration(128,u->death_timer,65535)));
             Persist field{};field.kind=p.weapon==59 ? 83u:128u;field.target=identity(u);field.owner=p.source.owner;field.source=p.source;field.x=u->flingy.position.x;field.y=u->flingy.position.y;field.until=now()+u->death_timer;field.due=field.until+1;
-            field.remaining=p.weapon==59 ? (rank(83) ? 80+talent_power::v5(83,40):80u):60+talent_power::v5(128,15);if(p.weapon==59&&rank(103)&&talent_power::enabled)field.remaining=std::max(talent_power::v5(103,80),field.remaining);field.ticks=p.weapon==59 ? field.remaining:40+talent_power::v5(128,10);persistent.push_back(field);
+            field.remaining=p.weapon==59 ? (rank(83) ? 80+talent_power::v5(83,40):80u):60+talent_power::v5(128,15);
+            // The legendary cloud is half its previous width and height. The
+            // same radii drive protection, healing and native image scaling.
+            if(p.weapon==59&&rank(103)&&talent_power::enabled)field.remaining=std::max(talent_power::v5(103,80),field.remaining)/2;
+            field.ticks=p.weapon==59 ? field.remaining:40+talent_power::v5(128,10);persistent.push_back(field);
         });
     }
     void broodlings(){
@@ -1307,6 +1337,18 @@ struct MissileScope {
         b->target=saved_target;b->flingy.position=saved_position;b->flingy.exact_position=saved_exact;b->flags=saved_flags;
     }
     ~MissileScope(){
+        try{if(tracked&&!air_spine_before.empty()&&combat_effects::original_weapon_damage){
+            auto source=resolve(p.source);
+            for(const auto& old:air_spine_before)if(auto target=resolve(old.who)){
+                auto found=projectiles.find(b);if(found==projectiles.end())break;
+                bool seen=false;for(const auto& hit:found->second.air_spine_hits)if(generation(hit)==target){seen=true;break;}if(seen)continue;
+                found->second.air_spine_hits.push_back(old.who);
+                const auto matrix=matrix_state(target);
+                if(!source||U32(target->flingy.hitpoints)!=old.hp||U32(target->shields)!=old.shields||U32(target->defensive_matrix_dmg)!=old.matrix||(matrix&&matrix->reserve!=old.reserve))continue;
+                const U32 amount=owner_stat(p.source.owner,{1,14,p.weapon})+owner_stat(p.source.owner,{1,15,p.weapon})*upgrade_level(p.source.owner,owner_stat(p.source.owner,{1,6,p.weapon}));
+                combat_effects::weapon_damage(target,std::int32_t(std::min<std::uint64_t>(0x7fffffffu,std::uint64_t(amount)*256)),U8(p.weapon),1,0,source,p.source.owner,combat_effects::original_weapon_damage);
+            }
+        }}catch(...){}
         try{extend_area();discover_fields();broodlings();}catch(...){}
         for(auto& old:before)if(old.timer_sentinel)if(auto u=generation(old.who))if(auto timer=recast_timer(u)){
             if(*timer==timer_base-1)*timer=U8(timer_base);
@@ -1402,6 +1444,7 @@ struct MissileScope {
         DamageScope::current_percent=previous_percent;DamageScope::current_secondary=previous_secondary;DamageScope::current_token=previous_token;DamageScope::current_primary=previous_primary;DamageScope::current_bounce_divisor=previous_bounce_divisor;
         DamageScope::current_infantry_rank=previous_infantry_rank;DamageScope::current_mobility_bonus=previous_mobility_bonus;DamageScope::current_projectile=previous_projectile;
         if(layer_flags)write_entry(layer_flags,p.weapon,saved_layer_flags);
+        impact_weapon=previous_impact_weapon;impact_owner=previous_impact_owner;impact_layer=previous_impact_layer;
         if(native_bounce_scoped)b->bounces_remaining=saved_bounces;
         mutal_bounce_numerator=previous_mutal_numerator;
     }
@@ -1415,6 +1458,13 @@ struct OrderScope {
     OrderScope(bw::Unit* u,UnitFn original=nullptr){previous_caster=active_caster;if(auto s=state(u))if(s->shadow_active){intercepted=true;return;}if(!own(u)||spell_depth)return;
         active_caster=u;dispatch=original;who=identity(u);target=identity(u->order_target.unit);order=u->order;energy=u->energy;hp=U32(u->flingy.hitpoints);shields=U32(u->shields);stim=u->stim_timer;auto to=resolve(target);target_hp=to ? U32(to->flingy.hitpoints):0;
         prior_state=u->order_state;prior_timer=u->order_timer;origin_x=u->order_target.x;origin_y=u->order_target.y;
+        if(talent_power::enabled&&rank(97)&&u->unit_id==103&&(u->flags&0x10u)&&to&&air(to)&&is_enemy(to->player)&&
+            (multi_target::attack_order(order)||in(order,{9,11,14}))){
+            // The stock air attack animation resets cooldown without producing
+            // a Lurker spine. Retain the selected order/target, and let the
+            // witnessed native-spine emitter below own this one attack clock.
+            intercepted=true;return;
+        }
         if(talent_power::enabled&&rank(145)&&order==137&&prior_state==1&&prior_timer==0)
             for(auto friend_unit:around(origin_x,origin_y,128,nullptr,65536,false))if(!building(friend_unit)&&!hallucination(friend_unit))recall_before.push_back(identity(friend_unit));
         if(rank(60)&&u->unit_id==13&&order==20&&u->order_state>=5&&to&&air(to)&&dist(u,to)>64u*64u){
@@ -1504,6 +1554,7 @@ struct OrderScope {
 };
 inline void reset() noexcept {
     expansion_support_frame=~0u;
+    impact_weapon=130;impact_owner=12;impact_layer=2;
     if(state_base==g.units&&states.size()==g.units_count)for(auto& s:states)if(auto u=generation(s.who)){restore_motion(u,s);if(s.shadow_active)shadow_restore(u,s);if(s.fade_until)u->flags=(u->flags&~(0x200000u|0x8000u))|s.saved_collision|s.saved_attack_flag;}
     irradiation::reset();states.clear();state_base=nullptr;storm_cells.clear();storm_cells_frame=~0u;acid_states.clear();acid_base=nullptr;matrices.clear();matrix_base=nullptr;projectiles.clear();pending_shots.clear();pending_work.clear();persistent.clear();morph_completions.clear();morph_rewarded.clear();generated_depth=spell_depth=0;DamageScope::current_percent=100;DamageScope::current_secondary=false;DamageScope::current_mobility_bonus=0;emission_percent=100;emission_secondary=false;
 }

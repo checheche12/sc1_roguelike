@@ -4,9 +4,11 @@
 
 ## 다운로드
 
-[최신 버전 받기 — v2026.10.22-qa66](https://github.com/checheche12/sc1_roguelike/raw/refs/tags/asset-v2026.10.22-qa66/SC1_Roguelike_20261022_QA66.zip)
+[최신 버전 받기 — v2026.10.22-qa67](https://github.com/checheche12/sc1_roguelike/raw/refs/tags/asset-v2026.10.22-qa67/SC1_Roguelike_20261022_QA67.zip)
 
 통합 효과 시험장: 압축을 푼 뒤 `Start_Effect_Lab.cmd`를 실행하세요. 256×256 지도와 재능·저주 611개 검색 목록인 `Effect_Checklist.html`이 포함되어 있습니다. [시험 방법과 변경 내용](docs/qa65-effect-lab-and-air-legends.md)
+
+최근 수정: 발키리 지상 스플래시와 파이어뱃 대공 스플래시의 공격층, 러커의 반복 대공 공격을 바로잡았습니다. 전설 다크 스웜은 반경 5타일로 줄였으며 공중 보호·초당 3% 회복은 유지합니다.
 
 Windows 64비트·스타크래프트 리마스터용입니다. ZIP 전체를 압축 해제한 뒤 `Start_Campaign.exe`를 실행하세요. Python은 따로 설치하지 않아도 됩니다.
 

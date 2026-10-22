@@ -35042,7 +35042,7 @@
       "id": "c2629f66-3675-5912-a0c0-171c6dddddac",
       "name": "하늘을 덮는 군체",
       "target": "디파일러 다크 스웜",
-      "description": "디파일러: 다크 스웜이 아군 공중 유닛도 보호하고 범위가 최소 10타일로 늘어납니다. 안의 아군 전투 병력은 초당 최대 체력 3% 회복.",
+      "description": "다크 스웜이 반경 5타일의 지상 유닛과 아군 공중 유닛을 보호합니다. 안의 아군 전투 병력은 초당 최대 체력 3% 회복.",
       "trigger": "",
       "numbers": "",
       "notes": "",
@@ -35065,10 +35065,11 @@
         "type": "rework_v5",
         "ordinal": 103,
         "source_id": "c2629f66-3675-5912-a0c0-171c6dddddac",
-        "qa_revision": 2026102038,
+        "qa_revision": 2026102267,
         "benefit_power_quarters": 16,
         "swarm_max_hp_regen_percent_per_second": 3,
-        "overlapping_regen_stacks": false
+        "overlapping_regen_stacks": false,
+        "swarm_radius_tiles": 5
       },
       "target_units": [
         46,

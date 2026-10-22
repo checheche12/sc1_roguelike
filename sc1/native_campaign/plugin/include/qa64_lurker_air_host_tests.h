@@ -1,6 +1,6 @@
 #pragma once
 namespace host_test {
-inline constexpr std::size_t qa64_group_count=5;
+inline constexpr std::size_t qa64_group_count=7;
 namespace qa64_fixture {
 inline U32 __cdecl no_native_attack(bw::Unit*,bw::Unit*,U32){return 0;}
 inline U32 __cdecl outside(bw::Unit* source,bw::Unit* target){const U32 w=raw_value(0,19,103),range=raw_value(1,5,w);return rework_combat_v5::dist(source,target)>std::uint64_t(range)*range;}
@@ -68,5 +68,21 @@ inline void qa64_failed_native_allocation_does_not_consume_attack_clock(){
  pulse(100);CHECK(multi_fixture::shots.empty()&&!source->ground_cooldown&&!source->air_cooldown&&rework_combat_v5::state(source)->next_air==0);
  multi_fixture::fail_all=false;pulse(101);CHECK(multi_fixture::shots.size()==1&&source->ground_cooldown&&source->air_cooldown);qa64_fixture::end();
 }
-inline void run_qa64_groups(){qa64_burrowed_lurker_acquires_air_and_uses_shared_native_cooldown();qa64_air_fire_respects_burrow_owner_detection_status_and_orders();qa64_explicit_air_target_and_ground_attack_do_not_double_fire();qa64_native_air_impact_hits_only_air_at_one_hundred_percent();qa64_failed_native_allocation_does_not_consume_attack_clock();}
+inline void qa67_native_ground_only_spine_dispatch_fills_air_once_per_projectile(){
+ using namespace rework_fixture;auto source=qa64_fixture::begin();auto target=unit(43,6,200,100,true),other=unit(43,6,210,100,true),ground=unit(37,6,200,100),ally=unit(43,1,200,100,true);
+ rework_fixture::ranks[18]=1;const auto saved_native=combat_effects::original_weapon_damage;combat_effects::original_weapon_damage=qa9_fixture::damage;pulse(100);CHECK(multi_fixture::shots.size()==1);auto b=&multi_fixture::bullets[0];b->flingy.position={200,100};
+ const auto no_air=[](bw::Bullet*){};
+ owner_missile_hook(b,no_air);CHECK(target->flingy.hitpoints==256000-30*256&&other->flingy.hitpoints==256000-30*256);
+ CHECK(ground->flingy.hitpoints==256000&&ally->flingy.hitpoints==256000);owner_missile_hook(b,no_air);
+ CHECK(target->flingy.hitpoints==256000-30*256&&other->flingy.hitpoints==256000-30*256);
+ source->ground_cooldown=source->air_cooldown=0;pulse(200);CHECK(multi_fixture::shots.size()==2);auto next=&multi_fixture::bullets[1];next->flingy.position={200,100};
+ owner_missile_hook(next,no_air);CHECK(target->flingy.hitpoints==256000-60*256&&other->flingy.hitpoints==256000-60*256);combat_effects::original_weapon_damage=saved_native;qa64_fixture::end();
+}
+inline void qa67_lurker_air_orders_keep_the_witnessed_projectile_clock(){
+ using namespace rework_fixture;auto source=qa64_fixture::begin();auto air_target=unit(43,6,200,100,true),ground=unit(37,6,200,100);
+ for(U32 order:{9u,10u,11u,14u}){source->order=U8(order);multi_fixture::target(source,air_target);{rework_combat_v5::OrderScope scope(source);CHECK(scope.handled());}CHECK(source->order==order&&source->order_target.unit==air_target);}
+ multi_fixture::target(source,ground);{rework_combat_v5::OrderScope scope(source);CHECK(!scope.handled());}
+ source->order=11;multi_fixture::target(source,air_target);for(U32 i=0;i<3;i++){source->ground_cooldown=source->air_cooldown=0;pulse(100+i*100);}CHECK(multi_fixture::shots.size()==3);qa64_fixture::end();
+}
+inline void run_qa64_groups(){qa64_burrowed_lurker_acquires_air_and_uses_shared_native_cooldown();qa64_air_fire_respects_burrow_owner_detection_status_and_orders();qa64_explicit_air_target_and_ground_attack_do_not_double_fire();qa64_native_air_impact_hits_only_air_at_one_hundred_percent();qa64_failed_native_allocation_does_not_consume_attack_clock();qa67_native_ground_only_spine_dispatch_fills_air_once_per_projectile();qa67_lurker_air_orders_keep_the_witnessed_projectile_clock();}
 }

@@ -1,6 +1,6 @@
 #pragma once
 namespace host_test {
-inline constexpr std::size_t qa26_group_count=3;
+inline constexpr std::size_t qa26_group_count=4;
 inline void __cdecl qa26_yamato_dispatch(bw::Bullet* shot){
  auto target=shot->target.unit;CHECK(target);
  rework_fixture::yamato_targets.push_back(target);
@@ -48,5 +48,22 @@ inline void qa26_illusion_blast_and_stasis_slow_keep_owner_and_once_guards(){
  pulse(101);CHECK(rework_combat_v5::state(close_enemy)->slow_percent==50&&rework_combat_v5::state(close_enemy)->slow_until==173);
  CHECK(rework_combat_v5::state(distant_enemy)->slow_until==0&&rework_combat_v5::state(ally)->slow_until==0);qa9_fixture::end();
 }
-inline void run_qa26_groups(){qa26_yamato_blasts_are_bounded_and_do_not_hit_allies();qa26_swarm_sustain_does_not_stack_or_heal_enemies();qa26_illusion_blast_and_stasis_slow_keep_owner_and_once_guards();}
+inline void qa67_legendary_swarm_halves_actual_and_drawn_bounds(){
+ using namespace rework_fixture;using namespace rework_combat_v5;
+ for(bool epic:{false,true}){
+  qa9_fixture::begin({103});if(epic)ranks[83]=1;
+  auto caster=unit(46,1,100,100),center=unit(37,6,600,600);auto shot=bullet(caster,center,59);bw::SpriteScr sprite{};bw::Unit* cloud=nullptr;
+  {MissileScope impact(shot);cloud=unit(202,11,600,600);cloud->death_timer=900;cloud->flingy.sprite=&sprite;}
+  CHECK(persistent.size()==1&&persistent[0].remaining==160&&persistent[0].ticks==160);
+  auto own_air=unit(43,1,750,600,true),enemy_air=unit(43,6,750,600,true),ground=unit(37,6,750,600),outside_air=unit(43,1,900,600,true);
+  CHECK(swarm_protects(own_air,0)&&swarm_protects(ground,0));CHECK(!swarm_protects(enemy_air,0)&&!swarm_protects(outside_air,0));
+  CHECK(!swarm_protects(own_air,35)&&!swarm_protects(own_air,84));
+  const auto max=effective_max_hp(own_air);own_air->flingy.hitpoints=int(max/2);outside_air->flingy.hitpoints=256;
+  pulse(101);CHECK(own_air->flingy.hitpoints==int(max/2+std::uint64_t(max)*3/100));CHECK(outside_air->flingy.hitpoints==256);
+  area_visuals::publish(true);area_visuals::Image image{};image.image_id=337;image.parent=&sprite;
+  const auto scale=area_visuals::scale(*area_visuals::current(),image);CHECK(scale.x==2&&scale.y==2);
+  area_visuals::reset();qa9_fixture::end();
+ }
+}
+inline void run_qa26_groups(){qa26_yamato_blasts_are_bounded_and_do_not_hit_allies();qa26_swarm_sustain_does_not_stack_or_heal_enemies();qa26_illusion_blast_and_stasis_slow_keep_owner_and_once_guards();qa67_legendary_swarm_halves_actual_and_drawn_bounds();}
 }

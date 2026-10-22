@@ -4,6 +4,9 @@ REVISION=2026102265
 
 def decorate(catalog):
     by={x['effect_ordinal']:x for x in catalog['talents'] if x.get('rework_revision')==5}
+    # Unit-family decoration runs after legendary_expansion; retain the newer
+    # reviewed cloud size when refreshing a campaign's pinned catalog.
+    by[103]['effect'].update(qa_revision=2026102267,swarm_radius_tiles=5)
     by[18]['description']='아군 일반 공격마다 원래 피해의 50%인 공격을 한 번 더 합니다. 원거리는 탄환을 추가 발사하며, 러커의 관통 가시는 명중한 적마다 50% 추가 타격합니다.'
     by[18]['effect'].update(qa_revision=REVISION,instant_projectile_supported=True,lurker_bonus_per_pierced_target=True)
     mutal=by[105]

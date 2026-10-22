@@ -4,6 +4,13 @@
 namespace effect_lab {
 inline campaign_config::Mission mission{101,0,0,1,256,256,"SC1_EFFECT_LAB_V1_QA65",false,205};
 inline std::vector<rework_combat_v5::Identity> test_units;
+inline std::vector<rework_combat_v5::Identity> stationary_targets;
+inline void hold_targets(){
+ for(auto it=stationary_targets.begin();it!=stationary_targets.end();){
+  auto u=rework_combat_v5::resolve(*it);if(!u||u->player!=6){it=stationary_targets.erase(it);continue;}
+  if(g.order&&u->order!=107)g.order(u,107,u->flingy.position.x,u->flingy.position.y,nullptr,0);++it;
+ }
+}
 inline bool matches(const U8* data,std::size_t size) noexcept {
  if(!data||size<8)return false;bool marker=false,dimensions=false,version=false;std::size_t at=0;
  while(at+8<=size){const U32 n=u32(data+at+4);if(n>size-at-8)return false;const auto value=data+at+8;
@@ -25,7 +32,7 @@ inline bool set_talent(GrowthSnapshot& snapshot,U32 index,U32 value) noexcept {
 inline void help(){message("EFFECT LAB: -t INDEX RANK | -c INDEX STACKS | -clear | -reset | -case 1..8 | -spawn UNIT COUNT OWNER(0/6) | -heal | -hurt | -up ID LEVEL | -wave. See Effect_Checklist.html.");}
 inline void heal(bool);
 inline bool apply(const GrowthSnapshot& snapshot){if(!apply_snapshot(nullptr,snapshot)){message("LAB: effect update rejected; previous effects retained.");return false;}heal(false);return true;}
-inline bw::Unit* add(U32 id,U32 owner,int x,int y){auto u=spawn(id,x,y,owner);if(u){refresh_units();rework_combat_v5::created(u);test_units.push_back(rework_combat_v5::identity(u));}return u;}
+inline bw::Unit* add(U32 id,U32 owner,int x,int y){auto u=spawn(id,x,y,owner);if(u){refresh_units();rework_combat_v5::created(u);test_units.push_back(rework_combat_v5::identity(u));if(owner==6){stationary_targets.push_back(rework_combat_v5::identity(u));hold_targets();}}return u;}
 inline void clear_units(){auto previous=std::move(test_units);test_units.clear();for(const auto& who:previous)if(auto u=rework_combat_v5::resolve(who))if(rework_combat_v5::native_kill)rework_combat_v5::native_kill(u);}
 inline void make_case(U32 kind){
  clear_units();std::vector<U32> ids;
@@ -62,7 +69,7 @@ inline bool command(const char* input) {
  if(!std::strcmp(op,"-clear")||!std::strcmp(op,"-reset")){snapshot={};snapshot.wire_version=2;snapshot.completed_phase=1;apply(snapshot);if(!std::strcmp(op,"-reset")){
   std::vector<rework_combat_v5::Identity> removed;living_units([&](bw::Unit* u){if((u->player==0||u->player==6)&&u->unit_id<106&&u->unit_id!=101)removed.push_back(rework_combat_v5::identity(u));});
   for(const auto& who:removed)if(auto u=rework_combat_v5::resolve(who))if(rework_combat_v5::native_kill)owner_kill_hook(u,rework_combat_v5::native_kill);
-  test_units.clear();rework_combat_v5::reset();rework_combat_v5::bind();
+  test_units.clear();stationary_targets.clear();rework_combat_v5::reset();rework_combat_v5::bind();
   for(U32 i=0;i<std::size(effect_lab_data::roster);i++)spawn(effect_lab_data::roster[i],512+int(i%10)*128,512+int(i/10)*128,0);
   make_case(1);
  }message("LAB: all effects cleared");return true;}
@@ -80,12 +87,13 @@ inline void __cdecl chat(const U8* data,U32 length,U32 player,U32,ChatOriginal o
  original(data,length);
 }
 inline void start(){
- enabled=true;mission.mission_id=101;mission.race=1;test_units.clear();g.mission=&mission;g.campaign_index=g.game()->campaign_mission;g.game_thread=GetCurrentThreadId();g.active=true;refresh_units();
+ enabled=true;mission.mission_id=101;mission.race=1;test_units.clear();stationary_targets.clear();g.mission=&mission;g.campaign_index=g.game()->campaign_mission;g.game_thread=GetCurrentThreadId();g.active=true;refresh_units();
+ living_units([&](bw::Unit* u){if(u->player==6&&u->unit_id==7)stationary_targets.push_back(rework_combat_v5::identity(u));});hold_targets();
  GrowthSnapshot snapshot{};snapshot.wire_version=2;snapshot.completed_phase=1;if(!apply(snapshot)){enabled=false;g.active=false;return;}help();
 }
 inline void step(){
  if(rework_waves::enabled())rework_waves::timeline.advance(*rework_waves::current,g.game()->frame_count,true,false,true);
  apply_unit_motion();max_hp_cache::publish();multi_target::step();rework_combat_v5::step();rework_economy_v5::step();rework_cargo_v5::step();
- rework_energy_ui::publish();yamato_cost_ui::publish();spell_energy_check::publish();siege_move_ui::publish();rework_economy_ui::publish(false);rework_shield_ui_v5::publish(false);rework_waves::release_and_orders();wave_targeting::step(true,false);area_visuals::publish();
+ rework_energy_ui::publish();yamato_cost_ui::publish();spell_energy_check::publish();siege_move_ui::publish();rework_economy_ui::publish(false);rework_shield_ui_v5::publish(false);rework_waves::release_and_orders();wave_targeting::step(true,false);area_visuals::publish();hold_targets();
 }
 }

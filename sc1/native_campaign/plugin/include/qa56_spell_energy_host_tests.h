@@ -37,7 +37,11 @@ inline void qa56_targeted_packet_validation_and_actual_cast_share_cost(){
  rework_combat_v5::motion_command(packet,11,1,0,command);CHECK(u->order==c.order&&u->energy==cost&&other->energy==cost+256&&enemy->energy==12*256);
  owner_order_hook(u,pay);CHECK(cast&&u->energy==0);
  u->energy=std::uint16_t(cost);u->order=3;rework_combat_v5::motion_command(packet,10,1,0,command);CHECK(u->order==3&&u->energy==cost);
- packet[0]=0x14;rework_combat_v5::motion_command(packet,11,1,0,command);CHECK(u->order==3&&u->energy==cost);qa9_fixture::end();
+ packet[0]=0x14;rework_combat_v5::motion_command(packet,11,1,0,command);CHECK(u->order==3&&u->energy==cost);
+ U8 extended[13]{};extended[0]=0x61;extended[11]=U8(c.order);
+ rework_combat_v5::motion_command(extended,13,1,0,command);CHECK(u->order==c.order&&u->energy==cost);owner_order_hook(u,pay);CHECK(cast&&u->energy==0);
+ u->order=3;u->energy=std::uint16_t(cost);rework_combat_v5::motion_command(extended,12,1,0,command);CHECK(u->order==3&&u->energy==cost);
+ extended[0]=0x60;rework_combat_v5::motion_command(extended,13,1,0,command);CHECK(u->order==3&&u->energy==cost);qa9_fixture::end();
 }
 inline void qa56_recall_zero_cost_stacking_and_reserves_are_not_minted(){
  using namespace qa56_fixture;Case c{120,71,137,150};auto u=begin(c);rework_fixture::ranks[126]=1;u->energy=0;

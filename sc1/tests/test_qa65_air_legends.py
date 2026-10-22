@@ -23,18 +23,18 @@ class AirLegendBalance(unittest.TestCase):
    self.assertEqual(t['source_description'],before['talents'][index]['source_description'])
   self.assertEqual(c,before)
  def test_all_old_pinned_cards_refresh_and_owned_ranks_survive(self):
-  current=load_catalog(expected_version=2);old=copy.deepcopy(current);indices=(271,312,343,353,429,560)
+  current=load_catalog(expected_version=2);old=copy.deepcopy(current);indices=(271,312,341,343,353,429,560)
   for i in indices:old['talents'][i]['effect']['qa_revision']=2026102264;old['talents'][i]['description']='Previous card'
   old['talents'][560]['candidate_weight_percent']=200
   with sqlite3.connect(':memory:') as conn:
    conn.execute('CREATE TABLE growth_rework_catalog (id INTEGER PRIMARY KEY,catalog_json TEXT NOT NULL)')
    conn.execute('INSERT INTO growth_rework_catalog VALUES(1,?)',(json.dumps(old),))
-   rework_growth.save_ranks(conn,201,{current['talents'][343]['id']:1})
+   rework_growth.save_ranks(conn,201,{current['talents'][343]['id']:1,current['talents'][341]['id']:1})
    rework_growth.enable(conn);updated=json.loads(conn.execute('SELECT catalog_json FROM growth_rework_catalog').fetchone()[0])
    for i in indices:
     for key in ('description','effect','id','bit_index','source_description'):self.assertEqual(updated['talents'][i][key],current['talents'][i][key])
    self.assertEqual(updated['talents'][560]['candidate_weight_percent'],300)
-   self.assertEqual(rework_growth.ranks(conn,201),{current['talents'][343]['id']:1})
+   self.assertEqual(rework_growth.ranks(conn,201),{current['talents'][343]['id']:1,current['talents'][341]['id']:1})
    self.assertEqual(updated['curses'],current['curses'])
 
 if __name__=='__main__':unittest.main()

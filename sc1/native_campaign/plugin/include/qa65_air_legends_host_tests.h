@@ -28,6 +28,12 @@ inline void __cdecl native_splash(bw::Bullet* b){
    combat_effects::weapon_damage(target,20*256,b->weapon_id,1,0,b->parent,b->player,qa9_fixture::damage);
  });
 }
+inline void __cdecl victim_owned_splash(bw::Bullet* b){
+ living_units([&](bw::Unit* victim){if(victim==b->parent||victim->player==b->player||!rework_combat_v5::eligible(victim))return;
+  if(rework_combat_v5::weapon_target_hook(victim,b->weapon_id,victim,native_weapon))
+   combat_effects::weapon_damage(victim,20*256,b->weapon_id,1,0,b->parent,b->player,qa9_fixture::damage);
+ });
+}
 inline void __cdecl instant_damage(bw::Bullet* b){combat_effects::weapon_damage(b->target.unit,20*256,b->weapon_id,1,0,b->parent,b->player,qa9_fixture::damage);}
 inline bw::Bullet* __cdecl instant_create(U32 w,int x,int y,U32 owner,U32 direction,bw::Unit* source){auto b=multi_fixture::raw(w,x,y,owner,direction,source);if(b)owner_missile_hook(b,instant_damage);return b;}
 inline U32 chat_original_calls=0;
@@ -102,6 +108,15 @@ inline void qa65_manual_launch_without_initialized_bullet_target_preserves_air_s
  }
 }
 inline void qa65_guardian_primary_and_six_secondary_hits_include_150_percent_once(){
+ // The real splash callback queries each enemy using the enemy as the first
+ // argument. A nested owner scope must retain this projectile's attack layer.
+ for(auto spec:{std::array<U32,3>{58,58,0},{59,32,1}}){
+  using namespace rework_fixture;qa9_fixture::begin({spec[0]});install();auto source=unit(spec[1],1,100,100),target=unit(43,6,150,100,spec[2]!=0),other=unit(37,6,155,100,spec[2]!=0),wrong=unit(43,6,150,100,spec[2]==0),ally=unit(43,1,150,100,spec[2]!=0);
+  const U32 w=original_stat({0,spec[2]?17u:19u,spec[1]});auto b=bullet(source,target,w);const auto flags=raw_value(1,3,w);
+  owner_missile_hook(b,qa65_fixture::victim_owned_splash);
+  CHECK(target->flingy.hitpoints<256000&&other->flingy.hitpoints<256000);CHECK(wrong->flingy.hitpoints==256000&&ally->flingy.hitpoints==256000);
+  CHECK(raw_value(1,3,w)==flags&&rework_combat_v5::impact_weapon==130&&rework_combat_v5::impact_owner==12&&rework_combat_v5::impact_layer==2);qa9_fixture::end();
+ }
  using namespace rework_fixture;qa9_fixture::begin({191});auto source=unit(44,1,100,100),target=unit(37,6,150,100);
  std::array<bw::Unit*,7> others{};for(U32 i=0;i<7;i++)others[i]=unit(37,6,151+int(i),100);
  const auto saved=combat_effects::original_weapon_damage;combat_effects::original_weapon_damage=qa9_fixture::damage;
