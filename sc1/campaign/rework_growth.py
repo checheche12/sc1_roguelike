@@ -55,7 +55,7 @@ def enable(conn, catalog_path=None):
             # Correct future display/mechanics metadata only. Issued offers,
             # frozen input text, indices, ranks and completed checkpoints stay.
             old.update(description=new['description'],effect=copy.deepcopy(new['effect']))
-            for field in ('rarity','target','target_units','balance_revision','pre_balance_description','pre_balance_effect','repeatable','rank_slot','max_rank','max_stacks','choice_max_stacks','bundle_family','bundle_families','wire_storage','name','candidate_weight_percent'):
+            for field in ('category','rarity','target','target_units','balance_revision','pre_balance_description','pre_balance_effect','repeatable','rank_slot','max_rank','max_stacks','choice_max_stacks','bundle_family','bundle_families','wire_storage','name','candidate_weight_percent'):
                 if field in new:old[field]=copy.deepcopy(new[field])
             changed=True
         if kind=='talents':
@@ -93,7 +93,7 @@ def overlay(conn, catalog):
                 existing=next(x for x in result[kind] if x['id']==item['id'])
                 if existing.get('source_description')==item.get('source_description'):
                     existing.update(description=item['description'],effect=copy.deepcopy(item['effect']))
-                    for field in ('rarity','target','target_units','balance_revision','pre_balance_description','pre_balance_effect','repeatable','rank_slot','max_rank','max_stacks','choice_max_stacks','bundle_family','bundle_families','wire_storage','name','candidate_weight_percent'):
+                    for field in ('category','rarity','target','target_units','balance_revision','pre_balance_description','pre_balance_effect','repeatable','rank_slot','max_rank','max_stacks','choice_max_stacks','bundle_family','bundle_families','wire_storage','name','candidate_weight_percent'):
                         if field in item:existing[field]=copy.deepcopy(item[field])
     result.update(catalog_version=2,rework_revision=5,policy_revision=5)
     return validate_catalog(result,2)

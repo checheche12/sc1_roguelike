@@ -10384,7 +10384,7 @@
       "updatedAt": "2026-10-15T17:38:57.822780+00:00",
       "race": "protoss",
       "status": "draft",
-      "category": "economy",
+      "category": "combat",
       "source": "proposal",
       "baseline": "",
       "rarity": "rare",
@@ -10400,7 +10400,7 @@
         "type": "rework_v5",
         "ordinal": 117,
         "source_id": "445755c6-36b9-570b-969a-6c6d45ab560f",
-        "qa_revision": 2026102372,
+        "qa_revision": 2026102374,
         "benefit_power_quarters": 4
       },
       "target_units": [

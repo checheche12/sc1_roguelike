@@ -11,7 +11,7 @@ POWER_QUARTERS = dict(common=6, uncommon=7, rare=8, epic=10, legendary=10)
 def power_quarters(item):
     if item.get('expansion_revision')==2026102038:return 4
     if item.get('rework_revision')==5 and item.get('effect_ordinal')==47:return 8
-    if item.get("rework_revision")==5 and item.get("effect_ordinal") in (18,130,148):return 4
+    if item.get("rework_revision")==5 and item.get("effect_ordinal") in (18,117,130,148):return 4
     if item.get("rework_revision")==5 and item.get("effect_ordinal") in UNIT_LEGENDARIES:return 16
     patches=item.get('effect',{}).get('patches',[])
     resource_only=bool(patches) and not item.get('effect',{}).get('movement') and all(

@@ -48,7 +48,10 @@ class TalentBalanceTests(unittest.TestCase):
     def test_economic_descriptions_and_powers_are_original(self):
         current=load_catalog(expected_version=2)
         economy=[x for x in current['talents'] if x.get('category')=='economy']
-        self.assertEqual(len(economy),25)
+        self.assertEqual(len(economy),24)
+        ammo=current['talents'][355]
+        self.assertEqual(ammo['category'],'combat')
+        self.assertEqual(balance.power_quarters(ammo),4)
         for item in economy:
             self.assertEqual(balance.power_quarters(item),4)
             if item.get('effect_ordinal') in (5,153,157,160):self.assertEqual(item['description'],effect_copy.with_subject(item,balance.DESCRIPTIONS[item['effect_ordinal']]))

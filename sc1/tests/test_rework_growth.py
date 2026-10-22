@@ -98,6 +98,7 @@ class ReworkGrowthTests(unittest.TestCase):
 
     def test_ammunition_bundle_update_keeps_issued_single_offer_exact(self):
         prior=copy.deepcopy(self.catalog);card=prior['talents'][355]
+        card['category']='economy'
         for field in ('bundle_family','bundle_families'):card.pop(field,None)
         card['effect']['qa_revision']=2026101610
         self.catalog_path.write_text(json.dumps(prior,ensure_ascii=False),encoding='utf8')
@@ -109,6 +110,7 @@ class ReworkGrowthTests(unittest.TestCase):
         self.assertEqual(resumed['offer'],issued)
         self.assertEqual(self.query('SELECT candidates_json FROM growth_offers WHERE offer_id=?',(issued['offer_id'],)),[(serialized,)])
         pinned=json.loads(self.query('SELECT catalog_json FROM growth_rework_catalog')[0][0])
+        self.assertEqual(pinned['talents'][355]['category'],'combat')
         self.assertEqual(pinned['talents'][355]['bundle_families'],[72,81])
         picked=self.pick(resumed)
         while picked.get('offer'):picked=self.pick(picked)
@@ -116,7 +118,7 @@ class ReworkGrowthTests(unittest.TestCase):
 
     def test_economic_single_rule_keeps_previously_issued_pair_exact(self):
         card=self.catalog['talents'][355];partner=self.catalog['talents'][369]
-        saved=dict(card,bundled_talent_ids=[card['id'],partner['id']])
+        saved=dict(card,category='economy',bundled_talent_ids=[card['id'],partner['id']])
         with patch.object(rework_growth,'candidates',return_value=[saved]):state=self.load(mission=301)
         issued=copy.deepcopy(state['offer'])
         serialized=self.query('SELECT candidates_json FROM growth_offers WHERE offer_id=?',(issued['offer_id'],))[0][0]

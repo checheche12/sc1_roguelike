@@ -78,11 +78,11 @@ def decorate(catalog):
   for item in catalog['talents']:
    if item.get('rework_revision')==5 and item.get('race')==race and set(item.get('target_units',()))<=set(units) and item.get('target_units') and not item['effect'].get('retired'):
     item['bundle_family']={73:72,85:81}.get(min(units),min(units));item['effect']['qa_revision']=REVISION
- # Retain family coverage for previously issued ammunition-production pairs.
- # New economic rewards are always single cards (see paired_unit).
+ # Ammunition production is a unit enhancement. Both parent families are
+ # covered, so neither Carrier nor Reaver rewards can be its partner.
  ammo=by_ord[117]
- ammo.update(bundle_family=72,bundle_families=[72,81])
- ammo['effect']['qa_revision']=2026102372
+ ammo.update(category='combat',bundle_family=72,bundle_families=[72,81])
+ ammo['effect']['qa_revision']=2026102374
  # The Ghost's missile and Carrier/Reaver ammunition belong to their parent
  # combat family, even when target coverage lists both native unit types.
  for ordinal,family in COMBAT_BUNDLE_FAMILIES.items():

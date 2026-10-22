@@ -84,7 +84,7 @@ class UnitGrowth(unittest.TestCase):
   pool=[x for x in c['talents'] if x.get('rework_revision')==5 and not retired(x)
         and not unit_offer_removed(x) and not x['effect'].get('offer_retired')]
   economic=[x for x in pool if x['category']=='economy']
-  self.assertEqual(len(economic),25)
+  self.assertEqual(len(economic),24)
   for item in economic:
    self.assertFalse(paired_unit(item),item['name'])
    option=pair_options([item],pool,random.Random(73))[0]
@@ -112,7 +112,7 @@ class UnitGrowth(unittest.TestCase):
 
  def test_previously_issued_economic_pairs_remain_readable_but_cannot_be_redrawn(self):
   c=self.catalog
-  for index in (258,260,355):
+  for index in (258,260):
    item=c['talents'][index]
    other=next(x for x in c['talents'] if x['rarity']==item['rarity'] and compatible(item,x,historical=True))
    saved=dict(item,bundled_talent_ids=[item['id'],other['id']])
@@ -124,15 +124,18 @@ class UnitGrowth(unittest.TestCase):
     self.assertEqual(owned,[item['id'],other['id']])
 
  def test_auxiliary_unit_combat_rewards_pair_with_a_different_combat_family(self):
-  c=self.catalog;expected={284:1,374:72,414:72,419:81}
+  c=self.catalog;expected={284:1,355:72,374:72,414:72,419:81}
   for index,family in expected.items():
    item=c['talents'][index]
    self.assertNotEqual(item['category'],'economy');self.assertTrue(paired_unit(item))
+   if index==355:
+    from sc1.campaign.talent_balance import power_quarters
+    self.assertEqual(power_quarters(item),4)
    self.assertEqual(item['bundle_family'],family)
    pool=[x for x in c['talents'] if x['race']==item['race'] and x['rarity']==item['rarity']
          and paired_unit(x) and not x['effect'].get('offer_retired')]
    for other in pool:
-    if other.get('bundle_family')==family:self.assertFalse(compatible(item,other))
+    if other.get('bundle_family') in ({72,81} if index==355 else {family}):self.assertFalse(compatible(item,other))
    for seed in range(5):
     option=pair_options([item],pool,random.Random(seed))[0]
     ids=member_ids(option,c);self.assertEqual(len(ids),2)
@@ -143,6 +146,7 @@ class UnitGrowth(unittest.TestCase):
 
  def test_ammunition_pin_upgrade_preserves_previously_issued_single(self):
   c=self.catalog;old=copy.deepcopy(c);ammo=old['talents'][355]
+  ammo['category']='economy'
   for field in ('bundle_family','bundle_families'):ammo.pop(field,None)
   ammo['effect']['qa_revision']=2026101610
   issued=copy.deepcopy(ammo)
@@ -152,7 +156,8 @@ class UnitGrowth(unittest.TestCase):
    rework_growth.enable(conn)
    refreshed=rework_growth.overlay(conn,old)
    future=refreshed['talents'][355]
-   self.assertFalse(paired_unit(future));self.assertEqual(set(future['bundle_families']),{72,81})
+   self.assertEqual(future['category'],'combat')
+   self.assertTrue(paired_unit(future));self.assertEqual(set(future['bundle_families']),{72,81})
    self.assertEqual(future['source_description'],issued['source_description'])
    self.assertEqual(member_ids(issued,refreshed),(issued['id'],))
    owned=[];rework_growth.acquire_option(conn,301,refreshed,owned,issued)
