@@ -930,7 +930,7 @@ inline void ordinary_hit(bw::Unit* source,bw::Unit* target,U32 damage,U32 w,bool
 struct DamageScope {
     static inline DamageScope* current=nullptr;DamageScope* previous=nullptr;
     bw::Unit* target=nullptr;bw::Unit* source=nullptr;U32 w=130;std::int32_t raw=0;bool secondary=false,normal=false;
-    U32 half_armor_reduction=0;bool had_shield=false;
+    U32 half_armor_reduction=0,erosion_armor_reduction=0;bool had_shield=false;
     bw::DatTable* armor=nullptr,*upgrade=nullptr;U32 saved_armor=0,saved_upgrade=0;
     rework_upgrade_storage::View shield_upgrade;
     U32 hp_before=0,shield_before=0,proc_base=0;bool received_armed=false;
@@ -981,9 +981,24 @@ struct DamageScope {
             const auto erosion=t&&t->erosion_owner==player_owner()?t->erosion:0u;
             if(erosion){
                 const U32 total=original_stat({0,27,target->unit_id})+upgrade_level(target->player,original_stat({0,25,target->unit_id}));
+                const auto scale=legend_focus::armor_erosion_denominator;
+                const auto total_scaled=std::uint64_t(total)*scale;
                 if(!ignore){armor=table_for({0,27,target->unit_id},false);upgrade=table_for({0,25,target->unit_id},false);
-                if(armor&&upgrade){saved_armor=read_entry(armor,target->unit_id);saved_upgrade=read_entry(upgrade,target->unit_id);write_entry(armor,target->unit_id,erosion<total?total-erosion:0);write_entry(upgrade,target->unit_id,61);}}
-                if(in(source->unit_id,{37,54})&&raw_rank(190)&&erosion>total)damage=std::int32_t(std::min<std::uint64_t>(0x7fffffffu,std::uint64_t(std::max(0,damage))+std::uint64_t(erosion-total)*256));
+                if(armor&&upgrade){
+                    saved_armor=read_entry(armor,target->unit_id);saved_upgrade=read_entry(upgrade,target->unit_id);
+                    const auto remaining=erosion<total_scaled?total_scaled-erosion:0u;
+                    // Native DAT armor is integral. Use its floor, then apply
+                    // the remaining fraction only to native health damage.
+                    write_entry(armor,target->unit_id,U32(remaining/scale));write_entry(upgrade,target->unit_id,61);
+                    const U32 type=original_stat({1,7,w}),size=original_stat({0,26,target->unit_id});
+                    auto numerator=(remaining%scale)*256u;U32 denominator=scale;
+                    if(type==1){if(size==1)denominator*=2;else if(size==2){numerator*=3;denominator*=4;}else if(size!=3)numerator=0;}
+                    else if(type==2){if(size==2)denominator*=2;else if(size==3)denominator*=4;else if(size!=1)numerator=0;}
+                    else if(type!=3)numerator=0;
+                    erosion_armor_reduction=U32((numerator+denominator/2)/denominator);had_shield=target->shields>=256;
+                }}
+                if(in(source->unit_id,{37,54})&&raw_rank(190)&&erosion>total_scaled)
+                    damage=std::int32_t(std::min<std::uint64_t>(0x7fffffffu,std::uint64_t(std::max(0,damage))+(std::uint64_t(erosion)-total_scaled)*256u/scale));
             }
             if(ignore){
                 half_armor_reduction=0;
@@ -1104,6 +1119,10 @@ inline std::int32_t post_armor_damage(bw::Unit* target,std::int32_t amount) {
     if(own(target)&&hit&&hit->target==target&&hit->normal&&hit->half_armor_reduction){
         const auto floor=hit->had_shield?0:128;
         amount=std::max(floor,amount-std::int32_t(hit->half_armor_reduction));
+    }
+    if(hit&&hit->target==target&&hit->normal&&hit->erosion_armor_reduction){
+        const auto floor=hit->had_shield?0:128;
+        amount=std::max(floor,amount-std::int32_t(hit->erosion_armor_reduction));
     }
     return own(target)&&rank(150)&&s&&s->protection>now() ? std::int32_t(std::int64_t(amount)*U32(talent_power::rate(150,0.8)*1000)/1000) : amount;
 }

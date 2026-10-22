@@ -33,10 +33,10 @@ inline void qa39_periodic_hits_use_unamplified_base_and_no_splash(){
 }
 inline void qa39_ramps_reset_and_armor_erosion_exceeds_zero(){
  using namespace rework_fixture;qa9_fixture::begin({190});auto u=unit(37,1,100,100),target=unit(39,6,120,100);const U32 armor=original_stat({0,27,39});
- for(U32 n=0;n<armor+5;n++)rework_combat_v5::focus_hit(u,target,256,35);
- auto s=rework_combat_v5::state(target);CHECK(s->erosion==armor+5);g.normal_hit=true;
- {std::int32_t amount=256;rework_combat_v5::DamageScope scope(target,u,35,1,amount);CHECK(amount==6*256);CHECK(raw_value(0,27,39)==0);}CHECK(raw_value(0,27,39)==armor);
- ranks[19]=1;{std::int32_t amount=256;rework_combat_v5::DamageScope scope(target,u,35,1,amount);CHECK(amount>=6*256);}target->player=2;CHECK(rework_combat_v5::state(target)->erosion==0);qa9_fixture::end();
+ for(U32 n=0;n<100;n++)rework_combat_v5::focus_hit(u,target,256,35);
+ auto s=rework_combat_v5::state(target);CHECK(s->erosion==3300);g.normal_hit=true;
+ {std::int32_t amount=256;rework_combat_v5::DamageScope scope(target,u,35,1,amount);CHECK(amount==int((34-armor)*256));CHECK(raw_value(0,27,39)==0);}CHECK(raw_value(0,27,39)==armor);
+ ranks[19]=1;{std::int32_t amount=256;rework_combat_v5::DamageScope scope(target,u,35,1,amount);CHECK(amount>=int((34-armor)*256));}target->player=2;CHECK(rework_combat_v5::state(target)->erosion==0);qa9_fixture::end();
  qa9_fixture::begin({90});u=unit(38,1,100,100);target=unit(39,6,120,100);auto other=unit(39,6,130,100);
  for(U32 n=0;n<20;n++)rework_combat_v5::focus_hit(u,target,256,38);
  CHECK(rework_combat_v5::focus_damage(u,target,38,1000,true)==2800);CHECK(rework_combat_v5::focus_damage(u,other,38,1000,true)==1000);game.frame_count+=73;CHECK(rework_combat_v5::focus_damage(u,target,38,1000,true)==1000);qa9_fixture::end();

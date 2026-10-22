@@ -1,5 +1,6 @@
 #pragma once
 namespace legend_focus {
+inline constexpr unsigned armor_erosion_denominator=100u;
 struct Rule {unsigned ordinal,mode,base,cadence,proc,step,limit;unsigned units[8];};
 inline constexpr Rule rules[]={
 {49u,1u,100u,1u,300u,0u,35u,{65538u,0u,0u,280u,0u,0u,0u,0u}},
@@ -17,7 +18,7 @@ inline constexpr Rule rules[]={
 {142u,8u,75u,1u,200u,0u,0u,{0u,0u,16842816u,0u,0u,0u,0u,0u}},
 {148u,3u,0u,1u,0u,20u,120u,{0u,0u,512u,0u,0u,0u,0u,0u}},
 {184u,2u,25u,3u,300u,0u,0u,{1048577u,0u,0u,0u,0u,0u,0u,0u}},
-{190u,6u,0u,1u,0u,1u,0u,{0u,4194336u,0u,0u,0u,0u,0u,0u}},
+{190u,6u,0u,1u,0u,33u,0u,{0u,4194336u,0u,0u,0u,0u,0u,0u}},
 {194u,1u,75u,1u,200u,0u,50u,{0u,0u,8194u,0u,0u,0u,0u,0u}},
 {197u,2u,0u,6u,900u,0u,0u,{0u,268435456u,0u,4u,0u,0u,0u,0u}},
 };

@@ -21,7 +21,7 @@ SPECS=(
  (142,'거대 표적 사냥',8,75,1,200,0,0),
  (148,'집중 요격',3,0,1,0,20,120),
  (184,'가우스 집중 포화',2,25,3,300,0,0),
- (190,'끝없는 갑각 분쇄',6,0,1,0,1,0),
+ (190,'끝없는 갑각 분쇄',6,0,1,0,33,0),
  (194,'태양의 결투',1,200,1,200,0,50),
  (197,'위상 과부하',2,0,6,900,0,0),
 )
@@ -39,7 +39,7 @@ def decorate(catalog):
   if mode==3:text.append(f'같은 적을 연속 공격하면 피해가 타격당 {step}%씩 최대 {limit}% 추가 증가. 표적 변경·3초 중단 시 초기화.')
   if mode==4:text.append(f'직접 공격 후 3초간 받은 일반 공격의 실제 체력 피해 {proc}%를 공격자에게 반사. 초당 최대 {limit}. 반사는 재반사되지 않습니다.')
   if mode==5:text.append(f'받은 일반 공격의 실제 체력·보호막 피해 {proc}%를 최대 {limit}까지 저장해 다음 직접 공격의 주 대상에게 돌려줍니다. 공격해야 방출됩니다.')
-  if mode==6:text.append('저글링의 공격마다 그 적의 체력 방어력을 1씩 끝없이 깎습니다. 0 아래의 누적분은 저글링의 추가 피해가 됩니다. 대상이 죽거나 소유자가 바뀌면 초기화.')
+  if mode==6:text.append('저글링의 공격마다 그 적의 체력 방어력을 0.33씩 끝없이 깎습니다. 0 아래의 누적분은 저글링의 추가 피해가 됩니다. 대상이 죽거나 소유자가 바뀌면 초기화.')
   if mode==7:text.append(f'이동 사격 유지. 이동 중 피해 +{proc}% 추가(총400%). 정지 시 총300%.')
   if mode==8:text.append(f'대형 유닛·건물에게 피해 +{proc}% 추가.')
   if mode==9:text.append('최대 체력3배. 공중 적을 추격할 때 받는 일반 공격 피해75% 감소. 과잉 자폭을 피하도록 주변 표적을 분배합니다. 지상 공격은 없습니다.')
@@ -50,6 +50,7 @@ def decorate(catalog):
   item['effect'].update(qa_revision=DRAGOON_REVISION if ordinal==137 else REVISION,focus_legend=True,focus_mode=mode,base_bonus_percent=base,
    focus_cadence=cadence,focus_proc_percent=proc,focus_step_percent=step,focus_limit=limit,legacy_area_effect_disabled=True,
    design_role='single_target',reflection_requires_attacking=mode==4,reflection_only_releases_on_attack=mode==5)
+  if ordinal==190:item['effect'].update(qa_revision=2026102262,armor_erosion_numerator=33,armor_erosion_denominator=100,armor_erosion_per_hit=0.33)
   if ordinal==137:item['effect'].update(focus_requires_same_target=False,focus_counter_scope='unit',focus_reset_on_target_change=False,focus_reset_on_idle=False)
   if ordinal==55:item['effect'].update(qa_revision=TANK_REVISION,focus_target_units=[5,6,23,24],siege_periodic_damage_percent=0,siege_moving_fire=True,siege_range_bonus_tiles=3)
   if ordinal==56:
@@ -83,7 +84,7 @@ def decorate(catalog):
 
 def generate_header(catalog,root):
  by={x['effect_ordinal']:x for x in catalog['talents'] if x.get('rework_revision')==5}
- lines=['#pragma once','namespace legend_focus {','struct Rule {unsigned ordinal,mode,base,cadence,proc,step,limit;unsigned units[8];};','inline constexpr Rule rules[]={']
+ lines=['#pragma once','namespace legend_focus {','inline constexpr unsigned armor_erosion_denominator=100u;','struct Rule {unsigned ordinal,mode,base,cadence,proc,step,limit;unsigned units[8];};','inline constexpr Rule rules[]={']
  for spec in SPECS:
   ordinal=spec[0];units=([73] if ordinal==148 else [85] if ordinal==141 else by[ordinal]['effect'].get('focus_target_units',by[ordinal]['target_units']));mask=[0]*8
   for unit in units:mask[unit//32]|=1<<(unit%32)

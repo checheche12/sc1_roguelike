@@ -36,7 +36,7 @@ inline void focus_hit(bw::Unit* u,bw::Unit* target,U32 amount,U32 weapon) {
   if(r.mode==2&&s->focus_hits%r.cadence==0)weapon_hurt(target,U32(std::min<std::uint64_t>(0x7fffffffu,std::uint64_t(amount)*r.proc/100)),weapon,u,u->player);
   if(r.mode==10&&s->dragoon_hits==0)weapon_hurt(target,U32(std::min<std::uint64_t>(0x7fffffffu,std::uint64_t(amount)*r.proc/100)),weapon,u,u->player);
   if(r.mode==5&&s->retaliation){const U32 stored=s->retaliation;s->retaliation=0;weapon_hurt(target,stored,weapon,u,u->player);}
-  if(r.mode==6){if(t->erosion_owner!=u->player){t->erosion=0;t->erosion_owner=u->player;}if(t->erosion<0xfffffffeu)++t->erosion;}
+  if(r.mode==6){if(t->erosion_owner!=u->player){t->erosion=0;t->erosion_owner=u->player;}t->erosion=U32(std::min<std::uint64_t>(0xfffffffeu,std::uint64_t(t->erosion)+r.step));}
  }
 }
 inline void focus_received(bw::Unit* u,bw::Unit* attacker,U32 hp_loss,U32 shield_loss) {
