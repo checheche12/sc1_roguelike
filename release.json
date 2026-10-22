@@ -1,0 +1,13 @@
+{
+  "version": "v2026.10.23-qa72",
+  "file": "SC1_Roguelike_20261023_QA72.zip",
+  "sha256": "6bde348ae2b34501305ebfa31f714c396b817fae546713ca17fccad0f943f672",
+  "bytes": 24942380,
+  "runtime_source_commit": "5f6bdcde7aab8b64d49dee9144d4a25b5e57fc09",
+  "native_dll_sha256": "89e4def3214ed877febe2dbdc52523b21a82fe4b958fd9c438b96fc77c2fbdfc",
+  "economic_talents": 24,
+  "ammunition_category": "combat",
+  "shared_melee_mastery_bundle_size": 2,
+  "all_talent_actual_condition_audit_complete": false,
+  "personal_database_included": false
+}
