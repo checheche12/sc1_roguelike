@@ -34,6 +34,10 @@ def decorate(catalog):
         assert old in item['description'], (ordinal, item['description'])
         item['description'] = item['description'].replace(old, new)
         item['effect'].update(values, qa_revision=REVISION)
+    by[54]['description']+=' 공격 유형이 일반형으로 바뀝니다.'
+    by[54]['effect'].update(qa_revision=2026102261,weapon_damage_type=3)
+    by[141]['description']+=' 스캐럽 미네랄 비용0.'
+    by[141]['effect'].update(qa_revision=2026102261,scarab_mineral_cost=0)
     catalog['legend_base_balance_revision'] = REVISION
     return catalog
 

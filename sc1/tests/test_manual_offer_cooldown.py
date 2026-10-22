@@ -25,7 +25,7 @@ class ManualOfferCooldownTests(unittest.TestCase):
         counts = Counter()
         for ticket in range(195):
             rng = Rolls(0, ticket)
-            offer = policy.draw_candidates(policy.reward_policy(101, 1), cards, (), rng,
+            offer = policy.draw_candidates(policy.reward_policy(102, 1), cards, (), rng,
                 limit=1, recent_manuals=['seen', 'seen'])
             counts[offer[0].id] += 1
             self.assertEqual(rng.stops, [100, 195])
@@ -35,17 +35,17 @@ class ManualOfferCooldownTests(unittest.TestCase):
         cards = [policy.Candidate('seen', 'common'), policy.Candidate('fresh', 'common')]
         for recent in ((), ('seen', 'fresh')):
             rng = Rolls(0, 1)
-            offer = policy.draw_candidates(policy.reward_policy(101, 1), cards, (), rng,
+            offer = policy.draw_candidates(policy.reward_policy(102, 1), cards, (), rng,
                 limit=1, recent_manuals=recent)
             self.assertEqual(offer[0].id, 'fresh')
             self.assertEqual(rng.stops, [100, 2])
-        offer = policy.draw_candidates(policy.reward_policy(101, 1), cards[:1], {'seen'},
+        offer = policy.draw_candidates(policy.reward_policy(102, 1), cards[:1], {'seen'},
             Rolls(0, 0), limit=1, recent_manuals={'seen'})
         self.assertEqual([x.id for x in offer], ['seen'])
 
     def test_economy_and_other_rarities_keep_uniform_draws(self):
         for reward, cards, rarity in (
-            (policy.reward_policy(101, 1), [policy.Candidate('a', 'rare'), policy.Candidate('b', 'rare')], 70),
+            (policy.reward_policy(102, 1), [policy.Candidate('a', 'rare'), policy.Candidate('b', 'rare')], 70),
             (policy.reward_policy(102, 2), [policy.Candidate('a', 'rare', 'economy'), policy.Candidate('b', 'rare', 'economy')], None),
         ):
             rng = Rolls(1) if rarity is None else Rolls(rarity, 1)

@@ -39,7 +39,7 @@ def validate_catalog_bundle(original,legacy,rework,*,require_implemented=True):
         from sc1.campaign.legendary_expansion import entries,identity
         from sc1.campaign.unit_growth import specifications as unit_specs,identity as unit_identity
         specifications=entries(rework)
-        if count!=437+123 or any(x['id']!=identity(s['ordinal']) or x.get('effect_ordinal')!=s['ordinal'] for x,s in zip(rework['talents'][400:437],specifications)):
+        if count!=437+len(unit_specs()) or any(x['id']!=identity(s['ordinal']) or x.get('effect_ordinal')!=s['ordinal'] for x,s in zip(rework['talents'][400:437],specifications)):
             raise ValueError('Appended unit legends differ from their permanent wire contract')
         if any(x['id']!=unit_identity(s['ordinal']) or x['wire_storage']!=s['storage'] for x,s in zip(rework['talents'][437:],unit_specs())):
             raise ValueError('Per-unit growth storage differs from its permanent contract')

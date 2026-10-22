@@ -46,6 +46,8 @@ inline bool plan_stats(const GrowthSnapshot& s,std::vector<Edit>& edits) {
         if(time!=base_time && !set(42,id,time))return false;
         if(rank(s,4) && in(id,{109,42,156}) && !plan_edit(edits,{0,45,id},1,16,1))return false;
     }
+    // Apply after price discounts so free Scarabs remain zero with117.
+    if(talent_power::enabled&&rank(s,141)&&!set(40,85,0u))return false;
     return true;
 }
 struct Identity {bw::Unit* p=nullptr;U32 id=228,owner=12,unique=0;};

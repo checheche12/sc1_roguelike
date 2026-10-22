@@ -129,6 +129,7 @@ class Candidate:
     category: str = "military"
     usable: bool = True
     repeatable: bool | None = None
+    sampling_weight: int = 100
 
 
 def draw_candidates(policy: RewardPolicy, catalog, owned, rng, limit: int = 4,
@@ -150,6 +151,8 @@ def draw_candidates(policy: RewardPolicy, catalog, owned, rng, limit: int = 4,
         raise ValueError("Candidate IDs must be unique")
     if any(x.rarity not in RARITY_WEIGHTS for x in catalog):
         raise ValueError("Unknown rarity")
+    if any(type(x.sampling_weight) is not int or x.sampling_weight<=0 for x in catalog):
+        raise ValueError('Candidate sampling weights must be positive integers')
     if any(x.category not in ("combat", "military", "economy") for x in catalog):
         raise ValueError("Only military and economy cards belong in reward offers")
     owned = set(owned)
@@ -190,6 +193,8 @@ def draw_candidates(policy: RewardPolicy, catalog, owned, rng, limit: int = 4,
         weights = [RECENT_MANUAL_WEIGHT if x.id in recent_manuals
                    and repeatable(x.rarity, x.category)
                    else NORMAL_CANDIDATE_WEIGHT for x in choices]
+        if any(x.sampling_weight!=100 for x in choices):
+            weights=[weight*x.sampling_weight for weight,x in zip(weights,choices)]
         if len(set(weights)) == 1:
             choice = choices[rng.randrange(len(choices))]
         else:

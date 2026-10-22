@@ -141,7 +141,7 @@ def acquire(conn,mission,catalog,owned,identity):
     if item.get('repeatable'):
         values=ranks(conn,mission)
         if rank_policy.exhausted(item,owned,values,catalog):
-            raise GrowthError('talent_rank_limit','이 재능은 최대 4회까지 선택할 수 있습니다.')
+            raise GrowthError('talent_rank_limit',f"이 재능은 최대 {item.get('max_rank',4)}회까지 선택할 수 있습니다.")
         progress=rank_policy.unit_manual_progress(item,owned,values,catalog)
         values[identity]=(progress[1] if progress is not None else values.get(identity,1 if identity in owned else 0))+1
         save_ranks(conn,mission,values)
@@ -226,7 +226,7 @@ def candidates(catalog,mission,phase,owned,rng,*,recent_manuals=(),rank_counts=N
         else:
             if not progression.item_eligible(item,mission,'talent'):continue
             usable=usable_on(item,mission)
-        available.append(policy.Candidate(item['id'],item['rarity'],item['category'],usable,item.get('repeatable',False)))
+        available.append(policy.Candidate(item['id'],item['rarity'],item['category'],usable,item.get('repeatable',False),item.get('candidate_weight_percent',100)))
         by_id[item['id']]=item
     usable_legends=[by_id[x.id] for x in available]
     available=[x for x in available if not paired_unit(by_id[x.id])

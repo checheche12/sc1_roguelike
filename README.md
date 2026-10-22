@@ -4,9 +4,7 @@
 
 ## 다운로드
 
-[최신 버전 받기 — v2026.10.22-qa60](https://github.com/checheche12/sc1_roguelike/raw/refs/tags/asset-v2026.10.22-qa60/SC1_Roguelike_20261022_QA60.zip)
-
-QA57은 브루드워 저그6번 「군단의 분노」의 추가 일꾼4기가 **실제 운영하는 섬 기지에 지급**되도록 수정했어요. 기존 시전 에너지 조건 수정과 교범 3계열 묶음·골리앗 분산 공격·추가 공세 베슬 에너지 0 제한도 유지해요. [변경 내용](docs/qa57-bwz6-starting-workers.md)을 확인할 수 있어요.
+[최신 버전 받기 — v2026.10.22-qa61](https://github.com/checheche12/sc1_roguelike/raw/refs/tags/asset-v2026.10.22-qa61/SC1_Roguelike_20261022_QA61.zip)
 
 Windows 64비트·스타크래프트 리마스터용입니다. ZIP 전체를 압축 해제한 뒤 `Start_Campaign.exe`를 실행하세요. Python은 따로 설치하지 않아도 됩니다.
 

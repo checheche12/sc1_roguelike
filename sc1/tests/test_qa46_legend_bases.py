@@ -17,12 +17,13 @@ class LegendaryBases(unittest.TestCase):
         for ordinal, bonus in BASE_BONUSES.items():
             item = self.by[ordinal]
             self.assertEqual(item['effect']['base_bonus_percent'], bonus)
-            self.assertIn(f'+{bonus}%', item['description'])
+            label={54:'정지 시 2배',141:'150% 증가'}.get(ordinal,f'+{bonus}%')
+            self.assertIn(label, item['description'])
         self.assertEqual(self.by[194]['effect']['focus_proc_percent'], 200)
         self.assertEqual(self.by[194]['effect']['focus_limit'], 50)
         self.assertEqual(self.by[54]['effect']['focus_proc_percent'], 100)
-        self.assertIn('총300%', self.by[54]['description'])
-        self.assertIn('총200%', self.by[54]['description'])
+        self.assertIn('이동 중 3배', self.by[54]['description'])
+        self.assertIn('정지 시 2배', self.by[54]['description'])
         self.assertEqual(self.by[105]['effect']['projectile_damage_percent'], 200)
         self.assertEqual(self.by[137]['effect']['focus_proc_percent'], 250)
         self.assertEqual(self.by[137]['effect']['focus_cadence'], 3)
@@ -44,7 +45,7 @@ class LegendaryBases(unittest.TestCase):
         for key, value in SCALARS.items():
             self.assertIn(f'{key}={value}u;', header)
         self.assertEqual(self.catalog['legend_base_balance_revision'], REVISION)
-        self.assertEqual(len(self.catalog['talents']), 560)
+        self.assertEqual(len(self.catalog['talents']), 561)
         self.assertEqual(len(self.catalog['curses']), 50)
 
 

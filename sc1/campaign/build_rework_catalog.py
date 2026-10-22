@@ -175,9 +175,15 @@ def build(coverage=None):
     contract['rank_slots_used']=rank_slot
     for path,value in ((TARGET,catalog),(CONTRACT,contract)):
         path.write_text(json.dumps(value,ensure_ascii=False,indent=2)+'\n',encoding='utf8')
-    rank_slots=[x.get('rank_slot',-1) for x in contract['new_talents']]
+    generate_rank_header(catalog)
+    return catalog
+
+
+def generate_rank_header(catalog,root=ROOT):
+    talents=catalog['talents'][238:];curses=catalog['curses'][15:]
+    rank_slots=[x.get('rank_slot',-1) for x in talents]
     lines=['#pragma once','#include <cstdint>','namespace rework_catalog {',
-           f'inline constexpr std::uint32_t kTalentBase=238, kTalentCount={len(contract["new_talents"])}, kCurseBase=15, kCurseCount=35;',
+           f'inline constexpr std::uint32_t kTalentBase=238, kTalentCount={len(talents)}, kCurseBase=15, kCurseCount=35;',
            f'inline constexpr std::uint32_t kRankCount=28;',
            'inline constexpr int kRankSlots[kTalentCount]={'+','.join(map(str,rank_slots))+'};',
            'template<class Snapshot> inline std::uint32_t rank(const Snapshot& s,std::uint32_t ordinal) noexcept {',
@@ -185,8 +191,8 @@ def build(coverage=None):
            ' if(ordinal>=199u)return packed_rank(s,ordinal);',
            ' const auto bit=kTalentBase+ordinal; const auto owned=(s.talent_bits[bit/32]>>(bit%32))&1u;',
            ' if(slot>=0){const auto n=s.talent_ranks[slot];return n ? (n>4u?4u:n):owned;} return owned; }',
-           'inline constexpr const char* kTalentSourceIds[kTalentCount]={'+','.join(json.dumps(x['id']) for x in contract['new_talents'])+'};',
-           'inline constexpr const char* kCurseSourceIds[35]={'+','.join(json.dumps(x['id']) for x in contract['new_curses'])+'};','}']
+           'inline constexpr const char* kTalentSourceIds[kTalentCount]={'+','.join(json.dumps(x['id']) for x in talents)+'};',
+           'inline constexpr const char* kCurseSourceIds[35]={'+','.join(json.dumps(x['id']) for x in curses)+'};','}']
     from .unit_growth import specifications
     packed=['struct Field {unsigned ordinal,word,shift,width;};','inline constexpr Field kPackedFields[]={']
     masks=[0]*65;owned=[0]*16
@@ -198,13 +204,14 @@ def build(coverage=None):
       'template<class S> inline unsigned word(const S& s,unsigned w) noexcept {return w<=16?s.talent_bits[w-1]:s.talent_ranks[w-33];}',
       'template<class S> inline unsigned packed_rank(const S& s,unsigned ordinal) noexcept {for(auto f:kPackedFields)if(f.ordinal==ordinal)return (word(s,f.word)>>f.shift)&((1u<<f.width)-1u);return 0;}',
       'template<class S> inline bool valid_packed(const S& s) noexcept {for(auto f:kPackedFields)if(f.width==3&&packed_rank(s,f.ordinal)>4)return false;']
+    packed.append(' if(packed_rank(s,322u)>2u)return false;')
     for w in range(54,61):packed.append(f' if(s.talent_ranks[{w-33}]&~{masks[w]}u)return false;')
     packed+=[' return true;}']
     at=next(i for i,line in enumerate(lines) if line.startswith('template<class Snapshot>'))
     lines[at:at]=packed
-    HEADER.write_text('\n'.join(lines)+'\n',encoding='utf8')
-    return catalog
-
+    target=root/'sc1/native_campaign/plugin/include/rework_catalog.generated.h'
+    target.write_text('\n'.join(lines)+'\n',encoding='utf8')
+    return target
 
 if __name__=='__main__':
     import argparse

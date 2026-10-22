@@ -51,16 +51,20 @@ def specifications():
    description=name+' 전용: '+', '.join(parts)+'. 1회 획득.',armor=armor,hp=hp,damage=damage,speed=speed,energy=energy))
  rows.append(dict(race='protoss',target='다크 템플러',units=[61,74,75],kind='shadow',rarity='legendary',name='그림자 격노',
   description='전투 중 자동으로 6타일 안 지상 적을 5회 순간이동하며 벱니다. 회당 일반 공격의200% 피해. 다른 적 우선·부족하면 재타격. 시전 중 무적, 종료 후 원위치 복귀. 재사용12초.'))
+ # QA61 uses two previously unused bits after all historical unit fields.
+ rows.append(dict(race='shared',target='미사일 터렛·스포어 콜로니·포톤 캐논',units=[124,144,162],
+  kind='tower',rarity='common',name='대공 방어 교범',hp=100,damage=50,max_rank=2,
+  description='미사일 터렛·스포어 콜로니·포톤 캐논: 획득마다 최대체력+100%, 대공피해+50%, 대공표적+1기. 포톤 캐논 보호막도+100%. 최대2회.'))
  # The order is a durable field contract. No field crosses a word boundary.
  word,shift=54,0  # growth words33+21, through33+27
  for i,spec in enumerate(rows):
-  width=1 if spec['kind'] in ('trait','shadow') else 3
+  width=2 if spec['kind']=='tower' else 1 if spec['kind'] in ('trait','shadow') else 3
   if shift+width>32:word+=1;shift=0
   if word==61:word,shift=14,21 # physical bit437 starts in growth word14
   spec.update(ordinal=BASE-238+i,index=BASE+i,storage=dict(word=word,shift=shift,width=width))
   shift+=width
   assert 54<=word<=60 or 14<=word<=16
- assert len(rows)==123 and rows[-1]['storage']['word']<=16
+ assert len(rows)==124 and rows[-1]['storage']==dict(word=16,shift=28,width=2)
  return rows
 
 def decorate(catalog):
@@ -75,14 +79,17 @@ def decorate(catalog):
     item['bundle_family']={73:72,85:81}.get(min(units),min(units));item['effect']['qa_revision']=REVISION
  missions=load_missions()
  for s in specifications():
-  repeat=s['kind'] in ('health','attack');ordinal=s['ordinal'];effect=dict(type='rework_v5',ordinal=ordinal,qa_revision=REVISION,benefit_power_quarters=4,unit_growth=copy.deepcopy(s))
+  repeat=s['kind'] in ('health','attack','tower');ordinal=s['ordinal'];effect=dict(type='rework_v5',ordinal=ordinal,qa_revision=REVISION,benefit_power_quarters=4,unit_growth=copy.deepcopy(s))
   item=dict(id=identity(ordinal),name=s['name'],race=s['race'],rarity=s['rarity'],target=s['target'],target_units=s['units'],
    description=s['description'],source_description=s['description'],effect=effect,bit_index=s['index'],wire_storage=s['storage'],
    category='combat',kind='talent',implemented=True,native_status='implemented',rework_revision=5,effect_ordinal=ordinal,
-   repeatable=repeat,requirements={'production':False},missions=[x['mission_id'] for x in missions if x['race']==s['race']],
+   repeatable=repeat,requirements={'production':s['kind']=='tower'},missions=[x['mission_id'] for x in missions if s['race'] in ('shared',x['race'])],
    expansion_revision=REVISION,balance_revision=9,bundle_family={73:72,85:81}.get(min(s['units']),min(s['units'])))
   item.update(pre_balance_description=item['description'],pre_balance_effect=copy.deepcopy(effect))
-  if repeat:item['max_rank']=4
+  if repeat:item['max_rank']=s.get('max_rank',4)
+  if s['kind']=='tower':
+   item.pop('bundle_family',None);item['candidate_weight_percent']=150
+   item['effect'].update(qa_revision=2026102261,health_percent_per_rank=100,shield_percent_per_rank=100,air_damage_percent_per_rank=50,additional_air_targets_per_rank=1)
   if s['index']<len(catalog['talents']):
    assert catalog['talents'][s['index']]['id']==item['id']
    catalog['talents'][s['index']]=item
@@ -99,7 +106,7 @@ def generate_header(catalog,root):
  for s in rows:
   mask=[0]*8
   for unit in s['units']:mask[unit//32]|=1<<(unit%32)
-  fields=[s['ordinal'],{'health':0,'attack':1,'trait':2,'shadow':3}[s['kind']],s.get('parent',0),*[s.get(k,0) for k in ('armor','hp','damage','speed','energy')]]
+  fields=[s['ordinal'],{'health':0,'attack':1,'trait':2,'shadow':3,'tower':4}[s['kind']],s.get('parent',0),*[s.get(k,0) for k in ('armor','hp','damage','speed','energy')]]
   lines.append('{'+','.join(str(x)+'u' for x in fields)+',{'+','.join(str(x)+'u' for x in mask)+'}},')
  lines+=['};','}']
  target=root/'sc1/native_campaign/plugin/include/unit_growth.generated.h';target.write_text('\n'.join(lines)+'\n',encoding='utf8')

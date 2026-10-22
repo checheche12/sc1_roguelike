@@ -53,7 +53,7 @@ class ReworkGrowthTests(unittest.TestCase):
         from sc1.campaign.talent_balance import historical
         self.assertEqual([historical(x) for x in self.catalog['talents'][:238]],old['talents'])
         self.assertEqual(self.catalog['curses'][:15],old['curses'])
-        self.assertEqual([x['bit_index'] for x in self.catalog['talents'][238:]],list(range(238,400)))
+        self.assertEqual([x['bit_index'] for x in self.catalog['talents'][238:]],list(range(238,len(self.catalog['talents']))))
         self.assertEqual([x['byte_index'] for x in self.catalog['curses'][15:]],list(range(15,50)))
         self.assertNotIn('rework-rule-special-wave',{x['id'] for x in self.catalog['curses']})
 
@@ -82,6 +82,7 @@ class ReworkGrowthTests(unittest.TestCase):
     def test_four_opening_legends_are_available_before_ordinary_rolls(self):
         class LastRoll:
             def randrange(self,stop):return stop-1
+            def shuffle(self,items):pass
         for first in (101,201,301,401,501,601):
             owned=[];mission=first;found=False
             while not found:
@@ -99,8 +100,8 @@ class ReworkGrowthTests(unittest.TestCase):
         opening=self.finish();nonce=opening['nonce']
         with patch.object(policy,'rolled_rarity',return_value='common'):
             state=self.load(phase=2,nonce=nonce)
-        displayed={x['id'] for x in state['offer']['candidates']}
-        self.assertEqual(len(displayed),4)
+        self.assertEqual(len(state['offer']['candidates']),4)
+        displayed={identity for x in state['offer']['candidates'] if x.get('repeatable') for identity in x.get('bundled_talent_ids',[x['id']])}
         first_rows=self.query('SELECT offer_id,candidates_json FROM growth_offers WHERE candidates_json IS NOT NULL')
         self.store=CampaignStore(self.path,runtime_catalog_path=self.catalog_path)
         with patch.object(rework_growth,'recent_manuals',side_effect=AssertionError('Existing offer must not redraw')):
@@ -188,7 +189,7 @@ class ReworkGrowthTests(unittest.TestCase):
             self.assertEqual(len(talents),policy.logical_mission_count(first)*3-1)
             self.assertEqual(sum(x['candidates'][0]['category']=='economy' for x in talents),5)
             legends=[x for x in talents if len(x['candidates'])==4 and all(c['rarity']=='legendary' for c in x['candidates'])]
-            self.assertEqual(len(legends),1)
+            self.assertEqual(len(legends),2)
             for offer in awards:
                 candidates=offer['candidates']
                 self.assertEqual(len({x['id'] for x in candidates}),len(candidates))

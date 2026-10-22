@@ -118,9 +118,31 @@ inline bool air_control(const GrowthSnapshot& snapshot,U32 id) noexcept {
         (rank(snapshot,69)&&in(id,{44,56,62})) ||
         (rank(snapshot,110)&&in(id,{70,71,72,80,82,86,88}));
 }
+inline constexpr U32 tower_ordinal=322;
+inline bool tower_type(U32 id) noexcept {return in(id,{124,144,162});}
+inline U32 tower_rank(const GrowthSnapshot& snapshot,U32 id) noexcept {
+    return talent_power::enabled&&tower_type(id)?std::min(2u,rank(snapshot,tower_ordinal)):0;
+}
+inline U32 tower_air_bonus(const bw::Unit* unit,U32 w) noexcept {
+    return own(unit)&&ordinary_weapon(w)&&w==original_stat({0,19,unit->unit_id})?50u*tower_rank(g.growth,unit->unit_id):0;
+}
 inline bool plan_stats(const GrowthSnapshot& s,std::vector<Edit>& edits) {
     const auto edit=[&](Key k,U32 op,U32 n,U32 d=1u){return plan_edit(edits,k,op,n,d);};
     const auto plus=[&](Key k,U32 n){return !n || edit(k,1,n);};
+    // Tower upgrades are a baseline feature, independent of owning the card.
+    // Vehicle8 / Zerg missile11 / Protoss ground13; native damage and UI
+    // consume the same owner-scoped upgrade ID and +2 damage per level.
+    if(talent_power::enabled)for(U32 id:{124u,144u,162u}){
+        const U32 upgrade=id==124?8u:id==144?11u:13u;
+        for(U32 field:{17u,19u}){const U32 w=original_stat({0,field,id});if(w>=130)continue;
+            if(!edit({1,6,w},0,upgrade)||!edit({1,15,w},0,2u))return false;
+        }
+        const U32 stacks=tower_rank(s,id);
+        if(stacks&&(!edit({0,8,id},4,1u+stacks,1u)||(id==162&&!edit({0,7,id},4,1u+stacks,1u))))return false;
+    }
+    if(talent_power::enabled&&rank(s,54))for(U32 id:{2u,19u}){
+        const U32 w=original_stat({0,17,id});if(w<130&&!edit({1,7,w},0,3u))return false;
+    }
     if(talent_power::enabled && rank(s,64) && !edit({4,3,8},0,50))return false;
     // Carriers have no weapon DAT slot. Their native launch/engagement range
     // uses acquisition tiles, including the interceptor's parent leash query.
@@ -215,6 +237,7 @@ inline U32 infantry_ui_value(const bw::Unit* unit,U32 weapon,U32 value) noexcept
     const auto factor=std::uint64_t(stacks)*talent_power::quarters(267);
     if(factor>((0xffffffffull-value)*40)/value)return 0xffffffffu;
     value+=U32((std::uint64_t(value)*factor+20)/40);
+    value=U32(std::min<std::uint64_t>(0xffffffffu,(std::uint64_t(value)*(100ull+tower_air_bonus(unit,weapon))+50)/100));
     const auto bonus=mobility_damage_bonus(unit,weapon);
     value=U32(std::min<std::uint64_t>(0xffffffffu,(std::uint64_t(value)*(100ull+bonus)+50)/100));
     return U32(std::min<std::uint64_t>(0xffffffffu,(std::uint64_t(value)*(100ull+expansion_static_bonus(unit,weapon)+focus_base(unit))+50)/100));
@@ -691,6 +714,16 @@ inline void launched(U32 w,bw::Unit* source,bw::Bullet* b) {
             if(rank(53)&&in(source->unit_id,{0,20})&&ordinary_weapon(w)){p.percent=100;queue(source,target,w,35,2);queue(source,target,w,35,4);}
             if(!bc_battery_emission&&rank(65)&&in(source->unit_id,{12,27,28,29,102})&&ordinary_weapon(w)&&++s->bc_primary_attacks%4==0)queue(source,target,30,100,2);
             if(rank(105)&&in(source->unit_id,{43,55})&&ordinary_weapon(w)){p.percent=100;queue(source,target,w,p.percent);}
+            // Tower fan-out is scheduled once per native attack. Secondary
+            // native projectiles cannot generate more shots or hit the ground.
+            const U32 tower_stacks=tower_rank(g.growth,effect_body(source)->unit_id);
+            if(tower_stacks&&eligible(target)&&air(target)&&w==weapon(source,true)){
+                U32 made=0;for(auto other:around(source->flingy.position.x,source->flingy.position.y,1024,target,65536,true,1)){
+                    if(!target_ok(source,other,w))continue;
+                    for(U32 hit=0;hit<multi_target::factor(w);++hit)queue(source,other,w,100);
+                    if(++made==tower_stacks)break;
+                }
+            }
             // One fan-out per native attack; air attacks retain both missiles.
             // Secondary projectiles cannot re-enter this primary-only branch.
             if(talent_power::enabled&&raw_rank(56)&&in(effect_body(source)->unit_id,{3,17})&&ordinary_weapon(w)&&eligible(target)){
@@ -932,6 +965,7 @@ struct DamageScope {
             damage=focus_damage(source,target,w,damage,!current_primary||current_primary==target);
             damage=infantry_damage(damage,current_projectile?current_infantry_rank:infantry_damage_rank(source,w));
             damage=mobility_damage(damage,current_projectile?current_mobility_bonus:mobility_damage_bonus(source,w));
+            if(air(target))damage=mobility_damage(damage,tower_air_bonus(source,w));
             auto expansion_bonus=expansion_outgoing_bonus(source,w);if(secondary&&talent_power::enabled&&raw_rank(185)&&valid_unit(source)&&in(source->unit_id,{10,32}))expansion_bonus-=std::min(expansion_bonus,100u);
             damage=mobility_damage(damage,expansion_bonus);
             if(own(target))damage=std::int32_t(std::int64_t(damage)*(100-10*frontline_rank(target))/100);

@@ -5382,7 +5382,7 @@
       "id": "3e935eb6-53f2-5bf6-8c13-f3f0ea60c7fc",
       "name": "사냥꾼 주행 사격",
       "target": "벌처",
-      "description": "벌처의 일반 공격 피해 +100%. 이동 중에도 사격합니다. 이동 중 피해 +100% 추가(총300%). 정지 시 총200%.",
+      "description": "벌처의 공격 유형이 일반형으로 바뀝니다. 이동 중에도 사격하며, 공격 피해는 정지 시 2배·이동 중 3배입니다.",
       "trigger": "",
       "numbers": "",
       "notes": "개편 효과 제안: 이동 명령을 유지하며 원래 사거리 내 지상 적에게 사격. 이동 중 피해 70%, 정지 시 100%, 기본 공격 주기 유지.",
@@ -5405,7 +5405,7 @@
         "type": "rework_v5",
         "ordinal": 54,
         "source_id": "3e935eb6-53f2-5bf6-8c13-f3f0ea60c7fc",
-        "qa_revision": 2026102046,
+        "qa_revision": 2026102261,
         "benefit_power_quarters": 10,
         "rarity_promoted": true,
         "focus_legend": true,
@@ -5418,7 +5418,8 @@
         "legacy_area_effect_disabled": true,
         "design_role": "single_target",
         "reflection_requires_attacking": false,
-        "reflection_only_releases_on_attack": false
+        "reflection_only_releases_on_attack": false,
+        "weapon_damage_type": 3
       },
       "target_units": [
         2,
@@ -5458,7 +5459,7 @@
       "previous_rarity": "epic",
       "bundle_family": 2,
       "effect_subject": "벌처",
-      "description_revision": 2026102042
+      "description_revision": 2026102262
     },
     {
       "id": "eb354299-5c88-5171-bb4a-cfc53a9fae8e",
@@ -12050,7 +12051,7 @@
       "id": "80b2b8c1-e93a-5a4e-b5b9-272c031fc75e",
       "name": "결전 갑충탄",
       "target": "리버 스캐럽",
-      "description": "리버의 스캐럽의 일반 공격 피해 +150%.",
+      "description": "리버의 스캐럽은 공격 피해가 150% 증가하며(원래의 2.5배), 생산 미네랄 비용이 0이 됩니다.",
       "trigger": "",
       "numbers": "",
       "notes": "재탐색 능력은 부여하지 않음.",
@@ -12073,7 +12074,7 @@
         "type": "rework_v5",
         "ordinal": 141,
         "source_id": "80b2b8c1-e93a-5a4e-b5b9-272c031fc75e",
-        "qa_revision": 2026102046,
+        "qa_revision": 2026102261,
         "benefit_power_quarters": 10,
         "rarity_promoted": true,
         "focus_legend": true,
@@ -12086,7 +12087,8 @@
         "legacy_area_effect_disabled": true,
         "design_role": "single_target",
         "reflection_requires_attacking": false,
-        "reflection_only_releases_on_attack": false
+        "reflection_only_releases_on_attack": false,
+        "scarab_mineral_cost": 0
       },
       "target_units": [
         81,
@@ -12126,7 +12128,7 @@
       },
       "previous_rarity": "epic",
       "effect_subject": "리버의 스캐럽",
-      "description_revision": 2026102042
+      "description_revision": 2026102262
     },
     {
       "id": "a16010ef-35d5-5f94-a64f-319e00102b66",
@@ -30615,6 +30617,169 @@
       },
       "effect_subject": "다크 템플러",
       "description_revision": 2026102042
+    },
+    {
+      "id": "0b5cd924-4677-57ab-941f-ff8911f2b4cf",
+      "name": "대공 방어 교범",
+      "race": "shared",
+      "rarity": "common",
+      "target": "미사일 터렛·스포어 콜로니·포톤 캐논",
+      "target_units": [
+        124,
+        144,
+        162
+      ],
+      "description": "미사일 터렛·스포어 콜로니·포톤 캐논: 획득마다 최대 체력 +100%, 대공 피해 +50%, 대공 표적 +1기. 포톤 캐논 보호막도 +100%. 최대 2회.",
+      "source_description": "미사일 터렛·스포어 콜로니·포톤 캐논: 획득마다 최대체력+100%, 대공피해+50%, 대공표적+1기. 포톤 캐논 보호막도+100%. 최대2회.",
+      "effect": {
+        "type": "rework_v5",
+        "ordinal": 322,
+        "qa_revision": 2026102261,
+        "benefit_power_quarters": 4,
+        "unit_growth": {
+          "race": "shared",
+          "target": "미사일 터렛·스포어 콜로니·포톤 캐논",
+          "units": [
+            124,
+            144,
+            162
+          ],
+          "kind": "tower",
+          "rarity": "common",
+          "name": "대공 방어 교범",
+          "hp": 100,
+          "damage": 50,
+          "max_rank": 2,
+          "description": "미사일 터렛·스포어 콜로니·포톤 캐논: 획득마다 최대체력+100%, 대공피해+50%, 대공표적+1기. 포톤 캐논 보호막도+100%. 최대2회.",
+          "ordinal": 322,
+          "index": 560,
+          "storage": {
+            "word": 16,
+            "shift": 28,
+            "width": 2
+          }
+        },
+        "health_percent_per_rank": 100,
+        "shield_percent_per_rank": 100,
+        "air_damage_percent_per_rank": 50,
+        "additional_air_targets_per_rank": 1
+      },
+      "bit_index": 560,
+      "wire_storage": {
+        "word": 16,
+        "shift": 28,
+        "width": 2
+      },
+      "category": "combat",
+      "kind": "talent",
+      "implemented": true,
+      "native_status": "implemented",
+      "rework_revision": 5,
+      "effect_ordinal": 322,
+      "repeatable": true,
+      "requirements": {
+        "production": true
+      },
+      "missions": [
+        101,
+        102,
+        103,
+        104,
+        105,
+        106,
+        107,
+        108,
+        109,
+        110,
+        201,
+        202,
+        203,
+        204,
+        205,
+        206,
+        207,
+        208,
+        209,
+        210,
+        301,
+        302,
+        303,
+        304,
+        305,
+        306,
+        307,
+        308,
+        309,
+        310,
+        401,
+        402,
+        403,
+        404,
+        405,
+        406,
+        407,
+        408,
+        501,
+        502,
+        503,
+        504,
+        505,
+        515,
+        506,
+        507,
+        508,
+        601,
+        602,
+        603,
+        604,
+        614,
+        615,
+        616,
+        617,
+        618,
+        605,
+        606,
+        607,
+        608,
+        609,
+        610,
+        611
+      ],
+      "expansion_revision": 2026102038,
+      "balance_revision": 9,
+      "pre_balance_description": "미사일 터렛·스포어 콜로니·포톤 캐논: 획득마다 최대체력+100%, 대공피해+50%, 대공표적+1기. 포톤 캐논 보호막도+100%. 최대2회.",
+      "pre_balance_effect": {
+        "type": "rework_v5",
+        "ordinal": 322,
+        "qa_revision": 2026102038,
+        "benefit_power_quarters": 4,
+        "unit_growth": {
+          "race": "shared",
+          "target": "미사일 터렛·스포어 콜로니·포톤 캐논",
+          "units": [
+            124,
+            144,
+            162
+          ],
+          "kind": "tower",
+          "rarity": "common",
+          "name": "대공 방어 교범",
+          "hp": 100,
+          "damage": 50,
+          "max_rank": 2,
+          "description": "미사일 터렛·스포어 콜로니·포톤 캐논: 획득마다 최대체력+100%, 대공피해+50%, 대공표적+1기. 포톤 캐논 보호막도+100%. 최대2회.",
+          "ordinal": 322,
+          "index": 560,
+          "storage": {
+            "word": 16,
+            "shift": 28,
+            "width": 2
+          }
+        }
+      },
+      "max_rank": 2,
+      "candidate_weight_percent": 150,
+      "description_revision": 2026102262
     }
   ],
   "new_curses": [

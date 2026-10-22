@@ -9,7 +9,7 @@ class UnitGrowth(unittest.TestCase):
  def setUpClass(cls):cls.catalog=load_catalog(expected_version=2)
 
  def test_all_fields_roundtrip_without_changing_historical_words(self):
-  c=self.catalog;new=c['talents'][437:]
+  c=self.catalog;new=c['talents'][437:560]
   self.assertEqual(len(new),123)
   self.assertEqual(sum(x.get('repeatable',False) for x in new),78)
   ranks={x['id']:4 for x in new if x['repeatable']}

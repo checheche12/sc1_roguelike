@@ -1,5 +1,11 @@
 """Current effect copy, independent of mechanics and frozen source records."""
 REVISION=2026102042
+QA61_DESCRIPTION_REVISION=2026102262
+QA61_DESCRIPTIONS={
+ 54:'벌처의 공격 유형이 일반형으로 바뀝니다. 이동 중에도 사격하며, 공격 피해는 정지 시 2배·이동 중 3배입니다.',
+ 141:'리버의 스캐럽은 공격 피해가 150% 증가하며(원래의 2.5배), 생산 미네랄 비용이 0이 됩니다.',
+ 322:'미사일 터렛·스포어 콜로니·포톤 캐논: 획득마다 최대 체력 +100%, 대공 피해 +50%, 대공 표적 +1기. 포톤 캐논 보호막도 +100%. 최대 2회.',
+}
 
 # Remove only reviewed editorial clauses; actual triggers and limits remain.
 OMIT=(
@@ -131,5 +137,9 @@ def decorate(catalog):
     item['description_revision']=REVISION
    if after!=before:
     item['description']=after;item['description_revision']=REVISION
- catalog['effect_description_revision']=REVISION
+ for item in catalog['talents']:
+  if item.get('rework_revision')==5 and item.get('effect_ordinal') in QA61_DESCRIPTIONS:
+   item['description']=QA61_DESCRIPTIONS[item['effect_ordinal']]
+   item['description_revision']=QA61_DESCRIPTION_REVISION
+ catalog['effect_description_revision']=QA61_DESCRIPTION_REVISION
  return catalog
