@@ -96,6 +96,24 @@ class ReworkGrowthTests(unittest.TestCase):
                         if identity not in owned:owned.append(identity)
                 if not found:mission=progression.next_missions(mission)[0]
 
+    def test_ammunition_bundle_update_keeps_issued_single_offer_exact(self):
+        prior=copy.deepcopy(self.catalog);card=prior['talents'][355]
+        for field in ('bundle_family','bundle_families'):card.pop(field,None)
+        card['effect']['qa_revision']=2026101610
+        self.catalog_path.write_text(json.dumps(prior,ensure_ascii=False),encoding='utf8')
+        with patch.object(rework_growth,'candidates',return_value=[card]):state=self.load(mission=301)
+        issued=copy.deepcopy(state['offer'])
+        serialized=self.query('SELECT candidates_json FROM growth_offers WHERE offer_id=?',(issued['offer_id'],))[0][0]
+        self.catalog_path.write_text(json.dumps(self.catalog,ensure_ascii=False),encoding='utf8')
+        resumed=self.load(mission=301)
+        self.assertEqual(resumed['offer'],issued)
+        self.assertEqual(self.query('SELECT candidates_json FROM growth_offers WHERE offer_id=?',(issued['offer_id'],)),[(serialized,)])
+        pinned=json.loads(self.query('SELECT catalog_json FROM growth_rework_catalog')[0][0])
+        self.assertEqual(pinned['talents'][355]['bundle_families'],[72,81])
+        picked=self.pick(resumed)
+        while picked.get('offer'):picked=self.pick(picked)
+        self.assertTrue(picked['growth_words'][1+355//32]&(1<<(355%32)))
+
     def test_displayed_unchosen_manuals_reach_next_offer_and_reconnect_is_immutable(self):
         opening=self.finish();nonce=opening['nonce']
         with patch.object(policy,'rolled_rarity',return_value='common'):

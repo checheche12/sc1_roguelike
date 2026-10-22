@@ -1,8 +1,9 @@
-import copy,random,sqlite3,unittest
+import copy,json,random,sqlite3,unittest
+from unittest.mock import patch
 from sc1.campaign.runtime_catalog import load_catalog,encode_growth,validate_catalog,GrowthError
 from sc1.campaign.unit_growth import specifications,identity,OLD_MANUALS
 from sc1.campaign import rework_growth
-from sc1.campaign.legendary_bundles import member_ids,compatible
+from sc1.campaign.legendary_bundles import member_ids,compatible,pair_options,paired_unit
 
 class UnitGrowth(unittest.TestCase):
  @classmethod
@@ -75,6 +76,56 @@ class UnitGrowth(unittest.TestCase):
        self.assertEqual(a['rarity'],b['rarity']);self.assertTrue(compatible(a,b))
      seen.add(item['rarity'])
   self.assertTrue(seen&{'uncommon','rare','epic'})
+
+ def test_ammunition_production_pairs_and_awards_both_without_parent_overlap(self):
+  c=self.catalog;ammo=c['talents'][355]
+  pool=[x for x in c['talents'] if x.get('rework_revision')==5 and x['race']=='protoss' and x['rarity']=='rare'
+        and not x['effect'].get('offer_retired') and paired_unit(x)]
+  self.assertTrue(paired_unit(ammo));seen=set()
+  for other in pool:
+   if set(other['target_units'])&{72,73,81,82,83,85}:
+    self.assertFalse(compatible(ammo,other),other['name'])
+    self.assertFalse(compatible(other,ammo),other['name'])
+  for seed in range(20):
+   option=pair_options([ammo],pool,random.Random(seed))[0]
+   ids=member_ids(option,c);self.assertEqual(len(ids),2);seen.add(ids[1])
+   self.assertIn(ammo['id'],ids);self.assertEqual(option['description'].count('\n'),1)
+   with sqlite3.connect(':memory:') as conn:
+    owned=[];rework_growth.acquire_option(conn,301,c,owned,option)
+    self.assertEqual(owned,list(ids))
+    words=encode_growth(c,owned,{})
+    self.assertTrue(words[1+355//32]&(1<<(355%32)))
+    with self.assertRaises(GrowthError):rework_growth.acquire_option(conn,301,c,owned,option)
+    self.assertEqual(owned,list(ids))
+  self.assertGreater(len(seen),1)
+
+ def test_ammunition_production_actual_offer_sampler_uses_two_members(self):
+  c=self.catalog;ammo=c['talents'][355];found=0
+  from sc1.campaign import talent_campaign_policy as policy
+  with patch.object(policy,'rolled_rarity',return_value='rare'):
+   for seed in range(80):
+    for option in rework_growth.candidates(c,303,2,[],random.Random(seed)):
+     ids=member_ids(option,c)
+     if ammo['id'] in ids:
+      found+=1;self.assertEqual(len(ids),2)
+  self.assertGreater(found,0)
+
+ def test_ammunition_pin_upgrade_preserves_previously_issued_single(self):
+  c=self.catalog;old=copy.deepcopy(c);ammo=old['talents'][355]
+  for field in ('bundle_family','bundle_families'):ammo.pop(field,None)
+  ammo['effect']['qa_revision']=2026101610
+  issued=copy.deepcopy(ammo)
+  with sqlite3.connect(':memory:') as conn:
+   conn.execute('CREATE TABLE growth_rework_catalog (id INTEGER PRIMARY KEY,catalog_json TEXT NOT NULL)')
+   conn.execute('INSERT INTO growth_rework_catalog VALUES (1,?)',(json.dumps(old,ensure_ascii=False),))
+   rework_growth.enable(conn)
+   refreshed=rework_growth.overlay(conn,old)
+   future=refreshed['talents'][355]
+   self.assertTrue(paired_unit(future));self.assertEqual(set(future['bundle_families']),{72,81})
+   self.assertEqual(future['source_description'],issued['source_description'])
+   self.assertEqual(member_ids(issued,refreshed),(issued['id'],))
+   owned=[];rework_growth.acquire_option(conn,301,refreshed,owned,issued)
+   self.assertEqual(owned,[issued['id']])
 
  def test_curse_start_and_sequences_match_requested_values(self):
   rows=self.catalog['curses']

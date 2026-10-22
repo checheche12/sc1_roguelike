@@ -10399,7 +10399,7 @@
         "type": "rework_v5",
         "ordinal": 117,
         "source_id": "445755c6-36b9-570b-969a-6c6d45ab560f",
-        "qa_revision": 2026101610,
+        "qa_revision": 2026102372,
         "benefit_power_quarters": 4
       },
       "target_units": [
@@ -10434,7 +10434,12 @@
         "source_id": "445755c6-36b9-570b-969a-6c6d45ab560f"
       },
       "effect_subject": "리버 스캐럽·캐리어 인터셉터",
-      "description_revision": 2026102042
+      "description_revision": 2026102042,
+      "bundle_family": 72,
+      "bundle_families": [
+        72,
+        81
+      ]
     },
     {
       "id": "10be23c9-95d7-5410-ac9f-bb7212ed43fc",

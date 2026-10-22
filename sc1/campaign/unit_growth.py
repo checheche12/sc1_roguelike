@@ -77,6 +77,11 @@ def decorate(catalog):
   for item in catalog['talents']:
    if item.get('rework_revision')==5 and item.get('race')==race and set(item.get('target_units',()))<=set(units) and item.get('target_units') and not item['effect'].get('retired'):
     item['bundle_family']={73:72,85:81}.get(min(units),min(units));item['effect']['qa_revision']=REVISION
+ # Ammunition production strengthens both parent units. Keep its existing
+ # effect and identity, and exclude both families when choosing a partner.
+ ammo=by_ord[117]
+ ammo.update(bundle_family=72,bundle_families=[72,81])
+ ammo['effect']['qa_revision']=2026102372
  missions=load_missions()
  for s in specifications():
   repeat=s['kind'] in ('health','attack','tower');ordinal=s['ordinal'];effect=dict(type='rework_v5',ordinal=ordinal,qa_revision=REVISION,benefit_power_quarters=4,unit_growth=copy.deepcopy(s))

@@ -18,6 +18,11 @@ def paired_unit(item):
             and not item.get('effect',{}).get('retired'))
 
 
+def families(item):
+    return frozenset(item.get('bundle_families') or
+                     (item.get('bundle_family',min(item['target_units'])),))
+
+
 def compatible(left, right, *, historical=False):
     # Hero variants and carried ammunition use their caster/parent's coverage.
     legacy=lambda item:item.get('rework_revision')==5 and item.get('effect_ordinal') in HISTORICAL_UNIT_LEGENDARIES
@@ -25,7 +30,7 @@ def compatible(left, right, *, historical=False):
     return (eligible(left) and eligible(right)
             and left['race'] == right['race']
             and (left['rarity']==right['rarity'] or historical and legacy(left) and legacy(right))
-            and left.get('bundle_family',min(left['target_units']))!=right.get('bundle_family',min(right['target_units']))
+            and families(left).isdisjoint(families(right))
             and not set(left['target_units']) & set(right['target_units']))
 
 
@@ -91,15 +96,18 @@ def generate_header(catalog, root):
     rows=[]
     for item in catalog['talents']:
         if paired_unit(item) or (item.get('rework_revision')==5 and item.get('effect_ordinal') in HISTORICAL_UNIT_LEGENDARIES):
-            rows.append('{%d,%d,%d,%d,%d,%d}' % (item['bit_index']+1,item.get('bundle_family',min(item['target_units'])),
-                {'terran':1,'zerg':2,'protoss':3}[item['race']],('common','uncommon','rare','epic','legendary').index(item['rarity']),int(item.get('effect_ordinal') in HISTORICAL_UNIT_LEGENDARIES),int(bundle_size(item)==3)))
+            covered=sorted(families(item))
+            if len(covered)>2:raise ValueError('A bundle member covers more than two unit families')
+            rows.append('{%d,%d,%d,%d,%d,%d,{%d,%d}}' % (item['bit_index']+1,item.get('bundle_family',min(item['target_units'])),
+                {'terran':1,'zerg':2,'protoss':3}[item['race']],('common','uncommon','rare','epic','legendary').index(item['rarity']),int(item.get('effect_ordinal') in HISTORICAL_UNIT_LEGENDARIES),int(bundle_size(item)==3),covered[0],covered[-1]))
     target=Path(root)/'sc1/native_campaign/plugin/include/legendary_bundles.generated.h'
     target.write_text('#pragma once\nnamespace legendary_bundles {\n'
-        'struct Entry {unsigned index,family,race,rarity,legacy,manual;};\ninline constexpr Entry entries[]={'+','.join(rows)+'};\n'
+        'struct Entry {unsigned index,family,race,rarity,legacy,manual;unsigned families[2];};\ninline constexpr Entry entries[]={'+','.join(rows)+'};\n'
         'inline constexpr bool manual(unsigned a) noexcept {for(auto x:entries)if(x.index==a)return x.manual;return false;}\n'
+        'inline constexpr bool overlap(Entry a,Entry b) noexcept {for(auto x:a.families)for(auto y:b.families)if(x==y)return true;return false;}\n'
         'inline constexpr bool compatible(unsigned a,unsigned b) noexcept {\n'
         ' for(auto left:entries)if(left.index==a)for(auto right:entries)if(right.index==b)\n'
-        '  return left.race==right.race && left.family!=right.family && (left.rarity==right.rarity || (left.legacy&&right.legacy));return false; }\n}\n',encoding='utf8')
+        '  return left.race==right.race && !overlap(left,right) && (left.rarity==right.rarity || (left.legacy&&right.legacy));return false; }\n}\n',encoding='utf8')
     return target
 
 

@@ -527,11 +527,13 @@ void cargo_page_button_test(){
 }
 void bundled_legendary_pages_test() {
     ++groups;
+    check(legendary_bundles::compatible(356,370) && legendary_bundles::compatible(370,356),"ammunition production pairs with a different rare unit family");
+    for(auto same_family:{369u,553u,556u})check(!legendary_bundles::compatible(356,same_family) && !legendary_bundles::compatible(same_family,356),"ammunition production excludes both Carrier/Interceptor and Reaver/Scarab families");
     const unsigned ids[]={300,301,302,303,304,305,341,342,343,344,345,346,383,384,385,386,387,388};
     std::vector<std::pair<unsigned,unsigned>> pairs;
     for(auto left:ids)for(auto right:ids)if(legendary_bundles::compatible(left,right))pairs.emplace_back(left,right);
     for(auto left:legendary_bundles::entries)if(std::find(std::begin(ids),std::end(ids),left.index)==std::end(ids))
-        for(auto right:legendary_bundles::entries)if(left.race==right.race&&left.rarity==right.rarity&&left.family!=right.family){pairs.emplace_back(left.index,right.index);break;}
+        for(auto right:legendary_bundles::entries)if(left.rarity==right.rarity&&legendary_bundles::compatible(left.index,right.index)){pairs.emplace_back(left.index,right.index);break;}
     for(auto pair:pairs){const auto left=pair.first,right=pair.second;
         Host h;bind_api(h);check(h.ui.initialize(&h.api,h.callbacks()),"bundle UI initialized");
         h.show();h.offer.wire_version=2;h.offer.count=2;h.offer.candidates[0]=left;h.offer.partners[0]=right;h.offer.candidates[1]=257;
