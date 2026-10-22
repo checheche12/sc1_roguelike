@@ -4808,7 +4808,7 @@
         "ordinal": 46,
         "source_id": "93f1cae8-5d40-5c23-b27f-4c5939d77a5a",
         "nuclear_warning_frames": 36,
-        "qa_revision": 2026102268,
+        "qa_revision": 2026102373,
         "benefit_power_quarters": 8,
         "nuclear_build_time_frames": 720,
         "nuclear_supply_required": 2
@@ -4855,7 +4855,8 @@
         "qa_revision": 20261016
       },
       "effect_subject": "고스트 핵 공격",
-      "description_revision": 2026102042
+      "description_revision": 2026102042,
+      "bundle_family": 1
     },
     {
       "id": "93d7201b-f0e9-5e54-87d5-28ffa9da3519",
@@ -11734,7 +11735,7 @@
         "type": "rework_v5",
         "ordinal": 136,
         "source_id": "afec03a0-460d-503a-872f-dd2f7a7afb79",
-        "qa_revision": 2026102039,
+        "qa_revision": 2026102373,
         "benefit_power_quarters": 10,
         "ignore_health_armor": false,
         "health_bonus_percent": 0
@@ -11777,7 +11778,8 @@
       },
       "previous_rarity": "legendary",
       "effect_subject": "캐리어·인터셉터",
-      "description_revision": 2026102042
+      "description_revision": 2026102042,
+      "bundle_family": 72
     },
     {
       "id": "b481fcc3-cc2a-5319-adf8-bef0e10b6abd",
@@ -14947,7 +14949,7 @@
         "type": "rework_v5",
         "ordinal": 176,
         "source_id": "15b7c118-5641-5714-bb3b-dee3d4a38556",
-        "qa_revision": 2026102038,
+        "qa_revision": 2026102373,
         "benefit_power_quarters": 4,
         "replaces_epic_id": "afec03a0-460d-503a-872f-dd2f7a7afb79"
       },
@@ -14998,7 +15000,8 @@
         "replaces_epic_id": "afec03a0-460d-503a-872f-dd2f7a7afb79"
       },
       "effect_subject": "캐리어·인터셉터",
-      "description_revision": 2026102042
+      "description_revision": 2026102042,
+      "bundle_family": 72
     },
     {
       "id": "d57a5db0-6f14-5d15-97fd-05be1108be14",
@@ -15343,7 +15346,7 @@
         "type": "rework_v5",
         "ordinal": 181,
         "source_id": "8ea09091-9163-57c5-8293-a81995bcaa3b",
-        "qa_revision": 2026102038,
+        "qa_revision": 2026102373,
         "benefit_power_quarters": 4,
         "replaces_epic_id": "80b2b8c1-e93a-5a4e-b5b9-272c031fc75e"
       },
@@ -15394,7 +15397,8 @@
         "replaces_epic_id": "80b2b8c1-e93a-5a4e-b5b9-272c031fc75e"
       },
       "effect_subject": "리버 스캐럽",
-      "description_revision": 2026102042
+      "description_revision": 2026102042,
+      "bundle_family": 81
     },
     {
       "id": "e8840a19-7a54-56ed-a944-6c76f3da960a",

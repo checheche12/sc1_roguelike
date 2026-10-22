@@ -13,6 +13,7 @@ BASE=437
 NO_ATTACK={34,11,9,42,46,45,67,63,69,84}
 CASTERS={1,34,9,46,45,67,63,60,71}
 OLD_MANUALS=(8,9,26,27,28,29,30,31,67,68,69,70,71,72,108,109,110,111,112)
+COMBAT_BUNDLE_FAMILIES={46:1,136:72,176:72,181:81}
 
 @lru_cache(maxsize=None)
 def identity(ordinal):
@@ -77,11 +78,16 @@ def decorate(catalog):
   for item in catalog['talents']:
    if item.get('rework_revision')==5 and item.get('race')==race and set(item.get('target_units',()))<=set(units) and item.get('target_units') and not item['effect'].get('retired'):
     item['bundle_family']={73:72,85:81}.get(min(units),min(units));item['effect']['qa_revision']=REVISION
- # Ammunition production strengthens both parent units. Keep its existing
- # effect and identity, and exclude both families when choosing a partner.
+ # Retain family coverage for previously issued ammunition-production pairs.
+ # New economic rewards are always single cards (see paired_unit).
  ammo=by_ord[117]
  ammo.update(bundle_family=72,bundle_families=[72,81])
  ammo['effect']['qa_revision']=2026102372
+ # The Ghost's missile and Carrier/Reaver ammunition belong to their parent
+ # combat family, even when target coverage lists both native unit types.
+ for ordinal,family in COMBAT_BUNDLE_FAMILIES.items():
+  by_ord[ordinal]['bundle_family']=family
+  by_ord[ordinal]['effect']['qa_revision']=2026102373
  missions=load_missions()
  for s in specifications():
   repeat=s['kind'] in ('health','attack','tower');ordinal=s['ordinal'];effect=dict(type='rework_v5',ordinal=ordinal,qa_revision=REVISION,benefit_power_quarters=4,unit_growth=copy.deepcopy(s))

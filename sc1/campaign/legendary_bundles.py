@@ -12,10 +12,22 @@ def unit_legendary(item):
             and item.get('race') in ('terran','zerg','protoss')
             and not item.get('effect',{}).get('retired'))
 
-def paired_unit(item):
-    return unit_legendary(item) or (item.get('bundle_family') is not None
+def unit_family(item):
+    return (item.get('bundle_family') is not None
             and item.get('rarity') in ('common','uncommon','rare','epic')
             and not item.get('effect',{}).get('retired'))
+
+
+def paired_unit(item):
+    # Economic rewards have their own scheduled payout and always grant one
+    # talent, even when their target is a particular unit or its ammunition.
+    return item.get('category')!='economy' and (unit_legendary(item) or unit_family(item))
+
+
+def historical_member(item):
+    # Keep already-issued economic pairs readable without creating new ones.
+    return unit_legendary(item) or unit_family(item) or (item.get('rework_revision')==5
+            and item.get('effect_ordinal') in HISTORICAL_UNIT_LEGENDARIES)
 
 
 def families(item):
@@ -26,7 +38,7 @@ def families(item):
 def compatible(left, right, *, historical=False):
     # Hero variants and carried ammunition use their caster/parent's coverage.
     legacy=lambda item:item.get('rework_revision')==5 and item.get('effect_ordinal') in HISTORICAL_UNIT_LEGENDARIES
-    eligible=lambda item:paired_unit(item) or (historical and legacy(item))
+    eligible=lambda item:paired_unit(item) or (historical and historical_member(item))
     return (eligible(left) and eligible(right)
             and left['race'] == right['race']
             and (left['rarity']==right['rarity'] or historical and legacy(left) and legacy(right))
@@ -95,7 +107,7 @@ def generate_header(catalog, root):
     from pathlib import Path
     rows=[]
     for item in catalog['talents']:
-        if paired_unit(item) or (item.get('rework_revision')==5 and item.get('effect_ordinal') in HISTORICAL_UNIT_LEGENDARIES):
+        if historical_member(item):
             covered=sorted(families(item))
             if len(covered)>2:raise ValueError('A bundle member covers more than two unit families')
             rows.append('{%d,%d,%d,%d,%d,%d,{%d,%d}}' % (item['bit_index']+1,item.get('bundle_family',min(item['target_units'])),

@@ -66,9 +66,10 @@ class UnitGrowth(unittest.TestCase):
  def test_future_unit_rewards_pair_same_rarity_and_omit_broad_manuals(self):
   seen=set();c=self.catalog
   for seed in range(100):
-   for item in rework_growth.candidates(c,109,2,[],random.Random(seed)):
+   for item in rework_growth.candidates(c,109,3,[],random.Random(seed)):
+    self.assertNotEqual(item['category'],'economy')
     self.assertNotIn(item.get('effect_ordinal'),OLD_MANUALS)
-    if item.get('bundle_family') is not None:
+    if paired_unit(item):
      members=member_ids(item,c);self.assertEqual(len(members),3 if item['rarity']=='common' else 2)
      rows=[next(x for x in c['talents'] if x['id']==m) for m in members]
      for i,a in enumerate(rows):
@@ -77,38 +78,68 @@ class UnitGrowth(unittest.TestCase):
      seen.add(item['rarity'])
   self.assertTrue(seen&{'uncommon','rare','epic'})
 
- def test_ammunition_production_pairs_and_awards_both_without_parent_overlap(self):
-  c=self.catalog;ammo=c['talents'][355]
-  pool=[x for x in c['talents'] if x.get('rework_revision')==5 and x['race']=='protoss' and x['rarity']=='rare'
-        and not x['effect'].get('offer_retired') and paired_unit(x)]
-  self.assertTrue(paired_unit(ammo));seen=set()
-  for other in pool:
-   if set(other['target_units'])&{72,73,81,82,83,85}:
-    self.assertFalse(compatible(ammo,other),other['name'])
-    self.assertFalse(compatible(other,ammo),other['name'])
-  for seed in range(20):
-   option=pair_options([ammo],pool,random.Random(seed))[0]
-   ids=member_ids(option,c);self.assertEqual(len(ids),2);seen.add(ids[1])
-   self.assertIn(ammo['id'],ids);self.assertEqual(option['description'].count('\n'),1)
-   with sqlite3.connect(':memory:') as conn:
-    owned=[];rework_growth.acquire_option(conn,301,c,owned,option)
-    self.assertEqual(owned,list(ids))
-    words=encode_growth(c,owned,{})
-    self.assertTrue(words[1+355//32]&(1<<(355%32)))
-    with self.assertRaises(GrowthError):rework_growth.acquire_option(conn,301,c,owned,option)
-    self.assertEqual(owned,list(ids))
-  self.assertGreater(len(seen),1)
+ def test_every_economic_reward_is_single_and_never_a_new_combat_partner(self):
+  from sc1.campaign.rework_growth import retired,unit_offer_removed
+  c=self.catalog
+  pool=[x for x in c['talents'] if x.get('rework_revision')==5 and not retired(x)
+        and not unit_offer_removed(x) and not x['effect'].get('offer_retired')]
+  economic=[x for x in pool if x['category']=='economy']
+  self.assertEqual(len(economic),25)
+  for item in economic:
+   self.assertFalse(paired_unit(item),item['name'])
+   option=pair_options([item],pool,random.Random(73))[0]
+   self.assertEqual(member_ids(option,c),(item['id'],))
+   self.assertNotIn('bundled_talent_ids',option)
+   for other in pool:
+    self.assertFalse(compatible(item,other),(item['name'],other['name']))
+    self.assertFalse(compatible(other,item),(other['name'],item['name']))
 
- def test_ammunition_production_actual_offer_sampler_uses_two_members(self):
-  c=self.catalog;ammo=c['talents'][355];found=0
-  from sc1.campaign import talent_campaign_policy as policy
+ def test_all_campaign_economic_payouts_and_combat_rewards_keep_their_category(self):
+  from sc1.campaign import progression,talent_campaign_policy as policy
+  c=self.catalog;by={x['id']:x for x in c['talents']};seen=set()
   with patch.object(policy,'rolled_rarity',return_value='rare'):
-   for seed in range(80):
-    for option in rework_growth.candidates(c,303,2,[],random.Random(seed)):
-     ids=member_ids(option,c)
-     if ammo['id'] in ids:
-      found+=1;self.assertEqual(len(ids),2)
-  self.assertGreater(found,0)
+   for first in (101,201,301,401,501,601):
+    for mission in progression.campaign_missions(first):
+     economic=policy.reward_policy(mission,2).category=='economy'
+     for seed in range(3):
+      for option in rework_growth.candidates(c,mission,2,[],random.Random(seed)):
+       ids=member_ids(option,c)
+       self.assertTrue(all((by[x]['category']=='economy')==economic for x in ids))
+       if economic:
+        self.assertEqual(len(ids),1);self.assertNotIn('bundled_talent_ids',option)
+        seen.add(progression.metadata(mission)['campaign_id'])
+  self.assertEqual(seen,{1,2,3,4,5,6})
+
+ def test_previously_issued_economic_pairs_remain_readable_but_cannot_be_redrawn(self):
+  c=self.catalog
+  for index in (258,260,355):
+   item=c['talents'][index]
+   other=next(x for x in c['talents'] if x['rarity']==item['rarity'] and compatible(item,x,historical=True))
+   saved=dict(item,bundled_talent_ids=[item['id'],other['id']])
+   self.assertEqual(member_ids(saved,c),(item['id'],other['id']))
+   self.assertFalse(compatible(item,other))
+   self.assertNotIn('bundled_talent_ids',pair_options([item],[item,other],random.Random(0))[0])
+   with sqlite3.connect(':memory:') as conn:
+    owned=[];rework_growth.acquire_option(conn,301,c,owned,saved)
+    self.assertEqual(owned,[item['id'],other['id']])
+
+ def test_auxiliary_unit_combat_rewards_pair_with_a_different_combat_family(self):
+  c=self.catalog;expected={284:1,374:72,414:72,419:81}
+  for index,family in expected.items():
+   item=c['talents'][index]
+   self.assertNotEqual(item['category'],'economy');self.assertTrue(paired_unit(item))
+   self.assertEqual(item['bundle_family'],family)
+   pool=[x for x in c['talents'] if x['race']==item['race'] and x['rarity']==item['rarity']
+         and paired_unit(x) and not x['effect'].get('offer_retired')]
+   for other in pool:
+    if other.get('bundle_family')==family:self.assertFalse(compatible(item,other))
+   for seed in range(5):
+    option=pair_options([item],pool,random.Random(seed))[0]
+    ids=member_ids(option,c);self.assertEqual(len(ids),2)
+    with sqlite3.connect(':memory:') as conn:
+     owned=[];rework_growth.acquire_option(conn,301,c,owned,option)
+     self.assertEqual(owned,list(ids))
+     self.assertTrue(encode_growth(c,owned,{})[1+index//32]&(1<<(index%32)))
 
  def test_ammunition_pin_upgrade_preserves_previously_issued_single(self):
   c=self.catalog;old=copy.deepcopy(c);ammo=old['talents'][355]
@@ -121,7 +152,7 @@ class UnitGrowth(unittest.TestCase):
    rework_growth.enable(conn)
    refreshed=rework_growth.overlay(conn,old)
    future=refreshed['talents'][355]
-   self.assertTrue(paired_unit(future));self.assertEqual(set(future['bundle_families']),{72,81})
+   self.assertFalse(paired_unit(future));self.assertEqual(set(future['bundle_families']),{72,81})
    self.assertEqual(future['source_description'],issued['source_description'])
    self.assertEqual(member_ids(issued,refreshed),(issued['id'],))
    owned=[];rework_growth.acquire_option(conn,301,refreshed,owned,issued)

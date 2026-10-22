@@ -114,6 +114,20 @@ class ReworkGrowthTests(unittest.TestCase):
         while picked.get('offer'):picked=self.pick(picked)
         self.assertTrue(picked['growth_words'][1+355//32]&(1<<(355%32)))
 
+    def test_economic_single_rule_keeps_previously_issued_pair_exact(self):
+        card=self.catalog['talents'][355];partner=self.catalog['talents'][369]
+        saved=dict(card,bundled_talent_ids=[card['id'],partner['id']])
+        with patch.object(rework_growth,'candidates',return_value=[saved]):state=self.load(mission=301)
+        issued=copy.deepcopy(state['offer'])
+        serialized=self.query('SELECT candidates_json FROM growth_offers WHERE offer_id=?',(issued['offer_id'],))[0][0]
+        resumed=self.load(mission=301)
+        self.assertEqual(resumed['offer'],issued)
+        self.assertEqual(self.query('SELECT candidates_json FROM growth_offers WHERE offer_id=?',(issued['offer_id'],)),[(serialized,)])
+        picked=self.pick(resumed)
+        while picked.get('offer'):picked=self.pick(picked)
+        for item in (card,partner):
+            bit=item['bit_index'];self.assertTrue(picked['growth_words'][1+bit//32]&(1<<(bit%32)))
+
     def test_displayed_unchosen_manuals_reach_next_offer_and_reconnect_is_immutable(self):
         opening=self.finish();nonce=opening['nonce']
         with patch.object(policy,'rolled_rarity',return_value='common'):
