@@ -686,7 +686,9 @@ inline bw::Bullet* emit(bw::Unit* source,bw::Unit* target,U32 w,U32 percent,int 
     if(!multi_target::create_bullet || !target_ok(source,target,w,false))return nullptr;
     source=attack_unit(source);
     const auto saved_percent=emission_percent;const auto saved_secondary=emission_secondary;const auto saved_primary=emission_primary;
-    emission_percent=percent;emission_secondary=!primary;emission_primary=primary;GeneratedScope recursion;
+    // A native projectile can deal damage before CreateBullet returns. Keep
+    // damage scaling active; the snapshotted secondary flag blocks recursion.
+    emission_percent=percent;emission_secondary=!primary;emission_primary=primary;
     OwnerDatScope view(source->player,source->player,source);multi_target::TargetScope destination(source,target);multi_target::SecondaryScope secondary;
     const auto direction=multi_target::direction_to(source,target);auto position=multi_target::launch_position(source,target,w,direction);
     if(x>=0){position.x=x;position.y=y;}

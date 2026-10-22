@@ -1,6 +1,6 @@
 #pragma once
 namespace host_test {
-inline constexpr std::size_t qa65_group_count=11;
+inline constexpr std::size_t qa65_group_count=13;
 namespace qa65_fixture {
 inline void __cdecl native_bounce(bw::Bullet* b){
  CHECK(b->bounces_remaining==2);CHECK(rework_combat_v5::DamageScope::current_primary==b->target.unit);
@@ -127,6 +127,22 @@ inline void qa65_hydra_instant_creation_records_once_before_damage_and_extra_sho
  pulse(101);CHECK(rework_combat_v5::pending_shots.empty()&&multi_fixture::shots.size()==2);
  CHECK(rework_combat_v5::projectiles.at(&multi_fixture::bullets[1]).percent==50);CHECK(!BulletCreation::current);qa9_fixture::end();
 }
+inline bw::Bullet* __cdecl qa66_instant_hooked(U32 w,int x,int y,U32 owner,U32 direction,bw::Unit* source){return owner_bullet_create_hook(w,x,y,owner,direction,source,qa65_fixture::instant_create);}
+inline void qa66_instant_secondary_native_damage_is_exactly_half(){
+ using namespace rework_fixture;qa9_fixture::begin({18});auto source=unit(38,1,100,100),target=unit(37,6,150,100);multi_fixture::target(source,target);const U32 w=original_stat({0,17,38});
+ multi_target::create_bullet=qa66_instant_hooked;
+ auto b=qa66_instant_hooked(w,150,100,1,0,source);CHECK(b&&target->flingy.hitpoints==256000-20*256);
+ pulse(101);CHECK(rework_combat_v5::pending_shots.empty()&&multi_fixture::shots.size()==2);
+ CHECK(target->flingy.hitpoints==256000-30*256);CHECK(rework_combat_v5::projectiles.at(&multi_fixture::bullets[1]).secondary);
+ qa9_fixture::end();
+}
+inline void qa66_lurker_instant_air_primary_keeps_per_victim_extra_hit(){
+ using namespace rework_fixture;auto source=qa64_fixture::begin();ranks[18]=1;auto target=unit(43,6,200,100,true);
+ const auto saved=combat_effects::original_weapon_damage;combat_effects::original_weapon_damage=qa9_fixture::damage;multi_target::create_bullet=qa66_instant_hooked;
+ pulse(100);CHECK(multi_fixture::shots.size()==1&&target->flingy.hitpoints==256000-30*256);
+ CHECK(rework_combat_v5::pending_shots.empty()&&source->air_cooldown&&source->ground_cooldown);
+ combat_effects::original_weapon_damage=saved;qa64_fixture::end();
+}
 inline void qa65_lurker_extra_hit_per_pierced_victim_without_duplicate_spines(){
  using namespace rework_fixture;qa9_fixture::begin({18});auto source=unit(103,1,100,100),first=unit(37,6,150,100),second=unit(37,6,160,100);
  const auto saved=combat_effects::original_weapon_damage;combat_effects::original_weapon_damage=qa9_fixture::damage;
@@ -156,5 +172,5 @@ inline void qa65_lab_custom_map_activation_and_repeatable_effect_updates(){
  CHECK(effect_lab::command("-clear"));CHECK(rework_catalog::rank(g.growth,105)==0&&g.growth.curse_counts[49]==0);
  abandon_session();CHECK(!effect_lab::enabled&&!g.active);
 }
-inline void run_qa65_groups(){qa65_mutal_seven_native_hits_linear_and_extra_bounce_cap();qa65_mutal_snapshot_survives_source_loss_and_nested_scopes();qa65_mutal_without_legend_enemy_and_hallucination_keep_stock();qa65_manual_A_and_right_click_query_all_added_attack_layers();qa65_manual_launch_without_initialized_bullet_target_preserves_air_splash();qa65_guardian_primary_and_six_secondary_hits_include_150_percent_once();qa65_transport_cards_keep_speed_without_capacity_expansion();qa65_hydra_instant_creation_records_once_before_damage_and_extra_shot();qa65_lurker_extra_hit_per_pierced_victim_without_duplicate_spines();qa65_lab_all_talent_rank_encodings_and_command_boundary();qa65_lab_custom_map_activation_and_repeatable_effect_updates();}
+inline void run_qa65_groups(){qa66_instant_secondary_native_damage_is_exactly_half();qa66_lurker_instant_air_primary_keeps_per_victim_extra_hit();qa65_mutal_seven_native_hits_linear_and_extra_bounce_cap();qa65_mutal_snapshot_survives_source_loss_and_nested_scopes();qa65_mutal_without_legend_enemy_and_hallucination_keep_stock();qa65_manual_A_and_right_click_query_all_added_attack_layers();qa65_manual_launch_without_initialized_bullet_target_preserves_air_splash();qa65_guardian_primary_and_six_secondary_hits_include_150_percent_once();qa65_transport_cards_keep_speed_without_capacity_expansion();qa65_hydra_instant_creation_records_once_before_damage_and_extra_shot();qa65_lurker_extra_hit_per_pierced_victim_without_duplicate_spines();qa65_lab_all_talent_rank_encodings_and_command_boundary();qa65_lab_custom_map_activation_and_repeatable_effect_updates();}
 }

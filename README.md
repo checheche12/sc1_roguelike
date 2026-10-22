@@ -4,7 +4,7 @@
 
 ## 다운로드
 
-[최신 버전 받기 — v2026.10.22-qa65](https://github.com/checheche12/sc1_roguelike/raw/refs/tags/asset-v2026.10.22-qa65/SC1_Roguelike_20261022_QA65.zip)
+[최신 버전 받기 — v2026.10.22-qa66](https://github.com/checheche12/sc1_roguelike/raw/refs/tags/asset-v2026.10.22-qa66/SC1_Roguelike_20261022_QA66.zip)
 
 통합 효과 시험장: 압축을 푼 뒤 `Start_Effect_Lab.cmd`를 실행하세요. 256×256 지도와 재능·저주 611개 검색 목록인 `Effect_Checklist.html`이 포함되어 있습니다. [시험 방법과 변경 내용](docs/qa65-effect-lab-and-air-legends.md)
 
