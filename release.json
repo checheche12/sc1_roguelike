@@ -1,0 +1,23 @@
+{
+  "version": "v2026.10.22-qa64",
+  "file": "SC1_Roguelike_20261022_QA64.zip",
+  "sha256": "77a7beed2576f19e9dfb858ca276563291295c1232b57c8b82c3c3cf4b0cfc58",
+  "bytes": 24795608,
+  "runtime_source_commit": "c946d72d2c73b7456e141f8d6db13125e1802acd",
+  "native_dll_sha256": "7d72dce6ff463f350fe40abeabfe75c4804397f11d25dc04911a6ed236b4c546",
+  "armor_erosion_per_hit": 0.33,
+  "armor_erosion_numerator": 33,
+  "armor_erosion_denominator": 100,
+  "broodlings_per_target": 6,
+  "additional_cast_targets": 3,
+  "broodling_energy_cost": 100,
+  "broodling_erosion": true,
+  "tower_candidate_weight_percent": 200,
+  "lurker_air_attack_fixed": true,
+  "lurker_air_damage_percent": 100,
+  "qa63_changes_preserved": true,
+  "unchanged_maps": 63,
+  "personal_database_included": false,
+  "live_gameplay_verified": false,
+  "created_at_utc": "2026-10-22T08:22:39.533908+00:00"
+}
