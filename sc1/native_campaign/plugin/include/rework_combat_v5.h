@@ -1008,6 +1008,7 @@ struct DamageScope {
     bw::DatTable* armor=nullptr,*upgrade=nullptr;U32 saved_armor=0,saved_upgrade=0;
     rework_upgrade_storage::View shield_upgrade;
     U32 hp_before=0,shield_before=0,proc_base=0;bool received_armed=false;
+    int blast_x=0,blast_y=0;
     bool absorbed_all=false;U8 saved_spores=0;bool spores_scoped=false;
     bool matrix_scoped=false;U32 restored_matrix=0;
     DamageScope(bw::Unit* to,bw::Unit* from,U32 weapon_id,U32 divisor,std::int32_t& damage) {
@@ -1015,6 +1016,7 @@ struct DamageScope {
         target=to;source=from;w=weapon_id;normal=g.normal_hit&&ordinary_weapon(w);raw=damage;
         if(!g.active||!g.applied||generated_depth||!live(target))return;
         hp_before=U32(std::max(0,target->flingy.hitpoints));shield_before=U32(std::max(0,target->shields));received_armed=true;
+        blast_x=target->flingy.position.x;blast_y=target->flingy.position.y;
         if(normal&&current_primary&&current_primary!=target&&focus_source(source)&&!(source->unit_id==60||source->unit_id==98)){absorbed_all=true;damage=0;received_armed=false;return;}
         if(normal&&valid_unit(source)&&talent_power::enabled&&raw_rank(185)&&in(source->unit_id,{10,32})&&current_primary&&current_primary!=target){absorbed_all=true;damage=0;received_armed=false;return;}
         if(normal&&own(target)&&soldier(target->unit_id)&&((armor_eighths(rank(ground_type(target->unit_id)?11u:12u)))%8u)){
@@ -1114,6 +1116,19 @@ struct DamageScope {
         // Native Lurker hit history suppresses a second spine from the same
         // attacker. Give each pierced victim one native 50% weapon hit instead.
         if(normal&&!secondary&&!absorbed_all&&received_armed&&talent_power::enabled&&rank(18)&&own(source)&&source->unit_id==103&&is_enemy(target->player))weapon_hurt(target,U32(std::max(0,raw))/2,w,source,source->player);
+        // The native suicide has already consumed the Scourge. Its witnessed
+        // identity is still valid, so do not require a living source here.
+        // Scale the primary pre-armor weapon damage once; each splash victim
+        // then receives its own native armor/shield/Matrix split.
+        if(normal&&!secondary&&!absorbed_all&&received_armed&&talent_power::enabled&&raw_rank(96)&&w==55&&
+           focus_source(source)&&source->unit_id==47&&air(target)&&is_enemy(target->player)&&
+           (!current_primary||current_primary==target))try{
+            const U32 amount=U32(std::uint64_t(std::max(0,raw))*legend_focus::scourge_blast_damage_percent/100);
+            // Native weapon damage expects a sprite on a non-null attacker.
+            // Suicide has removed it; owner and launch damage are already known.
+            auto attacker=live(source)?source:nullptr;
+            for(auto other:around(blast_x,blast_y,legend_focus::scourge_blast_radius_pixels,target,65536,true,1))weapon_hurt(other,amount,w,attacker,source->player);
+        }catch(...){}
         if(normal && !secondary && own(source)&&(!g.bullet_hit_context||!current_primary||current_primary==target))try{ordinary_hit(source,target,proc_base?proc_base:U32(std::max(0,raw)),w,false,current_token);}catch(...){}
     }
     static inline U32 current_percent=100,current_token=0,current_bounce_divisor=1;static inline bool current_secondary=false;static inline bw::Unit* current_primary=nullptr;

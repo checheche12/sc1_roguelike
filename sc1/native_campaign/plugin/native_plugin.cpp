@@ -839,7 +839,11 @@ ProjectileSource projectile_identity(bw::Bullet* bullet) noexcept {
     const auto source=found->second;
     // The engine may clear a dead parent. Never infer a source from a reused
     // unit-array slot, a changed owner, or an unobserved projectile launch.
-    return bullet->parent==source.unit && bullet->player==source.owner ? source : ProjectileSource{};
+    // Scourge launches are witnessed before native suicide clears the parent.
+    // Retain that exact dead generation; never infer a parent for other shots.
+    const bool detached_scourge=!bullet->parent && bullet->weapon_id==55 && source.id==47 &&
+        verified_projectile_source(source) && source.unit->order==0;
+    return (bullet->parent==source.unit || detached_scourge) && bullet->player==source.owner ? source : ProjectileSource{};
 }
 struct DamageObservation {
     bw::Unit* unit=nullptr;DamageObservation* previous=nullptr;

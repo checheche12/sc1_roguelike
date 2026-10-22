@@ -56,6 +56,9 @@ def decorate(catalog):
   if ordinal==56:
    item['description']='골리앗·앨런 셰자르의 주 대상에게 원래 공격의 100% 피해를 주고, 주 대상의 3타일 안 같은 공격층의 다른 적 최대 3기에게 각각 50% 피해를 줍니다. 추가 대상도 시야·사거리 조건을 만족해야 하며 추가 공격은 다시 퍼지지 않습니다.'
    item['effect'].update(qa_revision=2026102155,design_role='multi_target',primary_damage_percent=100,additional_targets=3,additional_target_damage_percent=50,additional_target_radius_pixels=96)
+  if ordinal==96:
+   item['description']='스커지의 일반 공격 피해 +50%. 자폭 시 주 대상의 반경 2타일 안 다른 적 공중 유닛들에게 주 대상 공격 피해의 50%를 줍니다. 최대 체력3배. 공중 적을 추격할 때 받는 일반 공격 피해75% 감소. 공중 표적을 자동으로 분산 추격합니다.'
+   item['effect'].update(qa_revision=2026102269,legacy_area_effect_disabled=False,design_role='air_splash',blast_radius_pixels=64,blast_damage_percent=50,blast_target_layer='air',blast_friendly_fire=False,blast_damage_basis='primary_pre_armor_weapon_damage',blast_recursion=False)
  for ordinal in DEMOTIONS:
   item=by[ordinal];item['rarity']='epic';item['previous_rarity']='legendary';item['effect'].pop('rarity_promoted',None)
   item['effect']['qa_revision']=REVISION
@@ -79,12 +82,12 @@ def decorate(catalog):
  by[185]['effect'].update(qa_revision=REVISION,mode=11,bonus=100,cone_radius_pixels=96,cone_angle_degrees=120)
  by[149]['description']='스테이시스 필드 반경 1.5배. 해제된 아군은 체력·보호막을 완전히 회복합니다. 적에게는 기존 보호막400·체력300+최대체력25% 피해와 주변 감속을 줍니다.'
  by[149]['effect'].update(qa_revision=REVISION,stasis_radius_multiplier=1.5,stasis_friendly_full_health_shields=True)
- catalog['legend_focus_revision']=2026102155;catalog['single_target_legend_ordinals']=sorted(CONVERTED-{56})
+ catalog['legend_focus_revision']=2026102269;catalog['single_target_legend_ordinals']=sorted(CONVERTED-{56,96})
  return catalog
 
 def generate_header(catalog,root):
  by={x['effect_ordinal']:x for x in catalog['talents'] if x.get('rework_revision')==5}
- lines=['#pragma once','namespace legend_focus {','inline constexpr unsigned armor_erosion_denominator=100u;','struct Rule {unsigned ordinal,mode,base,cadence,proc,step,limit;unsigned units[8];};','inline constexpr Rule rules[]={']
+ lines=['#pragma once','namespace legend_focus {','inline constexpr unsigned armor_erosion_denominator=100u;','inline constexpr unsigned scourge_blast_radius_pixels=64u,scourge_blast_damage_percent=50u;','struct Rule {unsigned ordinal,mode,base,cadence,proc,step,limit;unsigned units[8];};','inline constexpr Rule rules[]={']
  for spec in SPECS:
   ordinal=spec[0];units=([73] if ordinal==148 else [85] if ordinal==141 else by[ordinal]['effect'].get('focus_target_units',by[ordinal]['target_units']));mask=[0]*8
   for unit in units:mask[unit//32]|=1<<(unit%32)

@@ -1,6 +1,7 @@
 #pragma once
 namespace legend_focus {
 inline constexpr unsigned armor_erosion_denominator=100u;
+inline constexpr unsigned scourge_blast_radius_pixels=64u,scourge_blast_damage_percent=50u;
 struct Rule {unsigned ordinal,mode,base,cadence,proc,step,limit;unsigned units[8];};
 inline constexpr Rule rules[]={
 {49u,1u,100u,1u,300u,0u,35u,{65538u,0u,0u,280u,0u,0u,0u,0u}},

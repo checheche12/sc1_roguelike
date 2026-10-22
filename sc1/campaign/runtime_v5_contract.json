@@ -8681,7 +8681,7 @@
       "id": "ca756d48-4004-5862-bd36-d66e7fa51c7f",
       "name": "정밀 갈귀",
       "target": "스커지",
-      "description": "스커지의 일반 공격 피해 +50%. 최대 체력2배. 공중 적을 추격할 때 받는 일반 공격 피해75% 감소. 공중 표적을 자동으로 분산 추격합니다.",
+      "description": "스커지의 일반 공격 피해 +50%. 자폭 시 주 대상의 반경 2타일 안 다른 적 공중 유닛들에게 주 대상 공격 피해의 50%를 줍니다. 최대 체력2배. 공중 적을 추격할 때 받는 일반 공격 피해75% 감소. 공중 표적을 자동으로 분산 추격합니다.",
       "trigger": "",
       "numbers": "",
       "notes": "",
@@ -8704,7 +8704,7 @@
         "type": "rework_v5",
         "ordinal": 96,
         "source_id": "ca756d48-4004-5862-bd36-d66e7fa51c7f",
-        "qa_revision": 2026102046,
+        "qa_revision": 2026102269,
         "benefit_power_quarters": 10,
         "rarity_promoted": true,
         "focus_legend": true,
@@ -8714,11 +8714,17 @@
         "focus_proc_percent": 0,
         "focus_step_percent": 0,
         "focus_limit": 0,
-        "legacy_area_effect_disabled": true,
-        "design_role": "single_target",
+        "legacy_area_effect_disabled": false,
+        "design_role": "air_splash",
         "reflection_requires_attacking": false,
         "reflection_only_releases_on_attack": false,
-        "health_multiplier": 2
+        "health_multiplier": 2,
+        "blast_radius_pixels": 64,
+        "blast_damage_percent": 50,
+        "blast_target_layer": "air",
+        "blast_friendly_fire": false,
+        "blast_damage_basis": "primary_pre_armor_weapon_damage",
+        "blast_recursion": false
       },
       "target_units": [
         47

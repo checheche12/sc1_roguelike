@@ -84,7 +84,17 @@ inline void qa39_acid_spore_damage_and_slow_are_doubled(){
 inline void qa39_scourge_damage_health_survival_and_smart_target(){
  using namespace rework_fixture;qa9_fixture::begin({96});install();CHECK(owner_stat(1,{0,8,47})==original_stat({0,8,47})*2);CHECK(owner_stat(1,{0,17,47})>=130);
  auto u=unit(47,1,100,100,true),other=unit(47,1,101,100,true),a=unit(43,6,160,100,true),b=unit(43,6,180,100,true),enemy=unit(0,6,130,100);a->flingy.hitpoints=10*256;multi_fixture::target(u,a);multi_fixture::target(other,a);
- g.normal_hit=true;{std::int32_t amount=1000;rework_combat_v5::DamageScope scope(u,enemy,0,1,amount);CHECK(amount==250);}game.frame_count=104;auto s=rework_combat_v5::state(u);auto saved_order=g.order;g.order=qa39_fixture::targeted_order;rework_combat_v5::focus_tick(u,*s);CHECK(u->order_target.unit==b);g.order=saved_order;qa9_fixture::end();
+ g.normal_hit=true;{std::int32_t amount=1000;rework_combat_v5::DamageScope scope(u,enemy,0,1,amount);CHECK(amount==250);}game.frame_count=104;auto s=rework_combat_v5::state(u);auto saved_order=g.order;g.order=qa39_fixture::targeted_order;rework_combat_v5::focus_tick(u,*s);CHECK(u->order_target.unit==b);g.order=saved_order;
+ auto shot=bullet(u,a,55);CHECK(projectile_identity(shot).unit==u);u->order=0;shot->parent=nullptr;CHECK(projectile_identity(shot).unit==u);
+ const auto unique=u->minor_unique_index;u->minor_unique_index++;CHECK(!projectile_identity(shot).unit);u->minor_unique_index=unique;
+ u->player=6;CHECK(!projectile_identity(shot).unit);u->player=1;shot->player=6;CHECK(!projectile_identity(shot).unit);shot->player=1;
+ shot->weapon_id=0;CHECK(!projectile_identity(shot).unit);shot->weapon_id=55;
+ auto edge=unit(43,6,224,100,true),outside=unit(43,6,225,100,true),ally=unit(43,1,170,110,true),stasis=unit(43,6,160,110,true);stasis->stasis_timer=10;
+ const auto hp=b->flingy.hitpoints,edge_hp=edge->flingy.hitpoints,out_hp=outside->flingy.hitpoints,ally_hp=ally->flingy.hitpoints,ground_hp=enemy->flingy.hitpoints,stasis_hp=stasis->flingy.hitpoints;
+ const auto saved=combat_effects::original_weapon_damage;combat_effects::original_weapon_damage=qa39_fixture::hp_shield_damage;
+ qa39_fixture::primary(u,a,55,110*256,77);CHECK(a->flingy.hitpoints==0);CHECK(b->flingy.hitpoints==hp-165*128&&edge->flingy.hitpoints==edge_hp-165*128);
+ CHECK(outside->flingy.hitpoints==out_hp&&ally->flingy.hitpoints==ally_hp&&enemy->flingy.hitpoints==ground_hp&&stasis->flingy.hitpoints==stasis_hp);
+ combat_effects::original_weapon_damage=saved;qa9_fixture::end();
 }
 inline void qa39_shadow_fury_five_strikes_return_and_restore_invulnerability(){
  using namespace rework_fixture;qa9_fixture::begin({321});relocation();auto u=unit(61,1,100,100),target=unit(37,6,140,100);u->order=10;multi_fixture::target(u,target);const auto flags=u->flags;const auto hp=target->flingy.hitpoints;
