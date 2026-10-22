@@ -4784,7 +4784,7 @@
       "id": "93f1cae8-5d40-5c23-b27f-4c5939d77a5a",
       "name": "정밀 핵 유도",
       "target": "고스트 핵 공격",
-      "description": "고스트 핵 공격: 고스트 핵의 낙하 경고가 5초로 줄고, 적에게 주는 핵 피해가 50% 늘어납니다.",
+      "description": "고스트 핵 공격: 고스트 핵의 낙하 경고가 1.5초로 줄고, 핵 생산 시간은 30초, 필요 인구수는 2가 됩니다. 적에게 주는 핵 피해가 50% 늘어납니다.",
       "trigger": "",
       "numbers": "",
       "notes": "",
@@ -4807,9 +4807,11 @@
         "type": "rework_v5",
         "ordinal": 46,
         "source_id": "93f1cae8-5d40-5c23-b27f-4c5939d77a5a",
-        "nuclear_warning_frames": 120,
-        "qa_revision": 2026101610,
-        "benefit_power_quarters": 8
+        "nuclear_warning_frames": 36,
+        "qa_revision": 2026102268,
+        "benefit_power_quarters": 8,
+        "nuclear_build_time_frames": 720,
+        "nuclear_supply_required": 2
       },
       "target_units": [
         1,

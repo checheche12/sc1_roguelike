@@ -86,7 +86,9 @@ inline void hold_ensnare_cooldown(bw::Unit* u,U32 layer,U8& timer,U32 scaled) {
 }
 inline void shadow_restore(bw::Unit* u,UnitState& s) {
  if(!s.shadow_active)return;u->flags=(u->flags&~0x4000000u)|s.shadow_invincible;s.shadow_active=false;
- if(live(u)){const auto order=u->order;const auto target=u->order_target;rework_relocation::move(u,s.shadow_x,s.shadow_y,96,false);u->order=order;u->order_target=target;}
+ if(live(u)){const auto order=u->order,stage=u->order_state,signal=u->order_signal,timer=u->order_timer,wait=u->order_wait;const auto target=u->order_target;
+  rework_relocation::move(u,s.shadow_x,s.shadow_y,96,false);u->order=order;u->order_state=stage;u->order_signal=signal;u->order_timer=timer;u->order_wait=wait;u->order_target=target;
+  if(!live(target.unit)&&multi_target::attack_order(order))rework_relocation::stop_preserving_queue(u);}
 }
 inline void shadow_begin(bw::Unit* u,bw::Unit* target) {
  if(!talent_power::enabled||!own(u)||!raw_rank(321)||!in(u->unit_id,{61,74,75})||!eligible(target)||air(target))return;
@@ -105,13 +107,13 @@ inline void focus_tick(bw::Unit* u,UnitState& s) {
   if(now()<s.shadow_due)return;
   bw::Unit* target=nullptr;for(U32 n=0;n<s.shadow_count;n++){auto candidate=resolve(s.shadow_targets[(s.shadow_step+n)%s.shadow_count]);if(eligible(candidate)&&is_enemy(candidate->player)){target=candidate;break;}}
   if(!target){shadow_restore(u,s);return;}
-  const auto old_order=u->order;const auto old_target=u->order_target;
+  const auto old_order=u->order,old_stage=u->order_state,old_signal=u->order_signal,old_timer=u->order_timer,old_wait=u->order_wait;const auto old_target=u->order_target;
   if(rework_relocation::move(u,target->flingy.position.x,target->flingy.position.y,48,false)){
    const U32 w=original_stat({0,17,u->unit_id}),base=owner_stat(u->player,{1,14,w})+owner_stat(u->player,{1,15,w})*upgrade_level(u->player,original_stat({1,6,w}));
    if(g.lone_sprite)g.lone_sprite(361,u->flingy.position.x,u->flingy.position.y,u->player);
    weapon_hurt(target,U32(std::min<std::uint64_t>(0x7fffffffu,std::uint64_t(base)*512)),w,u,u->player);
   }
-  u->order=old_order;u->order_target=old_target;s.shadow_due=now()+4;
+  u->order=old_order;u->order_state=old_stage;u->order_signal=old_signal;u->order_timer=old_timer;u->order_wait=old_wait;u->order_target=old_target;s.shadow_due=now()+4;
   if(++s.shadow_step>=5)shadow_restore(u,s);return;
  }
  if(talent_power::enabled&&raw_rank(96)&&own(u)&&u->unit_id==47&&now()%8==0){

@@ -4,11 +4,11 @@
 
 ## 다운로드
 
-[최신 버전 받기 — v2026.10.22-qa67](https://github.com/checheche12/sc1_roguelike/raw/refs/tags/asset-v2026.10.22-qa67/SC1_Roguelike_20261022_QA67.zip)
+[최신 버전 받기 — v2026.10.22-qa68](https://github.com/checheche12/sc1_roguelike/raw/refs/tags/asset-v2026.10.22-qa68/SC1_Roguelike_20261022_QA68.zip)
 
 통합 효과 시험장: 압축을 푼 뒤 `Start_Effect_Lab.cmd`를 실행하세요. 256×256 지도와 재능·저주 611개 검색 목록인 `Effect_Checklist.html`이 포함되어 있습니다. [시험 방법과 변경 내용](docs/qa65-effect-lab-and-air-legends.md)
 
-최근 수정: 발키리 지상 스플래시와 파이어뱃 대공 스플래시의 공격층, 러커의 반복 대공 공격을 바로잡았습니다. 전설 다크 스웜은 반경 5타일로 줄였으며 공중 보호·초당 3% 회복은 유지합니다.
+최근 수정: 핵 희귀 재능은 낙하 경고 1.5초·생산 시간 30초·인구수 2가 됩니다. 근접 유닛이 적을 처치한 뒤 공격 모션을 계속하는 문제, 도약·점멸의 착지 실패, 러커의 패트롤 사격과 다크 템플러 전설 사용 뒤 명령 복귀를 수정했습니다. A 직접 지정·우클릭·자동공격·패트롤을 나눠 반복 검사했습니다.
 
 Windows 64비트·스타크래프트 리마스터용입니다. ZIP 전체를 압축 해제한 뒤 `Start_Campaign.exe`를 실행하세요. Python은 따로 설치하지 않아도 됩니다.
 

@@ -46,6 +46,13 @@ inline void economy_discount_components_and_rounding(){
     CHECK(owner_stat(1,{0,40,73})==13 && owner_stat(1,{0,40,85})==8);
 }
 inline void economy_times_supply_and_owner_isolation(){
+    reset();auto missile=economy_add(14);auto silo=economy_add(108);missile->flags|=1;game.supplies[1].used[1]=16;
+    CHECK(apply_snapshot(nullptr,economy_snapshot({46})));
+    CHECK(owner_stat(1,{0,42,14})==720 && owner_stat(1,{0,46,14})==4);
+    CHECK(game.supplies[1].used[1]==4);
+    std::uint64_t tooltip=0;CHECK(rework_economy_ui::read(silo,14,tooltip));CHECK(((tooltip>>32)&255u)==4);
+    CHECK(owner_stat(6,{0,42,14})==original_stat({0,42,14}) && owner_stat(6,{0,46,14})==16);
+    CHECK(owner_stat(1,{0,40,14})==original_stat({0,40,14}) && owner_stat(1,{0,41,14})==original_stat({0,41,14}));
     reset();auto depot=economy_add(109);depot->flags|=1;game.supplies[1].provided[1]=16;
     auto s=economy_snapshot({3,4,6,7,20,22,117});CHECK(apply_snapshot(nullptr,s));
     CHECK(game.supplies[1].provided[1]==32 && game.supplies[1].provided[6]==0);

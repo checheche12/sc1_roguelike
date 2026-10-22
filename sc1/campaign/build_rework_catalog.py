@@ -15,8 +15,8 @@ TARGET = Path(__file__).with_name('runtime_talents_v5.json')
 CONTRACT = Path(__file__).with_name('runtime_v5_contract.json')
 HEADER = ROOT / 'sc1/native_campaign/plugin/include/rework_catalog.generated.h'
 NUCLEAR_GUIDANCE_ID = '93f1cae8-5d40-5c23-b27f-4c5939d77a5a'
-NUCLEAR_GUIDANCE_DESCRIPTION = '고스트가 발사하는 핵의 낙하 경고 시간이 5초가 됩니다. 피해와 반경은 그대로입니다.'
-NUCLEAR_GUIDANCE_MECHANISM = 'own Ghost-related missile order125state4 fixed120-frame warning; native sigorder2 resumes launch; already elapsed warning retained; scripted unrelated nukes excluded'
+NUCLEAR_GUIDANCE_DESCRIPTION = '고스트 핵의 낙하 경고가 1.5초로 줄고, 핵 생산 시간은 30초, 필요 인구수는 2가 됩니다. 적에게 주는 핵 피해가 50% 늘어납니다.'
+NUCLEAR_GUIDANCE_MECHANISM = 'own Ghost-related missile order125state4 fixed36-frame warning; owner nuclear missile training720frames supply4half-units; native sigorder2 resumes launch; already elapsed warning retained; scripted unrelated nukes excluded'
 NUCLEAR_GUIDANCE_QA_RECORD = 'analysis/qa_fixes_20261016/nuclear_guidance_5s/verification.json'
 INFANTRY_MANUAL_ID = '2550fdb4-cace-5c0a-bc97-bfc04e0c0f33'
 WORKER_RAID_ID = 'rework-rule-worker-raid'
@@ -136,7 +136,7 @@ def build(coverage=None):
             # frozen user text in source_description and the original input.
             if item['id'] == NUCLEAR_GUIDANCE_ID:
                 item['description'] = NUCLEAR_GUIDANCE_DESCRIPTION
-                item['effect']['nuclear_warning_frames'] = 120
+                item['effect'].update(nuclear_warning_frames=36,nuclear_build_time_frames=720,nuclear_supply_required=2)
                 item['effect']['qa_revision'] = 20261016
             if item['id'] in QA_EFFECTS:
                 description, effect, _ = QA_EFFECTS[item['id']]

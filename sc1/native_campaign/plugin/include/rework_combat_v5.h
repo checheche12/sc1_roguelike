@@ -244,7 +244,25 @@ inline U32 infantry_ui_value(const bw::Unit* unit,U32 weapon,U32 value) noexcept
     value=U32(std::min<std::uint64_t>(0xffffffffu,(std::uint64_t(value)*(100ull+bonus)+50)/100));
     return U32(std::min<std::uint64_t>(0xffffffffu,(std::uint64_t(value)*(100ull+expansion_static_bonus(unit,weapon)+focus_base(unit))+50)/100));
 }
-inline constexpr U32 kNuclearWarningFrames=5u*24u;
+inline constexpr U32 kNuclearWarningFrames=36u;
+inline void finish_idle_melee_animation(bw::Unit* u) noexcept {
+    if(!own(u)||air(u)||(u->flags&0x10u)||!in(u->order,{2,3,117})||
+       u->stasis_timer||u->lockdown_timer||u->maelstrom_timer)return;
+    const U32 weapon_id=original_stat({0,17,u->unit_id});
+    if(u->unit_id>=106||weapon_id>=130||original_stat({1,5,weapon_id})>32)return;
+    auto sprite=static_cast<bw::SpriteScr*>(u->flingy.sprite);
+    auto image=sprite?static_cast<movement_effects::Image*>(sprite->main_image):nullptr;
+    if(!image||!in(image->script.animation,{8,9}))return;
+    const auto& code=movement_effects::data::kIscript;const U32 h=image->script.header;
+    if(h+34>=sizeof(code)||std::memcmp(code+h,"SCPE",4)||!in(code[h+4],{12,13,14,15,20,21,23,24,26,27,28,29}))return;
+    const U32 idle=U32(code[h+32])|(U32(code[h+33])<<8);
+    if(!idle||idle>=sizeof(code))return;
+    // A completed melee attack can retain its attack-to-idle animation while
+    // the cloned walking CFG is still running. Use this image's native idle
+    // entry; the next ordinary iscript step restores its standing frame.
+    image->script.animation=12;image->script.pos=std::uint16_t(idle);
+    image->script.return_pos=0;image->script.wait=0;
+}
 inline bool fixed_nuclear_warning(movement_effects::Image* image) noexcept {
     if(!image||image->script.animation!=21)return false;
     const auto& code=movement_effects::data::kIscript;
@@ -257,7 +275,7 @@ inline bool fixed_nuclear_warning(movement_effects::Image* image) noexcept {
     if(image->script.pos==start+2)elapsed=125u-std::min(125u,U32(image->script.wait));
     else if(image->script.pos==start+4)elapsed=126u+125u-std::min(125u,U32(image->script.wait));
     else return false;
-    // Resume the original sigorder 2 after a total five-second warning. Native
+    // Resume the original sigorder 2 after a total 1.5-second warning. Native
     // iscript wait n resumes n+1 frames later; elapsed warnings never restart.
     image->script.pos=std::uint16_t(start+4);
     image->script.wait=U8(elapsed<kNuclearWarningFrames ? kNuclearWarningFrames-elapsed-1u:0u);
@@ -1458,6 +1476,14 @@ struct OrderScope {
     OrderScope(bw::Unit* u,UnitFn original=nullptr){previous_caster=active_caster;if(auto s=state(u))if(s->shadow_active){intercepted=true;return;}if(!own(u)||spell_depth)return;
         active_caster=u;dispatch=original;who=identity(u);target=identity(u->order_target.unit);order=u->order;energy=u->energy;hp=U32(u->flingy.hitpoints);shields=U32(u->shields);stim=u->stim_timer;auto to=resolve(target);target_hp=to ? U32(to->flingy.hitpoints):0;
         prior_state=u->order_state;prior_timer=u->order_timer;origin_x=u->order_target.x;origin_y=u->order_target.y;
+        if(talent_power::enabled&&rank(91)&&u->unit_id==103&&(u->flags&0x10u)&&order==11&&to&&
+           target_ok(u,to,weapon(u,air(to)))&&u->flingy.current_speed){
+            // A mobile burrowed Lurker must stop at an acquired Patrol target.
+            // Run native Stop while preserving the attack and queued patrol.
+            const auto wait=u->order_wait;u->order_wait=0;
+            borrowed_order(u,original,1,nullptr,u->flingy.position.x,u->flingy.position.y);
+            u->order_wait=wait;
+        }
         if(talent_power::enabled&&rank(97)&&u->unit_id==103&&(u->flags&0x10u)&&to&&air(to)&&is_enemy(to->player)&&
             (multi_target::attack_order(order)||in(order,{9,11,14}))){
             // The stock air attack animation resets cooldown without producing
@@ -1582,7 +1608,7 @@ inline void step() {
     pending_work.clear();pending_work.swap(pending_shots);
     for(auto& shot:pending_work){if(std::int32_t(frame-shot.due)<0){pending_shots.push_back(shot);continue;}auto source=resolve(shot.source),target=resolve(shot.target);if(source&&target)emit(source,target,shot.weapon,shot.percent);}
     pending_work.clear();
-    living_units([&](bw::Unit* u){auto s=state(u);if(!s)return;focus_tick(u,*s);configure_motion(u,*s);
+    living_units([&](bw::Unit* u){auto s=state(u);if(!s)return;focus_tick(u,*s);configure_motion(u,*s);finish_idle_melee_animation(u);
         if(!u->matrix_timer||!u->defensive_matrix_dmg)if(auto shield=matrix_state(u))shield->reserve=0;
         if(auto a=acid_state(u)){
             if(!u->acid_spore_count)a->extra.fill(0);
@@ -1669,7 +1695,7 @@ inline void step() {
             const auto distance=dist(u,attack_target);
             if(rank(98)&&in(u->unit_id,{37,54})&&distance>=64u*64u&&distance<=128u*128u&&frame>=s->leap_due){
                 const double length=std::sqrt(double(distance));const double dx=attack_target->flingy.position.x-u->flingy.position.x,dy=attack_target->flingy.position.y-u->flingy.position.y;
-                if(rework_relocation::move(u,attack_target->flingy.position.x-int(std::lround(dx*16/length)),attack_target->flingy.position.y-int(std::lround(dy*16/length)),16)){s->leap_due=frame+U32(192.0/(talent_power::quarters(336)/4.0));if(g.order)g.order(u,10,attack_target->flingy.position.x,attack_target->flingy.position.y,attack_target,0);}
+                if(rework_relocation::move(u,attack_target->flingy.position.x-int(std::lround(dx*32/length)),attack_target->flingy.position.y-int(std::lround(dy*32/length)),16)){s->leap_due=frame+U32(192.0/(talent_power::quarters(336)/4.0));if(g.order)g.order(u,10,attack_target->flingy.position.x,attack_target->flingy.position.y,attack_target,0);}
             }
             if(rank(132)&&in(u->unit_id,{65,77})&&distance>=64u*64u&&distance<=160u*160u&&frame>=s->charge_due){s->charge_until=frame+talent_power::v5(132,24);s->charge_due=frame+192;}
         }

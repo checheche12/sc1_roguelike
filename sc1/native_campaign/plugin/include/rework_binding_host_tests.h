@@ -5,7 +5,7 @@ inline U32 moved=0;inline bool placement=true;inline int adjust=0;
 inline rework_relocation::Pathing* path=nullptr;
 inline rework_relocation::Pathing* __cdecl get_path(){return path;}
 inline void __cdecl move(bw::Unit* u,U32 x,U32 y){++moved;u->flingy.position={std::int16_t(x),std::int16_t(y)};}
-inline U32 __cdecl place(bw::Unit*,const bw::Point* requested,bw::Point* out,const void* region,U32 a,U32 b){CHECK(!region && !a && !b);*out=*requested;out->x=std::int16_t(out->x+adjust);return placement;}
+inline U32 __cdecl place(bw::Unit* u,const bw::Point* requested,bw::Point* out,const void* region,U32 a,U32 b){CHECK(!region && !a && !b);CHECK(u->flingy.position.x!=requested->x || u->flingy.position.y!=requested->y);*out=*requested;out->x=std::int16_t(out->x+adjust);return placement;}
 inline U32 __cdecl base_energy(U8,std::uint16_t,void*){return 200u*256;}
 inline void begin_energy(){
     reset();rework_combat_v5::bind([](const GrowthSnapshot& s,U32 ordinal) noexcept {return rework_catalog::rank(s,ordinal);});
@@ -19,9 +19,9 @@ inline void rework_relocation_native_transaction(){
     auto saved_move=rework_relocation::native_move;auto saved_place=rework_relocation::native_place;auto saved_path=rework_relocation::pathing_source;
     rework_relocation::native_move=move;rework_relocation::native_place=place;rework_relocation::pathing_source=get_path;
     path=new rework_relocation::Pathing{};path->count=2;path->regions[0].group=1;path->regions[1].group=2;
-    moved=0;placement=true;adjust=0;CHECK(rework_relocation::move(unit,130,100,16));CHECK(moved==2 && unit->flingy.position.x==130 && unit->order==1);
-    unit->order=3;moved=0;placement=false;CHECK(!rework_relocation::move(unit,160,100,16));CHECK(moved==2 && unit->flingy.position.x==130 && unit->order==3);
-    placement=true;adjust=17;moved=0;CHECK(!rework_relocation::move(unit,160,100,16));CHECK(moved==2 && unit->flingy.position.x==130);
+    moved=0;placement=true;adjust=0;CHECK(rework_relocation::move(unit,130,100,16));CHECK(moved==1 && unit->flingy.position.x==130 && unit->order==1);
+    unit->order=3;moved=0;placement=false;CHECK(!rework_relocation::move(unit,160,100,16));CHECK(moved==0 && unit->flingy.position.x==130 && unit->order==3);
+    placement=true;adjust=17;moved=0;CHECK(!rework_relocation::move(unit,160,100,16));CHECK(moved==0 && unit->flingy.position.x==130);
     adjust=0;path->tiles[(100/32)*256+160/32]=1;moved=0;CHECK(!rework_relocation::move(unit,160,100,16));CHECK(moved==0);
     CHECK(rework_relocation::move(unit,160,100,16,false));CHECK(unit->flingy.position.x==160);
     // Native split-region minitiles and generation-independent ground groups.

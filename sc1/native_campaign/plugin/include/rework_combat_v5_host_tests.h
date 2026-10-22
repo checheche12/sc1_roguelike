@@ -280,19 +280,19 @@ inline void rework_nuclear_warning_morph_once_and_reset(){
     for(U32 at=read16(0);at+4<sizeof(code)&&read16(at)!=65535;at+=4)if(read16(at)==131){header=read16(at+2);break;}
     CHECK(header!=0);const U32 start=read16(header+8+21*2);
     image.image_id=316;image.script.header=std::uint16_t(header);image.script.animation=21;image.script.pos=std::uint16_t(start+2);image.script.wait=125;const auto original=image;
-    pulse(100);CHECK(rework_combat_v5::state(nuke)->nuke_adjusted);CHECK(image.script.pos==start+4&&image.script.wait==119);
-    for(U32 i=1;i<=120;i++){
+    pulse(100);CHECK(rework_combat_v5::state(nuke)->nuke_adjusted);CHECK(image.script.pos==start+4&&image.script.wait==35);
+    for(U32 i=1;i<=36;i++){
         if(image.script.wait)--image.script.wait;
         else if(image.script.pos==start+4){nuke->order_signal|=code[start+5];image.script.pos+=2;}
-        pulse(100+i);CHECK(bool(nuke->order_signal&2)==(i==120));
+        pulse(100+i);CHECK(bool(nuke->order_signal&2)==(i==36));
     }
-    static_assert(rework_combat_v5::kNuclearWarningFrames==120,"Five game seconds");image.script.wait=20;pulse(221);CHECK(image.script.wait==20);
-    auto delayed=original;delayed.script.wait=75;CHECK(rework_combat_v5::fixed_nuclear_warning(&delayed));CHECK(delayed.script.wait==69&&delayed.script.pos==start+4);
+    static_assert(rework_combat_v5::kNuclearWarningFrames==36,"One and a half game seconds");image.script.wait=20;pulse(221);CHECK(image.script.wait==20);
+    auto delayed=original;delayed.script.wait=115;CHECK(rework_combat_v5::fixed_nuclear_warning(&delayed));CHECK(delayed.script.wait==25&&delayed.script.pos==start+4);
     auto late=original;late.script.pos=std::uint16_t(start+4);CHECK(rework_combat_v5::fixed_nuclear_warning(&late));CHECK(late.script.wait==0);
     auto bad=original;bad.script.header=0;CHECK(!rework_combat_v5::fixed_nuclear_warning(&bad));CHECK(bad.script.wait==125);
     auto scripted=unit(14,1,150,100);scripted->order=125;scripted->order_state=4;auto original_image=original;static_cast<bw::SpriteScr*>(scripted->flingy.sprite)->main_image=&original_image;pulse(222);CHECK(original_image.script.wait==125);
     auto enemy_ghost=unit(1,6,200,100),enemy_nuke=unit(14,6,200,100);enemy_nuke->related=enemy_ghost;enemy_nuke->order=125;enemy_nuke->order_state=4;auto enemy_image=original;static_cast<bw::SpriteScr*>(enemy_nuke->flingy.sprite)->main_image=&enemy_image;pulse(223);CHECK(enemy_image.script.wait==125);
-    rework_combat_v5::created(nuke);image=original;pulse(224);CHECK(image.script.wait==119&&rework_combat_v5::state(nuke)->nuke_adjusted);
+    rework_combat_v5::created(nuke);image=original;pulse(224);CHECK(image.script.wait==35&&rework_combat_v5::state(nuke)->nuke_adjusted);
     begin({101,55});ghost=unit(1,1,100,100);nuke=unit(14,1,100,100);nuke->related=ghost;nuke->order=125;nuke->order_state=4;image=original;static_cast<bw::SpriteScr*>(nuke->flingy.sprite)->main_image=&image;pulse(100);CHECK(image.script.wait==125);
     auto morph=unit(44,1,300,100),ling=unit(37,1,310,100),enemy=unit(37,6,320,100);ling->flingy.hitpoints=10*256;enemy->flingy.hitpoints=10*256;morph->flags&=~1u;
     rework_combat_v5::transformed(morph,59);pulse(108);CHECK(ling->flingy.hitpoints==10*256);morph->flags|=1;pulse(109);CHECK(ling->flingy.hitpoints==30*256&&enemy->flingy.hitpoints==10*256);
@@ -320,10 +320,22 @@ inline void rework_actual_iscript_layer_cfg_and_stat_weapons(){
     }CHECK(checked==7);U32 idle=0,body_header=0,turret_header=0;for(U32 at=read(0);at+4<bytes.size();at+=4){const auto id=read(at),header=read(at+2);if(id==65535)break;if(id==92)body_header=header;if(id==93){turret_header=header;idle=read(header+8+12*2);}}
     CHECK(body_header&&turret_header&&idle&&bytes[idle]==5&&bytes[idle+1]==125);CHECK(read(body_header+8+11*2)==idle&&read(body_header+8+12*2)==idle&&read(turret_header+8+11*2)==idle);CHECK(bytes!=original);const auto once=bytes;rework_combat_v5::script_transform(bytes.data(),bytes.size());CHECK(bytes==once);finish();
 }
+inline void rework_idle_melee_finishes_native_attack_animation(){
+    using namespace rework_fixture;begin();auto dt=unit(61,1,100,100);dt->order=3;
+    const auto& code=movement_effects::data::kIscript;const auto read16=[&](U32 at){return U32(code[at])|(U32(code[at+1])<<8);};U32 header=0;
+    for(U32 at=read16(0);at+4<sizeof(code)&&read16(at)!=65535;at+=4)if(read16(at)==354){header=read16(at+2);break;}
+    CHECK(header);movement_effects::Image image{};image.script.header=std::uint16_t(header);image.script.animation=8;image.script.pos=42810;image.script.wait=5;
+    static_cast<bw::SpriteScr*>(dt->flingy.sprite)->main_image=&image;rework_combat_v5::finish_idle_melee_animation(dt);
+    CHECK(image.script.animation==12&&image.script.pos==read16(header+32)&&image.script.wait==0);
+    image.script.animation=9;dt->order=10;rework_combat_v5::finish_idle_melee_animation(dt);CHECK(image.script.animation==9);
+    dt->order=6;dt->flingy.current_speed=1;rework_combat_v5::finish_idle_melee_animation(dt);CHECK(image.script.animation==9);
+    dt->order=3;rework_combat_v5::finish_idle_melee_animation(dt);CHECK(image.script.animation==12);
+    image.script.animation=9;dt->flingy.current_speed=0;dt->player=6;rework_combat_v5::finish_idle_melee_animation(dt);CHECK(image.script.animation==9);finish();
+}
 inline void rework_relocation_jump_fixed_recall_and_native_placement(){
     using namespace rework_fixture;begin({134,98,126,143,145});relocation();auto dt=unit(61,1,100,100);dt->order=6;dt->order_target={300,100,nullptr};pulse(100);CHECK(dt->flingy.position.x==196&&dt->order==6&&dt->order_target.x==300);const auto jump=rework_combat_v5::state(dt)->blink_due;CHECK(jump==388);
     dt->order_target.x=400;pulse(101);CHECK(dt->flingy.position.x==196);placement_allowed=false;game.frame_count=400;dt->order_target.x=500;pulse(400);CHECK(dt->flingy.position.x==196&&rework_combat_v5::state(dt)->blink_due==jump);placement_allowed=true;
-    auto ling=unit(37,1,100,300),target=unit(0,6,200,300);ling->order=10;multi_fixture::target(ling,target);pulse(401);CHECK(ling->flingy.position.x==184&&ling->order==10);
+    auto ling=unit(37,1,100,300),target=unit(0,6,200,300);ling->order=10;ling->flags|=0x8000000u;multi_fixture::target(ling,target);pulse(401);CHECK(ling->flingy.position.x==168&&ling->order==10);
     auto arbiter=unit(71,1,1000,1000,true);arbiter->energy=200*256;arbiter->order=137;arbiter->order_state=1;arbiter->order_timer=0;arbiter->order_target={500,500,nullptr};
     {rework_combat_v5::OrderScope scope(arbiter);arbiter->energy-=150*256;arbiter->order=3;}CHECK(arbiter->energy==125*256);
     auto ally=unit(37,1,500,500),enemy=unit(37,6,510,500),burrowed=unit(37,1,520,500),building=unit(131,1,530,500);burrowed->flags|=0x10u;
@@ -417,7 +429,7 @@ inline void rework_spell_recast_native_timer_write_witness(){
     for(U32 w:{32u,83u,108u}){target->lockdown_timer=target->stasis_timer=target->maelstrom_timer=200;auto shot=bullet(caster,target,w);{rework_combat_v5::MissileScope impact(shot);}CHECK(target->lockdown_timer==200&&target->stasis_timer==200&&target->maelstrom_timer==200);}finish();
 }
 inline void rework_native_upgrade_storage_and_shield_beneficiaries();
-inline void run_rework_combat_v5_groups(){rework_half_armor_native_health_callback();rework_ghost_zero_armor_five_seconds();rework_infantry_percentage_damage();rework_stats_and_repeatable_fractional();rework_medic_actual_pulses_and_lifecycle();rework_projectile_counts_and_moving_orders();rework_emp_storm_and_armor_semantics();rework_mobile_siege_burrow_and_ownership();rework_native_area_replay_and_restoration();rework_matrix_reserve_and_energy_overflow();rework_feedback_targeting_and_spell_costs();rework_acid_twelve_ground_lifecycle_and_native_hit();rework_hallucination_mind_chain_and_native_orders();rework_split_bounce_and_dying_ammunition();rework_medic_rate_network_emergency_and_stim();rework_nuclear_warning_morph_once_and_reset();rework_native_fields_owner_and_air_rules();rework_actual_iscript_layer_cfg_and_stat_weapons();rework_relocation_jump_fixed_recall_and_native_placement();rework_lethal_plague_chain_irradiate_and_brood_count();rework_storm_multiple_centers_and_consume_real_cap();rework_native_script_source_scope_restore();rework_goliath_body_weapon_and_ground_suicide_guards();rework_synthetic_native_weapon_factors();rework_bc_dual_triple_counts_once_per_layer();rework_dead_caster_spell_scalars_durations_and_yamato();rework_spell_recast_native_timer_write_witness();rework_native_upgrade_storage_and_shield_beneficiaries();}
+inline void run_rework_combat_v5_groups(){rework_half_armor_native_health_callback();rework_ghost_zero_armor_five_seconds();rework_infantry_percentage_damage();rework_stats_and_repeatable_fractional();rework_medic_actual_pulses_and_lifecycle();rework_projectile_counts_and_moving_orders();rework_emp_storm_and_armor_semantics();rework_mobile_siege_burrow_and_ownership();rework_native_area_replay_and_restoration();rework_matrix_reserve_and_energy_overflow();rework_feedback_targeting_and_spell_costs();rework_acid_twelve_ground_lifecycle_and_native_hit();rework_hallucination_mind_chain_and_native_orders();rework_split_bounce_and_dying_ammunition();rework_medic_rate_network_emergency_and_stim();rework_nuclear_warning_morph_once_and_reset();rework_native_fields_owner_and_air_rules();rework_actual_iscript_layer_cfg_and_stat_weapons();rework_idle_melee_finishes_native_attack_animation();rework_relocation_jump_fixed_recall_and_native_placement();rework_lethal_plague_chain_irradiate_and_brood_count();rework_storm_multiple_centers_and_consume_real_cap();rework_native_script_source_scope_restore();rework_goliath_body_weapon_and_ground_suicide_guards();rework_synthetic_native_weapon_factors();rework_bc_dual_triple_counts_once_per_layer();rework_dead_caster_spell_scalars_durations_and_yamato();rework_spell_recast_native_timer_write_witness();rework_native_upgrade_storage_and_shield_beneficiaries();}
 inline void rework_native_upgrade_storage_and_shield_beneficiaries(){
     using namespace rework_fixture;begin({113});install();
     std::array<U8,61*12> levels{};samase::ExtendedArray native_levels{levels.data(),levels.data()+levels.size(),0,0};g.extended=&native_levels;g.extended_count=1;
@@ -442,5 +454,5 @@ inline void rework_native_upgrade_storage_and_shield_beneficiaries(){
     CHECK(rework_combat_v5::upgrade_level(1,15)==7);{rework_combat_v5::DamageScope scope(target,attacker,0,1,damage);CHECK(game.upgrade_level_sc[1][15]==8);}CHECK(game.upgrade_level_sc[1][15]==7);
     finish();
 }
-inline constexpr std::size_t rework_combat_v5_group_count=28;
+inline constexpr std::size_t rework_combat_v5_group_count=29;
 }

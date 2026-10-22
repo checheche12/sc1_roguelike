@@ -54,7 +54,7 @@ DESCRIPTIONS = {
  5:'임무 시작 시 보유 저주 중첩당 미네랄·가스를 25씩 받습니다.',
  19:'아군 일반 공격이 적의 체력 방어력과 보호막 방어력을 모두 무시합니다.',
  44:'과학선의 EMP 반경이 100% 넓어집니다. 아군도 맞습니다.',
- 46:'고스트 핵의 낙하 경고가 5초로 줄고, 적에게 주는 핵 피해가 50% 늘어납니다.',
+ 46:'고스트 핵의 낙하 경고가 1.5초로 줄고, 핵 생산 시간은 30초, 필요 인구수는 2가 됩니다. 적에게 주는 핵 피해가 50% 늘어납니다.',
  47:'테란 유도탄의 표적이 죽으면 4타일 안 같은 공격층의 다른 적을 한 번 추적합니다.',
  54:'벌처가 이동하면서 지상 적을 공격합니다. 이동 사격 피해는 원래 공격의 250%입니다.',
  60:'스파이더 마인이 공중 적도 추적하며 2타일 안에서 폭발합니다. 대공 피해 +50%.',
@@ -136,6 +136,9 @@ def decorate(catalog):
     catalog['talent_power_quarters']=POWER_QUARTERS.copy()
     catalog['economy_talents_scaled']=False
     for item in catalog['talents']:
+        if item.get('rework_revision')==5 and item.get('effect_ordinal')==46:
+            item['description']=DESCRIPTIONS[46]
+            item['effect'].update(nuclear_warning_frames=36,nuclear_build_time_frames=720,nuclear_supply_required=2,qa_revision=2026102268)
         if item.get('rework_revision')==5 and item.get('effect_ordinal')==47:item['rarity']='uncommon'
         if item.get('balance_revision')==9:continue
         original=item['description'];q=power_quarters(item)

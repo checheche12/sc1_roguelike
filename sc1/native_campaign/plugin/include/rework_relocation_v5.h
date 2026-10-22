@@ -41,9 +41,16 @@ inline bool bind() noexcept {
     // native stop/order transition; no additional unverified function is used.
     return true;
 }
+inline void stop_preserving_queue(bw::Unit* u) noexcept {
+    if(!u||!g.order)return;
+    auto begin=u->order_queue_begin,end=u->order_queue_end;const auto count=u->highlight_order_count;
+    u->order_queue_begin=u->order_queue_end=nullptr;u->highlight_order_count=0;
+    g.order(u,1,U32(u->flingy.position.x),U32(u->flingy.position.y),nullptr,228);
+    u->order_queue_begin=begin;u->order_queue_end=end;u->highlight_order_count=count;
+}
 inline bool move(bw::Unit* u,int x,int y,unsigned max_adjust_pixels,bool require_ground_connection=true) noexcept {
     if(!native_move || !native_place || !g.active || !g.applied || !valid_unit(u) ||
-       !u->flingy.sprite || !u->order || u->flingy.hitpoints<=0 || (u->flags&(0x20u|0x40u|0x8000000u)) || u->stasis_timer)return false;
+       !u->flingy.sprite || !u->order || u->flingy.hitpoints<=0 || (u->flags&(0x20u|0x40u)) || u->stasis_timer)return false;
     auto game=g.game ? g.game():nullptr;
     if(!game || x<0 || y<0 || x>=int(game->map_width_tiles)*32 || y>=int(game->map_height_tiles)*32)return false;
     const bw::Point previous=u->flingy.position;
@@ -51,13 +58,15 @@ inline bool move(bw::Unit* u,int x,int y,unsigned max_adjust_pixels,bool require
     if(require_ground_connection && !(u->flags&4u) && !connected(previous,desired))return false;
     bw::Point placed{};
     OwnerDatScope scope(u->player,u->player,u);
-    native_move(u,U32(x),U32(y));
+    // Search while the unit still occupies its origin. Moving first makes the
+    // native collision search reject its own footprint at the requested point.
+    // Auto-acquired/Patrol attacks also set0x08000000; it is not cargo immunity.
     const bool found=native_place(u,&desired,&placed,nullptr,0,0)!=0;
     const auto dx=std::int64_t(placed.x)-x,dy=std::int64_t(placed.y)-y;
     const bool allowed=found && placed.x>=0 && placed.y>=0 && placed.x<int(game->map_width_tiles)*32 &&
         placed.y<int(game->map_height_tiles)*32 && dx*dx+dy*dy<=std::int64_t(max_adjust_pixels)*max_adjust_pixels;
-    if(!allowed || (require_ground_connection && !(u->flags&4u) && !connected(previous,placed))){native_move(u,U32(previous.x),U32(previous.y));return false;}
-    if(g.order)g.order(u,1,U32(previous.x),U32(previous.y),nullptr,228);
+    if(!allowed || (require_ground_connection && !(u->flags&4u) && !connected(previous,placed)))return false;
+    stop_preserving_queue(u);
     native_move(u,U32(placed.x),U32(placed.y));
     return true;
 }

@@ -23,7 +23,10 @@ class AirLegendBalance(unittest.TestCase):
    self.assertEqual(t['source_description'],before['talents'][index]['source_description'])
   self.assertEqual(c,before)
  def test_all_old_pinned_cards_refresh_and_owned_ranks_survive(self):
-  current=load_catalog(expected_version=2);old=copy.deepcopy(current);indices=(271,312,341,343,353,429,560)
+  current=load_catalog(expected_version=2);old=copy.deepcopy(current);indices=(271,284,312,341,343,353,429,560)
+  nuclear=current['talents'][284]
+  self.assertEqual((nuclear['effect']['nuclear_warning_frames'],nuclear['effect']['nuclear_build_time_frames'],nuclear['effect']['nuclear_supply_required']),(36,720,2))
+  self.assertIn('1.5초',nuclear['description']);self.assertIn('30초',nuclear['description'])
   for i in indices:old['talents'][i]['effect']['qa_revision']=2026102264;old['talents'][i]['description']='Previous card'
   old['talents'][560]['candidate_weight_percent']=200
   with sqlite3.connect(':memory:') as conn:
