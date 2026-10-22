@@ -1,0 +1,29 @@
+{
+  "version": "v2026.10.22-qa61",
+  "file": "SC1_Roguelike_20261022_QA61.zip",
+  "sha256": "99a38b60d7faafaf8e2ade2746d7e94fb97874fa2902423f8e79fd72346955ae",
+  "bytes": 24793480,
+  "runtime_source_commit": "ea664f3398743956d1bd5900c89f8c5a5d26891f",
+  "native_dll_sha256": "7485f0c62527e09628f4a30f0eb00b49df6555ce3228ceab3fac5e132911d4f4",
+  "created_at_utc": "2026-10-22T07:11:22.185476+00:00",
+  "tower_max_rank": 2,
+  "tower_health_percent_per_rank": 100,
+  "tower_air_damage_percent_per_rank": 50,
+  "tower_additional_targets_per_rank": 1,
+  "tower_sampling_weight_percent": 150,
+  "tower_upgrades": {
+    "turret_vehicle": 8,
+    "spore_missile": 11,
+    "cannon_ground": 13
+  },
+  "tower_upgrade_damage_per_level": 2,
+  "vulture_existing_moving_fire_and_2x_3x_damage_preserved": true,
+  "vulture_damage_type": "normal",
+  "reaver_existing_damage_bonus_percent": 150,
+  "reaver_scarab_mineral_cost": 0,
+  "descriptions_improved": true,
+  "unchanged_maps": 63,
+  "changed_maps": [],
+  "personal_database_included": false,
+  "live_gameplay_verified": false
+}
