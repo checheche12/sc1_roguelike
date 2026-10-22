@@ -130,6 +130,25 @@ class ReworkGrowthTests(unittest.TestCase):
         for item in (card,partner):
             bit=item['bit_index'];self.assertTrue(picked['growth_words'][1+bit//32]&(1<<(bit%32)))
 
+    def test_shared_melee_bundle_reconnect_and_native_snapshot_include_both_members(self):
+        from sc1.campaign.legendary_bundles import pair_options,member_ids,paired_unit
+        melee=self.catalog['talents'][388]
+        pool=[x for x in self.catalog['talents'] if x['race'] in ('shared','terran') and x['rarity']=='uncommon'
+              and paired_unit(x) and not x['effect'].get('offer_retired')]
+        option=pair_options([melee],pool,random.Random(75))[0];ids=member_ids(option,self.catalog)
+        with patch.object(rework_growth,'candidates',return_value=[option]):state=self.load(mission=101)
+        issued=copy.deepcopy(state['offer']);resumed=self.load(mission=101)
+        self.assertEqual(resumed['offer'],issued)
+        picked=self.pick(resumed)
+        while picked.get('offer'):picked=self.pick(picked)
+        for identity in ids:
+            item=next(x for x in self.catalog['talents'] if x['id']==identity)
+            field=item.get('wire_storage')
+            if field:
+                self.assertEqual(picked['growth_words'][field['word']]>>field['shift']&((1<<field['width'])-1),1)
+            else:
+                bit=item['bit_index'];self.assertTrue(picked['growth_words'][1+bit//32]&(1<<(bit%32)))
+
     def test_displayed_unchosen_manuals_reach_next_offer_and_reconnect_is_immutable(self):
         opening=self.finish();nonce=opening['nonce']
         with patch.object(policy,'rolled_rarity',return_value='common'):

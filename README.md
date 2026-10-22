@@ -4,11 +4,7 @@
 
 ## 다운로드
 
-[최신 버전 받기 — v2026.10.23-qa71](https://github.com/checheche12/sc1_roguelike/raw/refs/tags/asset-v2026.10.23-qa71/SC1_Roguelike_20261023_QA71.zip)
-
-통합 효과 시험장: 압축을 푼 뒤 `Start_Effect_Lab.cmd`를 실행하세요. 256×256 지도와 재능·저주 611개 검색 목록인 `Effect_Checklist.html`이 포함되어 있습니다. [시험 방법과 변경 내용](docs/qa65-effect-lab-and-air-legends.md)
-
-최근 수정: 퀸의 고체력 커맨드센터 감염 재능을 삭제했습니다. 기존 획득 기록이 있어도 효과는 작동하지 않습니다. 디파일러 컨슘의 추가 에너지 100이 누락되던 오류를 고쳐 기본 50과 합계 150을 회복합니다. 파이어뱃·다크 템플러의 추가 대공 사거리 끝에서 자동공격이 멈추거나 화염이 닿지 않는 문제도 고쳤습니다. 다크 스웜 스크롤 표시 수정과 기존 스커지 광역 피해·핵·러커·다크 템플러 수정도 유지합니다. 모든 등급 재능의 조건별 검수는 계속 진행 중입니다.
+[최신 버전 받기 — v2026.10.23-qa72](https://github.com/checheche12/sc1_roguelike/raw/refs/tags/asset-v2026.10.23-qa72/SC1_Roguelike_20261023_QA72.zip)
 
 Windows 64비트·스타크래프트 리마스터용입니다. ZIP 전체를 압축 해제한 뒤 `Start_Campaign.exe`를 실행하세요. Python은 따로 설치하지 않아도 됩니다.
 

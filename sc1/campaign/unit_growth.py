@@ -88,6 +88,10 @@ def decorate(catalog):
  for ordinal,family in COMBAT_BUNDLE_FAMILIES.items():
   by_ord[ordinal]['bundle_family']=family
   by_ord[ordinal]['effect']['qa_revision']=2026102373
+ # This shared combat card covers six melee families. Pair it with a
+ # different family from the current campaign, keeping its original buff.
+ by_ord[150].update(bundle_family=10,bundle_families=[10,37,39,40,61,65])
+ by_ord[150]['effect']['qa_revision']=2026102375
  missions=load_missions()
  for s in specifications():
   repeat=s['kind'] in ('health','attack','tower');ordinal=s['ordinal'];effect=dict(type='rework_v5',ordinal=ordinal,qa_revision=REVISION,benefit_power_quarters=4,unit_growth=copy.deepcopy(s))

@@ -531,6 +531,17 @@ void bundled_legendary_pages_test() {
     for(auto same_family:{369u,553u,556u})check(!legendary_bundles::compatible(356,same_family) && !legendary_bundles::compatible(same_family,356),"ammunition production excludes both Carrier/Interceptor and Reaver/Scarab families");
     const unsigned ids[]={300,301,302,303,304,305,341,342,343,344,345,346,383,384,385,386,387,388};
     std::vector<std::pair<unsigned,unsigned>> pairs;
+    const legendary_bundles::Entry* melee=nullptr;unsigned faction_partners[3]{};
+    for(const auto& entry:legendary_bundles::entries)if(entry.index==389)melee=&entry;
+    check(melee && melee->race==0 && melee->rarity==1,"shared melee mastery belongs to uncommon unit bundles");
+    for(unsigned race=1;race<=3;++race){
+        for(const auto& entry:legendary_bundles::entries)if(entry.race==race && entry.rarity==1 && legendary_bundles::compatible(389,entry.index)){
+            faction_partners[race-1]=entry.index;pairs.emplace_back(389,entry.index);pairs.emplace_back(entry.index,389);break;}
+        check(faction_partners[race-1]!=0,"each faction can pair its unit reward with shared melee mastery");
+    }
+    for(auto entry:legendary_bundles::entries)if(entry.family==10 || entry.family==37 || entry.family==39 || entry.family==40 || entry.family==61 || entry.family==65)
+        check(legendary_bundles::overlap(*melee,entry),"all six melee families are excluded as overlapping partners");
+    check(!legendary_bundles::compatible(faction_partners[0],faction_partners[1]),"shared eligibility does not pair Terran and Zerg faction cards together");
     for(auto left:ids)for(auto right:ids)if(legendary_bundles::compatible(left,right))pairs.emplace_back(left,right);
     for(auto left:legendary_bundles::entries)if(std::find(std::begin(ids),std::end(ids),left.index)==std::end(ids))
         for(auto right:legendary_bundles::entries)if(left.rarity==right.rarity&&legendary_bundles::compatible(left.index,right.index)){pairs.emplace_back(left.index,right.index);break;}

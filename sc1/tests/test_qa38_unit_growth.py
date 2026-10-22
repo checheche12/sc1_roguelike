@@ -163,6 +163,57 @@ class UnitGrowth(unittest.TestCase):
    owned=[];rework_growth.acquire_option(conn,301,refreshed,owned,issued)
    self.assertEqual(owned,[issued['id']])
 
+ def test_shared_melee_mastery_pairs_with_each_faction_and_awards_both(self):
+  c=self.catalog;melee=c['talents'][388]
+  self.assertTrue(paired_unit(melee));self.assertEqual(melee['rarity'],'uncommon')
+  self.assertEqual(set(melee['bundle_families']),{10,37,39,40,61,65})
+  faction_partners=[]
+  for race in ('terran','zerg','protoss'):
+   pool=[x for x in c['talents'] if x['race'] in (race,'shared') and x['rarity']=='uncommon'
+         and paired_unit(x) and not x['effect'].get('offer_retired')]
+   for other in pool:
+    if other.get('bundle_family') in melee['bundle_families']:
+     self.assertFalse(compatible(melee,other));self.assertFalse(compatible(other,melee))
+   for seed in range(10):
+    option=pair_options([melee],pool,random.Random(seed))[0]
+    ids=member_ids(option,c);self.assertEqual(len(ids),2)
+    other=next(x for x in pool if x['id']==ids[1])
+    self.assertEqual(other['race'],race);self.assertNotEqual(other['category'],'economy')
+    self.assertFalse(set(other['target_units'])&set(melee['target_units']))
+    self.assertTrue(compatible(other,melee));faction_partners.append(other)
+    with sqlite3.connect(':memory:') as conn:
+     owned=[];rework_growth.acquire_option(conn,301,c,owned,option)
+     self.assertEqual(owned,list(ids));self.assertTrue(encode_growth(c,owned,{})[1+388//32]&(1<<(388%32)))
+  self.assertFalse(compatible(faction_partners[0],faction_partners[10]))
+
+ def test_shared_melee_mastery_draws_in_all_six_campaigns(self):
+  from sc1.campaign import progression,talent_campaign_policy as policy
+  c=self.catalog;melee=c['talents'][388];by={x['id']:x for x in c['talents']}
+  with patch.object(policy,'rolled_rarity',return_value='uncommon'):
+   for mission in (109,209,309,407,507,609):
+    found=False;race=progression.metadata(mission)['race']
+    for seed in range(30):
+     for option in rework_growth.candidates(c,mission,3,[],random.Random(seed)):
+      ids=member_ids(option,c)
+      if melee['id'] in ids:
+       found=True;self.assertEqual(len(ids),2)
+       partner=next(by[x] for x in ids if x!=melee['id'])
+       self.assertEqual(partner['race'],race);self.assertEqual(partner['rarity'],'uncommon')
+    self.assertTrue(found,mission)
+
+ def test_shared_melee_mastery_pin_upgrade_preserves_issued_single(self):
+  c=self.catalog;old=copy.deepcopy(c);item=old['talents'][388]
+  for field in ('bundle_family','bundle_families'):item.pop(field,None)
+  item['effect']['qa_revision']=2026101610;issued=copy.deepcopy(item)
+  with sqlite3.connect(':memory:') as conn:
+   conn.execute('CREATE TABLE growth_rework_catalog (id INTEGER PRIMARY KEY,catalog_json TEXT NOT NULL)')
+   conn.execute('INSERT INTO growth_rework_catalog VALUES (1,?)',(json.dumps(old,ensure_ascii=False),))
+   rework_growth.enable(conn);refreshed=rework_growth.overlay(conn,old)
+   self.assertTrue(paired_unit(refreshed['talents'][388]))
+   self.assertEqual(set(refreshed['talents'][388]['bundle_families']),{10,37,39,40,61,65})
+   self.assertEqual(member_ids(issued,refreshed),(issued['id'],))
+   self.assertEqual(refreshed['talents'][388]['description'],issued['description'])
+
  def test_curse_start_and_sequences_match_requested_values(self):
   rows=self.catalog['curses']
   for slot,first,step in ((16,20,4),(18,10,2),(17,10,2),(19,15,1)):

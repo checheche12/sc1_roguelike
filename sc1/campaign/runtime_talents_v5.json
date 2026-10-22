@@ -38618,7 +38618,7 @@
         "type": "rework_v5",
         "ordinal": 150,
         "source_id": "5bdb025f-f544-54f4-b00a-b9f9754f29e1",
-        "qa_revision": 2026101610,
+        "qa_revision": 2026102375,
         "benefit_power_quarters": 7
       },
       "target_units": [
@@ -38711,7 +38711,16 @@
         "source_id": "5bdb025f-f544-54f4-b00a-b9f9754f29e1"
       },
       "effect_subject": "파이어뱃·저글링·울트라리스크·브루들링·질럿·다크 템플러",
-      "description_revision": 2026102042
+      "description_revision": 2026102042,
+      "bundle_family": 10,
+      "bundle_families": [
+        10,
+        37,
+        39,
+        40,
+        61,
+        65
+      ]
     },
     {
       "id": "a658caec-4220-56e3-9889-2316879eaf04",
