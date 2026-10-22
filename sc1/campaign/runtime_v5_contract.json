@@ -8761,7 +8761,7 @@
       "id": "eb164112-2629-5cb2-950e-2204c2e3be44",
       "name": "공중 가시",
       "target": "러커",
-      "description": "러커가 공중 적에게도 원래 공격의 100% 피해로 가시를 쏩니다.",
+      "description": "잠복한 러커가 사거리 안의 공중 적에게도 원래 공격의 100% 피해로 가시를 쏩니다. 지상 공격과 공격 간격을 공유하며, 공중을 겨냥한 가시는 공중 적만 관통합니다.",
       "trigger": "",
       "numbers": "",
       "notes": "지상 공격 주기·사거리 유지.",
@@ -8784,10 +8784,13 @@
         "type": "rework_v5",
         "ordinal": 97,
         "source_id": "eb164112-2629-5cb2-950e-2204c2e3be44",
-        "qa_revision": 2026102039,
+        "qa_revision": 2026102264,
         "benefit_power_quarters": 10,
         "rarity_promoted": true,
-        "air_attack_percent": 100
+        "air_attack_percent": 100,
+        "burrow_required": true,
+        "air_target_acquisition": true,
+        "shared_ground_air_cooldown": true
       },
       "target_units": [
         103
@@ -8832,7 +8835,7 @@
       "previous_rarity": "epic",
       "bundle_family": 103,
       "effect_subject": "러커",
-      "description_revision": 2026102042
+      "description_revision": 2026102265
     },
     {
       "id": "a9e0bf57-ae95-514f-8ecd-e8a2b3eb89a1",
@@ -30644,7 +30647,7 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 322,
-        "qa_revision": 2026102261,
+        "qa_revision": 2026102264,
         "benefit_power_quarters": 4,
         "unit_growth": {
           "race": "shared",
@@ -30788,7 +30791,7 @@
         }
       },
       "max_rank": 2,
-      "candidate_weight_percent": 150,
+      "candidate_weight_percent": 200,
       "description_revision": 2026102262
     }
   ],

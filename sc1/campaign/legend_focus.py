@@ -73,8 +73,8 @@ def decorate(catalog):
  by[106]['effect'].update(qa_revision=REVISION,acid_spore_effect_multiplier=2)
  by[92]['description']='울트라의 주 대상 공격에 더해 전방의 다른 지상 적 최대3기에게 원래 공격의70% 피해를 줍니다. 주 대상·추가 타격으로 실제 깎은 체력·보호막만큼 자신의 체력을 회복합니다. 방어막 흡수·초과 피해는 제외.'
  by[92]['effect'].update(qa_revision=REVISION,cleave_extra_targets=3,cleave_damage_percent=70,actual_hp_shield_lifesteal_percent=100)
- by[97]['description']='러커가 공중 적에게도 가시를 쏩니다. 대공 피해는 원래 공격의100%이며 추가 피해 증가는 없습니다. 한 공격은 한 공격층만 맞힙니다.'
- by[97]['effect'].update(qa_revision=REVISION,air_attack_percent=100)
+ by[97]['description']='잠복한 러커가 사거리 안의 공중 적에게도 가시를 쏩니다. 대공 피해는 원래 공격의 100%이며 지상 공격과 공격 간격을 공유합니다. 공중을 겨냥한 가시는 공중 적만 관통합니다.'
+ by[97]['effect'].update(qa_revision=2026102264,air_attack_percent=100,burrow_required=True,air_target_acquisition=True,shared_ground_air_cooldown=True)
  by[185]['description']='파이어뱃의 일반 공격 피해+100%. 전방3타일·120도 부채꼴 안 다른 지상 적들에게 원래 공격의100% 화염을 보냅니다. 추가 화염은 다시 발동시키지 않습니다.'
  by[185]['effect'].update(qa_revision=REVISION,mode=11,bonus=100,cone_radius_pixels=96,cone_angle_degrees=120)
  by[149]['description']='스테이시스 필드 반경 1.5배. 해제된 아군은 체력·보호막을 완전히 회복합니다. 적에게는 기존 보호막400·체력300+최대체력25% 피해와 주변 감속을 줍니다.'

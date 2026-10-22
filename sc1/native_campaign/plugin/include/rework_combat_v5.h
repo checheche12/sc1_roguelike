@@ -198,6 +198,8 @@ inline bool plan_stats(const GrowthSnapshot& s,std::vector<Edit>& edits) {
         const U32 flags=original_stat({1,3,weapon})|(l.field==17 ? 2u : 1u);
         if(!edit({1,3,weapon},0,flags))return false;
     }
+    // A new air weapon also needs a nonzero native air hit count.
+    if(rank(s,97)&&!edit({0,20,103},0,std::max(1u,original_stat({0,18,103}))))return false;
     if(rank(s,44)||(talent_power::enabled&&rank(s,62)))for(U32 f:{11u,12u,13u})if(!edit({1,f,33},4,rank(s,44)?100+talent_power::v5(44,50):200,100))return false;
     if(talent_power::enabled&&rank(s,104)){if(!edit({0,8,40},4,2,1))return false;const U32 weapon=original_stat({0,17,40});if(weapon<130&&!edit({1,14,weapon},4,2,1))return false;}
     if(rank(s,144))for(U32 f:{11u,12u,13u})if(!edit({1,f,84},4,100+(talent_power::enabled?legend_base_balance::storm_radius_bonus_percent:talent_power::v5(144,50)),100))return false;
@@ -662,6 +664,11 @@ inline bool target_ok(bw::Unit* source,bw::Unit* target,U32 w,bool range=true) n
         if(air(target)||building(target)||protected_objective_unit(target)||(original_stat({0,22,target->unit_id})&(0x4000u|0x40u)))return false;
         return native_weapon_target&&native_weapon_target(spawner,57,target)!=0;
     }
+    if(talent_power::enabled&&rank(97)&&source->unit_id==103&&air(target)&&w==original_stat({0,17,103})){
+        if(!(source->flags&0x10u))return false;
+        return native_weapon_target&&native_weapon_target(spawner,w,target)&&
+            (!range||(multi_target::outside_range&&!multi_target::outside_range(spawner,target)));
+    }
     return multi_target::can_attack && multi_target::can_attack(spawner,target,1) &&
         (!range || (multi_target::outside_range && !multi_target::outside_range(spawner,target)));
 }
@@ -699,7 +706,7 @@ inline void launched(U32 w,bw::Unit* source,bw::Bullet* b) {
     if(p.source.owner==player_owner()){
         if(talent_power::enabled&&rank(106)&&p.source.id==62)p.percent=p.layer ? p.percent*2:p.percent*legend_base_balance::devourer_ground_damage_percent/100;
         if(talent_power::enabled&&rank(60)&&p.source.id==13&&p.layer)p.percent=p.percent*150/100;
-        if(talent_power::enabled&&rank(97)&&p.source.id==103&&p.layer)p.percent=p.percent;
+        // Lurker air shots retain the ordinary100% launch scale.
         if(rank(58)&&p.source.id==58&&!p.layer)p.percent=p.percent*(talent_power::enabled&&rank(140)&&in(p.source.id,{68,76})?100u:talent_power::v5(rank(140)&&in(p.source.id,{68,76})?140u:58u,60))/100;
         if((rank(95)&&p.source.id==50&&p.layer)||(rank(96)&&p.source.id==47&&!p.layer))p.percent=p.percent*talent_power::v5(p.source.id==50?95u:96u,70)/100;
         if(talent_power::enabled&&rank(144)&&w==84)p.percent*=2;
@@ -766,6 +773,29 @@ inline void launched(U32 w,bw::Unit* source,bw::Bullet* b) {
     if(rank(131)&&in(source->unit_id,{66,78})){b->flingy.top_speed=U32(b->flingy.top_speed*talent_power::rate(131,1.5));b->flingy.current_speed=U32(b->flingy.current_speed*talent_power::rate(131,1.5));b->flingy.next_speed=U32(b->flingy.next_speed*talent_power::rate(131,1.5));}
     if(auto s=state(effect_body(source)))p.token=in(source->unit_id,{60,98})&&w==100?s->corsair_primary_attacks:s->shot_count;
     projectiles[b]=p;
+}
+// Native target acquisition/iscript can read the original ground-only DAT
+// outside step_order's owner scope. Complete only the missing burrowed air
+// attack through the native projectile API, sharing both native cooldowns.
+inline void lurker_air_attack(bw::Unit* u,UnitState& s,U32 frame) {
+    if(!talent_power::enabled||!rank(97)||u->unit_id!=103||!own(u)||!(u->flags&0x10u)||!can_fire(u)||u->stasis_timer||u->flingy.current_speed)return;
+    if(!(multi_target::attack_order(u->order)||in(u->order,{2,3,117})))return;
+    if(u->ground_cooldown||u->air_cooldown||s.launch_frame==frame||std::int32_t(frame-std::max(s.next_ground,s.next_air))<0)return;
+    const U32 w=weapon(u,true);if(w>=130)return;
+    auto target=u->order_target.unit;
+    if(eligible(target)&&is_enemy(target->player)){
+        // An explicit ground attack keeps its native target and one-layer shot.
+        if(!air(target))return;
+        if(!target_ok(u,target,w))return;
+    }else{
+        target=nullptr;
+        for(auto candidate:around(u->flingy.position.x,u->flingy.position.y,1024,nullptr,65536,true,1))
+            if(target_ok(u,candidate,w)){target=candidate;break;}
+    }
+    if(!target||!emit(u,target,w,100,-1,-1,true))return;
+    const U32 period=fractional_period(u,1,multi_target::period(u,w),cooldown_ratio(u,w));
+    s.next_ground=s.next_air=frame+period;
+    u->ground_cooldown=u->air_cooldown=U8(std::min(255u,period));
 }
 struct Persist {Identity target{},source{};U32 kind=0,until=0,due=0,remaining=0,ticks=0;int x=0,y=0;U32 owner=12;int destination_x=0,destination_y=0;};
 inline void recall_portal_visual(const Persist& portal) noexcept {
@@ -1577,6 +1607,7 @@ inline void step() {
             if(s->last_energy==U32(u->energy)+cost){const U32 numerator=cost*std::min(90u,talent_power::v5(35,70))+s->cloak_fraction;s->cloak_fraction=numerator%100;add_energy(u,*s,numerator/100);}
         }
         refill_energy(u,*s);s->last_energy=u->energy;s->energy_seen=true;
+        lurker_air_attack(u,*s,frame);
         const bool moving=u->order==6;
         if(moving&&rank(47)&&in(u->unit_id,{8,12,21,27,28,29,102})&&can_fire(u)){
             const auto due=std::max({s->next_ground,s->next_air,U32(u->ground_cooldown)+frame,U32(u->air_cooldown)+frame});

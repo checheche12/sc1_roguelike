@@ -88,8 +88,8 @@ def decorate(catalog):
   item.update(pre_balance_description=item['description'],pre_balance_effect=copy.deepcopy(effect))
   if repeat:item['max_rank']=s.get('max_rank',4)
   if s['kind']=='tower':
-   item.pop('bundle_family',None);item['candidate_weight_percent']=150
-   item['effect'].update(qa_revision=2026102261,health_percent_per_rank=100,shield_percent_per_rank=100,air_damage_percent_per_rank=50,additional_air_targets_per_rank=1)
+   item.pop('bundle_family',None);item['candidate_weight_percent']=200
+   item['effect'].update(qa_revision=2026102264,health_percent_per_rank=100,shield_percent_per_rank=100,air_damage_percent_per_rank=50,additional_air_targets_per_rank=1)
   if s['index']<len(catalog['talents']):
    assert catalog['talents'][s['index']]['id']==item['id']
    catalog['talents'][s['index']]=item
