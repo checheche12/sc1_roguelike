@@ -27,6 +27,10 @@ class QA39Legends(unittest.TestCase):
  def test_removed_and_demoted_historical_pairs_remain_readable(self):
   for ordinal in ORDINALS|DEMOTIONS:
    left=self.by[ordinal]
+   if left['rarity']!='legendary':
+    words=encode_growth(self.catalog,[left['id']],{})
+    self.assertTrue(words[1+left['bit_index']//32]&(1<<(left['bit_index']%32)))
+    continue
    right=next(x for x in self.by.values() if x['race']==left['race'] and x['rarity']=='legendary' and not x['effect'].get('retired') and not set(x['target_units'])&set(left['target_units']))
    old=dict(id=left['id'],bundled_talent_ids=[left['id'],right['id']])
    self.assertEqual(bundles.member_ids(old,self.catalog),(left['id'],right['id']))

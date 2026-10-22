@@ -891,6 +891,7 @@ struct DamageObservationScope {
 #include "include/rework_carrier_v5.h"
 #include "include/campaign_research.h"
 U32 __cdecl owner_attack_range_hook(bw::Unit* u,U32 id,RangeFn original) noexcept {return rework_combat_v5::attack_range(u,owner_range_hook(u,id,original),id);}
+U32 __cdecl owner_attack_acquire_hook(bw::Unit* u,UnitValueFn original) noexcept {return rework_combat_v5::acquisition_range(u,owner_acquire_hook(u,original));}
 U32 __cdecl owner_sight_range_hook(bw::Unit* u,U32 ignore_blind,RangeFn original) noexcept {return rework_combat_v5::sight_range(u,owner_range_hook(u,ignore_blind,original),ignore_blind);}
 void __cdecl owner_unit_hook(bw::Unit* u,UnitFn original) noexcept {
     if(rework_curses::spell_disabled(u))u->energy=0;
@@ -986,6 +987,7 @@ bw::Bullet* __cdecl owner_bullet_create_hook(U32 id,int x,int y,U32 player,U32 d
     try{if(!multi_target::allow_primary(id,parent))return nullptr;}
     catch(...){multi_target::reset();log_event("Multi-target allocation failed before primary; retaining original attack.");}
     auto body=effect_body(parent);OwnerDatScope scope(player,player,body);rework_combat_v5::ScriptSourceScope script_source(parent);
+    rework_combat_v5::air_flame_position(parent,id,x,y);
     BulletCreation creation(parent,id,player);auto bullet=original(id,x,y,player,direction,parent);
     if(bullet&&creation.observed!=bullet)try{observe_bullet_launch(id,parent,bullet);}
     catch(...){log_event("Projectile observation failed; original attack retained.");}
@@ -1091,7 +1093,7 @@ bool register_owner_hooks(const samase::PluginApi* api) noexcept {
         bind(samase::FuncId::FinishUnitPost,owner_unit_hook) &&
         bind(samase::FuncId::UnitAttackRange,owner_attack_range_hook) &&
         bind(samase::FuncId::UnitSightRange,owner_sight_range_hook) &&
-        bind(samase::FuncId::UnitTargetAcquisitionRange,owner_acquire_hook) &&
+        bind(samase::FuncId::UnitTargetAcquisitionRange,owner_attack_acquire_hook) &&
         bind(samase::FuncId::DamageUnit,owner_damage_hook) &&
         bind(samase::FuncId::HitUnit,owner_hit_hook) &&
         bind(samase::FuncId::DoMissileDamage,owner_missile_hook);

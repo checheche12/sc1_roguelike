@@ -1,6 +1,6 @@
 #pragma once
 namespace host_test {
-inline constexpr std::size_t qa38_group_count=14;
+inline constexpr std::size_t qa38_group_count=15;
 namespace qa38_fixture {
 inline void __cdecl timer(bw::Unit* u){if(u->death_timer)--u->death_timer;}
 inline void __cdecl recall(bw::Unit* u){
@@ -113,6 +113,11 @@ inline void qa38_mind_control_five_ignores_supply_and_infest_is_retired(){
  U32 controlled=0;living_units([&](bw::Unit* u){if(u!=caster&&u->player==1)++controlled;});CHECK(controlled==5&&caster->energy==50*256);qa9_fixture::end();
  qa9_fixture::begin({107});auto queen=unit(45,1,100,100,true);target=unit(37,6,120,100);target->flingy.hitpoints=1;queen->order=27;multi_fixture::target(queen,target);
  {rework_combat_v5::OrderScope scope(queen);CHECK(!scope.handled());}CHECK(target->player==6&&!rework_combat_v5::rank(107));qa9_fixture::end();
+ qa9_fixture::begin({85});CHECK(rework_combat_v5::raw_rank(85)==1);CHECK(rework_combat_v5::rank(85)==0);
+ talent_power::enabled=false;CHECK(rework_combat_v5::rank(85)==0);talent_power::enabled=true;qa9_fixture::end();
+ for(U32 type:{46u,52u}){qa9_fixture::begin({79});auto defiler=unit(type,1,100,100),victim=unit(37,1,120,100);defiler->energy=0;auto shot=bullet(defiler,victim,61);
+  {rework_combat_v5::MissileScope impact(shot);kill(victim);defiler->energy=50*256;}CHECK(defiler->energy==150*256);
+  {rework_combat_v5::MissileScope repeat(shot);}CHECK(defiler->energy==150*256);qa9_fixture::end();}
 }
 inline void qa38_irradiation_mechanical_damage_and_six_tile_infection(){
  using namespace rework_fixture;qa9_fixture::begin({61,198});auto vessel=unit(9,1,500,500,true),host=unit(37,6,1000,1000),machine=unit(3,6,1100,1000),friend_machine=unit(3,1,1100,1000),organic=unit(38,6,1100,1000),distant_machine=unit(3,6,1300,1000);
@@ -163,12 +168,31 @@ inline void qa38_promoted_battlecruiser_legend_reaches_all_hero_variants(){
   bullet(ship,target,original_stat({0,17,id}));CHECK(rework_combat_v5::pending_shots.empty());CHECK(rework_combat_v5::focus_base(ship)==100);qa9_fixture::end();
  }
 }
+inline void qa38_new_air_range_acquisition_and_flame_launch(){
+ using namespace rework_fixture;
+ for(U32 id:{10u,32u,61u,74u,75u}){
+  qa9_fixture::begin({59,138});auto actor=unit(id,1,100,100),enemy=unit(11,6,260,100,true);
+  CHECK(rework_combat_v5::acquisition_range(actor,3)==5);CHECK(rework_combat_v5::acquisition_range(actor,8)==8);
+  actor->player=6;CHECK(rework_combat_v5::acquisition_range(actor,3)==3);actor->player=1;
+  auto other=unit(0,1,100,100);CHECK(rework_combat_v5::acquisition_range(other,3)==3);
+  if(id==10||id==32){const U32 w=id==10?26u:25u;int x=17,y=19;multi_fixture::target(actor,enemy);
+   CHECK(rework_combat_v5::air_flame_position(actor,w,x,y)&&x==260&&y==100);
+   bullet(actor,enemy,w);CHECK(multi_fixture::shots.back().x==260&&multi_fixture::shots.back().y==100);
+   enemy->flags&=~4u;x=17;y=19;CHECK(!rework_combat_v5::air_flame_position(actor,w,x,y)&&x==17&&y==19);
+   enemy->flags|=4u;enemy->player=1;CHECK(!rework_combat_v5::air_flame_position(actor,w,x,y));enemy->player=6;
+   CHECK(!rework_combat_v5::air_flame_position(actor,w==25?26u:25u,x,y));
+   enemy->flingy.position.x=164;CHECK(!rework_combat_v5::air_flame_position(actor,w,x,y));enemy->flingy.position.x=260;
+   ranks[59]=0;CHECK(!rework_combat_v5::air_flame_position(actor,w,x,y));
+  }
+  ranks[59]=ranks[138]=0;CHECK(rework_combat_v5::acquisition_range(actor,3)==3);qa9_fixture::end();
+ }
+}
 inline void run_qa38_groups(){
  qa38_every_new_primary_bonus_uses_real_damage_and_ui();qa38_every_secondary_rule_has_cadence_limit_and_no_recursion();
  qa38_worker_and_overlord_auras_heal_once_without_stacking();qa38_transport_and_observer_buffs_apply_to_actual_hits_and_expire();
  qa38_broodling_death_expiry_once_and_birth_resets_token();qa38_recall_buff_first_cast_refreshes_and_expires();
  qa38_lockdown_six_tile_six_extras();qa38_broodling_cast_has_three_extra_native_targets();
  qa38_mind_control_five_ignores_supply_and_infest_is_retired();qa38_irradiation_mechanical_damage_and_six_tile_infection();
- qa38_native_original_energy_cell_precheck_deduction_and_nested_owners();qa38_wave_strength_and_global_limits();qa38_plague_native_outer_area_is_doubled();qa38_promoted_battlecruiser_legend_reaches_all_hero_variants();
+ qa38_native_original_energy_cell_precheck_deduction_and_nested_owners();qa38_wave_strength_and_global_limits();qa38_plague_native_outer_area_is_doubled();qa38_promoted_battlecruiser_legend_reaches_all_hero_variants();qa38_new_air_range_acquisition_and_flame_launch();
 }
 }

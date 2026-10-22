@@ -18,7 +18,7 @@ using RankLookup=U32 (*)(const GrowthSnapshot&,U32) noexcept;
 inline RankLookup rank_lookup=nullptr;
 inline U32 raw_rank(U32 ordinal) noexcept {return rank_lookup?rank_lookup(g.growth,ordinal):rework_catalog::rank(g.growth,ordinal);}
 inline U32 rank(const GrowthSnapshot& s,U32 ordinal) noexcept {
-    if(ordinal>=rework_catalog::kTalentCount)return 0;
+    if(ordinal>=rework_catalog::kTalentCount||ordinal==85)return 0;
     if(talent_power::enabled)switch(ordinal){case 51:case 66:case 95:case 107:case 183:case 187:case 188:case 189:case 192:case 193:case 195:case 196:return 0;default:break;}
     if(talent_power::enabled&&legend_focus::converted(ordinal)&&ordinal!=54&&ordinal!=55)return 0;
     if(rank_lookup)return rank_lookup(s,ordinal);
@@ -410,7 +410,6 @@ inline bw::Unit* active_caster=nullptr;
 inline U32 impact_weapon=130,impact_owner=12,impact_layer=2;
 inline void __cdecl hallucination_hit_hook(bw::Unit*,U32,U32,bw::Unit*,HallucinationFn) noexcept;
 inline U32 __cdecl order_target_hook(bw::Unit*,U32,bw::Unit*,U32,U32,std::uint16_t*,OrderTargetFn) noexcept;
-inline U32 __cdecl can_infest_hook(bw::Unit*,UnitValueFn) noexcept;
 inline U32 __cdecl weapon_target_hook(bw::Unit* source,U32 weapon,bw::Unit* target,WeaponTargetFn original) noexcept {
     if(weapon==impact_weapon&&impact_owner<12&&impact_layer<2){
         if(!valid_unit(target)||air(target)!=(impact_layer!=0))return 0;
@@ -477,7 +476,6 @@ inline bool bind_engine(const samase::PluginApi* api) noexcept {
         // SAMASE 0.10.28's Func24 hook masks target Unit* to 16 bits. Func25
         // preserves the pointer. Never register Func24, including pass-through.
         hook(static_cast<std::uint16_t>(samase::FuncId::CheckOrderTargeting),reinterpret_cast<std::uintptr_t>(order_target_hook)) &&
-        hook(static_cast<std::uint16_t>(samase::FuncId::UnitCanBeInfested),reinterpret_cast<std::uintptr_t>(can_infest_hook)) &&
         hook(static_cast<std::uint16_t>(samase::FuncId::CheckWeaponTargetingFlags),reinterpret_cast<std::uintptr_t>(weapon_target_hook)) &&
         hook(static_cast<std::uint16_t>(samase::FuncId::CanAttackUnit),reinterpret_cast<std::uintptr_t>(can_attack_hook));
 }
@@ -526,10 +524,6 @@ inline void __cdecl hallucination_hit_hook(bw::Unit* target,U32 w,U32 direction,
         weapon_hurt(target,talent_power::v5(147,base*64),w,attacker,attacker->player);
     }catch(...){}
 }
-inline U32 __cdecl can_infest_hook(bw::Unit* target,UnitValueFn original) noexcept {
-    if(!g.active||!g.applied||!own(active_caster)||!rank(85)||!live(target)||target->unit_id!=106||U32(target->flingy.hitpoints)>effective_max_hp(target)*3/4)return original(target);
-    const auto hp=target->flingy.hitpoints;target->flingy.hitpoints=std::min(hp,std::int32_t(effective_max_hp(target)/2));const auto result=original(target);target->flingy.hitpoints=hp;return result;
-}
 #include "spell_energy_requirements.h"
 inline U32 __cdecl order_target_hook(bw::Unit* caster,U32 order,bw::Unit* target,U32 x,U32 y,std::uint16_t* error,OrderTargetFn original) noexcept {
     if(rework_curses::spell_disabled(caster)&&in(order,{122,141,143}))return 0;
@@ -539,9 +533,6 @@ inline U32 __cdecl order_target_hook(bw::Unit* caster,U32 order,bw::Unit* target
     if(state_base==g.units&&states.size()==g.units_count&&states[std::size_t(caster-g.units)].fade_until>now())return 0;
     if(order==115&&rank(63)&&organic(target)&&soldier(target->unit_id)){
         auto table=table_for({0,22,target->unit_id},false);if(table){const auto flags=read_entry(table,target->unit_id);write_entry(table,target->unit_id,flags|0x40000000u);const auto result=original(caster,order,target,x,y,error);write_entry(table,target->unit_id,flags);return result;}
-    }
-    if(order==27&&target->unit_id==106&&rank(85)&&U32(target->flingy.hitpoints)<=effective_max_hp(target)*3/4){
-        const auto hp=target->flingy.hitpoints;target->flingy.hitpoints=std::min(hp,std::int32_t(effective_max_hp(target)/2));const auto result=original(caster,order,target,x,y,error);target->flingy.hitpoints=hp;return result;
     }
     if(order==27&&target->unit_id!=106&&rank(107)&&soldier(target->unit_id)&&is_enemy(target->player)&&!protected_objective_unit(target)&&U32(target->flingy.hitpoints)<=effective_max_hp(target)/(talent_power::enabled?2u:4u)){
         // Direct Func24 lookup has no hook masking. Keep native Mind Control
@@ -724,6 +715,15 @@ inline bw::Bullet* emit(bw::Unit* source,bw::Unit* target,U32 w,U32 percent,int 
     ScriptSourceScope script_source(source);
     auto b=multi_target::create_bullet(w,position.x,position.y,source->player,direction,source);
     emission_percent=saved_percent;emission_secondary=saved_secondary;emission_primary=saved_primary;return b;
+}
+inline bool air_flame_position(bw::Unit* source,U32 w,int& x,int& y) noexcept {
+    if(!own(source)||!rank(59)||!((source->unit_id==32&&w==25)||(source->unit_id==10&&w==26)))return false;
+    auto target=source->order_target.unit;
+    if(!live(target)||!air(target)||!is_enemy(target->player)||dist(source,target)<=64u*64u)return false;
+    // Native flame segments have fixed short offsets. At the added air range
+    // they can animate forever without reaching the selected target. Keep the
+    // native flame's count, lifetime, splash and layer; begin it at that target.
+    x=target->flingy.position.x;y=target->flingy.position.y;return true;
 }
 inline void queue(bw::Unit* source,bw::Unit* target,U32 w,U32 percent,U32 delay=0) {pending_shots.push_back({identity(source),identity(target),w,percent,now()+delay});}
 inline bool lockdown_committed(bw::Unit* target) {
@@ -1190,6 +1190,11 @@ inline U32 attack_range(bw::Unit* u,U32 value,U32 weapon_id=130) noexcept {
     if(air(u->order_target.unit)&&((rank(59)&&in(u->unit_id,{10,32}))||(rank(138)&&in(u->unit_id,{61,74,75}))))return std::max(talent_power::v5(in(u->unit_id,{10,32})?59u:138u,64),value);
     return value;
 }
+inline U32 acquisition_range(bw::Unit* u,U32 value) noexcept {
+    if(!own(u))return value;
+    const U32 ordinal=rank(59)&&in(u->unit_id,{10,32})?59u:rank(138)&&in(u->unit_id,{61,74,75})?138u:0u;
+    return ordinal?std::max(value,(talent_power::v5(ordinal,64)+31u)/32u):value;
+}
 inline U32 sight_range(bw::Unit* u,U32 value,U32 ignore_blind) noexcept {
     if(!own(u)||(!ignore_blind&&u->is_blind))return value;
     if((u->flags&0x10u)&&race_type(u->unit_id,1)&&soldier(u->unit_id))value+=rank(73) ? talent_power::v5(73,2):0u;
@@ -1230,7 +1235,7 @@ struct MissileScope {
     struct AirSpineBefore {Identity who;U32 hp,shields,matrix,reserve;};std::vector<AirSpineBefore> air_spine_before;
     bw::DatTable* layer_flags=nullptr;U32 saved_layer_flags=0;
     U32 previous_impact_weapon=130,previous_impact_owner=12,previous_impact_layer=2;
-    BulletFn dispatch=nullptr;U32 timer_base=0;
+    BulletFn dispatch=nullptr;U32 timer_base=0,consume_energy_before=0;bool consume_victim=false;
     U8* recast_timer(bw::Unit* u) const noexcept {return p.weapon==58 ? &u->ensnare_timer:p.weapon==60 ? &u->plague_timer:p.weapon==34 ? &u->irradiate_timer:nullptr;}
     MissileScope(bw::Bullet* bullet,BulletFn original=nullptr):b(bullet),dispatch(original){
         previous_impact_weapon=impact_weapon;previous_impact_owner=impact_owner;previous_impact_layer=impact_layer;
@@ -1240,6 +1245,12 @@ struct MissileScope {
         previous_infantry_rank=DamageScope::current_infantry_rank;previous_mobility_bonus=DamageScope::current_mobility_bonus;previous_projectile=DamageScope::current_projectile;
         auto it=projectiles.find(b);if(it==projectiles.end()||!g.active||!g.applied)return;
         p=it->second;tracked=true;DamageScope::current_percent=p.percent;DamageScope::current_secondary=p.secondary;DamageScope::current_token=p.token;DamageScope::current_primary=generation(p.primary);
+        if(p.weapon==61&&!p.impact&&p.source.owner==player_owner()&&in(p.source.id,{46,52})){
+            auto source=resolve(p.source),victim=resolve(p.primary);
+            if(source&&victim&&!hallucination(victim))if(auto s=state(source)){
+                consume_victim=true;consume_energy_before=U32(source->energy)+s->energy_reserve;
+            }
+        }
         if(area_visual_event)area_visual_event(p.weapon,p.source.owner,b->target.x,b->target.y);
         DamageScope::current_infantry_rank=p.infantry_rank;DamageScope::current_mobility_bonus=p.mobility_bonus;DamageScope::current_projectile=true;
         DamageScope::current_bounce_divisor=1;
@@ -1388,6 +1399,15 @@ struct MissileScope {
             else old.timer_recast=*timer==timer_base;
         }
         try{if(tracked){auto source=resolve(p.source);auto primary=resolve(p.primary);
+            // Consume removes its victim at missile impact, after the cast
+            // order has already finished. Credit only that witnessed removal.
+            if(consume_victim&&source&&!primary){
+                if(auto s=state(source)){
+                    const U32 total=U32(source->energy)+s->energy_reserve;
+                    const U32 native_gain=total>=consume_energy_before?total-consume_energy_before:0;
+                    add_energy(source,*s,50*256-std::min(50*256u,native_gain)+(rank(79)?talent_power::v5(79,50*256u):0u));
+                }
+            }
             if(p.source.owner==player_owner()&&p.source.id==47&&p.weapon==55&&!p.layer&&rank(96)&&!p.impact&&eligible(primary)&&is_enemy(primary->player)&&!(b->flags&1u)){
                 auto matrix=matrix_state(primary);
                 for(const auto& old:before)if(generation(old.who)==primary&&U32(primary->flingy.hitpoints)==old.hp&&U32(primary->shields)==old.shields&&U32(primary->defensive_matrix_dmg)==old.matrix&&(!matrix||matrix->reserve==old.matrix_reserve)){
@@ -1581,10 +1601,6 @@ struct OrderScope {
                 ms->healed_target=identity(patient);ms->last_heal_frame=now();break;
             }
         }
-        if(in(u->unit_id,{46,52})&&order==145&&target_hp){auto consumed=generation(target);if(consumed&&!live(consumed)&&!hallucination(consumed))if(auto s=state(u)){
-            const U32 native_gain=u->energy>=energy ? U32(u->energy)-energy:0;
-            add_energy(u,*s,50*256-std::min(50*256u,native_gain)+(rank(79) ? talent_power::v5(79,50*256u):0u));
-        }}
         if(order==137&&prior_state==1&&prior_timer==0&&u->order!=137){
             if(talent_power::enabled&&rank(145))for(const auto& id:recall_before)if(auto friend_unit=resolve(id))if(dist(friend_unit,u)<=128u*128u)portal_buff(friend_unit);
             if(rank(143)){Persist p{};p.kind=143;p.x=u->flingy.position.x;p.y=u->flingy.position.y;p.owner=u->player;p.until=now()+talent_power::v5(143,72);p.due=now();persistent.push_back(p);}

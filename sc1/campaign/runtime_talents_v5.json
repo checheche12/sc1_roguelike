@@ -33648,7 +33648,7 @@
       "id": "0092e1dd-7b0d-5974-9145-b2713cd19dee",
       "name": "감염 촉매",
       "target": "퀸 인페스트 커맨드 센터",
-      "description": "퀸이 체력 75% 이하인 커맨드 센터를 감염시킬 수 있습니다.",
+      "description": "삭제된 재능입니다. 더 이상 선택하거나 효과를 받을 수 없습니다.",
       "trigger": "",
       "numbers": "",
       "notes": "",
@@ -33671,9 +33671,12 @@
         "type": "rework_v5",
         "ordinal": 85,
         "source_id": "0092e1dd-7b0d-5974-9145-b2713cd19dee",
-        "qa_revision": 2026102038,
+        "qa_revision": 2026102371,
         "benefit_power_quarters": 8,
-        "energy_cost": 0
+        "energy_cost": 0,
+        "retired": true,
+        "runtime_disabled": true,
+        "offer_retired": true
       },
       "target_units": [
         45,
@@ -69924,7 +69927,7 @@
     "new_unit_traits": 42,
     "paired_unit_rewards": true
   },
-  "talent_retirement_revision": 2026102041,
+  "talent_retirement_revision": 2026102371,
   "legend_focus_revision": 2026102269,
   "single_target_legend_ordinals": [
     49,

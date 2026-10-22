@@ -230,8 +230,9 @@ inline void rework_feedback_targeting_and_spell_costs(){
     auto ghost=unit(1,1,100,100),organic=unit(37,6,120,100);std::uint16_t error=0;const auto flags=raw_value(0,22,37);
     CHECK(rework_combat_v5::order_target_hook(ghost,115,organic,0,0,&error,order_targeting)==1);CHECK(raw_value(0,22,37)==flags);ghost->player=6;CHECK(!rework_combat_v5::order_target_hook(ghost,115,organic,0,0,&error,order_targeting));
     auto queen=unit(45,1,100,100),cc=unit(106,6,120,100);cc->flingy.hitpoints=std::int32_t(effective_max_hp(cc)*7/10);const auto hp=cc->flingy.hitpoints;
-    CHECK(rework_combat_v5::order_target_hook(queen,27,cc,0,0,&error,order_targeting));CHECK(cc->flingy.hitpoints==hp);
+    CHECK(!rework_combat_v5::order_target_hook(queen,27,cc,0,0,&error,order_targeting));CHECK(cc->flingy.hitpoints==hp);
     cc->flingy.hitpoints=std::int32_t(effective_max_hp(cc)*8/10);CHECK(!rework_combat_v5::order_target_hook(queen,27,cc,0,0,&error,order_targeting));
+    cc->flingy.hitpoints=std::int32_t(effective_max_hp(cc)*4/10);CHECK(rework_combat_v5::order_target_hook(queen,27,cc,0,0,&error,order_targeting));
     ghost->player=1;ghost->energy=200*256;ghost->order=115;{rework_combat_v5::OrderScope scope(ghost);ghost->energy-=100*256;}CHECK(ghost->energy==130*256);
     {rework_combat_v5::OrderScope scope(ghost);}CHECK(ghost->energy==130*256);finish();
 }
@@ -353,7 +354,16 @@ inline void rework_storm_multiple_centers_and_consume_real_cap(){
     using namespace rework_fixture;begin({144});auto caster=unit(67,1,100,100),target=unit(37,6,130,100);U32 hits=0;
     for(U32 n=0;n<5;n++)for(int x:{120,150}){auto b=bullet(caster,target,84);b->flingy.position={std::int16_t(x),100};{rework_combat_v5::MissileScope scope(b);if(!target->is_under_storm){++hits;target->is_under_storm=1;}}}CHECK(hits==8);finish();
     begin({76,79});auto defiler=unit(46,1,100,100),victim=unit(37,1,120,100);defiler->energy=250*256;defiler->order=145;multi_fixture::target(defiler,victim);CHECK(rework_combat_v5::max_energy_hook(defiler,max200)==65535);
-    {rework_combat_v5::OrderScope scope(defiler);kill(victim);defiler->energy=65535;defiler->order=3;}auto s=rework_combat_v5::state(defiler);CHECK(U32(defiler->energy)+s->energy_reserve==300*256);const U32 total=U32(defiler->energy)+s->energy_reserve;defiler->energy-=100;pulse(101);CHECK(U32(defiler->energy)+s->energy_reserve==total-100&&defiler->energy==65535);finish();
+    auto consume=bullet(defiler,victim,61);{rework_combat_v5::MissileScope scope(consume);kill(victim);defiler->energy=65535;defiler->order=3;}auto s=rework_combat_v5::state(defiler);CHECK(U32(defiler->energy)+s->energy_reserve==300*256);const U32 total=U32(defiler->energy)+s->energy_reserve;defiler->energy-=100;pulse(101);CHECK(U32(defiler->energy)+s->energy_reserve==total-100&&defiler->energy==65535);finish();
+    for(U32 type:{46u,52u}){
+        begin({79});defiler=unit(type,1,100,100);victim=unit(37,1,120,100);defiler->energy=0;consume=bullet(defiler,victim,61);
+        {rework_combat_v5::MissileScope scope(consume);kill(victim);defiler->energy=50*256;}
+        CHECK(defiler->energy==100*256);{rework_combat_v5::MissileScope repeated(consume);}CHECK(defiler->energy==100*256);finish();
+        begin({79});defiler=unit(type,1,100,100);victim=unit(37,1,120,100);defiler->energy=0;consume=bullet(defiler,victim,61);
+        {rework_combat_v5::MissileScope invalid(consume);}CHECK(defiler->energy==0&&rework_combat_v5::live(victim));finish();
+        begin({79});defiler=unit(type,1,100,100);victim=unit(37,1,120,100);victim->flags|=0x40000000u;defiler->energy=0;consume=bullet(defiler,victim,61);
+        {rework_combat_v5::MissileScope illusion(consume);kill(victim);}CHECK(defiler->energy==0);finish();
+    }
 }
 inline void rework_native_script_source_scope_restore(){
     using namespace rework_fixture;begin();auto source=unit(12,1,100,100),target=unit(15,6,120,100),other=unit(0,1,200,100);multi_fixture::target(source,target);rework_combat_v5::script_context_read=script_read;rework_combat_v5::script_context_write=script_write;

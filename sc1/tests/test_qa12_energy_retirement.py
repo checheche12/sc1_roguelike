@@ -53,3 +53,29 @@ class Qa12Tests(unittest.TestCase):
         self.assertNotIn(card['id'],{x['id'] for x in resumed['offer']['candidates']})
         self.assertEqual(self.query('SELECT candidates_json FROM growth_offer_retirement_history WHERE offer_id=?',(original['offer_id'],)),[(raw,)])
         self.assertEqual(json.loads(raw)[0]['id'],card['id'])
+
+    def test_high_health_infest_retired_in_old_catalog_and_pending_offer(self):
+        card=self.catalog['talents'][323]
+        self.assertTrue(card['effect']['retired'])
+        self.assertTrue(card['effect']['runtime_disabled'])
+        old=copy.deepcopy(self.catalog)
+        for flag in ('retired','runtime_disabled','offer_retired'):
+            old['talents'][323]['effect'].pop(flag,None)
+        for phase in (1,2,3):
+            with patch.object(policy,'rolled_rarity',return_value='rare'):
+                chosen=rework_growth.candidates(old,201,phase,[],random.Random(71))
+            self.assertNotIn(card['id'],{x['id'] for x in chosen})
+        with closing(sqlite3.connect(':memory:')) as conn:
+            with self.assertRaises(GrowthError) as caught:
+                rework_growth.acquire(conn,201,old,[],card['id'])
+        self.assertEqual(caught.exception.code,'retired_talent')
+        words=encode_growth(self.catalog,[card['id']],{})
+        self.assertTrue(words[1+323//32]&(1<<(323%32)))
+        with patch.object(rework_growth,'candidates',return_value=[card]):
+            state=self.load(mission=201)
+        original=state['offer']
+        raw=self.query('SELECT candidates_json FROM growth_offers WHERE offer_id=?',(original['offer_id'],))[0][0]
+        resumed=self.load(mission=201)
+        self.assertNotEqual(resumed['offer']['offer_id'],original['offer_id'])
+        self.assertNotIn(card['id'],{x['id'] for x in resumed['offer']['candidates']})
+        self.assertEqual(self.query('SELECT candidates_json FROM growth_offer_retirement_history WHERE offer_id=?',(original['offer_id'],)),[(raw,)])
