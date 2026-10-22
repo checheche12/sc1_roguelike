@@ -7,7 +7,7 @@ inline void quad(std::vector<U8>& bytes,std::size_t offset,std::size_t stride,fl
  const float points[4][2]={{100,200},{140,200},{100,220},{140,220}};
  for(U32 i=0;i<4;++i){float xy[]={points[i][0]*zoom,points[i][1]*zoom};std::memcpy(bytes.data()+offset+i*stride,xy,8);}
 }
-inline Image image(){Image value{};value.image_id=525;value.map_position={500,600};value.bounds[0]=4;value.bounds[1]=8;value.bounds[2]=40;value.bounds[3]=20;return value;}
+inline Image image(){static U8 grp[]={1,0,40,0,20,0,0,0,40,20,0,0,0,0,0,0,0,0};Image value{};value.image_id=525;value.map_position={504,608};value.bounds[2]=40;value.bounds[3]=20;value.grp=grp;return value;}
 inline std::unique_ptr<Commands> gpu;inline Vertices vertices{};inline std::vector<U8> bytes,previous;
 inline U32 originals=0,registrations=0;inline void (__cdecl* callback)(void*,Draw)=nullptr;
 inline void __cdecl position(void*,std::uint16_t* xy){xy[0]=524;xy[1]=618;}

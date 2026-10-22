@@ -1,6 +1,6 @@
 #pragma once
 namespace host_test {
-inline constexpr std::size_t qa34_area_group_count=5;
+inline constexpr std::size_t qa34_area_group_count=6;
 inline void area_hd_reserved_batch_tail_does_not_define_vertex_stride(){
  using namespace area_fixture;
  auto commands=std::make_unique<Commands>();commands->count=2;
@@ -64,5 +64,17 @@ inline void area_registered_callback_scales_recycled_hd_geometry(){
  CHECK(transform(*gpu,vertices,2,vertices.used_bytes,view,{2,2},524,618,saved_used)==0);CHECK(bytes==scaled);
  area_visuals::read_vars=old_reader;get_position=old_position;reset();gpu.reset();
 }
-inline void run_qa34_area_groups(){area_hd_reserved_batch_tail_does_not_define_vertex_stride();area_new_image_can_reuse_a_freed_vertex_allocation();area_alignment_padding_is_not_a_vertex_attribute();area_all_effect_images_scale_normalized_hd_vertices();area_registered_callback_scales_recycled_hd_geometry();}
+inline void area_hd_camera_clipping_preserves_the_world_pivot(){
+ using namespace area_fixture;
+ U8 grp[6+2*(4+sizeof(void*))]{};grp[0]=2;grp[2]=40;grp[4]=20;grp[8]=3;grp[9]=4;grp[6+4+sizeof(void*)+2]=40;grp[6+4+sizeof(void*)+3]=20;
+ for(float zoom:{1.0f,.001f})for(U32 camera=0;camera<40;++camera){
+  auto commands=std::make_unique<Commands>();commands->count=1;auto& command=commands->commands[0];command.is_hd=1;command.shader=25;command.allocated_vertices=command.used_vertices=4;
+  std::vector<U8> data(64,0xa5);quad(data,0,16,zoom);for(U32 n=0;n<4;++n){float xy[2];std::memcpy(xy,data.data()+n*16,8);xy[0]-=camera*zoom;xy[1]-=std::min(camera,19u)*zoom;std::memcpy(data.data()+n*16,xy,8);}
+  auto view=image();view.grp=grp;view.frame=1;U32 width=0,height=0;CHECK(frame_dimensions(view,width,height)&&width==40&&height==20);view.bounds[0]=std::int16_t(camera);view.bounds[1]=std::int16_t(std::min(camera,19u));view.bounds[2]=std::int16_t(40-camera);view.bounds[3]=std::int16_t(20-std::min(camera,19u));
+  Vertices buffer{16,64,data.data()};CHECK(transform(*commands,buffer,0,0,view,{2,3},524,618)==4);
+  for(U32 n=0;n<4;++n){float xy[2];std::memcpy(xy,data.data()+n*16,8);CHECK(std::abs(xy[0]-(n%2?160-camera:80-camera)*zoom)<.001f);CHECK(std::abs(xy[1]-(n/2?240-std::min(camera,19u):180-std::min(camera,19u))*zoom)<.001f);}
+  const auto before=data;view.grp=nullptr;CHECK(transform(*commands,buffer,0,0,view,{2,3},524,618)==0);CHECK(data==before);
+ }
+}
+inline void run_qa34_area_groups(){area_hd_reserved_batch_tail_does_not_define_vertex_stride();area_new_image_can_reuse_a_freed_vertex_allocation();area_alignment_padding_is_not_a_vertex_attribute();area_all_effect_images_scale_normalized_hd_vertices();area_registered_callback_scales_recycled_hd_geometry();area_hd_camera_clipping_preserves_the_world_pivot();}
 }

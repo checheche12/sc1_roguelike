@@ -127,6 +127,16 @@ inline Scale scale(const Frame& frame,const Image& image) noexcept {
  const auto owner=frame.spell_owners.find(image.parent);
  return owner!=frame.spell_owners.end()&&owner->second==frame.owner?frame.images[image.image_id]:Scale{};
 }
+inline bool frame_dimensions(const Image& image,U32& width,U32& height) noexcept {
+ // The packed native GRP header has three u16 fields. Each loaded frame has
+ // four dimension bytes and a native data pointer (12 bytes on x64). The disk
+ // GRP's four-byte data offset has already been expanded by the engine.
+ std::uint16_t count=0;U8 frame[4]{};
+ if(!image.grp||!native_engine_hooks::read_exact(image.grp,&count,sizeof(count))||!count||count>4096||image.frame>=count)return false;
+ const auto address=reinterpret_cast<std::uintptr_t>(image.grp)+6u+std::size_t(image.frame)*(4u+sizeof(void*));
+ if(!native_engine_hooks::read_exact(reinterpret_cast<const void*>(address),frame,sizeof(frame))||!frame[2]||!frame[3])return false;
+ width=frame[2];height=frame[3];return true;
+}
 inline std::uint64_t transform(Commands& commands,Vertices& vertices,U32 first,std::size_t old_bytes,const Image& image,Scale amount,int center_x,int center_y,const U32* old_used=nullptr) noexcept {
  if(first>commands.count||commands.count>8192||!vertices.data||!std::isfinite(amount.x)||!std::isfinite(amount.y)||amount.x<1||amount.y<1||amount.x>64||amount.y>64||
   vertices.capacity_floats>0x1000000||vertices.used_bytes>vertices.capacity_floats*4||vertices.used_bytes<old_bytes||image.bounds[2]<=0||image.bounds[3]<=0)return 0;
@@ -154,8 +164,13 @@ inline std::uint64_t transform(Commands& commands,Vertices& vertices,U32 first,s
    left=std::min(left,double(xy[0]));right=std::max(right,double(xy[0]));top=std::min(top,double(xy[1]));bottom=std::max(bottom,double(xy[1]));
   }
   if(right<=left||bottom<=top)return 0;
-  const double anchor_x=left+(double(center_x)-image.map_position.x-image.bounds[0])*(right-left)/image.bounds[2];
-  const double anchor_y=top+(double(center_y)-image.map_position.y-image.bounds[1])*(bottom-top)/image.bounds[3];
+  U32 width=U32(image.bounds[2]),height=U32(image.bounds[3]);int offset_x=image.bounds[0],offset_y=image.bounds[1];
+  // HD emits the complete quad even when the legacy screen clip reduces
+  // bounds to a one-pixel sliver. Its pivot must use the complete GRP frame.
+  // SD vertices are actually clipped and retain the legacy clipped bounds.
+  if(command.is_hd){if(!frame_dimensions(image,width,height))return 0;offset_x=offset_y=0;}
+  const double anchor_x=left+(double(center_x)-image.map_position.x-offset_x)*(right-left)/width;
+  const double anchor_y=top+(double(center_y)-image.map_position.y-offset_y)*(bottom-top)/height;
   ranges[count++]={changed_begin,end,stride,command.used_vertices-prior,anchor_x,anchor_y};
  }
  std::uint64_t changed=0;
