@@ -166,6 +166,8 @@ def build(coverage=None):
     decorate_wave_balance(catalog, ROOT)
     from .effect_copy import decorate as clean_effect_copy
     clean_effect_copy(catalog)
+    from .air_legend_balance import decorate as air_legend_balance
+    air_legend_balance(catalog);generate_expansion(catalog,ROOT)
     contract['new_curses']=copy.deepcopy(catalog['curses'][15:])
     contract['balance_revision']=9
     contract['new_talents']=copy.deepcopy(catalog['talents'][238:])

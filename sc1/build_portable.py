@@ -16,6 +16,7 @@ NATIVE=ROOT/"sc1/native_campaign"
 sys.path.insert(0,str(ROOT))
 CAMPAIGN_DATA=("missions.json","runtime_talents.json","runtime_talents_all.json",
                "runtime_talents_v5.json","runtime_v5_contract.json","talent_rank_catalog.json")
+LAB_ASSETS=('SC1_Effect_Lab.scx','Effect_Checklist.html','build_evidence.json')
 def sha(path): return hashlib.sha256(Path(path).read_bytes()).hexdigest()
 def read(path): return json.loads(Path(path).read_text(encoding="utf-8"))
 def copy(source,target):
@@ -28,6 +29,7 @@ def runtime_sources(root=None):
     sources=[path for folder in ('campaign','manager','bridge') for path in sorted((root/'sc1'/folder).glob('*.py'))]
     sources += [root/'sc1'/name for name in ('__init__.py','portable_runtime.py')]
     sources += [root/'sc1/campaign'/name for name in CAMPAIGN_DATA]
+    sources += [root/'sc1/effect_lab'/name for name in LAB_ASSETS]
     if any(not path.is_file() for path in sources):raise ValueError('A required portable runtime source/catalog is missing')
     return sources
 
@@ -41,6 +43,7 @@ def verify_manager_closure(output,manifest):
     if manifest.get('growth_wire_version')==2:
         names={row['path'] for row in rows}
         required={'sc1/campaign/'+name for name in CAMPAIGN_DATA}
+        required|={'sc1/effect_lab/'+name for name in LAB_ASSETS}
         required |= {'sc1/campaign/rework_growth.py','sc1/campaign/talent_campaign_policy.py','sc1/bridge/protocol.py','sc1/manager/store.py'}
         if not required<=names:raise ValueError('Revision-five portable manager dependency pins are incomplete')
 
@@ -120,6 +123,8 @@ def build(output, manifest_path=None):
     copy(package["path"],release/"manifest.json")
     pointer=output/"sc1/native_campaign/current_build.json"
     pointer.write_text('{"manifest":"builds/release/manifest.json"}\n',encoding="utf-8")
+    (output/"Start_Effect_Lab.cmd").write_text('@echo off\r\ncd /d "%~dp0"\r\nstart "" /b "runtime\\pythonw.exe" -m sc1.manager.effect_lab_launch\r\n',encoding='ascii')
+    copy(ROOT/'sc1/effect_lab/Effect_Checklist.html',output/'Effect_Checklist.html')
     (output/"sc1/data").mkdir()
     from sc1.build_environment import msvc_environment
     compiler, environment = msvc_environment(ROOT)

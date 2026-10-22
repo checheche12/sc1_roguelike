@@ -47,6 +47,7 @@ constexpr U32 kOwner = 1, kCounterOwner = 11; // kOwner is retained only for the
 constexpr U32 kRouteCounter = 223, kMiddleCounter = 224;
 constexpr U32 kReadyCounter = 225, kGoalCounter = 226, kAckCounter = 227;
 constexpr U32 kAttackMove = 14;
+namespace effect_lab {inline bool enabled=false;using ChatOriginal=void (__cdecl*)(const U8*,U32);inline void __cdecl chat(const U8*,U32,U32,U32,ChatOriginal) noexcept;}
 namespace rework_waves {inline void spell_launched(bw::Unit*,U32) noexcept;}
 namespace enemy_detection {inline void note(bw::Unit*,bw::Unit*) noexcept;inline void reset() noexcept;inline void step(bool,bool,bool);}
 struct Key { U32 table, field, id; };
@@ -630,7 +631,7 @@ bool apply_snapshot(void*,const GrowthSnapshot& s) noexcept {
     g.apply_failure=nullptr;
     if(!g.active)return reject_growth("session_inactive");
     if(phase>g.protocol.total_phases())return reject_growth("phase_bounds");
-    if(g.applied && phase<=g.applied_phase)return reject_growth("phase_already_applied");
+    if(!effect_lab::enabled&&g.applied&&phase<=g.applied_phase)return reject_growth("phase_already_applied");
     if(s.wire_version!=1 && s.wire_version!=2)return reject_growth("growth_version");
     const U32 talent_limit=s.wire_version==1 ? frozen::kLegacyTalentCount:frozen::kTalentCount;
     const U32 curse_limit=s.wire_version==1 ? frozen::kLegacyCurseCount:frozen::kCurseCount;
@@ -921,7 +922,33 @@ void __cdecl owner_damage_hook(bw::Unit* u,std::int32_t amount,bw::Unit* attacke
     }
     if(g.normal_hit && rework_curses::marked(source) && u && u!=source && u->player==player_owner() && hp>0){const auto actual=std::max(0,hp-std::max(0,u->flingy.hitpoints));const auto percent=rework_curses::lifesteal_percent(source);if(actual && percent)heal_enemy(source,static_cast<U32>(std::min<std::uint64_t>(0x7fffffffu,std::uint64_t(actual)*percent/100)));}
 }
+// Some instant weapons dispatch damage inside CreateBullet, before it returns.
+// Bind that launch once at its first damage callback, while its caller is known.
+struct BulletCreation {
+    static inline BulletCreation* current=nullptr;BulletCreation* previous=nullptr;
+    bw::Unit* parent=nullptr;bw::Bullet* observed=nullptr;U32 weapon=130,owner=12;
+    BulletCreation(bw::Unit* u,U32 w,U32 p):previous(current),parent(u),weapon(w),owner(p){current=this;}
+    ~BulletCreation(){current=previous;}
+};
+void observe_bullet_launch(U32 id,bw::Unit* parent,bw::Bullet* bullet) {
+    if(!bullet)return;
+    if(g.active){
+        if(!multi_target::secondary())note_attack_launch(parent,id);const auto t=existing_track(effect_body(parent));
+        g.bullet_elites.erase(bullet);g.bullet_bonuses.erase(bullet);g.bullet_sources.erase(bullet);
+        g.bullet_elites[bullet]=t&&t->elite&&regular_enemy(effect_body(parent));g.bullet_bonuses[bullet]=charged_attack(parent,id);
+        auto source=effect_body(bullet->parent);
+        if(source&&source==bullet->parent&&source->player==bullet->player)g.bullet_sources[bullet]={source,source->unit_id,source->player,source->minor_unique_index};
+    }
+    rework_waves::spell_launched(parent,id);multi_target::launched(id,parent,bullet);rework_combat_v5::launched(id,parent,bullet);
+}
+void observe_instant_launch(bw::Bullet* bullet) noexcept {
+    auto pending=BulletCreation::current;
+    if(!pending||!bullet||pending->observed==bullet||bullet->parent!=pending->parent||bullet->player!=pending->owner||bullet->weapon_id!=pending->weapon)return;
+    pending->observed=bullet;
+    try{observe_bullet_launch(pending->weapon,pending->parent,bullet);}catch(...){log_event("Instant projectile observation failed; original damage retained.");}
+}
 void __cdecl owner_hit_hook(bw::Unit* u,bw::Bullet* bullet,U32 divisor,HitFn original) noexcept {
+    observe_instant_launch(bullet);
     OwnerDatScope scope(unit_owner(u),bullet ? bullet->player : 12u,u,verified_projectile_source(projectile_identity(bullet)));
     DamageObservationScope observed(u,bullet ? bullet->player : 12u);
     const bool previous=g.normal_hit;g.normal_hit=false;
@@ -935,6 +962,7 @@ void __cdecl owner_hit_hook(bw::Unit* u,bw::Bullet* bullet,U32 divisor,HitFn ori
     original(u,bullet,divisor);g.normal_hit=previous;g.elite_hit=previous_elite;g.hit_bonus=bonus;g.hit_source=source;g.bullet_hit_context=previous_context;g.hit_identity=previous_identity;
 }
 void __cdecl owner_missile_hook(bw::Bullet* bullet,BulletFn original) noexcept {
+    observe_instant_launch(bullet);
     OwnerDatScope scope(12u,bullet ? bullet->player : 12u,nullptr,verified_projectile_source(projectile_identity(bullet)));
     const bool previous=g.normal_hit,previous_elite=g.elite_hit;g.normal_hit=bullet && ordinary_weapon(bullet->weapon_id);
     const auto it=g.bullet_elites.find(bullet);g.elite_hit=it!=g.bullet_elites.end() && it->second;
@@ -953,23 +981,10 @@ bw::Bullet* __cdecl owner_bullet_create_hook(U32 id,int x,int y,U32 player,U32 d
     if(!rework_combat_v5::allow_primary(parent))return nullptr;
     try{if(!multi_target::allow_primary(id,parent))return nullptr;}
     catch(...){multi_target::reset();log_event("Multi-target allocation failed before primary; retaining original attack.");}
-    auto body=effect_body(parent);OwnerDatScope scope(player,player,body);rework_combat_v5::ScriptSourceScope script_source(parent);auto bullet=original(id,x,y,player,direction,parent);
-    if(bullet && g.active){
-        if(!multi_target::secondary())note_attack_launch(parent,id);const auto t=existing_track(body);
-        // Bullet storage is reused. Clear all previous launch metadata first;
-        // an allocation failure must not retain the old projectile's effects.
-        g.bullet_elites.erase(bullet);g.bullet_bonuses.erase(bullet);g.bullet_sources.erase(bullet);
-        try{
-            g.bullet_elites[bullet]=t && t->elite && regular_enemy(body);g.bullet_bonuses[bullet]=charged_attack(parent,id);
-            auto source=effect_body(bullet->parent);
-            if(source && source==bullet->parent && source->player==bullet->player)
-                g.bullet_sources[bullet]={source,source->unit_id,source->player,source->minor_unique_index};
-        }catch(...){g.bullet_elites.erase(bullet);g.bullet_bonuses.erase(bullet);g.bullet_sources.erase(bullet);}
-    }
-    if(bullet)rework_waves::spell_launched(parent,id);
-    try{multi_target::launched(id,parent,bullet);}
-    catch(...){multi_target::reset();log_event("Multi-target allocation failed after primary; additional attacks skipped.");}
-    try{rework_combat_v5::launched(id,parent,bullet);}catch(...){rework_combat_v5::reset();log_event("Revision5 projectile allocation failed; primary retained.");}
+    auto body=effect_body(parent);OwnerDatScope scope(player,player,body);rework_combat_v5::ScriptSourceScope script_source(parent);
+    BulletCreation creation(parent,id,player);auto bullet=original(id,x,y,player,direction,parent);
+    if(bullet&&creation.observed!=bullet)try{observe_bullet_launch(id,parent,bullet);}
+    catch(...){log_event("Projectile observation failed; original attack retained.");}
     return bullet;
 }
 using UnitIdFn=void (__cdecl*)(bw::Unit*,U32);
@@ -1044,6 +1059,9 @@ void __cdecl owner_rclick_hook(void* event,GuiFn original) noexcept {
     else original(event);
 }
 bool register_owner_hooks(const samase::PluginApi* api) noexcept {
+    using ChatHook=void (__cdecl*)(const U8*,U32,U32,U32,effect_lab::ChatOriginal);
+    using ChatRegister=U32 (__cdecl*)(U32,ChatHook,void*);
+    if(api->hook_ingame_command&&!reinterpret_cast<ChatRegister>(api->hook_ingame_command)(0x5c,effect_lab::chat,nullptr))return false;
     if(!api->hook_func || !api->hook_step_order || !api->hook_step_order_hidden ||
        !api->hook_step_secondary_order || !api->hook_create_unit || !api->hook_create_bullet || !api->hook_process_commands || !api->hook_game_screen_rclick)return false;
     const auto command=static_cast<std::uint16_t>(samase::VarId::CommandUser);U8 support=0;api->load_vars(&command,&support,1);if(support<2)return false;
@@ -1360,6 +1378,7 @@ void abandon_session() noexcept {
     g.mission=nullptr;g.friendly_edits.clear();g.enemy_edits.clear();g.owner_edits.clear();g.campaign_index=0;g.growth={};g.tracks.clear();g.weapon_cache=false;g.ordinary_weapons.fill(false);g.bullet_elites.clear();g.bullet_bonuses.clear();g.bullet_sources.clear();g.hit_identity={};g.bullet_hit_context=false;g.bombs.clear();g.hit_bonus=g.last_diversity_frame=0;g.hit_source=nullptr;g.tracked_base=nullptr;g.pending_origin=nullptr;g.next_wave_second=g.pending_second=g.pending_supply=g.wave_stage=g.wave_spawn_number=0;g.pending_batch=g.next_wave_id=g.current_wave_id=g.pending_wave_id=g.t01_wave_id=0;g.kills_for_wave=g.last_death_wave=g.last_regen_second=0;g.death_wave_due=g.normal_hit=g.elite_hit=false;
     g.protocol.shutdown();
     g.dialog.reset_session();
+    effect_lab::enabled=false;
     g.applied=false;g.wave_stacks=0;
     g.applied_phase=g.observed_phase=g.phase_frame=0;
     g.milestone_barracks=g.milestone_flags=std::numeric_limits<U32>::max();
@@ -1388,15 +1407,17 @@ U32 __cdecl load_extension(const U8* data,std::size_t size) noexcept {
     }
     return 1;
 }
+#include "include/effect_lab_runtime.h"
 void __cdecl init_units(GenericFn original) noexcept {
     abandon_session();
     original();
     if (!g.hooks_ready) return;
     try {
         auto game=g.game();
-        if (!game || !game->campaign_mission || g.multiplayer() || g.replay() ||
-            false) return;
+        if(!game||g.multiplayer()||g.replay())return;
         std::size_t size=0;auto data=g.read_map(reinterpret_cast<const U8*>("staredit\\scenario.chk"),&size);
+        if(effect_lab::matches(data,size)&&game->map_width_tiles==256&&game->map_height_tiles==256){if(data)g.free_memory(data);effect_lab::start();return;}
+        if(!game->campaign_mission){if(data)g.free_memory(data);return;}
         U32 phase_capability=0;const auto mission=identify_chk(data,size,&phase_capability);if(data)g.free_memory(data);
         if(!mission || (mission->campaign_index && game->campaign_mission!=mission->campaign_index) ||
            game->map_width_tiles!=mission->width || game->map_height_tiles!=mission->height)return;
@@ -1426,7 +1447,7 @@ void protocol_pump(void*) noexcept {
         if (owner_thread && !g.wrong_thread_reported.exchange(true)) log_event("Protocol pump ignored on non-game thread.");
         return;
     }
-    if (!g.active || g.pumping) return;
+    if(effect_lab::enabled||!g.active||g.pumping)return;
     struct Guard {Guard(){g.pumping=true;}~Guard(){g.pumping=false;}} guard;
     try {
         auto game=g.game();if (!game || !game->campaign_mission || g.multiplayer() || g.replay()) {abandon_session();return;}
@@ -1459,6 +1480,7 @@ void __cdecl frame() noexcept {
         if (g.last_frame==game->frame_count) return;
         g.last_frame=game->frame_count;
         if (!g.mission || game->campaign_mission!=g.campaign_index || g.multiplayer() || g.replay()) {abandon_session();return;}
+        if(effect_lab::enabled){effect_lab::step();return;}
         frame_profile::begin();
         campaign_visibility::step();
         update_original_goal();protocol_pump(nullptr);

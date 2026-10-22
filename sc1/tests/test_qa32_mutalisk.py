@@ -18,13 +18,15 @@ class MutaliskLegendTests(unittest.TestCase):
         current = load_catalog(expected_version=2)
         card = current['talents'][238 + 105]
         self.assertGreaterEqual(card['effect']['qa_revision'], 2026101932)
-        self.assertEqual(card['effect']['projectile_damage_percent'], 300)
+        self.assertEqual(card['effect']['projectile_damage_percent'], 200)
         self.assertEqual(card['effect']['projectile_count'], 1)
-        self.assertIn('200%', card['description'])
+        self.assertIn('+100%', card['description'])
+        self.assertIn('6번',card['description'])
+        self.assertEqual(card['effect']['bounce_damage_numerators'],[7,6,5,4,3,2,1])
         self.assertNotIn('240%', card['description'])
         prior = copy.deepcopy(current)
         old = prior['talents'][238 + 105]
-        old['description'] = card['description'].replace('200%', '240%')
+        old['description'] = card['description'].replace('+100%', '+240%')
         old['effect']['qa_revision'] = 2026101610
         old['effect'].pop('projectile_damage_percent')
         old['effect'].pop('projectile_count')

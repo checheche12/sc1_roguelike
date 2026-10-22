@@ -30,7 +30,7 @@ class TowerDefense(unittest.TestCase):
         self.assertEqual((x['name'],x['race'],x['rarity'],x['max_rank']),('대공 방어 교범','shared','common',2))
         self.assertEqual(x['target_units'],[124,144,162])
         self.assertTrue(x['repeatable']);self.assertNotIn('bundle_family',x)
-        self.assertEqual(x['candidate_weight_percent'],200)
+        self.assertEqual(x['candidate_weight_percent'],300)
         self.assertEqual(x['wire_storage'],dict(word=16,shift=28,width=2))
         for name,value in dict(health_percent_per_rank=100,shield_percent_per_rank=100,air_damage_percent_per_rank=50,additional_air_targets_per_rank=1).items():
             self.assertEqual(x['effect'][name],value)
@@ -61,12 +61,12 @@ class TowerDefense(unittest.TestCase):
             with patch.object(policy,'draw_candidates',capture):
                 result=rework_growth.candidates(self.catalog,mission,1,[],random.Random(1))
             self.assertEqual([x['id'] for x in result],[self.tower['id']])
-            self.assertEqual(next(x.sampling_weight for x in seen if x.id==self.tower['id']),200)
+            self.assertEqual(next(x.sampling_weight for x in seen if x.id==self.tower['id']),300)
 
-    def test_exact_double_sampling_weight_preserves_rarity_and_recent_penalty(self):
-        cards=[policy.Candidate('tower','common',sampling_weight=200),policy.Candidate('normal','common')]
+    def test_exact_triple_sampling_weight_preserves_rarity_and_recent_penalty(self):
+        cards=[policy.Candidate('tower','common',sampling_weight=300),policy.Candidate('normal','common')]
         reward=policy.reward_policy(102,1)
-        for recent,total,boundary in (((),30000,20000),(('tower',),29000,19000),(('tower','normal'),28500,19000)):
+        for recent,total,boundary in (((),40000,30000),(('tower',),38500,28500),(('tower','normal'),38000,28500)):
             for ticket,expected in ((0,'tower'),(boundary-1,'tower'),(boundary,'normal'),(total-1,'normal')):
                 rng=Rolls(0,ticket)
                 result=policy.draw_candidates(reward,cards,[],rng,limit=1,recent_manuals=recent)
@@ -116,7 +116,7 @@ class TowerDefense(unittest.TestCase):
                 self.assertEqual(current['talents'][index]['source_description'],prior['talents'][index]['source_description'])
             self.assertEqual(conn.execute('SELECT text FROM issued_copy').fetchone()[0],saved)
 
-    def test_double_weight_refreshes_old_pin_and_presentation_without_rewriting_issued_copy(self):
+    def test_triple_weight_refreshes_old_pin_and_presentation_without_rewriting_issued_copy(self):
         prior=copy.deepcopy(self.catalog);old=prior['talents'][560]
         old['candidate_weight_percent']=150;old['effect']['qa_revision']=2026102261
         saved=json.dumps(old,ensure_ascii=False)
@@ -127,13 +127,13 @@ class TowerDefense(unittest.TestCase):
             rework_growth.save_ranks(conn,101,{self.tower['id']:1})
             rework_growth.enable(conn)
             current=json.loads(conn.execute('SELECT catalog_json FROM growth_rework_catalog').fetchone()[0])
-            self.assertEqual(current['talents'][560]['candidate_weight_percent'],200)
+            self.assertEqual(current['talents'][560]['candidate_weight_percent'],300)
             self.assertEqual(current['talents'][560]['effect'],self.tower['effect'])
             self.assertEqual(current['talents'][:560],prior['talents'][:560]);self.assertEqual(current['curses'],prior['curses'])
             self.assertEqual(rework_growth.ranks(conn,101),{self.tower['id']:1})
             self.assertEqual(conn.execute('SELECT text FROM issued_copy').fetchone()[0],saved)
             presented=rework_growth.overlay(conn,prior)
-            self.assertEqual(presented['talents'][560]['candidate_weight_percent'],200)
+            self.assertEqual(presented['talents'][560]['candidate_weight_percent'],300)
 
     def test_rank_cap_validation_rejects_altered_limits_and_encoding_clamps_to_two(self):
         c=copy.deepcopy(self.catalog);c['talents'][560]['max_rank']=4

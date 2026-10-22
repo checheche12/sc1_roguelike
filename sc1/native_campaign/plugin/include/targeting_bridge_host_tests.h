@@ -29,7 +29,7 @@ inline void registration_avoids_broken_func24_entirely(){
  reset();registered.clear();samase::PluginApi provider{};provider.hook_func=reinterpret_cast<GenericFn>(hook);provider.get_func=get;
  provider.load_vars=load;provider.read_vars=read_vars;provider.write_vars=reinterpret_cast<GenericFn>(write_vars);
  auto saved_kill=rework_combat_v5::native_kill;auto saved_give=rework_combat_v5::native_give;auto saved_read=rework_combat_v5::script_context_read;auto saved_write=rework_combat_v5::script_context_write;
- CHECK(rework_combat_v5::bind_engine(&provider));CHECK(registered.size()==4&&std::count(registered.begin(),registered.end(),25u)==1&&std::count(registered.begin(),registered.end(),24u)==0);
+ CHECK(rework_combat_v5::bind_engine(&provider));CHECK(registered.size()==6&&std::count(registered.begin(),registered.end(),25u)==1&&std::count(registered.begin(),registered.end(),24u)==0);
  rework_combat_v5::native_kill=saved_kill;rework_combat_v5::native_give=saved_give;rework_combat_v5::script_context_read=saved_read;rework_combat_v5::script_context_write=saved_write;
 }
 inline bw::Unit* expected_target=nullptr;

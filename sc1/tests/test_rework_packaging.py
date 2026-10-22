@@ -92,6 +92,7 @@ class ReworkPackagingTests(unittest.TestCase):
             root=Path(folder)
             paths=['sc1/__init__.py','sc1/portable_runtime.py','sc1/campaign/rework_growth.py','sc1/campaign/talent_campaign_policy.py','sc1/bridge/protocol.py','sc1/manager/store.py']
             paths+=['sc1/campaign/'+name for name in build_portable.CAMPAIGN_DATA]
+            paths+=['sc1/effect_lab/'+name for name in build_portable.LAB_ASSETS]
             for name in paths:
                 path=root/name;path.parent.mkdir(parents=True,exist_ok=True);path.write_bytes(name.encode())
             for name in ('sc1/data/player.sqlite3','sc1/data/talent-site/board.json','sc1/campaign/autosave.json'):
@@ -111,6 +112,7 @@ class ReworkPackagingTests(unittest.TestCase):
             names=['sc1/__init__.py','sc1/portable_runtime.py','sc1/campaign/rework_growth.py',
                    'sc1/campaign/talent_campaign_policy.py','sc1/bridge/protocol.py','sc1/manager/store.py']
             names+=['sc1/campaign/'+name for name in build_portable.CAMPAIGN_DATA]
+            names+=['sc1/effect_lab/'+name for name in build_portable.LAB_ASSETS]
             for name in names:
                 path=root/name;path.parent.mkdir(parents=True,exist_ok=True);path.write_bytes(name.encode())
             rows=native.manager_source_entries(root)

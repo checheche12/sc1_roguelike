@@ -67,6 +67,7 @@ inline bool usable_home() {
  return hq && worker;
 }
 inline U32 capabilities() {
+ if(effect_lab::enabled)return policy::GroundPath|policy::AntiAir|policy::Detection|policy::TransportPath;
  U32 value=0;for(const auto& origin:sc1_native::campaign_wave_config::kOrigins)if(g.mission && origin.mission_id==g.mission->mission_id && origin_safe(origin)){
   const bool only_air=sc1_native::wave_progression::air_only_unit(static_cast<std::uint16_t>(origin.unit1)) && sc1_native::wave_progression::air_only_unit(static_cast<std::uint16_t>(origin.unit2));if(!only_air)value|=policy::GroundPath;}
  living_units([&](bw::Unit* u){if(u->player!=player_owner() || !(u->flags&1u) || u->flingy.hitpoints<=0)return;

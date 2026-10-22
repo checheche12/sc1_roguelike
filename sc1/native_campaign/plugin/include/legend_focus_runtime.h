@@ -6,7 +6,7 @@ inline bool erosion_source(bw::Unit* u) noexcept {
  for(const auto& r:legend_focus::rules)if(r.ordinal==190)return focus_match(r,u);return false;
 }
 inline bool flame_cone(bw::Unit* u,bw::Unit* target,bw::Unit* other) noexcept {
- if(!eligible(other)||air(other)||!is_enemy(other->player)||other==target||dist(u,other)>96u*96u)return false;
+ if(!eligible(other)||air(other)!=air(target)||!is_enemy(other->player)||other==target||dist(u,other)>96u*96u)return false;
  const auto dx=std::int64_t(target->flingy.position.x)-u->flingy.position.x,dy=std::int64_t(target->flingy.position.y)-u->flingy.position.y;
  const auto ox=std::int64_t(other->flingy.position.x)-u->flingy.position.x,oy=std::int64_t(other->flingy.position.y)-u->flingy.position.y;
  const auto dot=dx*ox+dy*oy,cross=dx*oy-dy*ox;return dot>0&&cross*cross<=3*dot*dot;
@@ -24,7 +24,7 @@ inline std::int32_t focus_damage(bw::Unit* u,bw::Unit* target,U32 weapon,std::in
  if(!focus_source(u)||!ordinary_weapon(weapon)||amount<=0||!primary)return amount;
  auto s=state(u);U32 bonus=0;
  for(auto r:legend_focus::rules)if(raw_rank(r.ordinal)&&focus_match(r,u)){
-  bonus+=r.base;
+  if(!(r.ordinal==105&&mutal_bounce_numerator))bonus+=r.base;
   if(r.mode==1&&live(target)&&std::uint64_t(std::max(0,target->flingy.hitpoints))*100<=std::uint64_t(effective_max_hp(target))*r.limit)bonus+=r.proc;
   if(r.mode==3&&s&&generation(s->focus_target)==target&&now()-s->focus_last<=72)bonus+=std::min(r.limit,s->focus_hits*r.step);
   if(r.mode==7&&u->order==6)bonus+=r.proc;

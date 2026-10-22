@@ -1,0 +1,31 @@
+eudplib test fixture and license
+Repository: https://github.com/armoha/eudplib
+Commit: 979f2fb4e8ffa4ec62e5872bddc4c0b36ae006cf
+Downloaded: 2026-10-14
+File: eudplib-basemap.scx
+Source: https://raw.githubusercontent.com/armoha/eudplib/979f2fb4e8ffa4ec62e5872bddc4c0b36ae006cf/tests/outputmap/basemap/basemap.scx
+SHA256: 2f04b1976ab07c95643757596868edc2f8a7edea1a7bc62e03073ee3033e2640
+License: MIT, retained in eudplib-LICENSE.txt
+Contents: MPQ with only staredit\scenario.chk (no campaign/audio/image assets).
+Use: Retain known-good 64x64 Jungle terrain/editor defaults and MPQ listfile;
+replace players, strings, locations, units, stats flags, objectives and triggers.
+
+Build compiler
+PyPI distribution: eudplib==0.81.0
+Dependency: typing-extensions==4.16.0
+Installed in the isolated, disposable eud-venv/ directory, not system Python.
+Compiler's MIT license is included in its package. The downloaded fixture uses
+the separately pinned repository commit above; it need not match compiler tag.
+
+Bridge design research (reference only; no SC-REPL source was copied)
+https://github.com/mighty1231/screpl/wiki/Bridge
+https://github.com/mighty1231/screpl/blob/master/bridge-client/worker.cpp
+Reviewed 2026-10-14: mailbox signature scanning, Windows process memory read/write
+and heartbeat detection. Our fixed 256-byte mailbox is a separate protocol.
+
+Reference-only compiler comparison (2026-10-14)
+PyPI eudplib==0.80.6 installed with --no-deps --only-binary=:all: into eudplib-0806/.
+Used only to compare source against 0.81.0; active eud-venv remains 0.81.0.
+mainloop.py, inj_finalizer.py, apply_injector.py, modcurpl.py and rawtriggerdef.py
+are identical; payload_init.py differences are annotations/naming/comments.
+No game maps have been compiled with the reference package.

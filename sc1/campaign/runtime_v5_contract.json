@@ -2503,7 +2503,7 @@
       "id": "ccf515a4-0372-5837-b7af-423472b39fb6",
       "name": "무한 화력",
       "target": "아군 일반 공격 병력·영웅",
-      "description": "아군 일반 공격마다 원래 피해의 50%인 공격을 한 번 더 합니다. 원거리는 탄환을 추가 발사합니다.",
+      "description": "아군 일반 공격마다 원래 피해의 50%인 공격을 한 번 더 합니다. 원거리는 탄환을 추가 발사하며, 러커의 관통 가시는 명중한 적마다 50% 추가 타격합니다.",
       "trigger": "",
       "numbers": "",
       "notes": "세부 적용: 주 공격마다 원래 일반 공격 피해의 50%인 추가 공격 1회. 원거리 무기는 추가 투사체, 근접은 추가 타격. 기존 타격 수 유지, 추가 공격의 재발동 금지.",
@@ -2526,9 +2526,11 @@
         "type": "rework_v5",
         "ordinal": 18,
         "source_id": "ccf515a4-0372-5837-b7af-423472b39fb6",
-        "qa_revision": 2026101816,
+        "qa_revision": 2026102265,
         "benefit_power_quarters": 4,
-        "extra_attack_percent": 50
+        "extra_attack_percent": 50,
+        "instant_projectile_supported": true,
+        "lurker_bonus_per_pierced_target": true
       },
       "target_units": [
         0,
@@ -3851,10 +3853,10 @@
       "id": "0e858d2c-c892-569f-bfb7-340b4ee27918",
       "name": "대용량 수송",
       "target": "드롭십",
-      "description": "드롭십의 수송 공간이 16칸이 되고 이동 속도가 40% 빨라집니다.",
+      "description": "드롭십의 이동 속도 +40%.",
       "trigger": "",
       "numbers": "",
-      "notes": "적재 중 획득·소유권 이전·해제 시 적재 병력 유실 금지.",
+      "notes": "수송 공간 확대 효과 제거. 기본 수송 공간과 수송 기술 요구 조건을 유지합니다.",
       "updatedAt": "2026-10-15T17:38:57.822780+00:00",
       "race": "terran",
       "status": "draft",
@@ -3874,8 +3876,10 @@
         "type": "rework_v5",
         "ordinal": 33,
         "source_id": "0e858d2c-c892-569f-bfb7-340b4ee27918",
-        "qa_revision": 2026102038,
-        "benefit_power_quarters": 8
+        "qa_revision": 2026102265,
+        "benefit_power_quarters": 8,
+        "transport_capacity_bonus": 0,
+        "movement_speed_bonus_percent": 40
       },
       "target_units": [
         11
@@ -6977,10 +6981,10 @@
       "id": "cf9d7028-0a05-5bdc-ba77-ababbaf03c09",
       "name": "비행 운반낭",
       "target": "오버로드",
-      "description": "오버로드: 수송 업그레이드가 끝난 오버로드의 수송 공간이 16칸이 되며 이동 속도 +40%.",
+      "description": "오버로드의 이동 속도 +40%.",
       "trigger": "",
       "numbers": "",
-      "notes": "수송 기술을 새로 해금하지 않음.",
+      "notes": "수송 공간 확대 효과 제거. 기본 수송 공간과 수송 기술 요구 조건을 유지합니다.",
       "updatedAt": "2026-10-15T17:38:57.822780+00:00",
       "race": "zerg",
       "status": "draft",
@@ -7000,8 +7004,10 @@
         "type": "rework_v5",
         "ordinal": 74,
         "source_id": "cf9d7028-0a05-5bdc-ba77-ababbaf03c09",
-        "qa_revision": 2026102038,
-        "benefit_power_quarters": 8
+        "qa_revision": 2026102265,
+        "benefit_power_quarters": 8,
+        "transport_capacity_bonus": 0,
+        "movement_speed_bonus_percent": 40
       },
       "target_units": [
         42,
@@ -9374,10 +9380,10 @@
       "id": "051c93bb-ca5d-5a11-8728-e640cad23f20",
       "name": "집중 쐐기",
       "target": "뮤탈 일반 공격",
-      "description": "뮤탈리스크의 일반 공격 피해 +100%.",
+      "description": "뮤탈리스크의 일반 공격 피해 +100%. 쐐기벌레가 최대 6번 튕깁니다. 튕길 때마다 첫 명중 피해의 1/7씩 감소합니다(7/7→6/7→5/7→4/7→3/7→2/7→1/7).",
       "trigger": "",
       "numbers": "",
-      "notes": "세부 적용: 원래 공격을 독립 쐐기벌레 2발로 교체, 발당 원래 피해의 60%. 각 발은 자기 튕김 규칙 유지. 한 발 내부 중복 표적·재귀 금지.",
+      "notes": "한 쐐기벌레당 최초 명중 포함 최대 7회. 다른 튕김 재능과 함께 획득해도 최대 6번 튕깁니다.",
       "updatedAt": "2026-10-15T17:38:57.822780+00:00",
       "race": "zerg",
       "status": "draft",
@@ -9397,7 +9403,7 @@
         "type": "rework_v5",
         "ordinal": 105,
         "source_id": "051c93bb-ca5d-5a11-8728-e640cad23f20",
-        "qa_revision": 2026102046,
+        "qa_revision": 2026102265,
         "benefit_power_quarters": 16,
         "projectile_damage_percent": 200,
         "projectile_count": 1,
@@ -9409,9 +9415,21 @@
         "focus_step_percent": 0,
         "focus_limit": 0,
         "legacy_area_effect_disabled": true,
-        "design_role": "single_target",
+        "design_role": "bouncing_attack",
         "reflection_requires_attacking": false,
-        "reflection_only_releases_on_attack": false
+        "reflection_only_releases_on_attack": false,
+        "legendary_bounces": 6,
+        "bounce_damage_numerators": [
+          7,
+          6,
+          5,
+          4,
+          3,
+          2,
+          1
+        ],
+        "bounce_damage_denominator": 7,
+        "bounce_decay": "linear_from_first_hit"
       },
       "target_units": [
         43,
@@ -10208,10 +10226,10 @@
       "id": "95731e09-a96a-5723-a329-ef3a8bdda706",
       "name": "확장 차원 수송",
       "target": "셔틀",
-      "description": "셔틀의 수송 공간이 16칸이 되며 이동 속도 +40%.",
+      "description": "셔틀의 이동 속도 +40%.",
       "trigger": "",
       "numbers": "",
-      "notes": "적재 병력 유실·중복 하차 금지.",
+      "notes": "수송 공간 확대 효과 제거. 기본 수송 공간과 수송 기술 요구 조건을 유지합니다.",
       "updatedAt": "2026-10-15T17:38:57.822780+00:00",
       "race": "protoss",
       "status": "draft",
@@ -10231,8 +10249,10 @@
         "type": "rework_v5",
         "ordinal": 115,
         "source_id": "95731e09-a96a-5723-a329-ef3a8bdda706",
-        "qa_revision": 2026102038,
-        "benefit_power_quarters": 8
+        "qa_revision": 2026102265,
+        "benefit_power_quarters": 8,
+        "transport_capacity_bonus": 0,
+        "movement_speed_bonus_percent": 40
       },
       "target_units": [
         69
@@ -16108,7 +16128,7 @@
       "race": "zerg",
       "rarity": "legendary",
       "target": "가디언·쿠쿨자(가디언)",
-      "description": "가디언의 일반 공격이 명중하면 3타일 안 다른 지상 적 최대 6기에도 원래 공격의 100% 피해를 줍니다.",
+      "description": "가디언의 일반 공격 피해 +150%. 명중하면 3타일 안 다른 지상 적 최대 6기에도 강화된 공격의 100% 피해를 줍니다.",
       "source_description": "가디언의 일반 공격이 명중하면 3타일 안 다른 지상 적 최대 6기에도 원래 공격의 100% 피해를 줍니다.",
       "bit_index": 429,
       "category": "combat",
@@ -16120,7 +16140,7 @@
       "repeatable": false,
       "effect": {
         "mode": 1,
-        "bonus": 0,
+        "bonus": 150,
         "percent": 100,
         "count": 6,
         "cadence": 1,
@@ -16128,8 +16148,9 @@
         "type": "rework_v5",
         "ordinal": 191,
         "source_id": "34bb2ee1-4cb6-5d80-a042-61e97dfb2603",
-        "qa_revision": 2026102038,
-        "benefit_power_quarters": 4
+        "qa_revision": 2026102265,
+        "benefit_power_quarters": 4,
+        "secondary_uses_boosted_attack": true
       },
       "target_units": [
         44,
@@ -30647,7 +30668,7 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 322,
-        "qa_revision": 2026102264,
+        "qa_revision": 2026102265,
         "benefit_power_quarters": 4,
         "unit_growth": {
           "race": "shared",
@@ -30791,7 +30812,7 @@
         }
       },
       "max_rank": 2,
-      "candidate_weight_percent": 200,
+      "candidate_weight_percent": 300,
       "description_revision": 2026102262
     }
   ],

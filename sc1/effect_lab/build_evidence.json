@@ -1,0 +1,17 @@
+{
+  "passed": true,
+  "width": 256,
+  "height": 256,
+  "marker": "SC1_EFFECT_LAB_V1_QA65",
+  "placed_units": 610,
+  "talents": 561,
+  "curses": 50,
+  "stock_triggers": 1,
+  "eud_payload": false,
+  "user_database_accessed": false,
+  "game_launched": false,
+  "live_gameplay_verified": false,
+  "terrain_walkability_verified": true,
+  "map_sha256": "9dce3ef4d3ff4165166e8865b45f61c79c79a9cc46a0fda06b441d15fe084a77",
+  "chk_sha256": "6330eb2f9f38ea37ccad59f66fe9830dd4f2d2b9228c6a8d333cc438ff686d53"
+}

@@ -35,7 +35,7 @@ inline void qa38_every_secondary_rule_has_cadence_limit_and_no_recursion(){
   const auto saved=combat_effects::original_weapon_damage;combat_effects::original_weapon_damage=qa9_fixture::damage;
   const auto target_hp=target->flingy.hitpoints,out_hp=outside->flingy.hitpoints,ally_hp=ally->flingy.hitpoints,air_hp=airborne->flingy.hitpoints;
   for(U32 n=1;n<=r.cadence;n++){game.frame_count=100+n*8;rework_combat_v5::ordinary_hit(source,target,10*256,w,false);}
-  U32 hit=0;for(auto u:victims){if(u->flingy.hitpoints!=256000){++hit;CHECK(u->flingy.hitpoints==256000-int(10*256*r.percent/100));}}
+  U32 hit=0;for(auto u:victims){if(u->flingy.hitpoints!=256000){++hit;CHECK(u->flingy.hitpoints==256000-int(10*256*r.percent*(r.ordinal==191?250:100)/10000));}}
   CHECK(hit==r.count&&outside->flingy.hitpoints==out_hp&&ally->flingy.hitpoints==ally_hp&&airborne->flingy.hitpoints==air_hp);
   CHECK(target->flingy.hitpoints==target_hp-(r.cadence==3?20*256:0));
   const auto hp=victims[0]->flingy.hitpoints;rework_combat_v5::ordinary_hit(source,target,10*256,w,true);CHECK(victims[0]->flingy.hitpoints==hp);

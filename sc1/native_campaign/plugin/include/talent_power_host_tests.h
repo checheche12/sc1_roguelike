@@ -66,7 +66,7 @@ inline void power_epic_legendary_projectiles_and_qualitative(){
 inline void power_carrier_cargo_and_legacy_conversion(){
     using namespace rework_carrier_tests;begin();talent(130);auto c=carrier(8);CHECK(rework_carrier_v5::capacity(c)==4);
     game.upgrade_level_sc[1][43]=1;CHECK(rework_carrier_v5::capacity(c)==8);
-    talent(115);auto shuttle=fresh(69);CHECK(rework_cargo_v5::capacity(shuttle)==16);
+    talent(115);auto shuttle=fresh(69);CHECK(rework_cargo_v5::capacity(shuttle)==8);
     reset();GrowthSnapshot s{};s.talent_bits[0]=1u<<5;CHECK(apply_snapshot(nullptr,s));CHECK(owner_stat(1,{1,7,2})==3);CHECK(owner_stat(1,{1,14,2})==13);
 }
 inline void power_acid_fifteen_and_enemy_curses_unchanged(){

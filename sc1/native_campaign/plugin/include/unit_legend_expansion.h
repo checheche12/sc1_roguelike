@@ -23,8 +23,9 @@ inline void expansion_hit(bw::Unit* source,bw::Unit* target,U32 amount,U32 weapo
  for(const auto& r:unit_legend_expansion::rules){
   if(r.ordinal==185||legend_focus::converted(r.ordinal)||r.mode!=1||!r.count||!rank(r.ordinal)||!expansion_matches(r,source->unit_id)||s->shot_count%std::max(1u,r.cadence))continue;
   if(r.cadence==3)weapon_hurt(target,U32(std::min<std::uint64_t>(0x7fffffffu,std::uint64_t(amount)*2)),weapon,source,source->player);
+  const auto secondary_amount=r.ordinal==191?std::uint64_t(amount)*(100+r.bonus)/100:std::uint64_t(amount);
   std::vector<Identity> victims;for(auto other:around(target->flingy.position.x,target->flingy.position.y,r.radius,target,r.count,true,air(target)))victims.push_back(identity(other));
-  for(const auto& id:victims)if(auto other=resolve(id))weapon_hurt(other,U32(std::min<std::uint64_t>(0x7fffffffu,std::uint64_t(amount)*r.percent/100)),weapon,source,source->player);
+  for(const auto& id:victims)if(auto other=resolve(id))weapon_hurt(other,U32(std::min<std::uint64_t>(0x7fffffffu,secondary_amount*r.percent/100)),weapon,source,source->player);
  }
 }
 inline void expansion_death(bw::Unit* dead) {

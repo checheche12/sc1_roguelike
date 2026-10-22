@@ -141,6 +141,7 @@ def generate_header(catalog,root):
   'struct Rule {unsigned ordinal,mode,bonus,percent,count,cadence,radius;unsigned units[8];};',
   'inline constexpr Rule rules[]={']
  for spec in entries(catalog):
+  if spec['ordinal']==191:spec['bonus']=catalog['talents'][238+191]['effect']['bonus']
   mask=[0]*8
   for unit in spec['units']:mask[unit//32]|=1<<(unit%32)
   lines.append('{'+','.join(str(spec[k])+'u' for k in ('ordinal','mode','bonus','percent','count','cadence','radius'))+',{' + ','.join(str(x)+'u' for x in mask)+'}},')
