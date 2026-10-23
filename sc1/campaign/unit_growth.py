@@ -14,6 +14,7 @@ NO_ATTACK={34,11,9,42,46,45,67,63,69,84}
 CASTERS={1,34,9,46,45,67,63,60,71}
 OLD_MANUALS=(8,9,26,27,28,29,30,31,67,68,69,70,71,72,108,109,110,111,112)
 COMBAT_BUNDLE_FAMILIES={46:1,136:72,176:72,181:81}
+SHADOW_FURY_ORIGINAL_DESCRIPTION='전투 중 자동으로 6타일 안 지상 적을 5회 순간이동하며 벱니다. 회당 일반 공격의200% 피해. 다른 적 우선·부족하면 재타격. 시전 중 무적, 종료 후 원위치 복귀. 재사용12초.'
 
 @lru_cache(maxsize=None)
 def identity(ordinal):
@@ -51,7 +52,7 @@ def specifications():
   rows.append(dict(race=race,target=name,units=ids,kind='trait',rarity=tier,name=name+' '+{'uncommon':'기동 장갑','rare':'정예 전투체','epic':'전장 완성형'}[tier],
    description=name+' 전용: '+', '.join(parts)+'. 1회 획득.',armor=armor,hp=hp,damage=damage,speed=speed,energy=energy))
  rows.append(dict(race='protoss',target='다크 템플러',units=[61,74,75],kind='shadow',rarity='legendary',name='그림자 격노',
-  description='전투 중 자동으로 6타일 안 지상 적을 5회 순간이동하며 벱니다. 회당 일반 공격의200% 피해. 다른 적 우선·부족하면 재타격. 시전 중 무적, 종료 후 원위치 복귀. 재사용12초.'))
+  description='6타일 내 지상 적·건물에 첫 타격 없이 자동 발동. 직전 적의 3타일 내 다른 적 우선·부족하면 재타격. 최대 5회, 회당 일반 공격 100%. 시전 중 무적·종료 후 원위치 복귀. 재사용 12초. 대공 강화와 무관하게 지상 전용.'))
  # QA61 uses two previously unused bits after all historical unit fields.
  rows.append(dict(race='shared',target='미사일 터렛·스포어 콜로니·포톤 캐논',units=[124,144,162],
   kind='tower',rarity='common',name='대공 방어 교범',hp=100,damage=50,max_rank=2,
@@ -101,6 +102,9 @@ def decorate(catalog):
    repeatable=repeat,requirements={'production':s['kind']=='tower'},missions=[x['mission_id'] for x in missions if s['race'] in ('shared',x['race'])],
    expansion_revision=REVISION,balance_revision=9,bundle_family={73:72,85:81}.get(min(s['units']),min(s['units'])))
   item.update(pre_balance_description=item['description'],pre_balance_effect=copy.deepcopy(effect))
+  if s['kind']=='shadow':
+   item['source_description']=SHADOW_FURY_ORIGINAL_DESCRIPTION
+   item['effect'].update(qa_revision=2026102384,shadow_requires_first_hit=False,shadow_trigger_radius_pixels=192,shadow_chain_radius_pixels=96,shadow_damage_percent=100,shadow_can_target_buildings=True,shadow_target_layer='ground',shadow_returns_to_cast_origin=True)
   if repeat:item['max_rank']=s.get('max_rank',4)
   if s['kind']=='tower':
    item.update(bundle_family=124,bundle_families=[124,144,162],candidate_weight_percent=300)

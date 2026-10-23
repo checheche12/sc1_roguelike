@@ -899,9 +899,10 @@ void __cdecl owner_unit_hook(bw::Unit* u,UnitFn original) noexcept {
     if(rework_curses::spell_disabled(u))u->energy=0;
 }
 void __cdecl owner_timer_hook(bw::Unit* u,UnitFn original) noexcept {
-    rework_combat_v5::ExpiryScope expiry(u);owner_unit_hook(u,original);
+    rework_combat_v5::ExpiryScope expiry(u);rework_combat_v5::RetaliationShieldRegenScope regeneration(u);owner_unit_hook(u,original);
 }
 void __cdecl owner_order_hook(bw::Unit* u,UnitFn original) noexcept {
+    rework_combat_v5::shadow_prepare(u);
     rework_combat_v5::SpellEnergyRequirementScope energy_requirement(u,u?u->order:0);
     campaign_research::Scope research(u);HallucinationCreationScope creation(u && u->order==148);rework_carrier_v5::LaunchScope launch(u);rework_carrier_v5::BurstScope burst(u);rework_combat_v5::OrderScope rework(u,original);if(!rework.handled()){owner_unit_hook(u,original);burst.finish([&]{owner_unit_hook(u,original);});}
 }

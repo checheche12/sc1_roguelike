@@ -38,7 +38,7 @@ def decorate(catalog):
   if mode==10:text.append(f'공격이 {cadence}회 적중할 때마다 세 번째 대상에게 원래 공격의 {proc}% 추가 피해.')
   if mode==3:text.append(f'같은 적을 연속 공격하면 피해가 타격당 {step}%씩 최대 {limit}% 추가 증가. 표적 변경·3초 중단 시 초기화.')
   if mode==4:text.append(f'직접 공격 후 3초간 받은 일반 공격의 실제 체력 피해 {proc}%를 공격자에게 반사. 초당 최대 {limit}. 반사는 재반사되지 않습니다.')
-  if mode==5:text.append(f'받은 일반 공격의 실제 체력·보호막 피해 {proc}%를 최대 {limit}까지 저장해 다음 직접 공격의 주 대상에게 돌려줍니다. 공격해야 방출됩니다.')
+  if mode==5:text.append(f'받은 일반 공격의 실제 체력·보호막 피해 {proc}%를 최대 {limit}까지 저장해 다음 직접 공격의 주 대상에게 돌려줍니다. 자연 보호막 회복 속도 +1000%(기본의 11배). 공격해야 방출됩니다.')
   if mode==6:text.append('저글링·브루들링의 공격마다 그 적의 체력 방어력을 0.33씩 끝없이 깎습니다. 0 아래의 누적분은 해당 유닛의 추가 피해가 됩니다. 대상이 죽거나 소유자가 바뀌면 초기화.')
   if mode==7:text.append(f'이동 사격 유지. 이동 중 피해 +{proc}% 추가(총400%). 정지 시 총300%.')
   if mode==8:text.append(f'대형 유닛·건물에게 피해 +{proc}% 추가.')
@@ -51,6 +51,7 @@ def decorate(catalog):
    focus_cadence=cadence,focus_proc_percent=proc,focus_step_percent=step,focus_limit=limit,legacy_area_effect_disabled=True,
    design_role='single_target',reflection_requires_attacking=mode==4,reflection_only_releases_on_attack=mode==5)
   if ordinal==190:item['effect'].update(qa_revision=2026102263,focus_target_units=[37,40,54],armor_erosion_numerator=33,armor_erosion_denominator=100,armor_erosion_per_hit=0.33)
+  if ordinal==139:item['effect'].update(qa_revision=2026102382,shield_regen_bonus_percent=1000,shield_regen_multiplier=11,shield_regen_native_step_q8=7)
   if ordinal==137:item['effect'].update(focus_requires_same_target=False,focus_counter_scope='unit',focus_reset_on_target_change=False,focus_reset_on_idle=False)
   if ordinal==55:item['effect'].update(qa_revision=TANK_REVISION,focus_target_units=[5,6,23,24],siege_periodic_damage_percent=0,siege_moving_fire=True,siege_range_bonus_tiles=3)
   if ordinal==56:
@@ -87,7 +88,7 @@ def decorate(catalog):
 
 def generate_header(catalog,root):
  by={x['effect_ordinal']:x for x in catalog['talents'] if x.get('rework_revision')==5}
- lines=['#pragma once','namespace legend_focus {','inline constexpr unsigned armor_erosion_denominator=100u;','inline constexpr unsigned scourge_blast_radius_pixels=64u,scourge_blast_damage_percent=50u;','struct Rule {unsigned ordinal,mode,base,cadence,proc,step,limit;unsigned units[8];};','inline constexpr Rule rules[]={']
+ lines=['#pragma once','namespace legend_focus {','inline constexpr unsigned armor_erosion_denominator=100u;','inline constexpr unsigned native_shield_regen_q8=7u,retaliation_shield_regen_multiplier=11u;','inline constexpr unsigned shadow_trigger_radius_pixels=192u,shadow_chain_radius_pixels=96u;','inline constexpr unsigned scourge_blast_radius_pixels=64u,scourge_blast_damage_percent=50u;','struct Rule {unsigned ordinal,mode,base,cadence,proc,step,limit;unsigned units[8];};','inline constexpr Rule rules[]={']
  for spec in SPECS:
   ordinal=spec[0];units=([73] if ordinal==148 else [85] if ordinal==141 else by[ordinal]['effect'].get('focus_target_units',by[ordinal]['target_units']));mask=[0]*8
   for unit in units:mask[unit//32]|=1<<(unit%32)

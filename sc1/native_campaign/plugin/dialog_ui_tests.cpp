@@ -552,6 +552,7 @@ void bundled_legendary_pages_test() {
         h.actions=[&]{
             const auto intro=h.paint(-1);check(intro.find(frozen::talent_names[left-1])!=std::string::npos && intro.find(frozen::talent_names[right-1])!=std::string::npos,"both names on persisted option");
             h.preview(1);check(h.paint(-1).find(frozen::talent_names[left-1])!=std::string::npos,"first complete member shown");
+            if(no_spaces(h.paint(-1)).find(no_spaces(frozen::talent_effects[left-1]))==std::string::npos)std::fprintf(stderr,"BUNDLE_DETAIL left=%u right=%u expected_bytes=%zu rendered=%s\n",left,right,std::strlen(frozen::talent_effects[left-1]),h.paint(-1).c_str());
             check(no_spaces(h.paint(-1)).find(no_spaces(frozen::talent_effects[left-1]))!=std::string::npos,"first effect not clipped");
             h.confirm();check(h.submits==0&&!h.ui.waiting(),"first click moves to second explanation");
             check(no_spaces(h.paint(-1)).find(no_spaces(frozen::talent_effects[right-1]))!=std::string::npos,"second effect not clipped");

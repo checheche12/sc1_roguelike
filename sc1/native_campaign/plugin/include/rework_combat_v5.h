@@ -320,7 +320,7 @@ struct UnitState {
     U32 support_frame=~0u,support_hp=0,support_shields=0,mechanical_irradiate_timer=0;
     Identity focus_target{};U32 focus_hits=0,focus_last=0,dragoon_hits=0,erosion=0,erosion_owner=12,retaliation=0;
     bool strong_ensnare=false,double_acid=false;U32 ensnare_due[2]{};double ensnare_factor[2]{1,1};
-    bool shadow_active=false;U32 shadow_count=0,shadow_step=0,shadow_due=0,shadow_cooldown=0,shadow_invincible=0;int shadow_x=0,shadow_y=0;Identity shadow_targets[5]{};
+    bool shadow_active=false;U32 shadow_count=0,shadow_step=0,shadow_due=0,shadow_cooldown=0,shadow_invincible=0,shadow_scan=~0u;int shadow_x=0,shadow_y=0,shadow_anchor_x=0,shadow_anchor_y=0;Identity shadow_first{},shadow_targets[5]{};
 };
 inline void shadow_restore(bw::Unit*,UnitState&);
 inline std::vector<UnitState> states;
@@ -625,6 +625,7 @@ inline double speed_ratio(bw::Unit* u) {
         if(rank(32) && group(32,u->unit_id))value*=talent_power::rate(32,1.15);
         if((rank(33)&&u->unit_id==11)||(rank(74)&&in(u->unit_id,{42,57}))||(rank(115)&&u->unit_id==69))value*=talent_power::rate(u->unit_id==11?33u:u->unit_id==69?115u:74u,1.2);
         if(rank(136)&&u->unit_id==73)value*=talent_power::rate(136,1.5);
+        if(talent_power::enabled&&raw_rank(141)&&in(u->unit_id,{81,83}))value*=2.0;
         if(air_control(g.growth,u->unit_id))value*=1.2;
         value*=1.0+unit_trait_value(g.growth,u->unit_id,3)/100.0;
         if(rank(75)&&!air(u)&&soldier(u->unit_id)&&race_type(u->unit_id,1)&&get_tiles){
