@@ -1,0 +1,1010 @@
+{
+  "version": "v2026.10.23-qa85",
+  "file": "SC1_Roguelike_QA85.zip",
+  "sha256": "78a8f20645198bc7131422d85e320cd4bf4171a00b884ebeb34061b711710da6",
+  "bytes": 25031763,
+  "runtime_source_commit": "1f613255e49e069d232cd8ce9dafd1380f6c0cf5",
+  "native_dll_sha256": "af15cdaac205713089669382a3548ae7bf3bbb4eab74b668d61b8905690bc2d7",
+  "maps": 63,
+  "changed_maps": [
+    102,
+    103,
+    105,
+    106,
+    107,
+    108,
+    109,
+    110,
+    201,
+    202,
+    203,
+    204,
+    206,
+    207,
+    208,
+    209,
+    210,
+    301,
+    302,
+    303,
+    304,
+    305,
+    307,
+    308,
+    309,
+    310,
+    402,
+    403,
+    404,
+    406,
+    407,
+    408,
+    501,
+    503,
+    504,
+    505,
+    515,
+    506,
+    508,
+    603,
+    604,
+    614,
+    615,
+    616,
+    617,
+    618,
+    605,
+    606,
+    607,
+    609,
+    610
+  ],
+  "first_normal_base_budget_percent": 100,
+  "wave_volume_percent": [
+    100,
+    90,
+    85,
+    80
+  ],
+  "normal_interval_cycle": [
+    120,
+    150
+  ],
+  "starting_base_first_range": [
+    240,
+    300
+  ],
+  "settlement_first_wave_seconds": 360,
+  "reinforcement_curse_scaling_preserved": true,
+  "base_defenses": {
+    "passed": true,
+    "maps": 63,
+    "changed_maps": [
+      102,
+      103,
+      105,
+      106,
+      107,
+      108,
+      109,
+      110,
+      201,
+      202,
+      203,
+      204,
+      206,
+      207,
+      208,
+      209,
+      210,
+      301,
+      302,
+      303,
+      304,
+      305,
+      307,
+      308,
+      309,
+      310,
+      402,
+      403,
+      404,
+      406,
+      407,
+      408,
+      501,
+      503,
+      504,
+      505,
+      515,
+      506,
+      508,
+      603,
+      604,
+      614,
+      615,
+      616,
+      617,
+      618,
+      605,
+      606,
+      607,
+      609,
+      610
+    ],
+    "added_units": 3236,
+    "added_towers": 684,
+    "base_count": 307,
+    "summaries": [
+      {
+        "mission": 101,
+        "bases": 0,
+        "units": 0,
+        "towers": 0,
+        "skipped": "no_eligible_enemy_base",
+        "tiers": []
+      },
+      {
+        "mission": 102,
+        "bases": 1,
+        "units": 10,
+        "towers": 2,
+        "skipped": null,
+        "tiers": [
+          0
+        ]
+      },
+      {
+        "mission": 103,
+        "bases": 1,
+        "units": 12,
+        "towers": 3,
+        "skipped": null,
+        "tiers": [
+          1
+        ]
+      },
+      {
+        "mission": 104,
+        "bases": 0,
+        "units": 0,
+        "towers": 0,
+        "skipped": "fixed_army_or_infiltration",
+        "tiers": []
+      },
+      {
+        "mission": 105,
+        "bases": 4,
+        "units": 24,
+        "towers": 7,
+        "skipped": null,
+        "tiers": [
+          0,
+          0,
+          1,
+          0
+        ]
+      },
+      {
+        "mission": 106,
+        "bases": 3,
+        "units": 34,
+        "towers": 5,
+        "skipped": null,
+        "tiers": [
+          1,
+          2,
+          0
+        ]
+      },
+      {
+        "mission": 107,
+        "bases": 3,
+        "units": 35,
+        "towers": 11,
+        "skipped": null,
+        "tiers": [
+          1,
+          0,
+          2
+        ]
+      },
+      {
+        "mission": 108,
+        "bases": 6,
+        "units": 63,
+        "towers": 16,
+        "skipped": null,
+        "tiers": [
+          0,
+          0,
+          2,
+          0,
+          2,
+          0
+        ]
+      },
+      {
+        "mission": 109,
+        "bases": 4,
+        "units": 36,
+        "towers": 4,
+        "skipped": null,
+        "tiers": [
+          2,
+          1,
+          1,
+          0
+        ]
+      },
+      {
+        "mission": 110,
+        "bases": 5,
+        "units": 68,
+        "towers": 16,
+        "skipped": null,
+        "tiers": [
+          0,
+          3,
+          0,
+          2,
+          0
+        ]
+      },
+      {
+        "mission": 201,
+        "bases": 2,
+        "units": 13,
+        "towers": 3,
+        "skipped": null,
+        "tiers": [
+          1,
+          0
+        ]
+      },
+      {
+        "mission": 202,
+        "bases": 3,
+        "units": 30,
+        "towers": 3,
+        "skipped": null,
+        "tiers": [
+          1,
+          0,
+          1
+        ]
+      },
+      {
+        "mission": 203,
+        "bases": 2,
+        "units": 22,
+        "towers": 5,
+        "skipped": null,
+        "tiers": [
+          2,
+          0
+        ]
+      },
+      {
+        "mission": 204,
+        "bases": 6,
+        "units": 38,
+        "towers": 5,
+        "skipped": null,
+        "tiers": [
+          1,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "mission": 205,
+        "bases": 0,
+        "units": 0,
+        "towers": 0,
+        "skipped": "fixed_army_or_infiltration",
+        "tiers": []
+      },
+      {
+        "mission": 206,
+        "bases": 3,
+        "units": 32,
+        "towers": 2,
+        "skipped": null,
+        "tiers": [
+          0,
+          2,
+          0
+        ]
+      },
+      {
+        "mission": 207,
+        "bases": 6,
+        "units": 50,
+        "towers": 10,
+        "skipped": null,
+        "tiers": [
+          1,
+          0,
+          1,
+          1,
+          0,
+          0
+        ]
+      },
+      {
+        "mission": 208,
+        "bases": 4,
+        "units": 50,
+        "towers": 5,
+        "skipped": null,
+        "tiers": [
+          1,
+          1,
+          2,
+          0
+        ]
+      },
+      {
+        "mission": 209,
+        "bases": 9,
+        "units": 101,
+        "towers": 13,
+        "skipped": null,
+        "tiers": [
+          1,
+          0,
+          0,
+          0,
+          2,
+          2,
+          2,
+          0,
+          0
+        ]
+      },
+      {
+        "mission": 210,
+        "bases": 20,
+        "units": 155,
+        "towers": 25,
+        "skipped": null,
+        "tiers": [
+          1,
+          0,
+          0,
+          1,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          1,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "mission": 301,
+        "bases": 1,
+        "units": 6,
+        "towers": 2,
+        "skipped": null,
+        "tiers": [
+          0
+        ]
+      },
+      {
+        "mission": 302,
+        "bases": 2,
+        "units": 20,
+        "towers": 3,
+        "skipped": null,
+        "tiers": [
+          1,
+          0
+        ]
+      },
+      {
+        "mission": 303,
+        "bases": 2,
+        "units": 24,
+        "towers": 8,
+        "skipped": null,
+        "tiers": [
+          1,
+          1
+        ]
+      },
+      {
+        "mission": 304,
+        "bases": 1,
+        "units": 12,
+        "towers": 4,
+        "skipped": null,
+        "tiers": [
+          1
+        ]
+      },
+      {
+        "mission": 305,
+        "bases": 3,
+        "units": 33,
+        "towers": 3,
+        "skipped": null,
+        "tiers": [
+          1,
+          2,
+          0
+        ]
+      },
+      {
+        "mission": 306,
+        "bases": 0,
+        "units": 0,
+        "towers": 0,
+        "skipped": "fixed_army_or_infiltration",
+        "tiers": []
+      },
+      {
+        "mission": 307,
+        "bases": 5,
+        "units": 72,
+        "towers": 11,
+        "skipped": null,
+        "tiers": [
+          2,
+          2,
+          2,
+          0,
+          0
+        ]
+      },
+      {
+        "mission": 308,
+        "bases": 4,
+        "units": 63,
+        "towers": 4,
+        "skipped": null,
+        "tiers": [
+          2,
+          1,
+          2,
+          1
+        ]
+      },
+      {
+        "mission": 309,
+        "bases": 8,
+        "units": 75,
+        "towers": 26,
+        "skipped": null,
+        "tiers": [
+          2,
+          1,
+          1,
+          1,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "mission": 310,
+        "bases": 5,
+        "units": 56,
+        "towers": 15,
+        "skipped": null,
+        "tiers": [
+          1,
+          2,
+          1,
+          0,
+          0
+        ]
+      },
+      {
+        "mission": 401,
+        "bases": 0,
+        "units": 0,
+        "towers": 0,
+        "skipped": "fixed_army_or_infiltration",
+        "tiers": []
+      },
+      {
+        "mission": 402,
+        "bases": 3,
+        "units": 18,
+        "towers": 2,
+        "skipped": null,
+        "tiers": [
+          0,
+          0,
+          1
+        ]
+      },
+      {
+        "mission": 403,
+        "bases": 3,
+        "units": 26,
+        "towers": 1,
+        "skipped": null,
+        "tiers": [
+          1,
+          1,
+          0
+        ]
+      },
+      {
+        "mission": 404,
+        "bases": 5,
+        "units": 56,
+        "towers": 18,
+        "skipped": null,
+        "tiers": [
+          0,
+          1,
+          3,
+          0,
+          0
+        ]
+      },
+      {
+        "mission": 405,
+        "bases": 0,
+        "units": 0,
+        "towers": 0,
+        "skipped": "fixed_army_or_infiltration",
+        "tiers": []
+      },
+      {
+        "mission": 406,
+        "bases": 4,
+        "units": 61,
+        "towers": 17,
+        "skipped": null,
+        "tiers": [
+          1,
+          3,
+          2,
+          0
+        ]
+      },
+      {
+        "mission": 407,
+        "bases": 4,
+        "units": 50,
+        "towers": 7,
+        "skipped": null,
+        "tiers": [
+          3,
+          2,
+          2,
+          0
+        ]
+      },
+      {
+        "mission": 408,
+        "bases": 16,
+        "units": 181,
+        "towers": 31,
+        "skipped": null,
+        "tiers": [
+          2,
+          2,
+          2,
+          3,
+          2,
+          1,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "mission": 501,
+        "bases": 4,
+        "units": 44,
+        "towers": 10,
+        "skipped": null,
+        "tiers": [
+          3,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "mission": 502,
+        "bases": 0,
+        "units": 0,
+        "towers": 0,
+        "skipped": "fixed_army_or_infiltration",
+        "tiers": []
+      },
+      {
+        "mission": 503,
+        "bases": 3,
+        "units": 43,
+        "towers": 14,
+        "skipped": null,
+        "tiers": [
+          2,
+          1,
+          1
+        ]
+      },
+      {
+        "mission": 504,
+        "bases": 7,
+        "units": 103,
+        "towers": 32,
+        "skipped": null,
+        "tiers": [
+          0,
+          3,
+          1,
+          2,
+          1,
+          2,
+          0
+        ]
+      },
+      {
+        "mission": 505,
+        "bases": 12,
+        "units": 91,
+        "towers": 23,
+        "skipped": null,
+        "tiers": [
+          3,
+          2,
+          0,
+          0,
+          0,
+          0,
+          2,
+          0,
+          0,
+          0,
+          3,
+          0
+        ]
+      },
+      {
+        "mission": 515,
+        "bases": 11,
+        "units": 90,
+        "towers": 27,
+        "skipped": null,
+        "tiers": [
+          2,
+          0,
+          0,
+          2,
+          0,
+          0,
+          2,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "mission": 506,
+        "bases": 6,
+        "units": 69,
+        "towers": 13,
+        "skipped": null,
+        "tiers": [
+          3,
+          2,
+          0,
+          0,
+          2,
+          0
+        ]
+      },
+      {
+        "mission": 507,
+        "bases": 0,
+        "units": 0,
+        "towers": 0,
+        "skipped": "fixed_army_or_infiltration",
+        "tiers": []
+      },
+      {
+        "mission": 508,
+        "bases": 11,
+        "units": 117,
+        "towers": 33,
+        "skipped": null,
+        "tiers": [
+          2,
+          3,
+          1,
+          2,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "mission": 601,
+        "bases": 0,
+        "units": 0,
+        "towers": 0,
+        "skipped": "fixed_army_or_infiltration",
+        "tiers": []
+      },
+      {
+        "mission": 602,
+        "bases": 0,
+        "units": 0,
+        "towers": 0,
+        "skipped": "no_eligible_enemy_base",
+        "tiers": []
+      },
+      {
+        "mission": 603,
+        "bases": 11,
+        "units": 127,
+        "towers": 22,
+        "skipped": null,
+        "tiers": [
+          3,
+          2,
+          2,
+          0,
+          0,
+          0,
+          1,
+          0,
+          2,
+          0,
+          0
+        ]
+      },
+      {
+        "mission": 604,
+        "bases": 9,
+        "units": 101,
+        "towers": 24,
+        "skipped": null,
+        "tiers": [
+          3,
+          1,
+          0,
+          3,
+          1,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "mission": 614,
+        "bases": 9,
+        "units": 101,
+        "towers": 24,
+        "skipped": null,
+        "tiers": [
+          3,
+          1,
+          0,
+          3,
+          1,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "mission": 615,
+        "bases": 9,
+        "units": 101,
+        "towers": 24,
+        "skipped": null,
+        "tiers": [
+          3,
+          1,
+          0,
+          3,
+          1,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "mission": 616,
+        "bases": 9,
+        "units": 101,
+        "towers": 24,
+        "skipped": null,
+        "tiers": [
+          3,
+          1,
+          0,
+          3,
+          1,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "mission": 617,
+        "bases": 9,
+        "units": 101,
+        "towers": 24,
+        "skipped": null,
+        "tiers": [
+          3,
+          1,
+          0,
+          3,
+          1,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "mission": 618,
+        "bases": 9,
+        "units": 101,
+        "towers": 24,
+        "skipped": null,
+        "tiers": [
+          3,
+          1,
+          0,
+          3,
+          1,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "mission": 605,
+        "bases": 10,
+        "units": 138,
+        "towers": 30,
+        "skipped": null,
+        "tiers": [
+          1,
+          0,
+          0,
+          2,
+          2,
+          0,
+          0,
+          3,
+          3,
+          0
+        ]
+      },
+      {
+        "mission": 606,
+        "bases": 3,
+        "units": 47,
+        "towers": 7,
+        "skipped": null,
+        "tiers": [
+          2,
+          3,
+          2
+        ]
+      },
+      {
+        "mission": 607,
+        "bases": 7,
+        "units": 54,
+        "towers": 1,
+        "skipped": null,
+        "tiers": [
+          1,
+          1,
+          3,
+          1,
+          0,
+          0,
+          1
+        ]
+      },
+      {
+        "mission": 608,
+        "bases": 6,
+        "units": 0,
+        "towers": 0,
+        "skipped": null,
+        "tiers": [
+          2,
+          1,
+          1,
+          1,
+          0,
+          0
+        ]
+      },
+      {
+        "mission": 609,
+        "bases": 3,
+        "units": 34,
+        "towers": 5,
+        "skipped": null,
+        "tiers": [
+          2,
+          2,
+          1
+        ]
+      },
+      {
+        "mission": 610,
+        "bases": 11,
+        "units": 147,
+        "towers": 36,
+        "skipped": null,
+        "tiers": [
+          3,
+          1,
+          0,
+          3,
+          0,
+          0,
+          1,
+          0,
+          1,
+          1,
+          3
+        ]
+      },
+      {
+        "mission": 611,
+        "bases": 0,
+        "units": 0,
+        "towers": 0,
+        "skipped": "fixed_army_or_infiltration",
+        "tiers": []
+      }
+    ],
+    "original_unit_prefix_preserved": true,
+    "all_other_sections_preserved": true,
+    "actual_gameplay_verified": false
+  },
+  "shadow_fury_damage_percent": 200,
+  "personal_database_included": false,
+  "actual_gameplay_verified": false
+}
