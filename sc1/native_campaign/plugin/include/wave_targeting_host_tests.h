@@ -95,8 +95,27 @@ inline void all_campaign_headquarters_and_t01_callback(){
     CHECK(issued.size()==2 && issued.back().x==1100 && issued.back().y==1200);
 }
 }
-inline constexpr std::size_t wave_targeting_group_count=6;
+inline void qa78_arbiters_and_orphan_detectors_march(){
+ using namespace wave_target_tests;
+ for(U32 id:{71u,86u,9u,42u,84u}){
+  begin();g.applied=true;auto hq=add(106,player_owner(),400,2200);hq->flags=1;
+  auto u=wave(id,4,1500,800);u->ai=reinterpret_cast<void*>(1);
+  rework_curses::identities.resize(g.units_count);auto& v=rework_curses::identities[std::size_t(u-g.units)];v.wave=1;v.unique=u->minor_unique_index;v.owner=u->player;v.type=u->unit_id;
+  const bool arbiter=id==71||id==86;
+  auto leader=wave(37,4,1200,1000);advance(0);CHECK(u->order==(arbiter?14u:6u)&&u->order_target.x==(arbiter?400:1200));
+  // An acquired but stale remote enemy must not pin an Arbiter at its origin.
+  if(arbiter){u->order=10;u->order_target.unit=hq;advance(48);CHECK(u->order==10);advance(192);CHECK(u->order==6);}
+  leader->flingy.hitpoints=0;advance(240);CHECK(u->order==6&&u->order_target.x==400&&u->order_target.y==2200);
+  g.current_wave_id=2;auto next=wave(37,4,700,1400);advance(288);CHECK(u->order==6&&u->order_target.x==(arbiter?400:700));
+  u->order=147;next->flingy.position.x=600;advance(336);CHECK(u->order==147); // Preserve Stasis casting.
+  u->order=3;u->stasis_timer=1;advance(384);CHECK(u->order==3);u->stasis_timer=0;
+  u->player=U8(player_owner());advance(432);CHECK(u->order==3); // Never take over captured units.
+ }
+ std::puts("QA78_ESCORT arbiters=2 direct_base_attack=1 detector_types=3 orphan_join=1 stale_target=1 spells_preserved=1");
+}
+inline constexpr std::size_t wave_targeting_group_count=7;
 inline void run_wave_targeting_groups(){
+    qa78_arbiters_and_orphan_detectors_march();
     wave_target_tests::t06_rescue_move_destroy();wave_target_tests::only_marked_hostile_identities();
     wave_target_tests::combat_and_order_throttle();wave_target_tests::turret_combat_and_target_fallback();
     wave_target_tests::stable_primary_base_and_session_goal();wave_target_tests::all_campaign_headquarters_and_t01_callback();

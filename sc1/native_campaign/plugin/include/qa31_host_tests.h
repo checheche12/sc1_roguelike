@@ -62,14 +62,14 @@ inline void qa31_arbiter_rejoins_own_wave_preserving_cast_and_cloak_orders(){
   arbiter->secondary_order=131; // CloakNearbyUnits is independent of movement.
   for(U32 order:{49u,163u}){
    arbiter->order=U8(order);game.frame_count+=48;wave_targeting::issue(arbiter);
-   CHECK(arbiter->order==14 && arbiter->order_target.x==600 && arbiter->order_target.y==600);
+   CHECK(arbiter->order==14 && arbiter->order_target.x==1000 && arbiter->order_target.y==1000);
    CHECK(arbiter->secondary_order==131);
   }
   arbiter->order=147;game.frame_count+=48;const auto issued_count=wave_target_tests::issued.size();wave_targeting::issue(arbiter);
   CHECK(arbiter->order==147 && wave_target_tests::issued.size()==issued_count);
   arbiter->order=130;game.frame_count+=48;wave_targeting::issue(arbiter);CHECK(arbiter->order==130); // Do not cancel native aura initialization.
   arbiter->order=163;leader->flingy.hitpoints=0;game.frame_count+=48;wave_targeting::issue(arbiter);
-  CHECK(arbiter->order==14 && arbiter->order_target.x==1000 && arbiter->order_target.y==1000);
+  CHECK(arbiter->order==6 && arbiter->order_target.x==1000 && arbiter->order_target.y==1000);
   wave_targeting::issue(unmarked);CHECK(std::memcmp(unmarked,&saved,sizeof(saved))==0);
  }
 }

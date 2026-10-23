@@ -151,7 +151,8 @@ inline void detectors_cover_their_own_army(){
   rework_waves::timeline.active_ticks=604*24;game.frame_count=96;rework_waves::release_and_orders();CHECK(detector->order==6);
   bool follows_army=false;for(std::size_t i=before;i<count;i++)if(!wave_targeting::detector(&units[i])){auto p=units[i].flingy.position;if(detector->order_target.x==p.x&&detector->order_target.y==p.y)follows_army=true;units[i].flingy.hitpoints=0;}
   CHECK(follows_army&&std::memcmp(original,&untouched,sizeof(untouched))==0);
-  const auto issued_before=wave_target_tests::issued.size();game.frame_count=192;detector->order=3;wave_targeting::issue(detector);CHECK(wave_target_tests::issued.size()==issued_before);
+  const auto issued_before=wave_target_tests::issued.size();game.frame_count=192;detector->order=3;wave_targeting::issue(detector);CHECK(wave_target_tests::issued.size()==issued_before+1&&detector->order==6);
+  CHECK(detector->order_target.x==origin->target.x&&detector->order_target.y==origin->target.y);
  }
 }
 inline void first_eligible_then_relative_cadence(){
@@ -383,8 +384,36 @@ inline void economy_loss_never_cancels_scheduled_waves(){
  }
  CHECK(missions>0);
 }
-inline constexpr std::size_t rework_wave_group_count=23;
+inline void qa78_dispatch_preserves_blocked_units_and_special_priority(){
+ using namespace rework_wave_tests;
+ begin(308);const auto origin=rework_waves::choose_origin(true);CHECK(origin);
+ add(154,player_owner(),origin->target.x,origin->target.y)->flags=1;
+ add(64,player_owner(),origin->target.x+32,origin->target.y)->flags=1;
+ add(66,player_owner(),origin->target.x+64,origin->target.y)->flags=1;
+ add(84,player_owner(),origin->target.x+96,origin->target.y)->flags=1;
+ rework_waves::timeline.home=true;rework_waves::timeline.active_ticks=1200*24;rework_waves::timeline.ordinal=8;
+ rework_waves::primary=origin;g.current_wave_id=41;rework_waves::selected={p::Lurkers,p::Alliance};
+ g.growth.curse_counts[p::Lurkers]=g.growth.curse_counts[p::Alliance]=1;
+ const auto baseline=count;fail_spawn=true;rework_waves::main_wave();CHECK(count==baseline&&!rework_waves::deferred.empty());
+ CHECK(rework_waves::timeline.delivered[p::Lurkers-24]==0&&rework_waves::timeline.delivered[p::Alliance-24]==0);
+ const auto requested=rework_waves::deferred.size();CHECK(requested>20);fail_spawn=false;
+ g.current_wave_id=99;rework_waves::primary=nullptr;rework_waves::timeline.ordinal=9;
+ for(U32 sec=1201;sec<1230&&!rework_waves::deferred.empty();sec++){
+  rework_waves::timeline.active_ticks=sec*24;rework_waves::retry_dispatch();
+  CHECK(g.current_wave_id==99&&rework_waves::primary==nullptr&&rework_waves::live_supply()<=480);
+  for(std::size_t i=baseline;i<count;i++){const auto v=rework_curses::identity(&units[i]);CHECK(v&&v->wave==41);units[i].flingy.position={std::int16_t(origin->target.x+128),std::int16_t(origin->target.y+128)};}
+ }
+ CHECK(rework_waves::deferred.empty()&&count-baseline==requested);
+ CHECK(wave_targeting::detector(&units[baseline])&&rework_curses::identity(&units[baseline+1])->slot==p::Lurkers);
+ CHECK(rework_waves::timeline.delivered[p::Lurkers-24]==9&&rework_waves::timeline.delivered[p::Alliance-24]==9);
+ const auto once=count;rework_waves::retry_dispatch();CHECK(count==once);
+ rework_waves::collecting=true;fail_spawn=true;CHECK(rework_waves::request_spawn(65,0));rework_waves::collecting=false;
+ rework_waves::timeline.active_ticks=1231*24;rework_waves::retry_dispatch();CHECK(rework_waves::deferred.empty());fail_spawn=false;
+ std::printf("QA78_DISPATCH mission=308 preserved=%zu duplicated=0 expiry=bounded\n",requested);
+}
+inline constexpr std::size_t rework_wave_group_count=24;
 inline void run_rework_wave_groups(){
+ qa78_dispatch_preserves_blocked_units_and_special_priority();
  economy_loss_never_cancels_scheduled_waves();
  CHECK(std::strcmp(rework_waves::warning_text(1),rework_waves::warning_text(2))==0);
  CHECK(std::strstr(rework_waves::warning_text(1),"공세"));

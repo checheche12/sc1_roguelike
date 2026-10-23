@@ -19,7 +19,7 @@ SPECS=(
  (139,'응축 보복',5,100,1,30,0,200),
  (141,'결전 갑충탄',0,400,1,0,0,0),
  (142,'거대 표적 사냥',8,75,1,200,0,0),
- (148,'집중 요격',3,0,1,0,20,120),
+ (148,'집중 요격',3,0,1,0,20,240),
  (184,'가우스 집중 포화',2,25,3,300,0,0),
  (190,'끝없는 갑각 분쇄',6,0,1,0,33,0),
  (194,'태양의 결투',1,200,1,200,0,50),
@@ -44,7 +44,7 @@ def decorate(catalog):
   if mode==8:text.append(f'대형 유닛·건물에게 피해 +{proc}% 추가.')
   if mode==9:text.append('최대 체력3배. 공중 적을 추격할 때 받는 일반 공격 피해75% 감소. 과잉 자폭을 피하도록 주변 표적을 분배합니다. 지상 공격은 없습니다.')
   if ordinal==55:text=['탱크 모드: 같은 적을 2회 공격할 때마다 원래 공격의 250% 추가 피해. 공성 모드: 이동하면서 사격하며 사거리 +3타일. 공성 모드에는 주기적 추가 피해가 없습니다.']
-  if ordinal==148:text.append('캐리어의 요격기에 적용.')
+  if ordinal==148:text=['캐리어의 인터셉터들이 모함별로 연속 타격을 공유합니다. 같은 적을 타격할 때마다 피해 +20%, 최대 +240%. 표적 변경·3초 중단 시 초기화.']
   item['description']=' '.join(text)+' 주 대상만 타격하며 주변 추가 피해·튕김은 없습니다.'
   if ordinal==197:item['description']='기본 범위 공격은 유지합니다. 같은 공중 적을 6회 공격할 때마다 그 주 대상에게 원래 공격의 900% 추가 피해를 줍니다. 추가 타격은 주변에 퍼지지 않습니다.'
   item['effect'].update(qa_revision=DRAGOON_REVISION if ordinal==137 else REVISION,focus_legend=True,focus_mode=mode,base_bonus_percent=base,
@@ -64,7 +64,7 @@ def decorate(catalog):
   item=by[ordinal];item['rarity']='epic';item['previous_rarity']='legendary';item['effect'].pop('rarity_promoted',None)
   item['effect']['qa_revision']=REVISION
  by[105]['effect'].update(projectile_count=1,projectile_damage_percent=300)
- by[148]['effect'].update(additional_targets=0,additional_target_damage_percent=0)
+ by[148]['effect'].update(qa_revision=2026102378,additional_targets=0,additional_target_damage_percent=0,focus_shared_by_carrier=True)
  by[136]['description']='캐리어 출격·인터셉터 이동 속도가 2.25배가 됩니다. 체력 증가와 방어력 무시 효과는 없습니다.'
  by[136]['effect'].update(ignore_health_armor=False,health_bonus_percent=0)
  by[140]['description']='아콘이 이동하면서 공격합니다. 이동 중과 정지 시 모두 원래 공격의 100% 피해를 줍니다.'

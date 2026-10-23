@@ -1,6 +1,6 @@
 #pragma once
 namespace host_test {
-inline constexpr std::size_t qa39_group_count=11;
+inline constexpr std::size_t qa39_group_count=12;
 namespace qa39_fixture {
 inline void __cdecl targeted_order(bw::Unit* u,U32 id,U32 x,U32 y,bw::Unit* target,U32){u->order=U8(id);u->order_target={std::int16_t(x),std::int16_t(y),target};}
 inline U32 first(const legend_focus::Rule& r){for(U32 id=0;id<228;id++)if(r.units[id/32]&(1u<<(id%32)))return id;return 228;}
@@ -31,7 +31,31 @@ inline void qa39_periodic_hits_use_unamplified_base_and_no_splash(){
   CHECK(target->flingy.hitpoints==hp-int(r.cadence*1000*(100+r.base)/100+1000*r.proc/100));CHECK(other->flingy.hitpoints==256000);CHECK(rework_combat_v5::pending_shots.empty());qa9_fixture::end();
  }combat_effects::original_weapon_damage=saved;
 }
+inline void qa78_carrier_shared_focus_and_auxiliary_damage(){
+ using namespace rework_fixture;
+ for(U32 parent_id:{72u,82u}){
+  qa9_fixture::begin({148});auto parent=unit(parent_id,1,100,100,true),second=unit(parent_id,1,120,100,true);
+  auto a=unit(73,1,100,100,true),b=unit(73,1,100,100,true),c=unit(73,1,120,100,true),target=unit(39,6,150,100),other=unit(39,6,160,100);
+  std::memcpy(a->unit_specific.bytes,&parent,sizeof(parent));std::memcpy(b->unit_specific.bytes,&parent,sizeof(parent));std::memcpy(c->unit_specific.bytes,&second,sizeof(second));
+  const auto saved=combat_effects::original_weapon_damage;combat_effects::original_weapon_damage=qa39_fixture::hp_shield_damage;
+  for(U32 n=0;n<16;n++){
+   game.frame_count=100+n;auto u=n%2?a:b;const auto before=target->flingy.hitpoints;
+   qa39_fixture::primary(u,target,79,1000,100+n);
+   CHECK(before-target->flingy.hitpoints==1000+int(std::min(240u,n*20u)*10));
+  }
+  CHECK(rework_combat_v5::focus_damage(a,target,79,1000,true)==3400);
+  CHECK(rework_combat_v5::focus_damage(c,target,79,1000,true)==1000);
+  qa39_fixture::primary(b,other,79,1000,200);CHECK(rework_combat_v5::focus_damage(a,target,79,1000,true)==1000);
+  CHECK(rework_combat_v5::focus_damage(a,other,79,1000,true)==1200);
+  game.frame_count+=73;CHECK(rework_combat_v5::focus_damage(a,other,79,1000,true)==1000);
+  ++parent->minor_unique_index;CHECK(rework_combat_v5::focus_damage(a,other,79,1000,true)==1000);
+  combat_effects::original_weapon_damage=saved;qa9_fixture::end();
+ }
+ bool found=false;for(const auto& r:unit_legend_expansion::rules)if(r.ordinal==176){CHECK(r.percent==50&&r.count==1);found=true;}CHECK(found);
+ std::puts("QA78_CARRIER shared_parent=1 parents=2 cap=240 target_reset=1 timeout=1 auxiliary_percent=50");
+}
 inline void qa39_ramps_reset_and_armor_erosion_exceeds_zero(){
+ qa78_carrier_shared_focus_and_auxiliary_damage();
  using namespace rework_fixture;qa9_fixture::begin({190});auto u=unit(37,1,100,100),target=unit(39,6,120,100);const U32 armor=original_stat({0,27,39});
  for(U32 n=0;n<100;n++)rework_combat_v5::focus_hit(u,target,256,35);
  auto s=rework_combat_v5::state(target);CHECK(s->erosion==3300);g.normal_hit=true;

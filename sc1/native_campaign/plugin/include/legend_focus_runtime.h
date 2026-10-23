@@ -20,9 +20,16 @@ inline bool focus_source(bw::Unit* u) noexcept {
  if(!talent_power::enabled||!valid_unit(u)||u->player!=player_owner()||hallucination(u))return false;
  for(auto r:legend_focus::rules)if(raw_rank(r.ordinal)&&focus_match(r,u))return true;return false;
 }
+inline UnitState* focus_state(bw::Unit* u) {
+ if(valid_unit(u)&&u->unit_id==73&&raw_rank(148)){
+  bw::Unit* parent=nullptr;std::memcpy(&parent,u->unit_specific.bytes,sizeof(parent));
+  if(live(parent)&&parent->player==u->player&&in(parent->unit_id,{72,82})&&!hallucination(parent))return state(parent);
+ }
+ return state(u);
+}
 inline std::int32_t focus_damage(bw::Unit* u,bw::Unit* target,U32 weapon,std::int32_t amount,bool primary) {
  if(!focus_source(u)||!ordinary_weapon(weapon)||amount<=0||!primary)return amount;
- auto s=state(u);U32 bonus=0;
+ auto s=focus_state(u);U32 bonus=0;
  for(auto r:legend_focus::rules)if(raw_rank(r.ordinal)&&focus_match(r,u)){
   if(!(r.ordinal==105&&mutal_bounce_numerator))bonus+=r.base;
   if(r.mode==1&&live(target)&&std::uint64_t(std::max(0,target->flingy.hitpoints))*100<=std::uint64_t(effective_max_hp(target))*r.limit)bonus+=r.proc;
@@ -33,7 +40,7 @@ inline std::int32_t focus_damage(bw::Unit* u,bw::Unit* target,U32 weapon,std::in
  return std::int32_t(std::min<std::uint64_t>(0x7fffffffu,std::uint64_t(amount)*(100ull+bonus)/100));
 }
 inline void focus_hit(bw::Unit* u,bw::Unit* target,U32 amount,U32 weapon) {
- if(!focus_source(u)||!eligible(target)||!is_enemy(target->player))return;auto s=state(u),t=state(target);if(!s||!t)return;
+ if(!focus_source(u)||!eligible(target)||!is_enemy(target->player))return;auto s=focus_state(u),t=state(target);if(!s||!t)return;
  const bool same=generation(s->focus_target)==target&&now()-s->focus_last<=72;
  s->focus_hits=same?std::min(0xfffffffeu,s->focus_hits)+1:1;s->focus_last=now();s->focus_target=identity(target);
  for(auto r:legend_focus::rules)if(raw_rank(r.ordinal)&&focus_match(r,u)){

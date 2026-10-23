@@ -53,8 +53,14 @@ inline bool support_due=false,spawned_pending=false;
 inline U32 last_main_budget=0,reserve_supply=0;
 inline std::array<U32,2> selected{{0,0}};
 inline const sc1_native::campaign_wave_config::Origin* primary=nullptr;
+struct DeferredSpawn {U32 id,slot,hp,attack;bool alternate;};
+inline std::vector<DeferredSpawn> deferred;
+inline bool collecting=false;
+inline U32 deferred_until=0,deferred_second=0,deferred_wave=0,deferred_ordinal=0,deferred_created=0;
+inline const sc1_native::campaign_wave_config::Origin* deferred_origin=nullptr;
+inline void reset_dispatch() noexcept {deferred.clear();collecting=false;deferred_until=deferred_second=deferred_wave=deferred_ordinal=deferred_created=0;deferred_origin=nullptr;}
 inline bw::Unit* raid_worker=nullptr;inline U8 raid_worker_unique=0;inline U32 raid_worker_frame=0;inline bool raid_worker_sampled=false;
-inline void reset() noexcept {reset_spells();reset_islands();if(g.units && rework_curses::identities.size()==g.units_count)for(std::size_t i=0;i<g.units_count;i++)rework_curses::forget(&g.units[i]);timeline.reset();current=nullptr;pending_kind=pending_spawn_at=raid_next=support_kills=support_last=reserve_at=unit_ordinal=0;last_main_budget=reserve_supply=0;support_due=spawned_pending=false;selected={0,0};primary=nullptr;raid_worker=nullptr;raid_worker_sampled=false;raid_worker_frame=0;raid_worker_unique=0;rework_curses::identities.clear();}
+inline void reset() noexcept {reset_dispatch();reset_spells();reset_islands();if(g.units && rework_curses::identities.size()==g.units_count)for(std::size_t i=0;i<g.units_count;i++)rework_curses::forget(&g.units[i]);timeline.reset();current=nullptr;pending_kind=pending_spawn_at=raid_next=support_kills=support_last=reserve_at=unit_ordinal=0;last_main_budget=reserve_supply=0;support_due=spawned_pending=false;selected={0,0};primary=nullptr;raid_worker=nullptr;raid_worker_sampled=false;raid_worker_frame=0;raid_worker_unique=0;rework_curses::identities.clear();}
 inline bool enabled() noexcept {return g.mission && !g.mission->no_production && (current=policy::profile(g.mission->mission_id)) && current->enabled;}
 inline U32 opening_second() noexcept {
  if(!current)return 0;
@@ -174,7 +180,14 @@ inline bw::Unit* create(U32 id,U32 slot,U32 hp=100,U32 attack=100,bool alternate
  return nullptr;
 }
 inline U32 infantry(U32 race) noexcept {return race==0?37u:race==2?65u:0u;}
-inline U32 count_spawn(U32 id,U32 count,U32 slot,U32 hp=100,U32 attack=100,bool alternate=false) {U32 done=0;for(U32 i=0;i<count && i<480;i++){if(!create(id,slot,hp,attack,alternate))break;++done;}return done;}
+inline bool request_spawn(U32 id,U32 slot,U32 hp=100,U32 attack=100,bool alternate=false) {
+ if(create(id,slot,hp,attack,alternate))return true;
+ // Preserve this dispatch's exact roster when its first placement pass fills
+ // the staging cells. A bounded retry uses only the same validated origins.
+ if(!collecting || deferred.size()>=1440)return false;
+ deferred.push_back({id,slot,hp,attack,alternate});return true;
+}
+inline U32 count_spawn(U32 id,U32 count,U32 slot,U32 hp=100,U32 attack=100,bool alternate=false) {U32 done=0;for(U32 i=0;i<count && i<480;i++){const auto before=unit_ordinal;if(!request_spawn(id,slot,hp,attack,alternate))break;if(unit_ordinal!=before)++done;}return done;}
 inline bw::Unit* add_detector(U32 slot=0) {
  bw::Unit* present=nullptr;bw::Unit* leader=nullptr;living_units([&](bw::Unit* u){auto t=existing_track(u);if(t && t->wave_id==g.current_wave_id && wave_targeting::marked(u)){if(wave_targeting::detector(u))present=u;else if(!leader)leader=u;}});
  if(present)return present;
@@ -196,11 +209,12 @@ inline void normal_units(U32 half_supply,U32 slot=0) {
  // Mixed-owner fallback origins must not strand the detector without a cell.
  auto detection=add_detector(slot);
  if(!detection)detection=create(policy::detector(race),slot,100,100,false,primary?primary->owner:12u);
- if(detection)half_supply-=detection_cost;
+ const bool queued_detector=collecting&&std::any_of(deferred.begin(),deferred.end(),[&](const auto& r){return r.id==policy::detector(race);});
+ if(detection||queued_detector)half_supply-=detection_cost;
  half_supply=policy::normal_combat_amount(half_supply,air_only);
  for(U32 i=0;i<480 && used<half_supply;i++){
   const auto pick=sc1_native::wave_progression::select(race,air_only,timeline.second(),timeline.ordinal,i,half_supply-used,wave_supply,anti_air);if(!pick.valid)break;
-  if(!create(pick.unit_id,slot))break;used+=pick.supply;}
+  if(!request_spawn(pick.unit_id,slot))break;used+=pick.supply;}
  if(used && !detection)add_detector(slot);
 }
 inline void roster(const policy::Roster& r) {
@@ -231,13 +245,31 @@ inline void selected_units() {
  for(auto slot:selected)if(slot)for(const auto& r:policy::kRosters)if(r.slot==slot)roster(r);
 }
 inline void main_wave() {
+ reset_dispatch();collecting=true;deferred_wave=g.current_wave_id;deferred_ordinal=timeline.ordinal+1;deferred_origin=primary;
+ deferred_until=timeline.second()+30;deferred_second=timeline.second();
  last_main_budget=policy::scaled_count(policy::normal_budget(timeline.ordinal,g.mission->mission_id),rework_curses::count(16));
- if(g.mission->mission_id==404){
-  // Reserve space for owned curse compositions before normal filler consumes
-  // the shared cap. Keep one detector.
-  if(primary)create(policy::detector(primary->race),0,100,100,false,primary->owner);
-  selected_units();normal_units(last_main_budget);
- }else{normal_units(last_main_budget);selected_units();}
+ // Every mission reserves special compositions before ordinary filler.
+ // Keep detection and all existing composition, supply and safety limits.
+ if(primary)request_spawn(policy::detector(primary->race),0);
+ selected_units();normal_units(last_main_budget);collecting=false;deferred_created=unit_ordinal;
+ if(!deferred.empty())log_event("V5 wave placement deferred: wave=%u remaining=%u retry_seconds=30",deferred_wave,U32(deferred.size()));
+}
+inline void retry_dispatch() {
+ if(deferred.empty()||timeline.second()==deferred_second)return;
+ deferred_second=timeline.second();
+ if(timeline.second()>deferred_until){log_event("V5 wave placement expired: wave=%u remaining=%u live_half_supply=%u",deferred_wave,U32(deferred.size()),live_supply());reset_dispatch();return;}
+ const auto saved_wave=g.current_wave_id,saved_spawn=g.wave_spawn_number,saved_ordinal=unit_ordinal;const auto saved_origin=primary;
+ g.current_wave_id=deferred_wave;g.wave_spawn_number=unit_ordinal=deferred_created;primary=deferred_origin;
+ const auto before=deferred.size();
+ for(auto it=deferred.begin();it!=deferred.end();){
+  if(create(it->id,it->slot,it->hp,it->attack,it->alternate)){
+   if(it->slot>=24&&it->slot<=49)timeline.delivered[it->slot-24]=deferred_ordinal;
+   it=deferred.erase(it);
+  }else ++it;
+ }
+ deferred_created=unit_ordinal;
+ if(before!=deferred.size())log_event("V5 wave placement resumed: wave=%u created=%u remaining=%u",deferred_wave,U32(before-deferred.size()),U32(deferred.size()));
+ g.current_wave_id=saved_wave;g.wave_spawn_number=saved_spawn;unit_ordinal=saved_ordinal;primary=saved_origin;
 }
 inline void note_death(bw::Unit* u,bool direct) noexcept {
  if(!direct || !enabled() || !rework_curses::count(20) || !regular_enemy(u))return;
@@ -299,6 +331,7 @@ inline void tick(bool ready,bool blocked,bool goal) {
  if(ready&&!busy)island_step();
  if(!home){pending_kind=pending_spawn_at=raid_next=reserve_at=support_kills=0;last_main_budget=reserve_supply=0;support_due=false;primary=nullptr;return;}
  if(!ready || busy || !home)return;
+ retry_dispatch();
  if(!raid_next)raid_next=std::max(current->first,timeline.ready_at+current->base_grace);
  if(!pending_kind){
   if(timeline.due(*current)){pending_kind=1;timeline.warn();pending_spawn_at=timeline.departure_at-4;select_specials();}

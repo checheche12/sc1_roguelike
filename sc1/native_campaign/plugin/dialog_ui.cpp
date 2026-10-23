@@ -320,7 +320,10 @@ std::uint8_t* DialogUi::file_read(const std::uint8_t* name,std::uint32_t* out_si
     // This unused native HUD placeholder gets a timer and a cargo page button in
     // an authenticated campaign. Native parsing owns every control/allocation;
     // the original placeholder stays intact and no mission timer is repurposed.
-    if(scope() && file_name(name,"rez/statfluf.ui.json") && memory_range(out_size,sizeof(*out_size),true)) {
+    // Native HUD construction precedes campaign authentication. Supply inert,
+    // blank controls at construction time; visibility and updates remain gated
+    // by scope(). Waiting for scope here permanently loses the cached HUD.
+    if(supported_ && file_name(name,"rez/statfluf.ui.json") && memory_range(out_size,sizeof(*out_size),true)) {
         const auto size=sizeof(wave_timer_asset::json)-1;
         auto* result=static_cast<std::uint8_t*>(HeapAlloc(GetProcessHeap(),0,size));
         if(!result)return nullptr;std::memcpy(result,wave_timer_asset::json,size);*out_size=static_cast<std::uint32_t>(size);
@@ -802,7 +805,6 @@ bool DialogUi::revalidate_wave_hud(WaveHud& h) noexcept {
     return true;
 }
 void DialogUi::observe_wave_hud(dialog::Dialog* root) noexcept {
-    if(!scope())return;
     const auto current=GetCurrentThreadId();
     if(gui_owner_.load() && gui_owner_.load()!=current)return;
     for(auto& h:wave_hud_)if(h.live && h.root==root){revalidate_wave_hud(h);refresh_wave_hud();return;}

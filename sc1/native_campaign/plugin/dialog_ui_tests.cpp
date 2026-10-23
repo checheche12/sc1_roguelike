@@ -453,7 +453,9 @@ U32 __cdecl wave_native_event(dialog::Control*,dialog::Event*){++wave_native_eve
 void independent_wave_timer_test(){
     ++groups;Host h;bind_api(h);check(h.ui.initialize(&h.api,h.callbacks()),"wave HUD public file hook registered");
     U32 size=321;const auto* file=reinterpret_cast<const std::uint8_t*>("rez/statfluf.ui.json");
-    h.active=false;check(!h.file_hook(file,&size) && size==321,"stock inactive HUD template stays unchanged");h.active=true;
+    h.active=false;auto* early=h.file_hook(file,&size);check(early&&size,"pre-authentication native HUD receives blank constructor controls");
+    const std::string inert(reinterpret_cast<const char*>(early),size);HeapFree(GetProcessHeap(),0,early);
+    check(inert.find("공세")==std::string::npos&&inert.find("승객")==std::string::npos,"pre-authentication constructor has no visible campaign labels");h.active=true;
     auto* bytes=h.file_hook(file,&size);check(bytes && size,"authenticated campaign gets native timer constructor even without an offer");
     const std::string payload(reinterpret_cast<const char*>(bytes),size);HeapFree(GetProcessHeap(),0,bytes);
     check(payload.find("\"content\":\"statfluf-1\",\"id\":-1,\"rect\":[0,0,4,4]")!=std::string::npos,"original placeholder geometry and content are retained");
@@ -465,8 +467,9 @@ void independent_wave_timer_test(){
     label.parent=&root;label.id=-32000;label.type=6;label.area={8,128,239,147};label.flags2=0x20;
     label.string.data=buffer.data();label.string.capacity=buffer.size()-1;label.string.length=0;
     const auto retained=placeholder;const auto parent_rect=root.control.area;const auto label_rect=label.area;const auto allocation=label.string.data;
-    h.ui.set_wave_timer("공세 출발 02:34");
+    h.active=false;h.ui.set_wave_timer("공세 출발 02:34");
     check(h.ui.spawn_dialog(&root,0,reinterpret_cast<void*>(wave_native_event),native_spawn)==31,"original native Spawn return retained for timer");
+    check(!(label.flags&2),"pre-authentication HUD is captured but hidden");h.active=true;h.ui.set_wave_timer("공세 출발 02:34");
     check(text(label)=="공세 출발 02:34" && (label.flags&2) && (label.flags2&1),"timer uses native allocated text and remains disabled for input");
     check(std::memcmp(&placeholder,&retained,sizeof(retained))==0,"every original placeholder field is untouched");
     check(label.string.data==allocation && label.string.capacity==79 && std::memcmp(&label.area,&label_rect,sizeof(label_rect))==0,"timer storage ownership and constructor geometry never resized");

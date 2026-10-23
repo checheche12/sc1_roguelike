@@ -91,7 +91,7 @@ inline bool reorderable(U32 order) noexcept {
         order==8 || order==9 || order==10 || order==11 || order==12 || order==21;
 }
 inline bool detector(const bw::Unit* u) noexcept {return valid_unit(u) && u->unit_id<228 && (original_stat({0,22,u->unit_id})&0x8001u)==0x8000u;}
-inline bool escort(const bw::Unit* u) noexcept {return detector(u) || (valid_unit(u) && (u->unit_id==71 || u->unit_id==86));}
+inline bool escort(const bw::Unit* u) noexcept {return detector(u);}
 inline void issue(bw::Unit* u) {
     if(!g.order || !g.active || counter(kGoalCounter) || !marked(u) || rework_curses::appearing(u) || rework_curses::transport_hold(u))return;
     // Deployed tanks keep their native firing/guard order until the tactical
@@ -100,30 +100,43 @@ inline void issue(bw::Unit* u) {
     refresh();if(!target.valid)return;
     auto raid=rework_curses::raid_target(u);int aim_x=raid?raid->flingy.position.x:target.x,aim_y=raid?raid->flingy.position.y:target.y;
     const auto game=g.game();const U32 frame=game->frame_count;auto t=existing_track(u);if(!t)return;
-    const bool support=escort(u);
+    const bool support=escort(u),arbiter=u->unit_id==71 || u->unit_id==86;
     if(support){
-        // Follow a live member of this exact army. Detectors move with it;
-        // armed Arbiters attack along its path while retaining their cloak aura.
+        // Detectors follow the army. Arbiters use the same player-base attack
+        // destination as ordinary combat troops and are never escort followers.
         bw::Unit* leader=nullptr;std::int64_t best=std::numeric_limits<std::int64_t>::max();
         living_units([&](bw::Unit* other){auto tracked=existing_track(other);
             if(other==u || !marked(other) || escort(other) || other->player!=u->player || !tracked || tracked->wave_id!=t->wave_id)return;
             const auto p=other->flingy.position;const auto d=distance(p.x,p.y,aim_x,aim_y);
             if(!leader || d<best){leader=other;best=d;}
         });
+        // Orphaned escorts join a later army, then advance to the current
+        // player target. They must not remain forever in the spawn cells.
+        if(!leader)living_units([&](bw::Unit* other){
+            if(other==u || !marked(other) || escort(other) || other->player!=u->player)return;
+            const auto p=other->flingy.position;const auto d=distance(p.x,p.y,aim_x,aim_y);
+            if(!leader || d<best){leader=other;best=d;}
+        });
         if(leader){aim_x=leader->flingy.position.x;aim_y=leader->flingy.position.y;}
-        else if(detector(u))return; // An armed Arbiter can continue after its escort dies.
     }
     const auto position=u->flingy.position;
     if(!t->wave_position_seen || distance(position.x,position.y,t->wave_position_x,t->wave_position_y)>=16ll*16){
         t->wave_position_seen=true;t->wave_position_x=position.x;t->wave_position_y=position.y;t->wave_position_frame=frame;
     }
     const bool support_idle=support && (u->order==49 || u->order==163); // Native Follow / ComputerReturn.
-    if((u->flags&0x40u) || u->lockdown_timer || u->stasis_timer || u->maelstrom_timer || (!reorderable(u->order) && !support_idle) || engaged(u,frame,*t))return;
+    const bool stalled_arbiter=arbiter && frame-t->wave_position_frame>=8u*24u && distance(position.x,position.y,aim_x,aim_y)>192ll*192;
+    // A stale attack target is not evidence of combat. In particular native
+    // computer Arbiters can retain a remote target without advancing. Recover
+    // only after eight seconds without motion, keeping ordinary AttackMove as
+    // their initial order and preserving active weapons, cloak and spell orders.
+    const bool shooting=u->ground_cooldown || u->air_cooldown || (t->last_attack_frame && frame-t->last_attack_frame<48);
+    const bool arbiter_idle=arbiter&&(u->order==49 || u->order==163);
+    if((u->flags&0x40u) || u->lockdown_timer || u->stasis_timer || u->maelstrom_timer || (!reorderable(u->order) && !support_idle && !arbiter_idle) || (engaged(u,frame,*t) && (!stalled_arbiter || shooting)))return;
     if(t->wave_ordered && frame-t->wave_order_frame<48)return;
     const bool moving=u->order==6 || u->order==14 || u->order==157 || u->order==158 || u->order==159;
     if(t->wave_ordered && moving && distance(u->order_target.x,u->order_target.y,aim_x,aim_y)<64ll*64 && frame-t->wave_position_frame<8u*24u)return;
-    t->wave_ordered=true;t->wave_order_frame=frame;t->wave_position_frame=frame;
-    g.order(u,detector(u)?6u:kAttackMove,static_cast<U32>(aim_x),static_cast<U32>(aim_y),nullptr,228);
+    t->wave_ordered=true;t->wave_order_frame=frame;if(!arbiter)t->wave_position_frame=frame;
+    g.order(u,(detector(u)||stalled_arbiter)?6u:kAttackMove,static_cast<U32>(aim_x),static_cast<U32>(aim_y),nullptr,228);
 }
 inline void step(bool ready,bool goal) {
     if(!ready || goal || !g.active)return;

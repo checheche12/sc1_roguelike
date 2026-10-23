@@ -180,18 +180,36 @@ def _terran03_gas(chk,row):
     return [dict(index=i,unit=188,position=list(points[i][:2]),before=before,after=5000)]
 
 
+def _protoss08_main_resources(chk,row):
+    """Add reserves to the sixteen minerals and two geysers of the starting base."""
+    raw=records(chk);points=list(map(info,raw));center=(736,432)
+    assert (*center,154,row['owner']) in points, 'Protoss08 starting nexus changed'
+    selected=[i for i,(x,y,u,p) in enumerate(points)
+              if u in (176,177,178,188) and math.dist(center,(x,y))<=512]
+    assert sum(points[i][2]==188 for i in selected)==2 and len(selected)==18
+    changes=[]
+    for i in selected:
+        r=bytearray(raw[i]);before=struct.unpack_from('<I',r,20)[0]
+        assert struct.unpack_from('<H',r,14)[0]&16, 'Resource reserve must be explicit'
+        bonus=2000 if points[i][2]==188 else 500
+        struct.pack_into('<I',r,20,before+bonus);raw[i]=bytes(r)
+        changes.append(dict(index=i,unit=points[i][2],position=list(points[i][:2]),before=before,after=before+bonus))
+    chk.setsection('UNIT',b''.join(raw));return changes
+
+
 def apply(chk,row,difficulty):
     before=chk.getsection('UNIT');before_records=records(chk)
     guards=_garrisons(chk,row,difficulty)
     opening=_zerg01(chk,row) if row['mission_id']==201 else None
     amounts=_terran03_gas(chk,row) if row['mission_id']==103 else []
+    if row['mission_id']==308:amounts=_protoss08_main_resources(chk,row)
     after=chk.getsection('UNIT')
     report=dict(revision=REVISION,mission_id=row['mission_id'],
         requested_garrison=GARRISONS[row['mission_id']],garrison_added=len(guards),garrisons=guards,
         opening=opening,before_unit_sha256=sha(before),after_unit_sha256=sha(after),
         base_unit_count=len(before_records),appended_records=[r.hex() for r in records(chk)[len(before_records):]],
         ordinary_enemies=True,registered_as_added_wave=False,live_gameplay_verified=False)
-    if amounts:report.update(revision=2026102201,resource_amount_changes=amounts)
+    if amounts:report.update(revision=2026102378 if row['mission_id']==308 else 2026102201,resource_amount_changes=amounts)
     return report
 
 def undo(chk,report):
