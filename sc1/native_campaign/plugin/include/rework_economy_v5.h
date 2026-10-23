@@ -167,7 +167,20 @@ struct UnitScope {
             auto job=resolve(child);
             if(s->chrono_child.p!=child.p || s->chrono_child.unique!=child.unique){s->chrono_child=child;s->chrono_build_fraction=0;}
             bool progressed=false;
-            if(job && time>job->remaining_build_time && job->remaining_build_time>0){s->chrono_build_fraction+=time-job->remaining_build_time;const auto extra=std::min<U32>(job->remaining_build_time,s->chrono_build_fraction/2);job->remaining_build_time=static_cast<std::uint16_t>(job->remaining_build_time-extra);s->chrono_build_fraction%=2;progressed=true;}
+            if(job && time>job->remaining_build_time && job->remaining_build_time>0){
+                s->chrono_build_fraction+=time-job->remaining_build_time;
+                const auto extra=std::min<U32>(job->remaining_build_time,s->chrono_build_fraction/2);
+                job->remaining_build_time=static_cast<std::uint16_t>(job->remaining_build_time-extra);
+                // Native training builds HP on every progressed frame. The
+                // extra frames must advance that same gain, not just the timer.
+                // Never top up a completed or damaged unit to its maximum.
+                if(extra && !(job->flags&1u) && job->flingy.hitpoints>0 && job->build_hp_gain && g.set_hp){
+                    OwnerDatScope scope(job->player,job->player,job);
+                    const auto hp=std::min<std::uint64_t>(effective_max_hp(job),std::uint64_t(job->flingy.hitpoints)+std::uint64_t(extra)*job->build_hp_gain);
+                    g.set_hp(job,std::int32_t(hp));
+                }
+                s->chrono_build_fraction%=2;progressed=true;
+            }
             std::uint16_t after=0;std::memcpy(&after,u->unit_specific.bytes+10,2);
             const U32 job_key=U32(u->order)<<16|U32(u->unit_specific.bytes[12])<<8|u->unit_specific.bytes[13];
             if(s->research_key!=job_key){s->research_key=job_key;s->chrono_research_fraction=0;}

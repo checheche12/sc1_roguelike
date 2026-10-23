@@ -48,7 +48,7 @@ inline void stop_preserving_queue(bw::Unit* u) noexcept {
     g.order(u,1,U32(u->flingy.position.x),U32(u->flingy.position.y),nullptr,228);
     u->order_queue_begin=begin;u->order_queue_end=end;u->highlight_order_count=count;
 }
-inline bool move(bw::Unit* u,int x,int y,unsigned max_adjust_pixels,bool require_ground_connection=true) noexcept {
+inline bool move(bw::Unit* u,int x,int y,unsigned max_adjust_pixels,bool require_ground_connection=true,const bw::Point* opposite_center=nullptr) noexcept {
     if(!native_move || !native_place || !g.active || !g.applied || !valid_unit(u) ||
        !u->flingy.sprite || !u->order || u->flingy.hitpoints<=0 || (u->flags&(0x20u|0x40u)) || u->stasis_timer)return false;
     auto game=g.game ? g.game():nullptr;
@@ -66,6 +66,13 @@ inline bool move(bw::Unit* u,int x,int y,unsigned max_adjust_pixels,bool require
     const bool allowed=found && placed.x>=0 && placed.y>=0 && placed.x<int(game->map_width_tiles)*32 &&
         placed.y<int(game->map_height_tiles)*32 && dx*dx+dy*dy<=std::int64_t(max_adjust_pixels)*max_adjust_pixels;
     if(!allowed || (require_ground_connection && !(u->flags&4u) && !connected(previous,placed)))return false;
+    if(opposite_center){
+        const auto from_x=std::int64_t(previous.x)-opposite_center->x,from_y=std::int64_t(previous.y)-opposite_center->y;
+        const auto to_x=std::int64_t(placed.x)-opposite_center->x,to_y=std::int64_t(placed.y)-opposite_center->y;
+        // Collision adjustment must not move a crossing strike back onto the
+        // starting side. A coincident starting center has no previous side.
+        if((from_x||from_y) && from_x*to_x+from_y*to_y>=0)return false;
+    }
     stop_preserving_queue(u);
     native_move(u,U32(placed.x),U32(placed.y));
     return true;

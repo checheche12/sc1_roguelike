@@ -113,6 +113,7 @@ inline bw::Unit* shadow_pick(bw::Unit* u,UnitState& s,int x,int y,U32 radius) {
  for(auto candidate:around(x,y,radius,nullptr,65536,true,0)){
   if(!shadow_candidate(u,candidate))continue;U32 rank=0;
   for(U32 i=0;i<s.shadow_count;i++)if(generation(s.shadow_targets[i])==candidate)rank=1;
+  // The previous victim is eligible only when no other candidate exists.
   if(s.shadow_count&&generation(s.shadow_targets[s.shadow_count-1])==candidate)rank=2;
   const auto distance=dist(x,y,candidate->flingy.position.x,candidate->flingy.position.y);
   if(rank<priority||(rank==priority&&distance<nearest)){best=candidate;priority=rank;nearest=distance;}
@@ -135,6 +136,23 @@ inline void shadow_prepare(bw::Unit* u) {
  if(shadow_candidate(u,target)&&dist(u,target)<=std::uint64_t(radius)*radius){shadow_begin(u,target);return;}
  if(s->shadow_scan!=~0u&&now()-s->shadow_scan<8)return;s->shadow_scan=now();shadow_begin(u,nullptr);
 }
+inline bool shadow_cross_target(bw::Unit* u,bw::Unit* target) {
+ const auto center=target->flingy.position;
+ const auto a=multi_target::dimensions(target->unit_id),b=multi_target::dimensions(u->unit_id);
+ int dx=int(center.x)-u->flingy.position.x,dy=int(center.y)-u->flingy.position.y;
+ if(!dx&&!dy)dx=1;
+ const int edge_x=(dx>=0?a.right+b.left:a.left+b.right)+8;
+ const int edge_y=(dy>=0?a.bottom+b.top:a.top+b.bottom)+8;
+ int offset_x=0,offset_y=0;
+ // Extend the incoming direction through the target to the opposite edge,
+ // accounting for both footprints so large buildings remain valid targets.
+ if(std::int64_t(std::abs(dx))*edge_y>=std::int64_t(std::abs(dy))*edge_x){
+  offset_x=dx>=0?edge_x:-edge_x;offset_y=int(std::int64_t(dy)*edge_x/std::abs(dx));
+ }else{
+  offset_y=dy>=0?edge_y:-edge_y;offset_x=int(std::int64_t(dx)*edge_y/std::abs(dy));
+ }
+ return rework_relocation::move(u,int(center.x)+offset_x,int(center.y)+offset_y,48,false,&center);
+}
 inline void focus_tick(bw::Unit* u,UnitState& s) {
  if(s.strong_ensnare&&!u->ensnare_timer)s.strong_ensnare=false;
  if(s.double_acid&&!u->acid_spore_count)s.double_acid=false;
@@ -147,18 +165,12 @@ inline void focus_tick(bw::Unit* u,UnitState& s) {
   if(!target)target=shadow_pick(u,s,s.shadow_anchor_x,s.shadow_anchor_y,legend_focus::shadow_chain_radius_pixels);
   if(!target){shadow_restore(u,s);return;}
   const auto old_order=u->order,old_stage=u->order_state,old_signal=u->order_signal,old_timer=u->order_timer,old_wait=u->order_wait;const auto old_target=u->order_target;
-  U32 placement_radius=48;
-  if(building(target)){
-   const auto a=multi_target::dimensions(target->unit_id),b=multi_target::dimensions(u->unit_id);
-   // Native placement must clear the building footprint, including corners.
-   placement_radius=std::max(placement_radius,U32(std::max(a.left,a.right)+std::max(a.top,a.bottom)+std::max(b.left,b.right)+std::max(b.top,b.bottom))+16u);
-  }
-  if(rework_relocation::move(u,target->flingy.position.x,target->flingy.position.y,placement_radius,false)){
+  if(shadow_cross_target(u,target)){
    s.shadow_anchor_x=target->flingy.position.x;s.shadow_anchor_y=target->flingy.position.y;
    if(s.shadow_count<5)s.shadow_targets[s.shadow_count++]=identity(target);
    const U32 w=original_stat({0,17,u->unit_id}),base=owner_stat(u->player,{1,14,w})+owner_stat(u->player,{1,15,w})*upgrade_level(u->player,original_stat({1,6,w}));
    if(g.lone_sprite)g.lone_sprite(361,u->flingy.position.x,u->flingy.position.y,u->player);
-   weapon_hurt(target,U32(std::min<std::uint64_t>(0x7fffffffu,std::uint64_t(base)*256)),w,u,u->player);
+   weapon_hurt(target,U32(std::min<std::uint64_t>(0x7fffffffu,std::uint64_t(base)*256*legend_focus::shadow_damage_percent/100)),w,u,u->player);
   }
   u->order=old_order;u->order_state=old_stage;u->order_signal=old_signal;u->order_timer=old_timer;u->order_wait=old_wait;u->order_target=old_target;s.shadow_due=now()+4;
   if(++s.shadow_step>=5)shadow_restore(u,s);return;

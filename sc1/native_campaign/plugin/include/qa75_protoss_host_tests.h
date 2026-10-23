@@ -9,9 +9,10 @@ inline std::vector<std::int32_t> shadow_damage;
 inline bw::Unit* building_blocker=nullptr;
 inline U32 __cdecl building_edge_place(bw::Unit* u,const bw::Point* desired,bw::Point* result,const void*,U32 a,U32 b){
  CHECK(!a&&!b);*result=*desired;
- if(building_blocker&&desired->x==building_blocker->flingy.position.x&&desired->y==building_blocker->flingy.position.y){
+ if(building_blocker){
   const auto target=multi_target::dimensions(building_blocker->unit_id),caster=multi_target::dimensions(u->unit_id);
-  const auto clearance=target.right+caster.left+1;CHECK(clearance>48);result->x=std::int16_t(desired->x+clearance);
+  const int x=desired->x-building_blocker->flingy.position.x,y=desired->y-building_blocker->flingy.position.y;
+  CHECK(x>target.right+caster.left || -x>target.left+caster.right || y>target.bottom+caster.top || -y>target.top+caster.bottom);
  }return 1;
 }
 inline void __cdecl split(bw::Unit* u,std::int32_t damage,U8 weapon,U32 divisor,U8 direction,bw::Unit* source,U32 owner){
@@ -72,9 +73,9 @@ inline void qa75_archon_natural_shield_regeneration_eleven_times(){
  qa9_fixture::begin({139});u=unit(68,6,100,100);u->flags|=1;u->shields=0;owner_timer_hook(u,native_regeneration);CHECK(u->shields==7);qa9_fixture::end();
  qa9_fixture::begin({139});u=unit(68,1,100,100);u->flags|=1|0x40000000u;u->shields=0;owner_timer_hook(u,native_regeneration);CHECK(u->shields==7);qa9_fixture::end();
 }
-inline void qa75_shadow_pre_hit_six_tiles_chain_three_buildings_ground_and_return(){
+inline void qa75_shadow_pre_hit_six_tiles_chain_five_buildings_ground_and_return(){
  using namespace rework_fixture;using namespace qa75_fixture;
- qa9_fixture::begin({321});relocation();auto u=unit(61,1,500,500),a=unit(37,6,693,500),b=unit(106,6,788,500),c=unit(37,6,884,500),air=unit(43,6,700,500,true);
+ qa9_fixture::begin({321});relocation();auto u=unit(61,1,500,500),a=unit(37,6,693,500),b=unit(106,6,852,500),c=unit(37,6,1012,500),air=unit(43,6,700,500,true);
  projectile_audit_fixture::load_dimensions();building_blocker=b;rework_relocation::native_place=building_edge_place;
  const auto saved=combat_effects::original_weapon_damage;combat_effects::original_weapon_damage=record_damage;victims.clear();shadow_damage.clear();order_calls=0;
  u->order=10;multi_fixture::target(u,a);const auto hp=a->flingy.hitpoints;
@@ -86,14 +87,14 @@ inline void qa75_shadow_pre_hit_six_tiles_chain_three_buildings_ground_and_retur
  const auto weapon=original_stat({0,17,u->unit_id});
  const auto normal_damage=owner_stat(u->player,{1,14,weapon})+owner_stat(u->player,{1,15,weapon})*rework_combat_v5::upgrade_level(u->player,original_stat({1,6,weapon}));
  CHECK(normal_damage>0&&shadow_damage.size()==5);
- for(const auto amount:shadow_damage)CHECK(amount==std::int32_t(normal_damage*256));
+ for(const auto amount:shadow_damage)CHECK(amount==std::int32_t(normal_damage*512));
  CHECK(std::find(victims.begin(),victims.end(),air)==victims.end());
  CHECK(!s->shadow_active&&u->flingy.position.x==500&&u->flingy.position.y==500&&!(u->flags&0x4000000u));
  CHECK(s->shadow_cooldown==388);rework_combat_v5::shadow_prepare(u);CHECK(!s->shadow_active);
  combat_effects::original_weapon_damage=saved;building_blocker=nullptr;relocation_end();qa9_fixture::end();
- // A unit97px from the first victim is outside the chain. Killing the only
+ // A unit161px from the first victim is outside the chain. Killing the only
  // valid victim must return immediately to the cast origin.
- qa9_fixture::begin({321});relocation();u=unit(61,1,500,500);a=unit(37,6,692,500);b=unit(37,6,789,500);a->flingy.hitpoints=1;
+ qa9_fixture::begin({321});relocation();u=unit(61,1,500,500);a=unit(37,6,692,500);b=unit(37,6,853,500);a->flingy.hitpoints=1;
  combat_effects::original_weapon_damage=record_damage;victims.clear();u->order=10;multi_fixture::target(u,a);owner_order_hook(u,original_order);s=rework_combat_v5::state(u);
  rework_combat_v5::focus_tick(u,*s);CHECK(a->flingy.hitpoints==0);game.frame_count+=4;rework_combat_v5::focus_tick(u,*s);
  CHECK(!s->shadow_active&&victims.size()==1&&u->flingy.position.x==500&&u->flingy.position.y==500);
@@ -110,5 +111,5 @@ inline void qa75_reaver_speed_is_double_for_parent_and_hero_only(){
  auto scarab=unit(85,1,100,100),target=unit(39,6,120,100);CHECK(rework_combat_v5::focus_damage(scarab,target,82,1000,true)==2500);qa9_fixture::end();
 }
 inline constexpr std::size_t qa75_group_count=4;
-inline void run_qa75_groups(){qa75_retaliation_real_melee_and_projectile_callback_chain();qa75_archon_natural_shield_regeneration_eleven_times();qa75_shadow_pre_hit_six_tiles_chain_three_buildings_ground_and_return();qa75_reaver_speed_is_double_for_parent_and_hero_only();}
+inline void run_qa75_groups(){qa75_retaliation_real_melee_and_projectile_callback_chain();qa75_archon_natural_shield_regeneration_eleven_times();qa75_shadow_pre_hit_six_tiles_chain_five_buildings_ground_and_return();qa75_reaver_speed_is_double_for_parent_and_hero_only();}
 }

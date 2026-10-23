@@ -88,7 +88,7 @@ def decorate(catalog):
 
 def generate_header(catalog,root):
  by={x['effect_ordinal']:x for x in catalog['talents'] if x.get('rework_revision')==5}
- lines=['#pragma once','namespace legend_focus {','inline constexpr unsigned armor_erosion_denominator=100u;','inline constexpr unsigned native_shield_regen_q8=7u,retaliation_shield_regen_multiplier=11u;','inline constexpr unsigned shadow_trigger_radius_pixels=192u,shadow_chain_radius_pixels=96u;','inline constexpr unsigned scourge_blast_radius_pixels=64u,scourge_blast_damage_percent=50u;','struct Rule {unsigned ordinal,mode,base,cadence,proc,step,limit;unsigned units[8];};','inline constexpr Rule rules[]={']
+ lines=['#pragma once','namespace legend_focus {','inline constexpr unsigned armor_erosion_denominator=100u;','inline constexpr unsigned native_shield_regen_q8=7u,retaliation_shield_regen_multiplier=11u;','inline constexpr unsigned shadow_trigger_radius_pixels=192u,shadow_chain_radius_pixels=160u,shadow_damage_percent=200u;','inline constexpr unsigned scourge_blast_radius_pixels=64u,scourge_blast_damage_percent=50u;','struct Rule {unsigned ordinal,mode,base,cadence,proc,step,limit;unsigned units[8];};','inline constexpr Rule rules[]={']
  for spec in SPECS:
   ordinal=spec[0];units=([73] if ordinal==148 else [85] if ordinal==141 else by[ordinal]['effect'].get('focus_target_units',by[ordinal]['target_units']));mask=[0]*8
   for unit in units:mask[unit//32]|=1<<(unit%32)

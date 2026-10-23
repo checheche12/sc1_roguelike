@@ -14,13 +14,14 @@ class ProtossChanges(unittest.TestCase):
         self.assertEqual((effect['shield_regen_bonus_percent'],effect['shield_regen_multiplier']),(1000,11))
         self.assertIn('11배',item['description'])
 
-    def test_shadow_tooltip_six_then_three_buildings_return_and_ground_only(self):
+    def test_shadow_tooltip_six_then_five_repeat_fallback_cross_return_and_ground_only(self):
         item=load_catalog(expected_version=2)['talents'][559];effect=item['effect'];text=item['description']
-        for phrase in ('첫 타격 없이','6타일','3타일','건물','원위치 복귀','대공 강화','지상 전용','일반 공격 100%'):
+        for phrase in ('선제 발동','6타일','5타일','다른 적 우선·없으면 재타격','매 타격 반대편 이동','건물','원위치 복귀','대공 강화','지상 전용','일반 공격 200%'):
             self.assertIn(phrase,text)
-        self.assertEqual((effect['shadow_trigger_radius_pixels'],effect['shadow_chain_radius_pixels']),(192,96))
+        self.assertEqual((effect['shadow_trigger_radius_pixels'],effect['shadow_chain_radius_pixels']),(192,160))
         self.assertFalse(effect['shadow_requires_first_hit'])
-        self.assertEqual(effect['shadow_damage_percent'],100)
+        self.assertEqual(effect['shadow_damage_percent'],200)
+        self.assertTrue(effect['shadow_repeat_last_only_without_alternative'] and effect['shadow_moves_to_opposite_side'])
         self.assertTrue(effect['shadow_can_target_buildings'] and effect['shadow_returns_to_cast_origin'])
         self.assertEqual(effect['shadow_target_layer'],'ground')
         self.assertEqual(effect_copy.describe_effect(item),text)

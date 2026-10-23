@@ -2,7 +2,7 @@
 namespace legend_focus {
 inline constexpr unsigned armor_erosion_denominator=100u;
 inline constexpr unsigned native_shield_regen_q8=7u,retaliation_shield_regen_multiplier=11u;
-inline constexpr unsigned shadow_trigger_radius_pixels=192u,shadow_chain_radius_pixels=96u;
+inline constexpr unsigned shadow_trigger_radius_pixels=192u,shadow_chain_radius_pixels=160u,shadow_damage_percent=200u;
 inline constexpr unsigned scourge_blast_radius_pixels=64u,scourge_blast_damage_percent=50u;
 struct Rule {unsigned ordinal,mode,base,cadence,proc,step,limit;unsigned units[8];};
 inline constexpr Rule rules[]={

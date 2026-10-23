@@ -30594,12 +30594,12 @@
         74,
         75
       ],
-      "description": "다크 템플러: 6타일 내 지상 적·건물에 첫 타격 없이 자동 발동. 직전 적의 3타일 내 다른 적 우선·부족하면 재타격. 최대 5회, 회당 일반 공격 100%. 시전 중 무적·종료 후 원위치 복귀. 재사용 12초. 대공 강화와 무관하게 지상 전용.",
+      "description": "다크 템플러: 6타일 내 지상 적·건물에 선제 발동. 직전 적의 5타일 내 다른 적 우선·없으면 재타격. 매 타격 반대편 이동. 최대 5회, 회당 일반 공격 200%. 시전 중 무적, 종료 후 원위치 복귀. 재사용 12초. 대공 강화 후에도 지상 전용.",
       "source_description": "전투 중 자동으로 6타일 안 지상 적을 5회 순간이동하며 벱니다. 회당 일반 공격의200% 피해. 다른 적 우선·부족하면 재타격. 시전 중 무적, 종료 후 원위치 복귀. 재사용12초.",
       "effect": {
         "type": "rework_v5",
         "ordinal": 321,
-        "qa_revision": 2026102384,
+        "qa_revision": 2026102385,
         "benefit_power_quarters": 4,
         "unit_growth": {
           "race": "protoss",
@@ -30612,7 +30612,7 @@
           "kind": "shadow",
           "rarity": "legendary",
           "name": "그림자 격노",
-          "description": "6타일 내 지상 적·건물에 첫 타격 없이 자동 발동. 직전 적의 3타일 내 다른 적 우선·부족하면 재타격. 최대 5회, 회당 일반 공격 100%. 시전 중 무적·종료 후 원위치 복귀. 재사용 12초. 대공 강화와 무관하게 지상 전용.",
+          "description": "6타일 내 지상 적·건물에 선제 발동. 직전 적의 5타일 내 다른 적 우선·없으면 재타격. 매 타격 반대편 이동. 최대 5회, 회당 일반 공격 200%. 시전 중 무적, 종료 후 원위치 복귀. 재사용 12초. 대공 강화 후에도 지상 전용.",
           "ordinal": 321,
           "index": 559,
           "storage": {
@@ -30623,11 +30623,13 @@
         },
         "shadow_requires_first_hit": false,
         "shadow_trigger_radius_pixels": 192,
-        "shadow_chain_radius_pixels": 96,
+        "shadow_chain_radius_pixels": 160,
         "shadow_can_target_buildings": true,
         "shadow_target_layer": "ground",
         "shadow_returns_to_cast_origin": true,
-        "shadow_damage_percent": 100
+        "shadow_damage_percent": 200,
+        "shadow_repeat_last_only_without_alternative": true,
+        "shadow_moves_to_opposite_side": true
       },
       "bit_index": 559,
       "wire_storage": {
