@@ -78,6 +78,8 @@ inline U32 manual_base(U32 ordinal,U32 id,U32 field=17) noexcept {
     return in(ordinal,{29,70,111})?1u:2u;
 }
 inline U32 manual_damage_bonus(U32 ordinal,U32 id,U32 field,U32 stacks) noexcept {
+    // Halo fires eight missiles; the requested manual bonus is +1 per missile.
+    if(talent_power::enabled&&ordinal==31&&id==58)return stacks;
     // Eight independently attacking Interceptors must not inherit the same
     // flat per-projectile bonus as a single ordinary attack aircraft.
     if(talent_power::enabled&&ordinal==112&&id==73)return stacks;

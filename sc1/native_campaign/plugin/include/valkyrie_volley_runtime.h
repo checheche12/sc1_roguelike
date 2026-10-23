@@ -4,11 +4,12 @@ namespace valkyrie_volley {
 inline constexpr U32 stock_entry=38317,stock_header=38242,idle=31138;
 inline constexpr U8 stock[]={5,1,0x2e,0x25,2,5,10,0x25,2,5,10,0x25,2,5,10,0x25,2,5,10,0x2f,0x2a,7,0xa2,0x79};
 inline constexpr U32 entry=shadow_feedback::offset+sizeof(shadow_feedback::program);
-inline constexpr U32 select_opcode=0xd0,release_opcode=0xd1,release=entry+5,finish=entry+6,salvo=entry+10;
+inline constexpr U32 select_opcode=0xd0,release_opcode=0xd1,release=entry+5,finish=entry+6,salvo=entry+12;
 // Select -> wait1 -> native AttackWith2 -> detach remaining salvos ->
-// native GotoRepeatAttk -> idle. Neither command-lock opcode is entered.
+// native GotoRepeatAttk -> wait for the volley -> idle. Keep the live attack
+// animation for its original duration, without either command-lock opcode.
 // The final AttackWith2/wait1 is a private script for each remaining pair.
-inline constexpr U8 program[]={select_opcode,5,1,0x25,2,release_opcode,0x2a,7,0xa2,0x79,0x25,2,5,1};
+inline constexpr U8 program[]={select_opcode,5,1,0x25,2,release_opcode,0x2a,5,40,7,0xa2,0x79,0x25,2,5,1};
 static_assert(entry+sizeof(program)<0x10000,"Valkyrie script fits native PC");
 struct Volley {Identity source,target;U32 started,remaining=3,next=0,layer=0;};
 inline std::vector<Volley> volleys;

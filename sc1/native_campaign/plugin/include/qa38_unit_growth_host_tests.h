@@ -29,7 +29,7 @@ inline void qa38_unit_attack_profiles_cooldown_and_parent_aliases(){
   CHECK(std::abs(rework_combat_v5::cooldown_ratio(source,0)-std::pow(0.955,4))<0.000001);
   for(U32 field:{17u,19u}){auto w=original_stat({0,field,id});if(id==72||id==82)w=79;if(id==81||id==83||id==85)w=82;if(w>=130)continue;
    if(rule.parent==29){CHECK(rework_combat_v5::infantry_damage_rank(source,w)==4);CHECK(rework_combat_v5::infantry_ui_value(source,w,100)==160);}
-   else {const U32 bonus=rework_combat_v5::in(id,{7,41,64})?12u:rework_combat_v5::manual_damage_bonus(rule.parent,(id==72||id==82)?73u:id,field,4);
+   else {const U32 bonus=id==58?4u:rework_combat_v5::in(id,{7,41,64})?12u:rework_combat_v5::manual_damage_bonus(rule.parent,(id==72||id==82)?73u:id,field,4);
     CHECK(owner_stat(1,{1,14,w})==original_stat({1,14,w})+bonus);CHECK(owner_stat(6,{1,14,w})==original_stat({1,14,w}));}
   }
   qa13_fixture::end();

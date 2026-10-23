@@ -5742,7 +5742,7 @@
       "id": "484803cb-9456-57c1-a263-c8cfcd7a8fa1",
       "name": "지상 유도탄",
       "target": "발키리",
-      "description": "발키리가 이동 중에도 공중·지상 적에게 8발의 광역 미사일을 쏩니다. 첫 탄 발사 직후 이동·패트롤 명령이 가능합니다. 공중 피해 100%, 지상 피해 150%(공중의 1.5배).",
+      "description": "발키리가 이동 중에도 공중·지상 적에게 8발의 광역 미사일을 연속 발사합니다. 공중 피해 100%, 지상 피해 150%(공중의 1.5배).",
       "trigger": "",
       "numbers": "",
       "notes": "같은 주기에 공중/지상 중 주 표적 1개.",
@@ -5765,14 +5765,14 @@
         "type": "rework_v5",
         "ordinal": 58,
         "source_id": "484803cb-9456-57c1-a263-c8cfcd7a8fa1",
-        "qa_revision": 2026102038,
+        "qa_revision": 2026102489,
         "benefit_power_quarters": 10,
         "rarity_promoted": true,
         "moving_fire": true,
         "ground_damage_percent": 150,
         "air_damage_percent": 100,
         "missiles_per_volley": 8,
-        "immediate_movement_after_first_shot": true
+        "uninterrupted_volley": true
       },
       "target_units": [
         58
@@ -19486,12 +19486,12 @@
       "target_units": [
         58
       ],
-      "description": "발키리의 공격력이 중첩당 +3, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회.",
+      "description": "발키리 미사일 한 발의 공격력이 중첩당 +1, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회.",
       "source_description": "발키리의 공격력이 중첩당 +3, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회. 소수점 공격력은 중첩 합계를 반올림합니다. 기존 병과 교범과 합산해 최대 4중첩.",
       "effect": {
         "type": "rework_v5",
         "ordinal": 223,
-        "qa_revision": 2026102038,
+        "qa_revision": 2026102489,
         "benefit_power_quarters": 4,
         "unit_growth": {
           "race": "terran",
@@ -19503,7 +19503,7 @@
           "rarity": "common",
           "name": "발키리 화력 교범",
           "parent": 31,
-          "description": "발키리의 공격력이 중첩당 +3, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회. 소수점 공격력은 중첩 합계를 반올림합니다. 기존 병과 교범과 합산해 최대 4중첩.",
+          "description": "발키리 미사일 한 발의 공격력이 중첩당 +1, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회.",
           "ordinal": 223,
           "index": 461,
           "storage": {
@@ -19511,7 +19511,9 @@
             "shift": 12,
             "width": 3
           }
-        }
+        },
+        "damage_per_missile_per_rank": 1,
+        "attack_interval_reduction_percent_per_rank": 4.5
       },
       "bit_index": 461,
       "wire_storage": {

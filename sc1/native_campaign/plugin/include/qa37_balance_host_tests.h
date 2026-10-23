@@ -37,7 +37,7 @@ inline void qa37_manuals_separate_ground_air_and_interceptor_damage(){
   qa13_fixture::begin();CHECK(apply_snapshot(nullptr,qa37_fixture::manuals(stacks)));
   for(U32 id:{8u,21u,70u,80u,88u,73u,12u,27u,28u,29u,102u,58u,60u,71u,86u,98u})for(U32 field:{17u,19u}){
    const auto weapon=original_stat({0,field,id});if(weapon>=130)continue;
-   U32 per=3;if(id==73)per=1;else if(rework_combat_v5::in(id,{8,21}))per=field==19?12:6;
+   U32 per=3;if(id==73||id==58)per=1;else if(rework_combat_v5::in(id,{8,21}))per=field==19?12:6;
    else if(rework_combat_v5::in(id,{70,80,88,12,27,28,29,102}))per=6;
    CHECK(owner_stat(1,{1,14,weapon})==original_stat({1,14,weapon})+per*stacks);
    for(U32 owner:{2u,6u,11u})CHECK(owner_stat(owner,{1,14,weapon})==original_stat({1,14,weapon}));

@@ -125,8 +125,9 @@ def decorate(catalog):
     ordinal=item['effect_ordinal']
     if ordinal==48:after='테란 기계의 단일 원거리 일반 공격이 주변 적 최대 3기에 50% 피해를 줍니다.'
     elif ordinal==58:
-     after='발키리가 이동 중에도 공중·지상 적에게 8발의 광역 미사일을 쏩니다. 첫 탄 발사 직후 이동·패트롤 명령이 가능합니다. 공중 피해 100%, 지상 피해 150%(공중의 1.5배).'
-     item['effect'].update(moving_fire=True,ground_damage_percent=150,air_damage_percent=100,missiles_per_volley=8,immediate_movement_after_first_shot=True)
+     after='발키리가 이동 중에도 공중·지상 적에게 8발의 광역 미사일을 연속 발사합니다. 공중 피해 100%, 지상 피해 150%(공중의 1.5배).'
+     item['effect'].pop('immediate_movement_after_first_shot',None)
+     item['effect'].update(qa_revision=2026102489,moving_fire=True,ground_damage_percent=150,air_damage_percent=100,missiles_per_volley=8,uninterrupted_volley=True)
     elif ordinal==82:
      after='퀸의 인스네어가 적의 공격 속도·이동 속도를 각각 85% 감소시킵니다.'
      item['target']='퀸 인스네어'
@@ -134,6 +135,10 @@ def decorate(catalog):
     elif ordinal==97:after='러커가 공중 적에게도 원래 공격의 100% 피해로 가시를 쏩니다.'
     elif ordinal==96:after=after.replace('과잉 자폭을 피하도록 주변 표적을 분배합니다.','공중 표적을 자동으로 분산 추격합니다.')
     elif ordinal==149:after=after.replace('기존 보호막','보호막')
+    elif ordinal==223:
+     after='발키리 미사일 한 발의 공격력이 중첩당 +1, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회.'
+     item['effect'].update(qa_revision=2026102489,damage_per_missile_per_rank=1,attack_interval_reduction_percent_per_rank=4.5)
+     item['effect']['unit_growth']['description']=after
    if not item.get('effect',{}).get('retired'):
     after=with_subject(item,after);item['effect_subject']=effect_subject(item)
     item['description_revision']=REVISION

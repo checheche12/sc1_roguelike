@@ -56,6 +56,18 @@ inline bool command(bw::Unit* u,U32 order,int x,int y){
 }
 inline void qa87_valkyrie_unlocked_ground_air_and_eight_native_missiles(){
     using namespace qa87_valkyrie;
+    for(bool air:{false,true}){
+        begin();auto target=rework_fixture::unit(air?43:37,6,180,100,air),u=ship(target);
+        advance(u,100);advance(u,101);
+        CHECK(image(u)->script.pos!=volley::idle&&image(u)->script.wait==40);
+        for(U32 frame=102;frame<=141;frame++){
+            advance(u,frame);volley::step();
+            CHECK(multi_fixture::shots.size()==(frame<111?2u:frame<121?4u:frame<131?6u:8u));
+            CHECK((image(u)->script.pos==volley::idle)==(frame==141));
+            CHECK(u->order==10&&u->order_target.unit==target&&locks==0);
+        }
+        CHECK(volley::volleys.empty());end();
+    }
     for(bool air:{false,true})for(U32 order:{6u,152u}){
         begin();auto target=rework_fixture::unit(air?43:37,6,180,100,air),u=ship(target);
         advance(u,100);CHECK(multi_fixture::shots.empty());advance(u,101);
