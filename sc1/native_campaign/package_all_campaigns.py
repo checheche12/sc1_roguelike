@@ -145,7 +145,7 @@ def verify_mineral_layout(source_chk, output_chk, mission, row):
 
 def verify_checkpoint_layout(source_chk, output_chk, mission, row):
     """A four-stage receipt cannot authorize different mission trigger code."""
-    from . import mission_balance, campaign_objectives,corner_resource_layout,courtyard_resource_layout,scripted_openings
+    from . import mission_balance, campaign_objectives,corner_resource_layout,courtyard_resource_layout,scripted_openings,campaign_resource_grants
     baseline=CHK(source_chk.save());units=CHK(output_chk.save())
     try:
         courtyard_resource_layout.undo(units,row['courtyard_resource_layout'])
@@ -156,6 +156,9 @@ def verify_checkpoint_layout(source_chk, output_chk, mission, row):
     for tag in ('OWNR','SIDE','FORC'):baseline.setsection(tag,output_chk.getsection(tag))
     correction=campaign_objectives.apply(baseline,mission)
     opening_balance=scripted_openings.apply(baseline,mission)
+    resource_grants=campaign_resource_grants.apply(baseline,mission)
+    if resource_grants!=row.get('resource_grants'):
+        raise ValueError('Resource grant receipt differs from the original mission')
     progression=map_builder.patch_progression(baseline,mission);progression['objective_correction']=correction
     if opening_balance is not None:progression['opening_balance']=opening_balance
     progression=json.loads(json.dumps(progression))
@@ -200,8 +203,8 @@ def validate_maps(receipt_path):
     from . import mission_balance
     balance_path, _ = legacy.checked_file(receipt['mission_balance_source'], receipt['mission_balance_source_sha256'])
     if balance_path != Path(mission_balance.__file__).resolve():raise ValueError('Unexpected mission balance implementation')
-    from . import corner_resource_layout,scripted_openings,courtyard_resource_layout
-    for module in (corner_resource_layout,scripted_openings,courtyard_resource_layout):
+    from . import corner_resource_layout,scripted_openings,courtyard_resource_layout,campaign_resource_grants
+    for module in (corner_resource_layout,scripted_openings,courtyard_resource_layout,campaign_resource_grants):
         name=module.__name__.rsplit('.',1)[-1]
         pinned,_=legacy.checked_file(receipt[name+'_source'],receipt[name+'_source_sha256'])
         if pinned!=Path(module.__file__).resolve():raise ValueError('Unexpected '+name+' implementation')

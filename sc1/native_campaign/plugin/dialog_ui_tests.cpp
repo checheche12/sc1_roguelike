@@ -560,6 +560,13 @@ void bundled_legendary_pages_test() {
     }
 }
 void checkpoint_v2_small_curse_lists_test() {
+    check(legendary_bundles::manual(561),"anti-air defense belongs to common manual triples");
+    for(unsigned race=1;race<=3;race++){
+        bool found=false;
+        for(auto a:legendary_bundles::entries)if(a.race==race&&a.manual&&legendary_bundles::compatible(561,a.index))
+            for(auto b:legendary_bundles::entries)if(b.race==race&&b.manual&&legendary_bundles::compatible(561,b.index)&&legendary_bundles::compatible(a.index,b.index))found=true;
+        check(found,"anti-air defense has two compatible manual partners for every faction");
+    }
     // Triple manuals retain the pair UI and show every full effect before save.
     {
         ++groups;unsigned members[3]{};

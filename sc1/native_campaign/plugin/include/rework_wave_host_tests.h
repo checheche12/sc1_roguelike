@@ -117,8 +117,9 @@ inline void profile_binding_and_readiness(){
  for(U32 f=1202*24;f<=1416*24;f+=24)t.advance(profile,f,true,false,true);CHECK(!t.due(profile));
  t.advance(profile,1417*24,true,false,true);CHECK(t.due(profile));t.warn();CHECK(t.countdown(profile)==24);
  for(U32 f=1418*24;f<=1500*24;f+=24)t.advance(profile,f,true,true,true);CHECK(t.second()==1417 && t.countdown(profile)==24);
- t.advance(profile,1501*24,true,false,false);CHECK(!t.next && !t.departure_at);
- t.advance(profile,1502*24,true,false,true);CHECK(t.next==t.second()+240);
+ const auto scheduled=t.next,departure=t.departure_at,ready_at=t.ready_at;
+ t.advance(profile,1501*24,true,false,false);CHECK(t.home && t.next==scheduled && t.departure_at==departure);
+ t.advance(profile,1502*24,true,false,true);CHECK(t.next==scheduled && t.ready_at==ready_at && t.departure_at==departure);
 }
 inline void reduced_auxiliary_dispatch(){
  for(U32 kind:{2u,3u}){
@@ -351,8 +352,44 @@ inline void native_caster_orders_and_original_hero_exclusion(){
  const auto initial=count;rework_waves::roster(hyperion);CHECK(count==initial);
 }
 }
-inline constexpr std::size_t rework_wave_group_count=21;
+inline void economy_loss_never_cancels_scheduled_waves(){
+ using namespace rework_wave_tests;
+ U32 missions=0;
+ for(const auto& profile:p::kProfiles){if(!profile.enabled)continue;++missions;
+  for(U32 loss_before:{25u,12u,2u}){
+   begin(profile.mission);const auto origin=rework_waves::choose_origin(false);CHECK(origin);
+   const U32 hq_id=g.mission->race==0?131u:g.mission->race==2?154u:106u,worker_id=g.mission->race==0?41u:g.mission->race==2?64u:7u;
+   auto hq=add(hq_id,player_owner(),origin->target.x,origin->target.y);hq->flags=1;
+   auto worker=add(worker_id,player_owner(),origin->target.x+32,origin->target.y);worker->flags=1;
+   add(0,player_owner(),origin->target.x+64,origin->target.y)->flags=1;
+   const auto first=std::max(profile.first,profile.base_grace);U32 first_units=0;
+   for(U32 second=0;second<=first+profile.interval;second++){
+    if(second==first-loss_before){hq->flingy.hitpoints=0;worker->flingy.hitpoints=0;CHECK(!rework_waves::usable_home());}
+    if(second==first+30){add(hq_id,player_owner(),origin->target.x,origin->target.y)->flags=1;add(worker_id,player_owner(),origin->target.x+32,origin->target.y)->flags=1;}
+    advance_second(second);CHECK(rework_waves::timeline.home&&rework_waves::timeline.ready_at==0);
+    CHECK(rework_waves::countdown(true,false).kind==sc1_native::WaveCountdown::Kind::Scheduled);
+    if(second<first)CHECK(rework_waves::timeline.next==first);
+    if(second==first-24)CHECK(rework_waves::pending_kind==1&&rework_waves::timeline.departure_at==first);
+    if(second==first){
+     CHECK(rework_waves::timeline.ordinal==1&&rework_waves::timeline.next==first+profile.interval);
+     living_units([&](bw::Unit* u){if(!rework_curses::marked(u))return;++first_units;CHECK(!rework_curses::appearing(u)&&marching(u));u->flingy.position={std::int16_t(origin->target.x+96),std::int16_t(origin->target.y+96)};});
+     CHECK(first_units>0);
+    }
+    if(second>first&&second<first+profile.interval)CHECK(rework_waves::timeline.next==first+profile.interval);
+   }
+   CHECK(rework_waves::timeline.ordinal==2&&rework_waves::timeline.next==first+2*profile.interval);
+   U32 total=0;living_units([&](bw::Unit* u){if(rework_curses::marked(u))++total;});CHECK(total>first_units);
+  }
+ }
+ CHECK(missions>0);
+}
+inline constexpr std::size_t rework_wave_group_count=23;
 inline void run_rework_wave_groups(){
+ economy_loss_never_cancels_scheduled_waves();
+ CHECK(std::strcmp(rework_waves::warning_text(1),rework_waves::warning_text(2))==0);
+ CHECK(std::strstr(rework_waves::warning_text(1),"공세"));
+ CHECK(std::strstr(rework_waves::warning_text(3),"일꾼 기습"));
+ CHECK(std::strcmp(rework_waves::warning_text(1),rework_waves::warning_text(3))!=0);
  rework_wave_tests::qa_stack_counts_and_wave_budgets();
  rework_wave_tests::reduced_auxiliary_dispatch();
  rework_wave_tests::detectors_cover_their_own_army();

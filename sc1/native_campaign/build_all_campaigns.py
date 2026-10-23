@@ -605,6 +605,8 @@ def make_map(raw,row):
  objective_correction=campaign_objectives.apply(chk,row)
  from sc1.native_campaign import scripted_openings
  opening_balance=scripted_openings.apply(chk,row)
+ from sc1.native_campaign import campaign_resource_grants
+ resource_grants=campaign_resource_grants.apply(chk,row)
  progression=patch_progression(chk,row)
  progression['objective_correction']=objective_correction
  if opening_balance is not None:progression['opening_balance']=opening_balance
@@ -630,6 +632,7 @@ def make_map(raw,row):
  report['corner_resource_layout']=corners
  report['scripted_opening']=scripted_openings.evidence(row)
  report['courtyard_resource_layout']=courtyard
+ report['resource_grants']=resource_grants
  return rawout,report
 
 def wave_header(rows):
@@ -677,7 +680,8 @@ def build(output=OUT,receipt=RECEIPT):
  report['mission_balance_source']=str(Path(mission_balance.__file__).resolve())
  report['mission_balance_source_sha256']=digest(Path(mission_balance.__file__).read_bytes())
  from sc1.native_campaign import corner_resource_layout,scripted_openings,courtyard_resource_layout
- for module in (corner_resource_layout,scripted_openings,courtyard_resource_layout):
+ from sc1.native_campaign import campaign_resource_grants
+ for module in (corner_resource_layout,scripted_openings,courtyard_resource_layout,campaign_resource_grants):
   name=module.__name__.rsplit('.',1)[-1]
   report[name+'_source']=str(Path(module.__file__).resolve())
   report[name+'_source_sha256']=digest(Path(module.__file__).read_bytes())

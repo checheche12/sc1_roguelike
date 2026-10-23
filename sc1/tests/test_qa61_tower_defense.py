@@ -29,7 +29,7 @@ class TowerDefense(unittest.TestCase):
         x=self.tower
         self.assertEqual((x['name'],x['race'],x['rarity'],x['max_rank']),('대공 방어 교범','shared','common',2))
         self.assertEqual(x['target_units'],[124,144,162])
-        self.assertTrue(x['repeatable']);self.assertNotIn('bundle_family',x)
+        self.assertTrue(x['repeatable']);self.assertEqual(x['bundle_families'],[124,144,162])
         self.assertEqual(x['candidate_weight_percent'],300)
         self.assertEqual(x['wire_storage'],dict(word=16,shift=28,width=2))
         for name,value in dict(health_percent_per_rank=100,shield_percent_per_rank=100,air_damage_percent_per_rank=50,additional_air_targets_per_rank=1).items():

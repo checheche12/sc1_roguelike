@@ -288,9 +288,13 @@ inline void release_and_orders() {
  });
  for(auto u:due)if(u)if(auto v=rework_curses::identity(u))caster_order(u,*v);
 }
+inline const char* warning_text(U32 kind) noexcept {
+ return kind==3 ? "일꾼 기습이 20초 뒤 모습을 드러냅니다. 모습을 드러낸 후 4초 뒤 공격합니다."
+                : "공세가 20초 뒤 모습을 드러냅니다. 모습을 드러낸 후 4초 뒤 출발합니다.";
+}
 inline void tick(bool ready,bool blocked,bool goal) {
  if(!enabled() || goal){if(current || timeline.initialized)reset();return;}
- const bool home=usable_home();const bool busy=blocked || g.dialog.open() || major_original_assault();
+ const bool home=timeline.home || usable_home();const bool busy=blocked || g.dialog.open() || major_original_assault();
  timeline.advance(*current,g.game()->frame_count,ready,busy,home);release_and_orders();
  if(ready&&!busy)island_step();
  if(!home){pending_kind=pending_spawn_at=raid_next=reserve_at=support_kills=0;last_main_budget=reserve_supply=0;support_due=false;primary=nullptr;return;}
@@ -300,7 +304,7 @@ inline void tick(bool ready,bool blocked,bool goal) {
   if(timeline.due(*current)){pending_kind=1;timeline.warn();pending_spawn_at=timeline.departure_at-4;select_specials();}
   else if(support_due && !reserve_at && timeline.second()>=opening_second() && (!support_last || timeline.second()-support_last>=60)){pending_kind=2;timeline.warn();pending_spawn_at=timeline.departure_at-4;support_due=false;support_last=timeline.second();selected={0,0};}
   else if(rework_curses::count(15) && !reserve_at && timeline.second()>=raid_next && (capabilities()&policy::AntiAir)){pending_kind=3;timeline.warn();pending_spawn_at=timeline.departure_at-4;raid_next=timeline.second()+current->interval;selected={0,0};}
-  if(pending_kind){primary=pending_kind==3?raid_owner():choose_origin(true);if(!primary&&pending_kind!=3)primary=choose_origin(false);if(!primary){pending_kind=0;timeline.finished(*current);return;}spawned_pending=false;unit_ordinal=0;g.wave_spawn_number=0;g.current_wave_id=++g.next_wave_id;log_event("V5 added wave warning kind=%u departure=%u normal_ordinal=%u",pending_kind,timeline.departure_at,timeline.ordinal+1);message("추가 공세가 20초 뒤 모습을 드러냅니다. 모습을 드러낸 후 4초 뒤 출발합니다.");}
+  if(pending_kind){primary=pending_kind==3?raid_owner():choose_origin(true);if(!primary&&pending_kind!=3)primary=choose_origin(false);if(!primary){pending_kind=0;timeline.finished(*current);return;}spawned_pending=false;unit_ordinal=0;g.wave_spawn_number=0;g.current_wave_id=++g.next_wave_id;log_event("V5 added wave warning kind=%u departure=%u normal_ordinal=%u",pending_kind,timeline.departure_at,timeline.ordinal+1);message(warning_text(pending_kind));}
  }
  if(pending_kind && !spawned_pending && timeline.second()>=pending_spawn_at){
   spawned_pending=true;

@@ -48,7 +48,7 @@ def compatible(left, right, *, historical=False):
 
 def bundle_size(item):
     spec = item.get('effect', {}).get('unit_growth', {})
-    return 3 if item.get('rarity') == 'common' and spec.get('kind') in ('health', 'attack') else 2
+    return 3 if item.get('rarity') == 'common' and spec.get('kind') in ('health', 'attack', 'tower') else 2
 
 
 def partners_for(item, eligible):

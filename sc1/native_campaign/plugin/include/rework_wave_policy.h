@@ -70,8 +70,9 @@ struct Timeline {
    const auto delta=now>=frame ? std::min(now-frame,24u):0u;frame=now;
    if(ready && !blocked)active_ticks+=delta;
    if(home_ready && !home){ready_at=second();const auto grace=(!had_home && p.starting_hq && p.mission!=101)?0u:p.base_grace;next=std::max(p.first,ready_at+grace);warning_at=departure_at=0;had_home=true;}
-   home=home_ready;
-   if(!home){warning_at=departure_at=0;next=0;}
+   // First economy acquisition starts the mission's grace period once.
+   // Destruction, lifted depots and worker losses never cancel or restart it.
+   home=home || home_ready;
  }
  U32 unlock_second(const Profile& p,const Roster& r) const noexcept {
    U32 nominal=r.grade==1?p.rare:r.grade==2?p.epic:r.grade==3?p.legendary:0u;
