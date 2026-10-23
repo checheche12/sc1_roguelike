@@ -20,7 +20,7 @@ using RankLookup=U32 (*)(const GrowthSnapshot&,U32) noexcept;
 inline RankLookup rank_lookup=nullptr;
 inline U32 raw_rank(U32 ordinal) noexcept {return rank_lookup?rank_lookup(g.growth,ordinal):rework_catalog::rank(g.growth,ordinal);}
 inline U32 rank(const GrowthSnapshot& s,U32 ordinal) noexcept {
-    if(ordinal>=rework_catalog::kTalentCount||ordinal==85)return 0;
+    if(ordinal>=rework_catalog::kTalentCount||ordinal==60||ordinal==85)return 0;
     if(talent_power::enabled)switch(ordinal){case 51:case 66:case 95:case 107:case 183:case 187:case 188:case 189:case 192:case 193:case 195:case 196:return 0;default:break;}
     if(talent_power::enabled&&legend_focus::converted(ordinal)&&ordinal!=54&&ordinal!=55)return 0;
     if(rank_lookup)return rank_lookup(s,ordinal);

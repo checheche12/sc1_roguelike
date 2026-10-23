@@ -1,6 +1,6 @@
 """Removed talents keep their IDs for ownership and frozen history."""
 REVISION=2026102041
-ORDINALS=frozenset((51,66,85,95,183,187,188,189,192,193,195,196))
+ORDINALS=frozenset((51,60,66,85,95,183,187,188,189,192,193,195,196))
 NONCOMBAT_FAMILIES=frozenset((7,34,11,40,41,42,50,64,69,84))
 NONCOMBAT_TRAIT_FAMILIES=frozenset((7,34,11,41,42,64,69,84))
 def decorate(catalog):
@@ -13,10 +13,12 @@ def decorate(catalog):
    item['effect'].update(offer_retired=True,unit_trait_removed=True)
   if item.get('rework_revision')!=5 or item.get('effect_ordinal') not in ORDINALS:continue
   item['description']='삭제된 재능입니다. 더 이상 선택하거나 효과를 받을 수 없습니다.'
-  revision=2026102371 if item['effect_ordinal']==85 else REVISION
+  revision={60:2026102488,85:2026102371}.get(item['effect_ordinal'],REVISION)
   item['effect'].update(qa_revision=revision,retired=True,runtime_disabled=True)
-  if item['effect_ordinal']==85:item['effect'].update(offer_retired=True)
+  if item['effect_ordinal'] in (60,85):item['effect'].update(offer_retired=True)
   for field in ('armor_mark_frames','marked_armor','include_armor_upgrades','include_shield_armor'):item['effect'].pop(field,None)
- catalog['talent_retirement_revision']=2026102371
+ catalog['talent_retirement_revision']=2026102488
+ if 'single_target_legend_ordinals' in catalog:
+  catalog['single_target_legend_ordinals']=[n for n in catalog['single_target_legend_ordinals'] if n not in ORDINALS]
  catalog['unit_growth_summary'].update(health_manuals=41,attack_manuals=31,new_unit_traits=42)
  return catalog

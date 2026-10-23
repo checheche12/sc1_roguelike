@@ -31705,7 +31705,7 @@
       "id": "19d1a884-1eea-5c77-906f-8941cde82c77",
       "name": "대형 성형 지뢰",
       "target": "벌처 스파이더 마인",
-      "description": "스파이더 마인의 일반 공격 피해 +150%.",
+      "description": "삭제된 재능입니다. 더 이상 선택하거나 효과를 받을 수 없습니다.",
       "trigger": "",
       "numbers": "",
       "notes": "원래 지뢰 피해·소모 유지.",
@@ -31728,7 +31728,7 @@
         "type": "rework_v5",
         "ordinal": 60,
         "source_id": "19d1a884-1eea-5c77-906f-8941cde82c77",
-        "qa_revision": 2026102046,
+        "qa_revision": 2026102488,
         "benefit_power_quarters": 10,
         "rarity_promoted": true,
         "focus_legend": true,
@@ -31741,7 +31741,10 @@
         "legacy_area_effect_disabled": true,
         "design_role": "single_target",
         "reflection_requires_attacking": false,
-        "reflection_only_releases_on_attack": false
+        "reflection_only_releases_on_attack": false,
+        "retired": true,
+        "runtime_disabled": true,
+        "offer_retired": true
       },
       "target_units": [
         13
@@ -69982,14 +69985,13 @@
     "new_unit_traits": 42,
     "paired_unit_rewards": true
   },
-  "talent_retirement_revision": 2026102371,
+  "talent_retirement_revision": 2026102488,
   "legend_focus_revision": 2026102269,
   "single_target_legend_ordinals": [
     49,
     54,
     55,
     57,
-    60,
     90,
     137,
     139,

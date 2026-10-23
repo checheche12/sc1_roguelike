@@ -8,7 +8,7 @@ from .curse_balance import REAR_ID, RESERVE_ID
 
 SKIPPED_CURSE='__no_future_added_waves__'
 SKIPPED_FINAL='__campaign_clear_no_final_reward__'
-RETIRED_TALENTS=frozenset(('bbf067dc-0ced-5875-a519-2c0443580c8d','9653d275-b027-51c6-bb5d-920e2bab74c4','0092e1dd-7b0d-5974-9145-b2713cd19dee'))
+RETIRED_TALENTS=frozenset(('bbf067dc-0ced-5875-a519-2c0443580c8d','9653d275-b027-51c6-bb5d-920e2bab74c4','0092e1dd-7b0d-5974-9145-b2713cd19dee','19d1a884-1eea-5c77-906f-8941cde82c77'))
 
 
 def retired(item):

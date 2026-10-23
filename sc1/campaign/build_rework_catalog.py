@@ -157,11 +157,14 @@ def build(coverage=None):
     from .unit_growth import decorate as expand_units,generate_header as generate_units
     expand_units(catalog);generate_units(catalog,ROOT)
     from .talent_retirement import decorate as retire_talents
-    retire_talents(catalog)
     from .legend_focus import decorate as focus_legends,generate_header as generate_focus
     focus_legends(catalog)
     from .legend_base_balance import decorate as balance_legend_bases, generate_header as generate_legend_bases
-    balance_legend_bases(catalog);generate_legend_bases(catalog,ROOT);generate_focus(catalog,ROOT)
+    balance_legend_bases(catalog)
+    # Retire after balance decorators so historical effects cannot re-enable
+    # removed legends or overwrite their migration revision and description.
+    retire_talents(catalog)
+    generate_legend_bases(catalog,ROOT);generate_focus(catalog,ROOT)
     from .wave_balance import decorate as decorate_wave_balance
     decorate_wave_balance(catalog, ROOT)
     from .effect_copy import decorate as clean_effect_copy

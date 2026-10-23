@@ -1,6 +1,6 @@
 #pragma once
 namespace host_test {
-inline constexpr std::size_t qa39_group_count=12;
+inline constexpr std::size_t qa39_group_count=13;
 namespace qa39_fixture {
 inline void __cdecl targeted_order(bw::Unit* u,U32 id,U32 x,U32 y,bw::Unit* target,U32){u->order=U8(id);u->order_target={std::int16_t(x),std::int16_t(y),target};}
 inline U32 first(const legend_focus::Rule& r){for(U32 id=0;id<228;id++)if(r.units[id/32]&(1u<<(id%32)))return id;return 228;}
@@ -23,6 +23,24 @@ inline void qa39_focus_damage_ui_owner_and_primary_boundary(){
   CHECK(other->flingy.hitpoints==hp-(r.ordinal==197?1000:0));rework_combat_v5::DamageScope::current_primary=nullptr;
   u->player=6;CHECK(rework_combat_v5::focus_damage(u,target,w,1000,true)==1000);qa9_fixture::end();
  }
+}
+inline void qa88_retired_mine_keeps_native_damage_splash_and_old_wire_identity(){
+ using namespace rework_fixture;qa9_fixture::begin({60});
+ g.growth.talent_bits[298/32]|=1u<<(298%32);
+ CHECK(rework_catalog::rank(g.growth,60)==1&&rework_combat_v5::rank(60)==0);
+ CHECK(!legend_focus::converted(60));install();
+ auto mine=unit(13,1,100,100),target=unit(37,6,120,100),other=unit(37,6,125,100);
+ CHECK(!rework_combat_v5::focus_source(mine)&&rework_combat_v5::focus_base(mine)==0);
+ CHECK(rework_combat_v5::infantry_ui_value(mine,6,125)==125);
+ CHECK(rework_combat_v5::focus_damage(mine,target,6,1000,true)==1000);
+ CHECK(owner_stat(1,{0,19,13})==original_stat({0,19,13}));
+ g.normal_hit=true;rework_combat_v5::DamageScope::current_primary=target;
+ {std::int32_t amount=1000;rework_combat_v5::DamageScope hit(other,mine,6,1,amount);CHECK(amount==1000);}
+ rework_combat_v5::DamageScope::current_primary=nullptr;
+ auto flyer=unit(8,6,140,100,true);mine->order=20;mine->order_state=3;mine->order_target={0,0,nullptr};
+ pulse(104);CHECK(mine->order_state==3&&!mine->order_target.unit&&multi_fixture::shots.empty());
+ CHECK(flyer->flingy.hitpoints==256000&&rework_catalog::rank(g.growth,60)==1);
+ qa9_fixture::end();
 }
 inline void qa39_periodic_hits_use_unamplified_base_and_no_splash(){
  using namespace rework_fixture;const auto saved=combat_effects::original_weapon_damage;combat_effects::original_weapon_damage=qa39_fixture::hp_shield_damage;
@@ -127,5 +145,5 @@ inline void qa39_shadow_fury_five_strikes_return_and_restore_invulnerability(){
  for(U32 n=0;n<5;n++){game.frame_count=100+4*n;rework_combat_v5::focus_tick(u,*s);}CHECK(!s->shadow_active&&(u->flags&0x4000000u)==(flags&0x4000000u)&&u->flingy.position.x==100&&u->flingy.position.y==100&&u->order==10&&u->order_target.unit==target);CHECK(target->flingy.hitpoints<hp);rework_combat_v5::shadow_begin(u,target);CHECK(!s->shadow_active);
  combat_effects::original_weapon_damage=saved;relocation_end();qa9_fixture::end();
 }
-inline void run_qa39_groups(){qa39_focus_damage_ui_owner_and_primary_boundary();qa39_periodic_hits_use_unamplified_base_and_no_splash();qa39_ramps_reset_and_armor_erosion_exceeds_zero();qa39_retaliation_needs_attack_and_has_storage_cap();qa39_firebat_real_projectiles_form_front_cone_and_stop_recursion();qa39_ensnare_native_duration_final_speed_and_long_cooldown();qa39_stasis_area_allies_heal_and_visual_scale();qa39_ultralisk_three_cleaves_actual_leech_and_overkill_cap();qa39_acid_spore_damage_and_slow_are_doubled();qa39_scourge_damage_health_survival_and_smart_target();qa39_shadow_fury_five_strikes_return_and_restore_invulnerability();}
+inline void run_qa39_groups(){qa88_retired_mine_keeps_native_damage_splash_and_old_wire_identity();qa39_focus_damage_ui_owner_and_primary_boundary();qa39_periodic_hits_use_unamplified_base_and_no_splash();qa39_ramps_reset_and_armor_erosion_exceeds_zero();qa39_retaliation_needs_attack_and_has_storage_cap();qa39_firebat_real_projectiles_form_front_cone_and_stop_recursion();qa39_ensnare_native_duration_final_speed_and_long_cooldown();qa39_stasis_area_allies_heal_and_visual_scale();qa39_ultralisk_three_cleaves_actual_leech_and_overkill_cap();qa39_acid_spore_damage_and_slow_are_doubled();qa39_scourge_damage_health_survival_and_smart_target();qa39_shadow_fury_five_strikes_return_and_restore_invulnerability();}
 }
