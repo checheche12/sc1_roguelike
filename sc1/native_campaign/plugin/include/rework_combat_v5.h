@@ -583,13 +583,19 @@ inline void configure_motion(bw::Unit* u,UnitState& s) {
 // accepted Move uses native pathfinding and the motion adapter above.
 struct CommandScope {
     std::vector<Identity> lurkers;
+    std::vector<Identity> shadow_command_locks;
     struct StimBefore{Identity who;U32 hp;U8 timer;};std::vector<StimBefore> stimulants;
     explicit CommandScope(U32 player,bool motion=true,bool stim=true){if(player!=player_owner())return;living_units([&](bw::Unit* u){
         if(!own(u))return;
+        // The native command predicates reject disabled units before changing
+        // orders or queues. Scope that predicate to command parsing only;
+        // simulation, cast progress, and other selected units stay unaffected.
+        if(in(u->unit_id,{61,74,75})&&!u->lockdown_timer)if(auto s=state(u))if(s->shadow_active){shadow_command_locks.push_back(identity(u));u->lockdown_timer=1;}
         if(motion&&rank(91)&&u->unit_id==103&&(u->flags&0x10u))lurkers.push_back(identity(u));
         if(stim&&rank(39)&&in(u->unit_id,{0,10,20,32}))stimulants.push_back({identity(u),U32(u->flingy.hitpoints),u->stim_timer});
     });for(const auto& i:lurkers)if(auto u=resolve(i))u->flags&=~0x10u;}
-    ~CommandScope(){for(const auto& i:lurkers)if(auto u=resolve(i))u->flags|=0x10u;
+    ~CommandScope(){for(const auto& i:shadow_command_locks)if(auto u=resolve(i))if(u->lockdown_timer==1)u->lockdown_timer=0;
+        for(const auto& i:lurkers)if(auto u=resolve(i))u->flags|=0x10u;
         for(const auto& before:stimulants)if(auto u=resolve(before.who))if(u->stim_timer&&before.hp>=U32(u->flingy.hitpoints)+10*256){u->stim_timer=U8(std::min(255u,talent_power::duration(39,u->stim_timer)));heal(u,talent_power::v5(39,5*256)>9*256?9*256:talent_power::v5(39,5*256));}
     }
 };

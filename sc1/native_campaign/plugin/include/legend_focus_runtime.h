@@ -108,6 +108,12 @@ inline void shadow_restore(bw::Unit* u,UnitState& s) {
 inline bool shadow_candidate(bw::Unit* u,bw::Unit* target) {
  return eligible(target)&&!air(target)&&is_enemy(target->player)&&visible(target,u->player)&&!protected_objective_unit(target);
 }
+inline bool shadow_attack_order(bw::Unit* u) {
+ // Explicit attack/pursuit/attack-move, or Hold after acquiring an enemy.
+ // Move, Follow, idle, Stop and unengaged Patrol must never start a cast.
+ return live(u)&&(in(u->order,{8,9,10,11,12,14,21,22,157,158}) ||
+  (u->order==107&&shadow_candidate(u,u->order_target.unit)));
+}
 inline bw::Unit* shadow_pick(bw::Unit* u,UnitState& s,int x,int y,U32 radius) {
  bw::Unit* best=nullptr;U32 priority=3;std::uint64_t nearest=~std::uint64_t(0);
  for(auto candidate:around(x,y,radius,nullptr,65536,true,0)){
@@ -120,7 +126,7 @@ inline bw::Unit* shadow_pick(bw::Unit* u,UnitState& s,int x,int y,U32 radius) {
  }return best;
 }
 inline void shadow_begin(bw::Unit* u,bw::Unit* target) {
- if(!talent_power::enabled||!own(u)||!raw_rank(321)||!in(u->unit_id,{61,74,75})||(u->flags&0x40u)||u->stasis_timer||u->lockdown_timer||u->maelstrom_timer)return;
+ if(!talent_power::enabled||!own(u)||!raw_rank(321)||!in(u->unit_id,{61,74,75})||!shadow_attack_order(u)||(u->flags&0x40u)||u->stasis_timer||u->lockdown_timer||u->maelstrom_timer)return;
  auto s=state(u);if(!s||s->shadow_active||now()<s->shadow_cooldown)return;
  s->shadow_count=0;
  const auto radius=legend_focus::shadow_trigger_radius_pixels;
@@ -132,6 +138,7 @@ inline void shadow_begin(bw::Unit* u,bw::Unit* target) {
 inline void shadow_prepare(bw::Unit* u) {
  if(!talent_power::enabled||!own(u)||!in(u->unit_id,{61,74,75})||!raw_rank(321))return;
  auto s=state(u);if(!s||s->shadow_active||now()<s->shadow_cooldown)return;
+ if(!shadow_attack_order(u))return;
  auto target=u->order_target.unit;const auto radius=legend_focus::shadow_trigger_radius_pixels;
  if(shadow_candidate(u,target)&&dist(u,target)<=std::uint64_t(radius)*radius){shadow_begin(u,target);return;}
  if(s->shadow_scan!=~0u&&now()-s->shadow_scan<8)return;s->shadow_scan=now();shadow_begin(u,nullptr);
