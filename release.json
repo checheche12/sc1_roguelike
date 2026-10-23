@@ -1,0 +1,21 @@
+{
+  "version": "v2026.10.24-qa90",
+  "file": "SC1_Roguelike_QA90.zip",
+  "sha256": "fe673ff8f4e1b0bcdc9fd249af7117fd6f0ee1f8a3e212934678670b02ef9a85",
+  "bytes": 25035478,
+  "runtime_source_commit": "1473c1fae72728226b94927b15fbb5cebcb0bf31",
+  "native_dll_sha256": "931aa029a3ab21eb8492da35dfc3498999ff1f86f830bc1450fd701d72c38f97",
+  "maps": 63,
+  "maps_changed": 0,
+  "base_release": "v2026.10.24-qa89",
+  "bunker_passenger_external_area_protection": true,
+  "mechanical_irradiate_chain_synergy": true,
+  "transport_speed_offers_removed": [
+    33,
+    74,
+    115
+  ],
+  "existing_transport_speed_ownership_preserved": true,
+  "personal_database_included": false,
+  "actual_gameplay_verified": false
+}
