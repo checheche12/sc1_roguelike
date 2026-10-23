@@ -46,7 +46,7 @@ void __cdecl order(bw::Unit* u,U32 id,U32 x,U32 y,bw::Unit*,U32){++orders;u->ord
 void __cdecl finish(bw::Unit*){++finishes;}
 void __cdecl text(const U8* value){printed.emplace_back(reinterpret_cast<const char*>(value));}
 U32 __cdecl zero(){return 0;}
-void __cdecl sound_step(void*,void*,U32,U32*){}
+void __cdecl sound_step(movement_effects::Image*,movement_effects::Script*,U32,U32*){}
 void __cdecl read_vars(const std::uint16_t*,std::size_t* out,std::size_t){++read_var_calls;*out=saved_handle;}
 std::size_t __cdecl ext(samase::ExtendedArray** p){++extended_array_calls;if(!require_init())return 0;*p=provided_extended;return provided_extended_count;}
 U8* __cdecl read_map(const U8*,std::size_t* n){*n=chk.size();if(chk.empty())return nullptr;auto p=new U8[chk.size()];std::memcpy(p,chk.data(),chk.size());return p;}

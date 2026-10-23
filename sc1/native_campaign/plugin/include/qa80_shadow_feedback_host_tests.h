@@ -7,8 +7,7 @@ inline U32 sounds=0,commands=0,unique=0;inline bool queued=false;
 inline bw::Unit* casting=nullptr;
 inline void* __cdecl bin(){return code.data();}
 inline bw::Unit** __cdecl selected(){return selections.data();}
-inline void __cdecl sound(void* script,void* image,U32 dry,U32* speed){
- auto s=static_cast<movement_effects::Script*>(script);auto img=static_cast<movement_effects::Image*>(image);
+inline void __cdecl sound(movement_effects::Image* img,movement_effects::Script* s,U32 dry,U32* speed){
  CHECK(!dry&&speed&&casting&&s!=&img->script&&img->parent==casting->flingy.sprite);
  // Decode only the native sound and terminating wait; no weapon/attack opcode.
  CHECK(s->pos==shadow_feedback::offset&&code[s->pos++]==0x18);

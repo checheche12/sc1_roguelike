@@ -1,6 +1,8 @@
 #pragma once
 namespace shadow_feedback {
-using Step=void (__cdecl*)(void*,void*,U32,U32*);
+// SAMASE step_iscript(image, iscript, dry_run, speed_out), as implemented by
+// the pinned API44 shim. Distinct pointer types prevent swapping these inputs.
+using Step=void (__cdecl*)(movement_effects::Image*,movement_effects::Script*,U32,U32*);
 inline Step step=nullptr;
 // Stock Dark Templar attack: iscript 152 PlaySnd111 and 372 AttackMelee[111].
 // Append a sound-only script after all generated code. Wait returns immediately
@@ -24,6 +26,6 @@ inline void strike(bw::Unit* u) noexcept {
  if(!image||image->parent!=sprite)return;
  movement_effects::Script sound{};sound.pos=std::uint16_t(offset);U32 speed=0;
  // The real image supplies positional audio; its animation remains untouched.
- step(&sound,image,0,&speed);
+ step(image,&sound,0,&speed);
 }
 }
