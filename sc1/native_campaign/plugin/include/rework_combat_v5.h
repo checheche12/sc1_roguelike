@@ -311,6 +311,7 @@ struct UnitState {
     U32 energy_reserve=0,energy_cap=0,cloak_fraction=0;bool energy_granted=false,energy_pending=false;
     bool materialized=false,detonated=false,legendary_death_done=false;U32 swarm_heal_frame=~0u;
     bool chase=false;int chase_x=0,chase_y=0;
+    bool valkyrie_backshot=false;U32 valkyrie_backshot_frame=0;Identity valkyrie_backshot_target{};
     U32 last_effect_token=~0u;
     U32 retreat_due=0,blink_due=0,reposition_due=0,leap_due=0,charge_due=0,charge_until=0;
     int move_x=0,move_y=0,retreat_x=0,retreat_y=0;U32 saved_attack_flag=0;bool nuke_adjusted=false;
@@ -1245,6 +1246,36 @@ inline void borrowed_order(bw::Unit* u,UnitFn dispatch,U32 order,bw::Unit* targe
     u->order=saved_order;u->order_state=saved_state;u->order_signal=saved_signal;u->order_timer=saved_timer;u->order_target=saved_target;
     u->order_queue_begin=queue_begin;u->order_queue_end=queue_end;u->flags=flags;u->energy=energy;u->shields=shields;
 }
+inline bool valkyrie_backshot_order(bw::Unit* u,UnitFn dispatch) {
+    if(!dispatch||!own(u)||u->unit_id!=58||!rank(58))return false;
+    auto s=state(u);if(!s)return false;
+    // Once a moving attack has begun, AttackUnit's continuing-order branch
+    // must not brake the ship before/during its native NoBrkCode volley.
+    // The native GotoRepeatAttk clears StartingAttack (flingy bit 8).
+    if(s->valkyrie_backshot){
+        const bool continuing=u->order==10&&u->order_target.unit==resolve(s->valkyrie_backshot_target)&&
+            resolve(s->valkyrie_backshot_target)&&can_fire(u)&&!u->stasis_timer&&
+            (u->flingy.flingy_flags&8u)&&U32(now()-s->valkyrie_backshot_frame)<48u;
+        if(continuing)return true;
+        s->valkyrie_backshot=false;return false;
+    }
+    // Patrol acquires an ordinary AttackUnit order. Only its initial moving
+    // attack uses native AttackFixedRange, which keeps momentum and still
+    // checks the weapon's angle/range/cooldown and runs the real animation.
+    // Move, stationary attacks, chasing, other units and unowned Valkyries
+    // retain their original order processing. No synthetic missiles are used.
+    if(u->order!=10||u->order_state!=0||u->flingy.current_speed<=0||
+       u->ground_cooldown||u->air_cooldown||(u->flingy.flingy_flags&8u)||
+       !can_fire(u)||u->stasis_timer)return false;
+    auto target=u->order_target.unit;
+    if(!target_ok(u,target,weapon(u,air(target))))return false;
+    borrowed_order(u,dispatch,11,target,target->flingy.position.x,target->flingy.position.y);
+    if((u->flingy.flingy_flags&8u)&&(u->ground_cooldown||u->air_cooldown)){
+        s->valkyrie_backshot=true;s->valkyrie_backshot_frame=now();s->valkyrie_backshot_target=identity(target);
+        u->order_state=1; // Resume normal pursuit/stopping after this one volley.
+    }
+    return true;
+}
 inline std::int32_t post_armor_damage(bw::Unit* target,std::int32_t amount) {
     if(!g.normal_hit||generated_depth||amount<=0)return amount;auto s=state(target);
     const auto hit=DamageScope::current;
@@ -1545,6 +1576,7 @@ struct OrderScope {
     OrderScope(bw::Unit* u,UnitFn original=nullptr){previous_caster=active_caster;if(auto s=state(u))if(s->shadow_active){intercepted=true;return;}if(!own(u)||spell_depth)return;
         active_caster=u;dispatch=original;who=identity(u);target=identity(u->order_target.unit);order=u->order;energy=u->energy;hp=U32(u->flingy.hitpoints);shields=U32(u->shields);stim=u->stim_timer;auto to=resolve(target);target_hp=to ? U32(to->flingy.hitpoints):0;
         prior_state=u->order_state;prior_timer=u->order_timer;origin_x=u->order_target.x;origin_y=u->order_target.y;
+        if(valkyrie_backshot_order(u,original)){intercepted=true;return;}
         if(talent_power::enabled&&rank(91)&&u->unit_id==103&&(u->flags&0x10u)&&order==11&&to&&
            target_ok(u,to,weapon(u,air(to)))&&u->flingy.current_speed){
             // A mobile burrowed Lurker must stop at an acquired Patrol target.
