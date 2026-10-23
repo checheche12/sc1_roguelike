@@ -36,7 +36,7 @@ class AirLegendBalance(unittest.TestCase):
    rework_growth.enable(conn);updated=json.loads(conn.execute('SELECT catalog_json FROM growth_rework_catalog').fetchone()[0])
    for i in indices:
     for key in ('description','effect','id','bit_index','source_description'):self.assertEqual(updated['talents'][i][key],current['talents'][i][key])
-   self.assertEqual(updated['talents'][560]['candidate_weight_percent'],300)
+   self.assertEqual(updated['talents'][560]['candidate_weight_percent'],400)
    self.assertEqual(rework_growth.ranks(conn,201),{current['talents'][343]['id']:1,current['talents'][341]['id']:1})
    self.assertEqual(updated['curses'],current['curses'])
 

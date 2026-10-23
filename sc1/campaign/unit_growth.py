@@ -107,7 +107,7 @@ def decorate(catalog):
    item['effect'].update(qa_revision=2026102386,shadow_requires_first_hit=False,shadow_requires_attack_order=True,shadow_commands_ignored_while_casting=True,shadow_trigger_radius_pixels=192,shadow_chain_radius_pixels=160,shadow_damage_percent=200,shadow_repeat_last_only_without_alternative=True,shadow_moves_to_opposite_side=True,shadow_can_target_buildings=True,shadow_target_layer='ground',shadow_returns_to_cast_origin=True)
   if repeat:item['max_rank']=s.get('max_rank',4)
   if s['kind']=='tower':
-   item.update(bundle_family=124,bundle_families=[124,144,162],candidate_weight_percent=300)
+   item.update(bundle_family=124,bundle_families=[124,144,162],candidate_weight_percent=400)
    item['effect'].update(qa_revision=2026102376,health_percent_per_rank=100,shield_percent_per_rank=100,air_damage_percent_per_rank=50,additional_air_targets_per_rank=1)
   if s['index']<len(catalog['talents']):
    assert catalog['talents'][s['index']]['id']==item['id']

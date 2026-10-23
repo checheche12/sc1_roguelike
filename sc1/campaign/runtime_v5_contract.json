@@ -30742,7 +30742,7 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 322,
-        "qa_revision": 2026102376,
+        "qa_revision": 2026102491,
         "benefit_power_quarters": 4,
         "unit_growth": {
           "race": "shared",
@@ -30886,7 +30886,7 @@
         }
       },
       "max_rank": 2,
-      "candidate_weight_percent": 300,
+      "candidate_weight_percent": 400,
       "description_revision": 2026102262,
       "bundle_family": 124,
       "bundle_families": [

@@ -21,8 +21,8 @@ def decorate(catalog):
         item['description']=f'{subject}의 이동 속도 +40%.'
         item['effect'].update(qa_revision=2026102490,transport_capacity_bonus=0,movement_speed_bonus_percent=40,offer_retired=True,transport_speed_offer_removed=True)
         item['notes']='수송 공간 확대 효과 제거. 기본 수송 공간과 수송 기술 요구 조건을 유지합니다.'
-    by[322]['candidate_weight_percent']=300
-    by[322]['effect']['qa_revision']=REVISION
+    by[322]['candidate_weight_percent']=400
+    by[322]['effect']['qa_revision']=2026102491
     if 'single_target_legend_ordinals' in catalog:
         catalog['single_target_legend_ordinals']=[x for x in catalog['single_target_legend_ordinals'] if x!=105]
     return catalog
