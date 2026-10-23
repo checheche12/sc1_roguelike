@@ -128,6 +128,12 @@ def decorate(catalog):
      after='발키리가 이동 중에도 공중·지상 적에게 8발의 광역 미사일을 연속 발사합니다. 공중 피해 100%, 지상 피해 150%(공중의 1.5배).'
      item['effect'].pop('immediate_movement_after_first_shot',None)
      item['effect'].update(qa_revision=2026102489,moving_fire=True,ground_damage_percent=150,air_damage_percent=100,missiles_per_volley=8,uninterrupted_volley=True)
+    elif ordinal==61:
+     after='과학선: 이레디에이트 피해 2배·반경 4타일. 감염된 적 사망 시 6타일 내 생체 적 최대 5기에 전염(최대 5단계·지속 시간 갱신).'
+     item['effect'].update(qa_revision=2026102490,mechanical_infection_requires_ordinal=198)
+    elif ordinal==198:
+     after='아군 과학선의 이레디에이트가 기계 유닛에도 원래 방사선 피해를 줍니다. 방사선 연쇄와 함께 선택하면 확장 피해 반경과 기계 적 전염도 적용됩니다.'
+     item['effect'].update(qa_revision=2026102490,mechanical_chain_synergy=True)
     elif ordinal==82:
      after='퀸의 인스네어가 적의 공격 속도·이동 속도를 각각 85% 감소시킵니다.'
      item['target']='퀸 인스네어'

@@ -29695,10 +29695,12 @@
         "type": "rework_v5",
         "ordinal": 33,
         "source_id": "0e858d2c-c892-569f-bfb7-340b4ee27918",
-        "qa_revision": 2026102265,
+        "qa_revision": 2026102490,
         "benefit_power_quarters": 8,
         "transport_capacity_bonus": 0,
-        "movement_speed_bonus_percent": 40
+        "movement_speed_bonus_percent": 40,
+        "offer_retired": true,
+        "transport_speed_offer_removed": true
       },
       "target_units": [
         11
@@ -31789,7 +31791,7 @@
       "id": "a8b767de-c945-5116-8e5d-a8e8c8478b5b",
       "name": "방사선 연쇄",
       "target": "과학선 이레디에이트",
-      "description": "과학선: 이레디에이트 피해 2배, 피해 반경 4타일. 감염된 적이 죽으면 6타일 안 생체 적 최대 5기에 전염되며 최초 시전부터 최대 5단계까지 이어집니다. 전염 시 지속 시간이 갱신됩니다.",
+      "description": "과학선: 이레디에이트 피해 2배·반경 4타일. 감염된 적 사망 시 6타일 내 생체 적 최대 5기에 전염(최대 5단계·지속 시간 갱신).",
       "trigger": "",
       "numbers": "",
       "notes": "이전 효과 재복제 금지, 원래 오사 규칙 유지.",
@@ -31812,10 +31814,11 @@
         "type": "rework_v5",
         "ordinal": 61,
         "source_id": "a8b767de-c945-5116-8e5d-a8e8c8478b5b",
-        "qa_revision": 2026102046,
+        "qa_revision": 2026102490,
         "benefit_power_quarters": 16,
         "infection_radius_pixels": 192,
-        "damage_multiplier": 2
+        "damage_multiplier": 2,
+        "mechanical_infection_requires_ordinal": 198
       },
       "target_units": [
         9,
@@ -32834,10 +32837,12 @@
         "type": "rework_v5",
         "ordinal": 74,
         "source_id": "cf9d7028-0a05-5bdc-ba77-ababbaf03c09",
-        "qa_revision": 2026102265,
+        "qa_revision": 2026102490,
         "benefit_power_quarters": 8,
         "transport_capacity_bonus": 0,
-        "movement_speed_bonus_percent": 40
+        "movement_speed_bonus_percent": 40,
+        "offer_retired": true,
+        "transport_speed_offer_removed": true
       },
       "target_units": [
         42,
@@ -36090,10 +36095,12 @@
         "type": "rework_v5",
         "ordinal": 115,
         "source_id": "95731e09-a96a-5723-a329-ef3a8bdda706",
-        "qa_revision": 2026102265,
+        "qa_revision": 2026102490,
         "benefit_power_quarters": 8,
         "transport_capacity_bonus": 0,
-        "movement_speed_bonus_percent": 40
+        "movement_speed_bonus_percent": 40,
+        "offer_retired": true,
+        "transport_speed_offer_removed": true
       },
       "target_units": [
         69
@@ -42570,7 +42577,7 @@
       "race": "terran",
       "rarity": "epic",
       "target": "과학선 이레디에이트",
-      "description": "아군 과학선의 이레디에이트가 기계 유닛에도 원래 방사선 피해를 줍니다. 방사선 연쇄와 함께 선택하면 확장 피해 반경도 적용됩니다.",
+      "description": "아군 과학선의 이레디에이트가 기계 유닛에도 원래 방사선 피해를 줍니다. 방사선 연쇄와 함께 선택하면 확장 피해 반경과 기계 적 전염도 적용됩니다.",
       "source_description": "아군 과학선의 이레디에이트가 기계 유닛에도 원래 방사선 피해를 줍니다. 방사선 연쇄와 함께 선택하면 확장 피해 반경도 적용됩니다. 원래 아군 피해를 유지하며 같은 방사선의 피해는 중복되지 않습니다.",
       "bit_index": 436,
       "category": "combat",
@@ -42590,8 +42597,9 @@
         "type": "rework_v5",
         "ordinal": 198,
         "source_id": "f2a0f5e9-54ab-5cf6-9876-d3b0d0af45ce",
-        "qa_revision": 2026102038,
-        "benefit_power_quarters": 4
+        "qa_revision": 2026102490,
+        "benefit_power_quarters": 4,
+        "mechanical_chain_synergy": true
       },
       "target_units": [
         9,

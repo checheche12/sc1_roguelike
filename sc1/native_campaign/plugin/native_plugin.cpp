@@ -1247,6 +1247,8 @@ void regenerate_waves(U32 second) {
     });
 }
 void __cdecl owner_kill_hook(bw::Unit* u,UnitFn original) noexcept {
+    if(g.active && valid_unit(u) && (u->flags&0x40u) && valid_unit(u->related) && u->related->unit_id==125)
+        log_event("Bunker passenger death: owner=%u unit=%u type=%u bunker=%u bunker_hp_q8=%d passenger_hp_q8=%d",U32(u->player),U32(u-g.units),U32(u->unit_id),U32(u->related-g.units),u->related->flingy.hitpoints,u->flingy.hitpoints);
     rework_economy_v5::before_kill(u);
     rework_combat_v5::death(u);rework_combat_v5::invalidate(u);
     rework_carrier_v5::forget(u);

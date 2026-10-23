@@ -170,6 +170,38 @@ inline void rework_projectile_counts_and_moving_orders(){
     pulse(100);CHECK(multi_fixture::shots.size()==1);CHECK(vulture->order==6&&vulture->order_target.x==saved.x&&vulture->order_target.y==saved.y&&vulture->order_target.unit==nullptr);pulse(101);CHECK(multi_fixture::shots.size()==1);
     vulture->lockdown_timer=1;pulse(200);CHECK(multi_fixture::shots.size()==1);finish();
 }
+inline void qa90_bunker_passengers_survive_external_fragment_damage(){
+    using namespace rework_fixture;
+    for(U32 carrier_type:{125u,11u,42u,69u}){
+        begin({48});talent_power::enabled=true;
+        rework_cargo_v5::reset();CHECK(rework_cargo_v5::bind());
+        rework_cargo_v5::native_unload_all=rework_cargo_tests::unload_all;
+        rework_cargo_v5::native_detach=rework_cargo_tests::detach;
+        rework_cargo_tests::blocked_unload=false;rework_cargo_tests::death_calls={};
+        auto source=unit(2,1,100,100),carrier=unit(carrier_type,6,160,100);
+        std::array<bw::Unit*,4> passengers{};
+        for(U32 i=0;i<4;i++){
+            // Real loaded units live on the hidden list at the carrier center.
+            auto p=add(i%2 ? 1u:0u,6,160,100,40*256,true);passengers[i]=p;
+            p->flingy.sprite=reinterpret_cast<void*>(1);p->flags=1u|0x40u|(carrier_type==125?0x20u:0u);
+            p->related=carrier;p->order=5;p->energy=25*256;
+            carrier->loaded_units[i]=static_cast<std::uint16_t>(rework_cargo_v5::cargo.identity(p));
+        }
+        auto outside=unit(0,6,176,100);const auto before=outside->flingy.hitpoints;
+        for(U32 n=0;n<4;n++)rework_combat_v5::ordinary_hit(source,carrier,20*256,4,false);
+        for(auto p:passengers)CHECK(p->flingy.hitpoints==40*256 && p->related==carrier && p->energy==25*256);
+        CHECK(outside->flingy.hitpoints<before); // The actual fragment effect ran.
+        if(carrier_type==125){
+            owner_kill_hook(carrier,rework_cargo_tests::native_kill);
+            for(auto p:passengers)CHECK(p->flingy.hitpoints==40*256 && p->order && !p->related && !(p->flags&0x60u));
+        }
+        // Boarding protection ends when the same unit has left the carrier.
+        auto p=passengers[0];p->related=nullptr;p->flags&=~0x60u;
+        auto targets=rework_combat_v5::around(160,100,24,carrier,64);
+        CHECK(std::find(targets.begin(),targets.end(),p)!=targets.end());
+        finish();
+    }
+}
 inline void rework_emp_storm_and_armor_semantics(){
     using namespace rework_fixture;begin({62});auto caster=unit(9,1,100,100),target=unit(68,6,120,100);target->energy=200*256;target->shields=200*256;
     auto b=bullet(caster,target,33);{rework_combat_v5::MissileScope scope(b);target->energy=0;target->shields=0;}CHECK(target->flingy.hitpoints==256000-100*256);
@@ -440,7 +472,7 @@ inline void rework_spell_recast_native_timer_write_witness(){
 }
 inline void rework_native_upgrade_storage_and_shield_beneficiaries();
 #include "qa87_valkyrie_host_tests.h"
-inline void run_rework_combat_v5_groups(){qa87_valkyrie_mobile_acquires_one_target_and_shared_cycle();qa87_valkyrie_unlocked_ground_air_and_eight_native_missiles();qa87_valkyrie_stock_isolation_and_script_validation();qa87_valkyrie_death_capture_disable_and_no_repeat();rework_half_armor_native_health_callback();rework_ghost_zero_armor_five_seconds();rework_infantry_percentage_damage();rework_stats_and_repeatable_fractional();rework_medic_actual_pulses_and_lifecycle();rework_projectile_counts_and_moving_orders();rework_emp_storm_and_armor_semantics();rework_mobile_siege_burrow_and_ownership();rework_native_area_replay_and_restoration();rework_matrix_reserve_and_energy_overflow();rework_feedback_targeting_and_spell_costs();rework_acid_twelve_ground_lifecycle_and_native_hit();rework_hallucination_mind_chain_and_native_orders();rework_split_bounce_and_dying_ammunition();rework_medic_rate_network_emergency_and_stim();rework_nuclear_warning_morph_once_and_reset();rework_native_fields_owner_and_air_rules();rework_actual_iscript_layer_cfg_and_stat_weapons();rework_idle_melee_finishes_native_attack_animation();rework_relocation_jump_fixed_recall_and_native_placement();rework_lethal_plague_chain_irradiate_and_brood_count();rework_storm_multiple_centers_and_consume_real_cap();rework_native_script_source_scope_restore();rework_goliath_body_weapon_and_ground_suicide_guards();rework_synthetic_native_weapon_factors();rework_bc_dual_triple_counts_once_per_layer();rework_dead_caster_spell_scalars_durations_and_yamato();rework_spell_recast_native_timer_write_witness();rework_native_upgrade_storage_and_shield_beneficiaries();}
+inline void run_rework_combat_v5_groups(){qa90_bunker_passengers_survive_external_fragment_damage();qa87_valkyrie_mobile_acquires_one_target_and_shared_cycle();qa87_valkyrie_unlocked_ground_air_and_eight_native_missiles();qa87_valkyrie_stock_isolation_and_script_validation();qa87_valkyrie_death_capture_disable_and_no_repeat();rework_half_armor_native_health_callback();rework_ghost_zero_armor_five_seconds();rework_infantry_percentage_damage();rework_stats_and_repeatable_fractional();rework_medic_actual_pulses_and_lifecycle();rework_projectile_counts_and_moving_orders();rework_emp_storm_and_armor_semantics();rework_mobile_siege_burrow_and_ownership();rework_native_area_replay_and_restoration();rework_matrix_reserve_and_energy_overflow();rework_feedback_targeting_and_spell_costs();rework_acid_twelve_ground_lifecycle_and_native_hit();rework_hallucination_mind_chain_and_native_orders();rework_split_bounce_and_dying_ammunition();rework_medic_rate_network_emergency_and_stim();rework_nuclear_warning_morph_once_and_reset();rework_native_fields_owner_and_air_rules();rework_actual_iscript_layer_cfg_and_stat_weapons();rework_idle_melee_finishes_native_attack_animation();rework_relocation_jump_fixed_recall_and_native_placement();rework_lethal_plague_chain_irradiate_and_brood_count();rework_storm_multiple_centers_and_consume_real_cap();rework_native_script_source_scope_restore();rework_goliath_body_weapon_and_ground_suicide_guards();rework_synthetic_native_weapon_factors();rework_bc_dual_triple_counts_once_per_layer();rework_dead_caster_spell_scalars_durations_and_yamato();rework_spell_recast_native_timer_write_witness();rework_native_upgrade_storage_and_shield_beneficiaries();}
 inline void rework_native_upgrade_storage_and_shield_beneficiaries(){
     using namespace rework_fixture;begin({113});install();
     std::array<U8,61*12> levels{};samase::ExtendedArray native_levels{levels.data(),levels.data()+levels.size(),0,0};g.extended=&native_levels;g.extended_count=1;
@@ -465,5 +497,5 @@ inline void rework_native_upgrade_storage_and_shield_beneficiaries(){
     CHECK(rework_combat_v5::upgrade_level(1,15)==7);{rework_combat_v5::DamageScope scope(target,attacker,0,1,damage);CHECK(game.upgrade_level_sc[1][15]==8);}CHECK(game.upgrade_level_sc[1][15]==7);
     finish();
 }
-inline constexpr std::size_t rework_combat_v5_group_count=33;
+inline constexpr std::size_t rework_combat_v5_group_count=34;
 }

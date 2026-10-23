@@ -17,7 +17,9 @@ def retired(item):
 
 def unit_offer_removed(item):
     effect=item.get('effect',{})
-    return effect.get('unit_manual_removed',False) or effect.get('unit_trait_removed',False)
+    return (effect.get('unit_manual_removed',False) or effect.get('unit_trait_removed',False)
+            or effect.get('transport_speed_offer_removed',False)
+            or (item.get('rework_revision')==5 and item.get('effect_ordinal') in (33,74,115)))
 
 def option_has_retired(item,catalog):
     removed=lambda x:retired(x) or unit_offer_removed(x)
@@ -214,7 +216,7 @@ def candidates(catalog,mission,phase,owned,rng,*,recent_manuals=(),rank_counts=N
         return progression.item_eligible(item,identity,'talent') and (not targets or bool(targets&available))
     rank_counts=rank_counts or {}
     for item in catalog['talents']:
-        if retired(item) or item.get("effect",{}).get("offer_retired"):continue
+        if retired(item) or unit_offer_removed(item) or item.get("effect",{}).get("offer_retired"):continue
         if rank_policy.exhausted(item,owned,rank_counts,catalog):continue
         if item.get('rework_revision')!=5:continue
         if opening:

@@ -371,7 +371,9 @@ inline std::vector<bw::Unit*> around(int x,int y,U32 radius,bw::Unit* excluded,U
     ++frame_profile::nearby_queries;
     if(!limit)return result;
     result.reserve(std::min<std::size_t>(g.units_count,128));
-    living_units([&](bw::Unit* u){if(u==excluded || !eligible(u) || (enemy ? !is_enemy(u->player) : u->player!=player_owner()) ||
+    // living_units also traverses the hidden list. Loaded passengers share the
+    // carrier's position, but external area effects must not reach inside it.
+    living_units([&](bw::Unit* u){if(u==excluded || !eligible(u) || (u->flags&0x40u) || (enemy ? !is_enemy(u->player) : u->player!=player_owner()) ||
         (layer>=0 && air(u)!=(layer!=0)) || (bio && !organic(u)) || dist(x,y,u->flingy.position.x,u->flingy.position.y)>std::uint64_t(radius)*radius)return;result.push_back(u);});
     frame_profile::nearby_matches+=result.size();
     const auto nearer=[&](bw::Unit* a,bw::Unit* b){const auto da=dist(x,y,a->flingy.position.x,a->flingy.position.y),db=dist(x,y,b->flingy.position.x,b->flingy.position.y);return da==db ? a<b : da<db;};

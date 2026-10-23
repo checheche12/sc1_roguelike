@@ -1,6 +1,6 @@
 #pragma once
 namespace host_test {
-inline constexpr std::size_t qa38_group_count=15;
+inline constexpr std::size_t qa38_group_count=16;
 namespace qa38_fixture {
 inline void __cdecl timer(bw::Unit* u){if(u->death_timer)--u->death_timer;}
 inline void __cdecl recall(bw::Unit* u){
@@ -131,6 +131,28 @@ inline void qa38_irradiation_mechanical_damage_and_six_tile_infection(){
  auto ring=unit(37,6,1180,1000),outside=unit(37,6,1300,1000);rework_combat_v5::irradiation::attach(host,vessel,1);rework_combat_v5::death(host);CHECK(ring->irradiate_timer&& !outside->irradiate_timer);
  combat_effects::original_weapon_damage=saved;qa9_fixture::end();
 }
+inline void qa90_irradiation_chain_combines_mechanical_targets(){
+ using namespace rework_fixture;
+ for(bool combined:{false,true}){
+  qa9_fixture::begin({61});if(combined)ranks[198]=1;
+  auto vessel=unit(9,1,500,500,true),host=unit(37,6,1000,1000);
+  auto machine=unit(3,6,1100,1000),ally=unit(3,1,1100,1000),building=unit(125,6,1100,1000),loaded=unit(3,6,1100,1000),distant=unit(3,6,1400,1000);
+  loaded->flags|=0x40u;
+  host->irradiate_timer=75;host->irradiate_player=1;host->irradiated_by=vessel;
+  rework_combat_v5::irradiation::attach(host,vessel,1);rework_combat_v5::death(host);
+  CHECK(bool(machine->irradiate_timer)==combined);
+  CHECK(!ally->irradiate_timer&&!building->irradiate_timer&&!loaded->irradiate_timer&&!distant->irradiate_timer);
+  if(combined){
+   host->flingy.hitpoints=0;host->order=0;
+   auto next=unit(8,6,1200,1000,true),organic=unit(38,6,1200,1000);
+   ++game.frame_count;rework_combat_v5::death(machine);
+   CHECK(next->irradiate_timer==75&&organic->irradiate_timer==75);
+   CHECK(next->irradiated_by==vessel&&next->irradiate_player==1);
+   CHECK(rework_combat_v5::irradiation::nodes[next-g.units].generation==2);
+  }
+  qa9_fixture::end();
+ }
+}
 inline void qa38_native_original_energy_cell_precheck_deduction_and_nested_owners(){
  using namespace qa12_fixture;begin(64,false);g.applied=false;CHECK(apply_snapshot(nullptr,talent(64)));
  auto memory=static_cast<U8*>(VirtualAlloc(nullptr,0x1000000,MEM_COMMIT|MEM_RESERVE,PAGE_READWRITE));CHECK(memory);
@@ -187,7 +209,7 @@ inline void qa38_new_air_range_acquisition_and_flame_launch(){
   ranks[59]=ranks[138]=0;CHECK(rework_combat_v5::acquisition_range(actor,3)==3);qa9_fixture::end();
  }
 }
-inline void run_qa38_groups(){
+inline void run_qa38_groups(){qa90_irradiation_chain_combines_mechanical_targets();
  qa38_every_new_primary_bonus_uses_real_damage_and_ui();qa38_every_secondary_rule_has_cadence_limit_and_no_recursion();
  qa38_worker_and_overlord_auras_heal_once_without_stacking();qa38_transport_and_observer_buffs_apply_to_actual_hits_and_expire();
  qa38_broodling_death_expiry_once_and_birth_resets_token();qa38_recall_buff_first_cast_refreshes_and_expires();

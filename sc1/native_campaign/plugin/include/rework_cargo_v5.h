@@ -74,6 +74,7 @@ inline bool transport_lifecycle(const bw::Unit* carrier) noexcept {
 }
 template<class Callback> inline void before_death(bw::Unit* carrier,Callback callback) {
  if(g.active && valid_unit(carrier) && carrier->unit_id==125 && !lifecycle_depth && bind() && native_unload_all && native_detach){
+  const auto before=cargo.count(carrier);U32 forced=0;
   ++lifecycle_depth;native_unload_all(carrier);
   // Timers, disables and blocked terrain can reject stock UnloadAll. Only
   // detach passengers resolved from the physical, generation-tagged slots.
@@ -91,8 +92,10 @@ template<class Callback> inline void before_death(bw::Unit* carrier,Callback cal
    // Native ShowUnit/list/collision/packed-handle cleanup preserves the same
    // unit, HP and energy. It never spawns replacement occupants.
    native_detach(p,0);
+   if(!p->related)++forced;
    if(g.order && !p->related)g.order(p,1,U32(placed.x),U32(placed.y),nullptr,228);
   }
+  log_event("Bunker ejection: owner=%u unit=%u generation=%u occupants=%zu forced=%u remaining=%zu hp_q8=%d",U32(carrier->player),U32(carrier-g.units),U32(carrier->minor_unique_index),before,forced,cargo.count(carrier),carrier->flingy.hitpoints);
   --lifecycle_depth;return;
  }
  if(!g.active || !transport_lifecycle(carrier) || !bind() || lifecycle_depth || !cargo.count(carrier))return;
