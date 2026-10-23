@@ -2,6 +2,7 @@
 // Native upgrade/tech IDs and speed rules: pinned bw_dat Game and OpenBW
 // references in analysis/runtime_rework_20261016/primary_sources. No DAT edits.
 #include "rework_upgrade_storage.h"
+namespace rework_waves {U32 upgrade_second(U32 elapsed) noexcept;}
 namespace enemy_progression {
 struct Unlock {U32 minute,id;};
 inline constexpr Unlock upgrades[]={
@@ -79,7 +80,7 @@ inline void step(bool ready,bool blocked,bool goal) {
  const auto delta=frame>=last_frame?std::min(24u,frame-last_frame):0;last_frame=frame;
  if(!ready||blocked||goal)return;
  active_ticks+=delta;
- const auto now=second();
+ const auto now=rework_waves::upgrade_second(second());
  if(now!=last_second){
   last_second=now;const U32 level=now>=840?3u:now>=600?2u:now>=360?1u:0u;
   bool combat_changed=false,special_changed=false;
@@ -89,7 +90,7 @@ inline void step(bool ready,bool blocked,bool goal) {
    for(const auto& unlock:technologies)if(now>=unlock.minute*60){special_changed|=!researched(owner,unlock.id);research(owner,unlock.id);}
   }
   const U32 stage=now<360?0:std::min(6u,(now-360)/120+1);
-  if(stage>announced){announced=stage;log_event("Enemy technology stage=%u active_seconds=%u",stage,now);if(combat_changed)message("적의 공방 업그레이드가 완료되었습니다.");if(special_changed)message("적의 특수 기술 중 일부가 강화되었습니다.");}
+  if(stage>announced){announced=stage;log_event("Enemy technology stage=%u active_seconds=%u adjusted_seconds=%u",stage,second(),now);if(combat_changed)message("적의 공방 업그레이드가 완료되었습니다.");if(special_changed)message("적의 특수 기술 중 일부가 강화되었습니다.");}
  }
  living_units([](bw::Unit* u){refresh_motion(u);});
 }

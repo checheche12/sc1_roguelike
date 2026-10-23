@@ -64,7 +64,18 @@ inline void reset() noexcept {reset_dispatch();reset_spells();reset_islands();if
 inline bool enabled() noexcept {return g.mission && !g.mission->no_production && (current=policy::profile(g.mission->mission_id)) && current->enabled;}
 inline U32 opening_second() noexcept {
  if(!current)return 0;
- return current->mission==404?std::max(current->first,timeline.ready_at+current->base_grace):current->first;
+ const auto grace=current->starting_hq&&current->mission!=101?0u:current->base_grace;
+ return std::max(current->first,timeline.ready_at+grace);
+}
+// Normalize the technology schedule to the original four-minute opening.
+// The first usable economy latches ready_at; later unit losses never move it.
+inline U32 upgrade_second(U32 elapsed) noexcept {
+ const auto profile=g.mission?policy::profile(g.mission->mission_id):nullptr;
+ if(!profile||!profile->enabled)return elapsed;
+ if(!timeline.home||current!=profile)return 0;
+ const auto opening=opening_second();
+ if(opening>=240){const auto delay=opening-240;return elapsed>delay?elapsed-delay:0u;}
+ return U32(std::min<std::uint64_t>(0xffffffffu,std::uint64_t(elapsed)+240-opening));
 }
 inline bool usable_home() {
  bool hq=false,worker=false;

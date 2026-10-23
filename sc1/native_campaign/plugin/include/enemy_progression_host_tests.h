@@ -2,8 +2,33 @@
 namespace host_test {
 namespace enemy_progression_tests {
 namespace ep=enemy_progression;
-inline void begin(){rework_wave_tests::begin(101);ep::reset();game.frame_count=0;ep::step(true,false,false);}
-inline void to(U32 second){while(ep::second()<second){game.frame_count+=24;ep::step(true,false,false);}}
+inline void begin(U32 mission=101,bool latched=true){rework_wave_tests::begin(mission);ep::reset();rework_waves::timeline.home=latched;game.frame_count=0;ep::step(true,false,false);}
+inline void to(U32 second){while(rework_waves::upgrade_second(ep::second())<second){game.frame_count+=24;ep::step(true,false,false);}}
+inline void every_opening_shifts_upgrades_and_waits_for_late_settlement(){
+ for(const auto& profile:sc1_native::rework_wave::kProfiles){if(!profile.enabled)continue;
+  begin(profile.mission);const auto first=rework_waves::opening_second();
+  for(U32 stage=0;stage<6;++stage){
+   const U32 boundary=360+stage*120,combat=stage/2+1;
+   to(boundary-1);CHECK(ep::second()==first+120+stage*120-1);
+   const U32 previous=stage?((stage-1)/2+1):0;
+   CHECK(rework_upgrade_storage::level(4,0)==previous);
+   for(const auto& u:ep::upgrades)if(u.minute*60==boundary)CHECK(!rework_upgrade_storage::level(4,u.id));
+   for(const auto& t:ep::technologies)if(t.minute*60==boundary)CHECK(!ep::researched(4,t.id));
+   to(boundary);CHECK(ep::second()==first+120+stage*120&&rework_upgrade_storage::level(4,0)==combat);
+   for(const auto& u:ep::upgrades)if(u.minute*60==boundary)CHECK(rework_upgrade_storage::level(4,u.id)==1);
+   for(const auto& t:ep::technologies)if(t.minute*60==boundary)CHECK(ep::researched(4,t.id));
+  }
+  std::printf("QA83_UPGRADE_ALIGNMENT mission=%u first=%u combat1=%u combat2=%u combat3=%u technology_last=%u\n",profile.mission,first,first+120,first+360,first+600,first+720);
+ }
+ begin(309,false);
+ for(U32 second=1;second<=900;++second){game.frame_count=second*24;ep::step(true,false,false);CHECK(!rework_upgrade_storage::level(4,0));}
+ rework_waves::timeline.home=true;rework_waves::timeline.ready_at=900;
+ const auto opening=rework_waves::opening_second();CHECK(opening==1140);
+ to(359);CHECK(ep::second()==1259&&!rework_upgrade_storage::level(4,0));
+ // Loss of the economy after activation must not rewind the technology clock.
+ auto hq=add(154,player_owner(),500,500);hq->flingy.hitpoints=0;
+ to(360);CHECK(rework_upgrade_storage::level(4,0)==1&&rework_waves::opening_second()==opening);
+}
 inline void six_exact_technology_boundaries(){
  begin();to(359);for(U32 id=0;id<61;id++)CHECK(!rework_upgrade_storage::level(4,id));
  to(360);for(U32 id=0;id<16;id++)CHECK(rework_upgrade_storage::level(4,id)==1);
@@ -102,6 +127,6 @@ inline void support_spells_consume_and_native_target_denial(){
  begin();ep::research(4,27);auto archon=caster(63);target(12,1940,1600,250);rework_waves::native_tech_target=deny;rework_waves::auto_spell(archon,*rework_curses::identity(archon));CHECK(archon->order==14);rework_waves::native_tech_target=allow_tech;
 }
 }
-inline constexpr std::size_t enemy_progression_group_count=10;
-inline void run_enemy_progression_groups(){using namespace enemy_progression_tests;six_exact_technology_boundaries();owner_isolation_and_original_levels();extended_storage_bounds_and_real_native_layout();clock_pauses_selection_goal_and_session_reset();native_speed_flags_flingy_and_late_births();overlord_escort_speed_and_identity_restoration();research_energy_visibility_native_guards();all_spell_roles_use_real_order_numbers();area_reservations_friendly_fire_and_protected_targets();support_spells_consume_and_native_target_denial();}
+inline constexpr std::size_t enemy_progression_group_count=11;
+inline void run_enemy_progression_groups(){using namespace enemy_progression_tests;every_opening_shifts_upgrades_and_waits_for_late_settlement();six_exact_technology_boundaries();owner_isolation_and_original_levels();extended_storage_bounds_and_real_native_layout();clock_pauses_selection_goal_and_session_reset();native_speed_flags_flingy_and_late_births();overlord_escort_speed_and_identity_restoration();research_energy_visibility_native_guards();all_spell_roles_use_real_order_numbers();area_reservations_friendly_fire_and_protected_targets();support_spells_consume_and_native_target_denial();}
 }

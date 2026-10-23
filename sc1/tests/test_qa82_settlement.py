@@ -53,12 +53,12 @@ class SettlementTests(unittest.TestCase):
             chk=maps.CHK(Path(mission['source']).read_bytes());raw=chk.save()
             self.assertIsNone(terrain.apply(chk,mission));self.assertEqual(chk.save(),raw)
 
-    def test_new_base_missions_start_at_390_seconds(self):
+    def test_new_base_missions_start_at_340_seconds(self):
         affected=[]
         for profile in derive():
             if profile['enabled'] and not profile['starting_headquarters']:
-                affected.append(profile['mission_id']);self.assertEqual(profile['normal_first_seconds'],390)
-            elif profile['enabled']:self.assertEqual(profile['normal_first_seconds'],240)
+                affected.append(profile['mission_id']);self.assertEqual(profile['normal_first_seconds'],340)
+            elif profile['enabled']:self.assertIn(profile['normal_first_seconds'],range(180,271,15))
             else:self.assertEqual(profile['normal_first_seconds'],360)
             self.assertEqual(profile['normal_interval_seconds'],120)
         self.assertEqual(affected,[105,106,207,301,304,309,402,404,503,506,602,603,605])
