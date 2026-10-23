@@ -55,12 +55,13 @@ inline constexpr U32 graded_amount(U32 amount,U32 grade) noexcept {
 }
 inline constexpr U32 detector(U32 race) noexcept {return race==0?42u:race==2?84u:9u;}
 inline U32 scaled_count(U32 amount,U32 stacks) noexcept {return curse_scaling::scale(amount,curse_scaling::bonus(stacks,20,4));}
-inline constexpr U32 normal_budget(U32 ordinal,U32 mission=0) noexcept {
- const auto full=((mission==404?16u+4u*std::min(ordinal,4u):32u+8u*std::min(ordinal,12u))*6u)/5u;
- // The first army is a warning: half the base budget, rounded up.
- // Reinforcement curses still scale this budget in the normal dispatch path.
- return ordinal?full:(full+1u)/2u;
-}
+inline constexpr U32 normal_budget(U32 ordinal,U32 mission=0) noexcept {return ((mission==404?16u+4u*std::min(ordinal,4u):32u+8u*std::min(ordinal,12u))*6u)/5u;}
+// First normal wave remains full. Later waves retain curse scaling, followed
+// by a10%,15%,then20% volume reduction. Ordinals are zero based.
+inline constexpr U32 wave_percent(U32 ordinal) noexcept {return ordinal==0?100u:ordinal==1?90u:ordinal==2?85u:80u;}
+inline constexpr U32 wave_amount(U32 amount,U32 ordinal) noexcept {return U32((std::uint64_t(amount)*wave_percent(ordinal)+50u)/100u);}
+inline U32 normal_dispatch_budget(U32 ordinal,U32 mission,U32 stacks=0) noexcept {return wave_amount(scaled_count(normal_budget(ordinal,mission),stacks),ordinal);}
+inline constexpr U32 interval_after(U32 ordinal,U32 base=120) noexcept {return base+(ordinal%2?30u:0u);}
 inline constexpr U32 live_supply_cap(U32) noexcept {return 480u;}
 inline U32 raid_count(U32 stacks,U32 reinforcements=0) noexcept {stacks=std::min(stacks,3u);return scaled_count(stacks==0?0u:stacks==1?2u:stacks==2?6u:10u,reinforcements);}
 inline U32 stacked_count(U32 amount,U32 stacks) noexcept {return U32(std::min<std::uint64_t>(480u,std::uint64_t(amount)*stacks));}
@@ -96,7 +97,7 @@ struct Timeline {
  void mark_delivered(U32 slot) noexcept {if(slot>=24 && slot<=49)delivered[slot-24]=ordinal+1;}
  bool due(const Profile& p) const noexcept {return p.enabled && home && next && second()+24>=next && !departure_at;}
  void warn() noexcept {warning_at=second();departure_at=second()+24;}
- void finished(const Profile& p) noexcept {++ordinal;next=second()+p.interval;warning_at=departure_at=0;}
+ void finished(const Profile& p) noexcept {const auto interval=interval_after(ordinal,p.interval);++ordinal;next=second()+interval;warning_at=departure_at=0;}
  U32 countdown(const Profile& p) const noexcept {if(!p.enabled || !home)return 0;const auto due=departure_at?departure_at:next;return due>second()?due-second():0;}
 };
 } }

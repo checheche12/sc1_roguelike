@@ -1231,6 +1231,7 @@ void campaign_waves(U32 second,bool ready,bool goal) {
 }
 #include "include/rework_wave_native.h"
 #include "include/enemy_detection.h"
+#include "include/base_defenses_runtime.h"
 void regenerate_waves(U32 second) {
     if(g.applied)update_diversity();
     if(!g.applied || second==g.last_regen_second)return;g.last_regen_second=second;
@@ -1378,7 +1379,7 @@ void abandon_session() noexcept {
     g.campaign_clear_shown=false;
     area_visuals::reset();campaign_visibility::reset();yamato_cost_ui::reset();spell_energy_check::reset();siege_move_ui::reset();rework_energy_ui::reset();rework_economy_ui::reset();rework_shield_ui_v5::reset();enemy_progression::reset();rework_waves::reset();rework_combat_v5::reset();rework_economy_v5::reset();rework_cargo_v5::reset();rework_carrier_v5::reset();
     max_hp_cache::reset();
-    wave_targeting::reset();enemy_detection::reset();
+    wave_targeting::reset();enemy_detection::reset();base_defenses::reset();
     movement_effects::reset();combat_effects::reset_melee();g.objective_units.clear();
     multi_target::reset();progress_dialog={};
     // Clear only our dialog state; choice UI owns no game units.
@@ -1541,6 +1542,7 @@ void __cdecl frame() noexcept {
             else if(g.mission->mission_id==408)message("추가 승리 조건: 사원 활성화 후 적 기지의 모든 건물을 파괴하면 남은 시간과 관계없이 승리합니다.");
             g.survival_hint_shown=true;
         }
+        base_defenses::step(ready,!after_dialog,counter(kGoalCounter));
         rework_waves::tick(ready,!after_dialog,counter(kGoalCounter));regenerate_waves(game->elapsed_seconds);
         frame_profile::mark(5);
         wave_targeting::step(ready,counter(kGoalCounter));area_visuals::publish();

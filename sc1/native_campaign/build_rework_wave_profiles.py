@@ -23,12 +23,12 @@ BUILDINGS=HQ|{107,108,109,110,111,112,113,114,115,116,117,118,120,122,123,124,12
 LATE_SUPPORT={109,110,209,210,309,310,609,610}
 
 def opening_seconds(headquarters,buildings,workers):
-    """Equal infrastructure/economy weight, in fifteen-second steps."""
+    """Equal infrastructure/economy weight, in ten-second steps."""
     # Each extra HQ counts like three support buildings. Cap both components
     # independently so a large base cannot hide a shortage of workers.
     base_steps=min(3,max(0,(max(0,headquarters-1)*3+max(0,buildings-headquarters))//3))
     worker_steps=min(3,max(0,(workers-6)//2))
-    return 270-15*(base_steps+worker_steps)
+    return 300-10*(base_steps+worker_steps)
 
 def starting_strength(placed,row):
     owned=[p for p in placed if p[3]==row['owner']]
@@ -67,12 +67,12 @@ def derive():
                     uid=struct.unpack_from('<H',a,24)[0]
                     if uid in {u for ids in HEROES.values() for u in ids}: references.add(uid);evidence.append({'trigger':ti,'action':ai,'type':a[26],'unit':uid})
         blocked=[slot for slot,ids in HEROES.items() if references.intersection(ids)]
-        # New/rescued-base missions first depart no earlier than5min40sec.
+        # New/rescued-base missions first depart no earlier than6min.
         # Retain the economy-acquisition grace if the player settles later.
-        first=360 if row['no_production'] else opening_seconds(strength['headquarters'],strength['buildings'],strength['effective_workers']) if own_hq else 340
+        first=360 if row['no_production'] else opening_seconds(strength['headquarters'],strength['buildings'],strength['effective_workers']) if own_hq else 360
         mode='disabled' if row['no_production'] else 'defense' if row['mission_id'] in DEFENSE else 'starting_base' if own_hq else 'build_or_rescue_base'
         profiles.append(dict(mission_id=row['mission_id'],label=row['label'],enabled=not row['no_production'],mode=mode,
-          starting_headquarters=own_hq,starting_strength=strength,normal_first_seconds=first,normal_interval_seconds=120,
+          starting_headquarters=own_hq,starting_strength=strength,normal_first_seconds=first,normal_interval_seconds=120,normal_alternate_interval_seconds=150,
           new_base_grace_seconds=60 if row['mission_id']==101 else 240 if not own_hq else 180,
           rare_unlock_seconds=600 if row['mission_id'] in DEFENSE else 540 if not own_hq else 480,
           epic_unlock_seconds=720 if row['mission_id'] in DEFENSE else 660 if not own_hq else 600,
@@ -82,15 +82,15 @@ def derive():
           hero_referenced_types=sorted(references),hero_trigger_references=evidence,
           original_chk_sha256=hashlib.sha256(raw).hexdigest(),original_triggers_changed=False))
         if row['mission_id']==404:
-            # The latest settling grace is5min40sec after a working economy.
-            profiles[-1].update(normal_first_seconds=340,normal_interval_seconds=120,
-                new_base_grace_seconds=340)
+            # The latest settling grace is6min after a working economy.
+            profiles[-1].update(normal_first_seconds=360,normal_interval_seconds=120,
+                new_base_grace_seconds=360)
     return profiles
 
 def build(*,write_coverage=True):
     rows=derive()
     record={'schema_version':5,'source':'original CHK metadata + latest user timing overrides','profile_count':len(rows),
-      'policy':'No-production disables every added wave and timer. With an initial HQ, first departure180..270sec by starting playable buildings/HQs and workers including map/support additions; equal capped components in15sec steps. Without an initial HQ, minimum340sec with readiness-relative grace; Uraj also uses340sec after its economy becomes usable. Then120sec interval. Enemy upgrades/technology shift by the actual opening departure minus the240sec reference. Initial state is fixed; later base/worker loss never reschedules waves.',
+      'policy':'No-production disables every added wave and timer. With an initial HQ, first departure240..300sec by starting playable buildings/HQs and workers including map/support additions; equal capped components in10sec steps. Without an initial HQ, minimum360sec with readiness-relative grace; Uraj also uses360sec after its economy becomes usable. Subsequent normal intervals alternate120/150sec. Wave volume after curse scaling is100/90/85/80% for first/second/third/fourth-and-later normal waves; attached special rosters and auxiliary waves use the current normal ordinal. Enemy upgrades/technology shift by the actual opening departure minus the240sec reference. Initial state is fixed; later base/worker loss never reschedules waves.',
       'cutscene_guard':'Simulation-frame clock and modal guard; scripted original assault guard uses nearby unmarked hostile combatants.',
       'hero_guard':'Conservative exclusion on any placed or original trigger-referenced hero type, independent of owner. Original hero DAT/triggers remain untouched.',
       'profiles':rows}

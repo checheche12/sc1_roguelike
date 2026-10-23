@@ -13,14 +13,14 @@ class OpeningTimingTests(unittest.TestCase):
             for buildings in range(hq,45):
                 for workers in range(25):
                     t=waves.opening_seconds(hq,buildings,workers)
-                    self.assertIn(t,range(180,271,15))
+                    self.assertIn(t,range(240,301,10))
                     self.assertLessEqual(waves.opening_seconds(hq,buildings+1,workers),t)
                     self.assertLessEqual(waves.opening_seconds(hq+1,buildings+1,workers),t)
                     self.assertLessEqual(waves.opening_seconds(hq,buildings,workers+1),t)
-        self.assertEqual(waves.opening_seconds(1,1,4),270)
-        self.assertEqual(waves.opening_seconds(2,10,12),180)
-        self.assertEqual(waves.opening_seconds(1,40,4),225)
-        self.assertEqual(waves.opening_seconds(1,1,30),225)
+        self.assertEqual(waves.opening_seconds(1,1,4),300)
+        self.assertEqual(waves.opening_seconds(2,10,12),240)
+        self.assertEqual(waves.opening_seconds(1,40,4),270)
+        self.assertEqual(waves.opening_seconds(1,1,30),270)
 
     def test_only_owned_playable_assets_count(self):
         row=dict(mission_id=302,owner=7,no_production=False)
@@ -54,8 +54,8 @@ class OpeningTimingTests(unittest.TestCase):
                 counts['starting']+=1;s=p['starting_strength']
                 self.assertEqual(p['normal_first_seconds'],waves.opening_seconds(s['headquarters'],s['buildings'],s['effective_workers']))
             else:
-                counts['settlement']+=1;self.assertEqual(p['normal_first_seconds'],340)
-            self.assertEqual(p['normal_interval_seconds'],120)
+                counts['settlement']+=1;self.assertEqual(p['normal_first_seconds'],360)
+            self.assertEqual((p['normal_interval_seconds'],p['normal_alternate_interval_seconds']),(120,150))
             self.assertEqual((p['warning_seconds'],p['appearance_seconds']),(20,4))
         self.assertEqual(counts,dict(starting=41,settlement=13,disabled=9))
 
