@@ -1,0 +1,23 @@
+{
+  "version": "v2026.10.24-qa89",
+  "file": "SC1_Roguelike_QA89.zip",
+  "sha256": "e3ba9c6a38ee739a30721070cb3a6f68c08a9cc66727a65cd1f82977f857f095",
+  "bytes": 25034589,
+  "runtime_source_commit": "3631c069d085f8e0f900689140ccdd12ad797745",
+  "native_dll_sha256": "a7e4bf9a7cc032a03ad31d12ba6c624f8fc2cc8a217f8470c81d57d6ad103413",
+  "maps": 63,
+  "maps_changed": 0,
+  "base_release": "v2026.10.24-qa88",
+  "moving_fire": true,
+  "ground_damage_percent": 150,
+  "air_damage_percent": 100,
+  "missiles_per_volley": 8,
+  "first_shot_idle_transition_removed": true,
+  "uninterrupted_volley": true,
+  "valkyrie_manual_damage_per_missile_per_rank": 1,
+  "valkyrie_manual_max_damage_bonus": 4,
+  "attack_interval_reduction_percent_per_rank": 4.5,
+  "personal_database_included": false,
+  "actual_gameplay_verified": false,
+  "spider_mine_legend_removed": true
+}
