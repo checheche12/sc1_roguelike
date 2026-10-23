@@ -1,0 +1,30 @@
+{
+  "version": "v2026.10.23-qa82",
+  "file": "SC1_Roguelike_QA82_Final.zip",
+  "sha256": "96aca56983e89d1ed81c2145eb3cbefee2d733796b86be8373c7ea1398920c7c",
+  "bytes": 24942350,
+  "runtime_source_commit": "99249a359c0641fadb1f43ebe7dff4b480c95e1b",
+  "native_dll_sha256": "fd7e0f5a89ec5cda73a287f0f3099b38dbe04bef8388201a9c2811cc34b6510e",
+  "maps": 63,
+  "changed_maps": [
+    309
+  ],
+  "settlement_first_wave_seconds": 390,
+  "settlement_mission_count": 13,
+  "late_support_missions": [
+    109,
+    110,
+    209,
+    210,
+    309,
+    310,
+    609,
+    610
+  ],
+  "starting_minerals": 750,
+  "starting_gas": 750,
+  "starting_workers": 6,
+  "scarab_production_speed_multiplier": 1.5,
+  "personal_database_included": false,
+  "actual_gameplay_verified": false
+}
