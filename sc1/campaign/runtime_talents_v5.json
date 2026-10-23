@@ -37918,7 +37918,7 @@
       "id": "80b2b8c1-e93a-5a4e-b5b9-272c031fc75e",
       "name": "결전 갑충탄",
       "target": "리버 스캐럽",
-      "description": "리버의 스캐럽은 공격 피해가 150% 증가하며(원래의 2.5배), 생산 미네랄 비용이 0이 됩니다. 리버 이동 속도 +100%(기본의 2배).",
+      "description": "리버의 스캐럽은 공격 피해가 150% 증가하며(원래의 2.5배), 생산 미네랄 비용이 0이 됩니다. 갑충탄 생산 속도 +50%(1.5배). 리버 이동 속도 +100%(기본의 2배).",
       "trigger": "",
       "numbers": "",
       "notes": "재탐색 능력은 부여하지 않음.",
@@ -37941,7 +37941,7 @@
         "type": "rework_v5",
         "ordinal": 141,
         "source_id": "80b2b8c1-e93a-5a4e-b5b9-272c031fc75e",
-        "qa_revision": 2026102383,
+        "qa_revision": 2026102384,
         "benefit_power_quarters": 10,
         "rarity_promoted": true,
         "focus_legend": true,
@@ -37961,7 +37961,11 @@
         "reaver_move_speed_units": [
           81,
           83
-        ]
+        ],
+        "scarab_production_speed_bonus_percent": 50,
+        "scarab_production_speed_multiplier": 1.5,
+        "scarab_build_time_numerator": 2,
+        "scarab_build_time_denominator": 3
       },
       "target_units": [
         81,
@@ -62636,7 +62640,7 @@
           83,
           85
         ],
-        "mechanism": "two immediate native scarab82 explosions50% atneighbor centers before original ammo dies; no further splitting; QA61 owner Scarab unit85 mineral field40 zero after all discounts; build time and gas unchanged",
+        "mechanism": "two immediate native scarab82 explosions50% atneighbor centers before original ammo dies; no further splitting; QA61 owner Scarab unit85 mineral field40 zero after all discounts; gas unchanged; QA82 own Scarab build time ceil(2/3 of existing time), production speed+50%, composes with ammunition discount; unrelated units and other owners unchanged",
         "implementation": "native_combat_adapter",
         "adapter_parts_implemented_here": [
           "combat_movement_spell_stats"

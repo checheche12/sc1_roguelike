@@ -34,9 +34,9 @@ def derive():
                     uid=struct.unpack_from('<H',a,24)[0]
                     if uid in {u for ids in HEROES.values() for u in ids}: references.add(uid);evidence.append({'trigger':ti,'action':ai,'type':a[26],'unit':uid})
         blocked=[slot for slot,ids in HEROES.items() if references.intersection(ids)]
-        # User QA: ordinary first departure at4min. A map beginning with no
-        # owned HQ still waits for a working economy, then gets fresh grace.
-        first=360 if row['no_production'] else 240
+        # New/rescued-base missions first depart no earlier than6min30sec.
+        # Retain the economy-acquisition grace if the player settles later.
+        first=360 if row['no_production'] else 240 if own_hq else 390
         mode='disabled' if row['no_production'] else 'defense' if row['mission_id'] in DEFENSE else 'starting_base' if own_hq else 'build_or_rescue_base'
         profiles.append(dict(mission_id=row['mission_id'],label=row['label'],enabled=not row['no_production'],mode=mode,
           starting_headquarters=own_hq,normal_first_seconds=first,normal_interval_seconds=120,
@@ -49,16 +49,16 @@ def derive():
           hero_referenced_types=sorted(references),hero_trigger_references=evidence,
           original_chk_sha256=hashlib.sha256(raw).hexdigest(),original_triggers_changed=False))
         if row['mission_id']==404:
-            # Start six minutes after a completed Nexus/working economy,
-            # then repeat every two minutes. There is no ten-minute map floor.
-            profiles[-1].update(normal_first_seconds=360,normal_interval_seconds=120,
+            # Keep Uraj's six-minute economy grace with the common390sec
+            # mission floor. Later normal waves still repeat every two minutes.
+            profiles[-1].update(normal_first_seconds=390,normal_interval_seconds=120,
                 new_base_grace_seconds=360)
     return profiles
 
-def build():
+def build(*,write_coverage=True):
     rows=derive()
     record={'schema_version':5,'source':'original CHK metadata + latest user timing overrides','profile_count':len(rows),
-      'policy':'No-production disables every added wave and timer. Normal first departure240sec, then120sec interval, with readiness-relative grace for reclaimed/new HQ. Uraj (404) first departs360sec after a completed Nexus/working economy, then repeats every120sec; no ten-minute map floor. First eligible wave includes an unlocked roster; later cadence is relative to its last delivered normal wave. No catch-up.',
+      'policy':'No-production disables every added wave and timer. Normal first departure240sec with an initial owned HQ, otherwise390sec; then120sec interval. Existing readiness-relative grace for reclaimed/new HQ is retained. Uraj (404) retains360sec after a completed Nexus/working economy with the390sec mission floor. First eligible wave includes an unlocked roster; later cadence is relative to its last delivered normal wave. No catch-up.',
       'cutscene_guard':'Simulation-frame clock and modal guard; scripted original assault guard uses nearby unmarked hostile combatants.',
       'hero_guard':'Conservative exclusion on any placed or original trigger-referenced hero type, independent of owner. Original hero DAT/triggers remain untouched.',
       'profiles':rows}
@@ -70,6 +70,7 @@ def build():
         lines.append('    {'+','.join(map(str,vals))+'},')
     lines+=['};','inline const Profile* profile(std::uint32_t id) noexcept {for(const auto& p:kProfiles)if(p.mission==id)return &p;return nullptr;}','} }']
     (ROOT/'sc1/native_campaign/plugin/include/rework_wave_profiles.generated.h').write_text('\n'.join(lines)+'\n',encoding='utf8')
+    if not write_coverage:return record
     contract=json.loads((ROOT/'sc1/campaign/runtime_v5_contract.json').read_text(encoding='utf8'))
     curse_rows=contract['new_curses']
     coverage={'schema_version':5,'status':'native_adapters_written_host_validation_pending','implemented_ids':[],

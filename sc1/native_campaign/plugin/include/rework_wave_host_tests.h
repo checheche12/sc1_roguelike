@@ -108,8 +108,8 @@ inline void larger_raids_reserves_and_uncommon_stacks(){
 inline void profile_binding_and_readiness(){
  static_assert(std::size(p::kProfiles)==std::size(campaign_config::kMissions),"all original profiles are bound");
  for(const auto& m:campaign_config::kMissions){const auto profile=p::profile(m.mission_id);CHECK(profile && profile->enabled==!m.no_production);
-  if(m.mission_id==404){CHECK(profile->first==360&&profile->interval==120&&profile->base_grace==360);CHECK(profile->rare==540&&profile->epic==660&&profile->legendary==780);}
-  else {CHECK(profile->first>=240 && profile->first<=360);CHECK(profile->rare>=480 && profile->rare<=600);CHECK(profile->epic>=600 && profile->epic<=720);CHECK(profile->legendary>=720 && profile->legendary<=840);}}
+  if(m.mission_id==404){CHECK(profile->first==390&&profile->interval==120&&profile->base_grace==360);CHECK(profile->rare==540&&profile->epic==660&&profile->legendary==780);}
+  else {CHECK(profile->first==(profile->enabled?(profile->starting_hq?240u:390u):360u));CHECK(profile->rare>=480 && profile->rare<=600);CHECK(profile->epic>=600 && profile->epic<=720);CHECK(profile->legendary>=720 && profile->legendary<=840);}}
  const p::Profile profile{1,true,false,300,120,240,480,600,720,360,480,600,0};p::Timeline t;
  for(U32 f=0;f<=1200*24;f+=24)t.advance(profile,f,true,false,false);
  CHECK(t.second()==1200 && !t.home && !t.next);
@@ -302,7 +302,7 @@ inline void uraj_completed_nexus_clock_and_auxiliary_grace(){
   auto original=add(0,origin->owner,origin->target.x+800,origin->target.y+800);
   const auto baseline=count;g.growth.curse_counts[15]=1;g.growth.curse_counts[20]=1;
   for(U32 second=0;second<completed;second++){advance_second(second);CHECK(count==baseline&&!rework_waves::timeline.home);}
-  nexus->flags=1;advance_second(completed);const auto first=completed+360;
+  nexus->flags=1;advance_second(completed);const auto first=std::max(390u,completed+360);
   CHECK(rework_waves::timeline.ready_at==completed&&rework_waves::timeline.next==first&&rework_waves::opening_second()==first);
   for(U32 second=completed+1;second<first-24;second++){
    rework_waves::support_due=true;advance_second(second);CHECK(count==baseline&&!rework_waves::pending_kind);

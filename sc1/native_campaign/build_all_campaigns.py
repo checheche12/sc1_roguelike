@@ -617,7 +617,10 @@ def make_map(raw,row):
  balance=mission_balance.apply(chk,row,difficulty)
  from sc1.native_campaign import courtyard_resource_layout
  courtyard=courtyard_resource_layout.apply(chk,row,minerals,gas,corners,reserved_points=mineral_reserved_points(difficulty))
+ from sc1.native_campaign import settlement_terrain
+ terrain=settlement_terrain.apply(chk,row)
  permitted={b'UNIT',b'PUNI',b'UPGR',b'PUPx',b'PTEC',b'PTEx',b'TRIG',b'STR '}
+ if terrain:permitted|={tag.encode() for tag in settlement_terrain.TAGS}
  if row['mission_id']==101:permitted|={b'OWNR',b'SIDE',b'FORC'}
  assert chk.order==original_order
  assert all(chk.sections[k]==v for k,v in original.items() if k not in permitted)
@@ -633,6 +636,10 @@ def make_map(raw,row):
  report['scripted_opening']=scripted_openings.evidence(row)
  report['courtyard_resource_layout']=courtyard
  report['resource_grants']=resource_grants
+ if terrain:
+  report['settlement_terrain']=terrain
+  report['original_briefing_wav_locations_terrain_heroes_preserved']=False
+  report['original_briefing_wav_locations_heroes_preserved']=True
  return rawout,report
 
 def wave_header(rows):
@@ -681,7 +688,8 @@ def build(output=OUT,receipt=RECEIPT):
  report['mission_balance_source_sha256']=digest(Path(mission_balance.__file__).read_bytes())
  from sc1.native_campaign import corner_resource_layout,scripted_openings,courtyard_resource_layout
  from sc1.native_campaign import campaign_resource_grants
- for module in (corner_resource_layout,scripted_openings,courtyard_resource_layout,campaign_resource_grants):
+ from sc1.native_campaign import settlement_terrain
+ for module in (corner_resource_layout,scripted_openings,courtyard_resource_layout,campaign_resource_grants,settlement_terrain):
   name=module.__name__.rsplit('.',1)[-1]
   report[name+'_source']=str(Path(module.__file__).resolve())
   report[name+'_source_sha256']=digest(Path(module.__file__).read_bytes())

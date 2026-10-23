@@ -119,9 +119,13 @@ def _verify_base_resource_layout(source_chk, output_chk, mission, row):
 
 def verify_mineral_layout(source_chk, output_chk, mission, row):
     from . import mission_balance,corner_resource_layout,scripted_openings,courtyard_resource_layout
+    from . import settlement_terrain
     report = row.get('mission_balance')
     if not report:raise ValueError('Mission-specific balance proof missing')
     baseline = CHK(output_chk.save())
+    if row.get('settlement_terrain'):
+        settlement_terrain.verify(source_chk,output_chk,mission,row['settlement_terrain'])
+        for tag in settlement_terrain.TAGS:baseline.setsection(tag,source_chk.getsection(tag))
     try:
         courtyard_resource_layout.undo(baseline,row['courtyard_resource_layout'])
         mission_balance.undo(baseline, report)
@@ -137,6 +141,8 @@ def verify_mineral_layout(source_chk, output_chk, mission, row):
             raise ValueError('Corner resources/scripted opening differ from deterministic replay')
         if scripted_openings.excluded_factions(mission)&set(row['difficulty']['hostile_owners']):
             raise ValueError('Scripted event faction was reinforced')
+        terrain=settlement_terrain.apply(baseline,mission)
+        if terrain!=row.get('settlement_terrain'):raise ValueError('Settlement terrain differs from deterministic replay')
         if expected != report or baseline.save() != output_chk.save():
             raise ValueError('Mission balance differs from deterministic replay')
     except AssertionError as error:
@@ -203,8 +209,8 @@ def validate_maps(receipt_path):
     from . import mission_balance
     balance_path, _ = legacy.checked_file(receipt['mission_balance_source'], receipt['mission_balance_source_sha256'])
     if balance_path != Path(mission_balance.__file__).resolve():raise ValueError('Unexpected mission balance implementation')
-    from . import corner_resource_layout,scripted_openings,courtyard_resource_layout,campaign_resource_grants
-    for module in (corner_resource_layout,scripted_openings,courtyard_resource_layout,campaign_resource_grants):
+    from . import corner_resource_layout,scripted_openings,courtyard_resource_layout,campaign_resource_grants,settlement_terrain
+    for module in (corner_resource_layout,scripted_openings,courtyard_resource_layout,campaign_resource_grants,settlement_terrain):
         name=module.__name__.rsplit('.',1)[-1]
         pinned,_=legacy.checked_file(receipt[name+'_source'],receipt[name+'_source_sha256'])
         if pinned!=Path(module.__file__).resolve():raise ValueError('Unexpected '+name+' implementation')
@@ -238,7 +244,9 @@ def validate_maps(receipt_path):
             raise ValueError("Scenario format version changed")
         if source_chk.order != output_chk.order:
             raise ValueError("Original section order/tags changed")
-        for tag in ("DIM ", "ERA ", "MTXM", "MASK", "MRGN", "MBRF", "WAV "):
+        from . import settlement_terrain
+        settlement_terrain.verify(source_chk,output_chk,mission,row.get('settlement_terrain'))
+        for tag in ("DIM ", "ERA ", "MASK", "MRGN", "MBRF", "WAV "):
             if tag.encode() in source_chk.sections and source_chk.getsection(tag) != output_chk.getsection(tag):
                 raise ValueError("Original terrain/locations/briefing/audio changed: " + asset + ":" + tag)
         before_strings, after_strings = strings(source_chk.getsection("STR ")), strings(output_chk.getsection("STR "))

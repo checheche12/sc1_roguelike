@@ -39,6 +39,9 @@ inline bool plan_stats(const GrowthSnapshot& s,std::vector<Edit>& edits) {
         const U32 flags=original_stat({0,44,id});
         if((flags&16u) && ((rank(s,20) && (flags&2u)) || (rank(s,22) && (flags&4u))))time=std::max(1u,ceiling(time,1,2));
         if(rank(s,117) && in(id,{73,85}))time=std::max(1u,ceiling(time,1,2));
+        // +50% production speed is 1.5x throughput, hence two-thirds time.
+        // Compose with the existing ammunition discount, for own Scarabs only.
+        if(talent_power::enabled && rank(s,141) && id==85)time=std::max(1u,ceiling(time,2,3));
         if((rank(s,153)&&in(id,{8,9,11,12,58})) ||
            (rank(s,157)&&in(id,{43,44,47,62})) ||
            (rank(s,160)&&in(id,{60,69,70,71,72,84})))time=std::max(1u,ceiling(time,4,5));
@@ -334,8 +337,15 @@ inline std::uint64_t bwz6_support_distance(const bw::Unit* u) noexcept {
     const auto dx=std::int64_t(u->flingy.position.x)-bwz6_support_x,dy=std::int64_t(u->flingy.position.y)-bwz6_support_y;
     return std::uint64_t(dx*dx+dy*dy);
 }
+inline bool late_campaign_support(U32 mission) noexcept {
+    // Logical ninth/tenth missions of the four ten-mission campaigns only.
+    return in(mission,{109,110,209,210,309,310,609,610});
+}
 inline void starting_bonus(const std::vector<bw::Unit*>& depots) {
-    auto game=g.game();if(!g.mission || g.mission->no_production || game->frame_count<48 || starting_workers>=4 || game->frame_count<starting_retry)return;
+    auto game=g.game();if(!g.mission || g.mission->no_production)return;
+    const bool late=late_campaign_support(g.mission->mission_id);
+    const U32 workers=late?6u:4u,resources=late?750u:500u;
+    if(game->frame_count<48 || starting_workers>=workers || game->frame_count<starting_retry)return;
     bw::Unit* base=nullptr;
     const bool bwz6=g.mission->mission_id==606;
     for(auto candidate:depots){
@@ -349,13 +359,13 @@ inline void starting_bonus(const std::vector<bw::Unit*>& depots) {
     if(!base)return;
     const U32 race=base->unit_id==106?1u:base->unit_id==154?2u:0u;
     const U32 id=race==1?7u:race==2?64u:41u;
-    if(!starting_bonus_credited){credit(500,500);starting_bonus_credited=true;
-        // Preserve the original free supply after adding the four workers.
-        auto& provided=game->supplies[race].provided[player_owner()];provided=U32(std::min<std::uint64_t>(0xffffffffu,std::uint64_t(provided)+8));
-        message("시작 지원: 광물 500, 가스 500, 추가 일꾼 4기.");
+    if(!starting_bonus_credited){credit(resources,resources);starting_bonus_credited=true;
+        // Preserve the original free supply after adding the support workers.
+        auto& provided=game->supplies[race].provided[player_owner()];provided=U32(std::min<std::uint64_t>(0xffffffffu,std::uint64_t(provided)+workers*2));
+        message(late?"후반 임무 시작 지원: 광물 750, 가스 750, 추가 일꾼 6기.":"시작 지원: 광물 500, 가스 500, 추가 일꾼 4기.");
     }
     starting_retry=game->frame_count+24;
-    for(int radius=128;radius<=320 && starting_workers<4;radius+=32)for(int dy=-radius;dy<=radius && starting_workers<4;dy+=32)for(int dx=-radius;dx<=radius && starting_workers<4;dx+=32){
+    for(int radius=128;radius<=320 && starting_workers<workers;radius+=32)for(int dy=-radius;dy<=radius && starting_workers<workers;dy+=32)for(int dx=-radius;dx<=radius && starting_workers<workers;dx+=32){
         if(std::max(std::abs(dx),std::abs(dy))!=radius)continue;
         const int x=int(base->flingy.position.x)+dx,y=int(base->flingy.position.y)+dy;
         bool occupied=false;living_units([&](bw::Unit* other){if(original_stat({0,22,other->unit_id})&4u)return;

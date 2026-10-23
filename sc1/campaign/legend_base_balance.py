@@ -37,7 +37,7 @@ def decorate(catalog):
     by[54]['description']+=' 공격 유형이 일반형으로 바뀝니다.'
     by[54]['effect'].update(qa_revision=2026102261,weapon_damage_type=3)
     by[141]['description']+=' 스캐럽 미네랄 비용0.'
-    by[141]['effect'].update(qa_revision=2026102383,scarab_mineral_cost=0,reaver_move_speed_bonus_percent=100,reaver_move_speed_multiplier=2,reaver_move_speed_units=[81,83])
+    by[141]['effect'].update(qa_revision=2026102384,scarab_mineral_cost=0,reaver_move_speed_bonus_percent=100,reaver_move_speed_multiplier=2,reaver_move_speed_units=[81,83],scarab_production_speed_bonus_percent=50,scarab_production_speed_multiplier=1.5,scarab_build_time_numerator=2,scarab_build_time_denominator=3)
     catalog['legend_base_balance_revision'] = REVISION
     return catalog
 

@@ -106,6 +106,19 @@ inline void qa61_reaver_legend_free_scarabs_with_discount_and_owner_cost_view(){
   CHECK(owner_stat(1,{0,40,85})==expected&&rework_economy_v5::current_cost(85).mineral==expected);
   CHECK(owner_stat(6,{0,40,85})==original&&owner_stat(2,{0,40,85})==original);
   CHECK(owner_stat(1,{0,41,85})==original_stat({0,41,85}));
+  const auto original_time=original_stat({0,42,85});
+  const auto discounted_time=discount?(original_time+1)/2:original_time;
+  const auto expected_time=legendary?(discounted_time*2+2)/3:discounted_time;
+  CHECK(owner_stat(1,{0,42,85})==expected_time);
+  CHECK(owner_stat(6,{0,42,85})==original_time&&owner_stat(2,{0,42,85})==original_time);
+  // The owner's native TrainFighter scope sees the shortened production time;
+  // leaving it restores the shared DAT and does not accelerate other units.
+  {OwnerDatScope production(1,1);CHECK(raw_value(0,42,85)==expected_time);}
+  CHECK(raw_value(0,42,85)==original_time);
+  CHECK(owner_stat(1,{0,42,73})==(discount?(original_stat({0,42,73})+1)/2:original_stat({0,42,73})));
+  CHECK(owner_stat(1,{0,42,83})==original_stat({0,42,83}));
+  CHECK(owner_stat(1,{0,42,81})==original_stat({0,42,81}));
+  std::printf("QA82_SCARAB_PRODUCTION legendary=%u discount=%u original=%u frames=%u owner_isolation=ok\n",legendary?1u:0u,discount?1u:0u,original_time,expected_time);
   CHECK(owner_stat(1,{0,40,73})==(discount?(original_stat({0,40,73})+1)/2:original_stat({0,40,73})));
   {OwnerDatScope view(1,1);CHECK(raw_value(0,40,85)==expected);}
   CHECK(raw_value(0,40,85)==original);qa13_fixture::end();

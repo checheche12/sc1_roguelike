@@ -34,6 +34,9 @@ class ProtossChanges(unittest.TestCase):
         self.assertEqual(effect['reaver_move_speed_units'],[81,83])
         self.assertEqual((effect['scarab_mineral_cost'],effect['base_bonus_percent']),(0,150))
         self.assertIn('이동 속도 +100%',item['description'])
+        self.assertEqual((effect['scarab_production_speed_bonus_percent'],effect['scarab_production_speed_multiplier']),(50,1.5))
+        self.assertEqual((effect['scarab_build_time_numerator'],effect['scarab_build_time_denominator']),(2,3))
+        self.assertIn('갑충탄 생산 속도 +50%(1.5배)',item['description'])
 
     def test_catalog_refresh_preserves_all_previously_issued_copies_and_ids(self):
         catalog=load_catalog(expected_version=2);old=copy.deepcopy(catalog)
