@@ -1543,7 +1543,8 @@ void __cdecl frame() noexcept {
         rework_waves::tick(ready,!after_dialog,counter(kGoalCounter));regenerate_waves(game->elapsed_seconds);
         frame_profile::mark(5);
         wave_targeting::step(ready,counter(kGoalCounter));area_visuals::publish();
-        g.dialog.set_wave_timer(sc1_native::wave_countdown_text(rework_waves::countdown(ready,counter(kGoalCounter))));
+        // Countdown display is disabled by request; keep the shared cargo HUD refreshed.
+        g.dialog.set_wave_timer({});
         frame_profile::mark(6);frame_profile::finish(ready&&after_dialog,game->frame_count,g.units_count,rework_combat_v5::projectiles.size(),rework_combat_v5::pending_shots.size());
     } catch (...) {set_counter(kReadyCounter,0);set_counter(kAckCounter,0);abandon_session();message("본편 플러그인 실행 오류. 추가 공세와 승리 기록을 중단했습니다.");}
 }
