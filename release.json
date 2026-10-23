@@ -1,0 +1,17 @@
+{
+  "version": "v2026.10.23-qa84",
+  "file": "SC1_Roguelike_QA84.zip",
+  "sha256": "ecbe74fd0fa349671f4b85ab597dac4307270384890d3549c2ab6adc4670c5a8",
+  "bytes": 24927373,
+  "runtime_source_commit": "0d421916bc1c279fabfbd89c6c6d041db5d65b28",
+  "native_dll_sha256": "8b98cd16835f801b9783bceb5826a0703f69f0adda15b125fe72c650d73d0049",
+  "maps": 63,
+  "changed_maps": [],
+  "first_normal_base_budget_percent": 50,
+  "reinforcement_curse_scaling_preserved": true,
+  "opening_basic_unit_pool_only": true,
+  "special_rosters_start_at_wave": 2,
+  "auxiliary_starts_after_wave": 2,
+  "personal_database_included": false,
+  "actual_gameplay_verified": false
+}
