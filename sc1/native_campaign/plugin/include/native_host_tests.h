@@ -46,6 +46,7 @@ void __cdecl order(bw::Unit* u,U32 id,U32 x,U32 y,bw::Unit*,U32){++orders;u->ord
 void __cdecl finish(bw::Unit*){++finishes;}
 void __cdecl text(const U8* value){printed.emplace_back(reinterpret_cast<const char*>(value));}
 U32 __cdecl zero(){return 0;}
+void __cdecl sound_step(void*,void*,U32,U32*){}
 void __cdecl read_vars(const std::uint16_t*,std::size_t* out,std::size_t){++read_var_calls;*out=saved_handle;}
 std::size_t __cdecl ext(samase::ExtendedArray** p){++extended_array_calls;if(!require_init())return 0;*p=provided_extended;return provided_extended_count;}
 U8* __cdecl read_map(const U8*,std::size_t* n){*n=chk.size();if(chk.empty())return nullptr;auto p=new U8[chk.size()];std::memcpy(p,chk.data(),chk.size());return p;}
@@ -91,6 +92,7 @@ void reset() {
     api.game=factory<get_game>;api.first_active_unit=factory<get_active>;api.first_hidden_unit=factory<get_hidden>;
     api.unit_array_len=factory<get_array>;api.create_unit=factory<create>;api.finish_unit_pre=api.finish_unit_post=factory<finish>;
     api.create_bullet=reinterpret_cast<GenericFn>(factory<no_bullet>);
+    api.step_iscript=reinterpret_cast<GenericFn>(factory<sound_step>);
     api.issue_order=factory<order>;api.print_text=factory<text>;api.read_map_file=factory<read_map>;
     api.is_multiplayer=api.is_replay=factory<zero>;api.get_func=get_function;api.max_func_id=80;
     api.hook_on_first_file_access=reinterpret_cast<GenericFn>(register_first_file);
@@ -555,7 +557,7 @@ void wave_host_integration() {
 }
 void api_lifecycle_boundaries() {
     reset();const auto init_count=init_calls;
-    CHECK(init_count==27 && !plugin_init_open);
+    CHECK(init_count==28 && !plugin_init_open); // includes native positional sound script factory
     // The registration object is not a runtime API. Invalidating it after bind
     // models that boundary, while cached direct callbacks remain executable.
     api={};make_chk();init_units(original);
@@ -738,11 +740,13 @@ void real_managed_dat_assets() {
 #include "qa75_protoss_host_tests.h"
 #include "qa76_shadow_training_host_tests.h"
 #include "qa77_shadow_attack_host_tests.h"
+#include "qa80_shadow_feedback_host_tests.h"
 int main() {
     using namespace host_test;
     try {
         char perf_only[8]{};if(GetEnvironmentVariableA("SC1_ENEMY_PERF_ONLY",perf_only,sizeof(perf_only))){run_enemy_performance_groups();return 0;}
         exact_stats_hp_supply();validation_atomicity_and_stacks();ui_lifetime();fingerprint_and_save_scope();
+        run_qa80_groups();
         run_qa77_groups();run_qa76_groups();run_qa75_groups();run_qa65_groups();run_qa64_groups();run_qa63_groups();run_qa62_groups();run_qa61_groups();run_qa60_groups();run_qa57_groups();run_qa56_groups();run_qa59_groups();run_qa55_groups();run_qa53_groups();run_qa52_groups();run_qa50_groups();
         loaded_save_handle_regression();original_objectives_reminder();
         run_qa49_groups();run_qa48_groups();run_qa47_groups();run_qa46_groups();run_qa45_groups();run_qa44_groups();run_qa43_groups();run_qa39_groups();run_qa38_unit_growth_groups();run_qa38_groups();mailbox_ui_goal_integration();early_goal_orders_remaining_phases();cumulative_snapshots_preserve_live_ratios_and_supply();stage1_growth_keeps_waves_playable();paused_protocol_pump_and_reentrancy();failure_keeps_victory_closed();extended_deaths_fail_closed();dedicated_counter_mirror_contract();extended_completed_phase_milestones();original_goal_completed_counts_and_ack_mirror();wave_host_integration();api_lifecycle_boundaries();dat_mutation_contract_and_diagnostics();real_managed_dat_assets();
@@ -778,6 +782,6 @@ int main() {
         run_qa30_performance_groups();
         abandon_session();g.baseline.clear();g.game=nullptr;
         CHECK(late_init_calls==0);
-        std::printf("PASS native host integration: %zu groups, %d checks; game process never accessed.\n",91u+qa77_group_count+qa76_group_count+qa75_group_count+qa65_group_count+qa64_group_count+qa63_group_count+qa62_group_count+qa61_group_count+qa60_group_count+qa59_group_count+qa57_group_count+qa56_group_count+qa55_group_count+qa53_group_count+qa52_group_count+qa50_group_count+qa49_group_count+qa48_group_count+qa47_group_count+qa46_group_count+qa45_group_count+qa44_group_count+qa43_group_count+qa39_group_count+qa37_group_count+qa38_group_count+qa36_carrier_group_count+qa35_carrier_group_count+qa34_area_group_count+qa33_group_count+area_visual_group_count+qa31_group_count+qa30_performance_group_count+qa30_group_count+qa29_group_count+qa28_group_count+qa26_group_count+qa17_group_count+qa16_group_count+qa15_group_count+qa14_group_count+qa13_group_count+qa12_extra_group_count+qa12_group_count+qa9_group_count+qa10_group_count+campaign_research_group_count+talent_power_group_count+std::size(combat_audit::cases)+max_hp_engine_group_count+samase_status_ui_group_count+samase_weapon_ui_group_count+samase_armor_ui_group_count+trampoline_unwind_group_count+wave_targeting_group_count+wave_progression_group_count+talent_rank_group_count+rework_wave_group_count+enemy_progression_group_count+enemy_performance_group_count+targeting_bridge_group_count+rework_cargo_group_count+rework_carrier_group_count+rework_economy_group_count+rework_binding_group_count+rework_lighting_v5_group_count+rework_combat_v5_group_count+rework_economy_ui_group_count+rework_shield_ui_v5_group_count,checks);return 0;
+        std::printf("PASS native host integration: %zu groups, %d checks; game process never accessed.\n",91u+qa80_group_count+qa77_group_count+qa76_group_count+qa75_group_count+qa65_group_count+qa64_group_count+qa63_group_count+qa62_group_count+qa61_group_count+qa60_group_count+qa59_group_count+qa57_group_count+qa56_group_count+qa55_group_count+qa53_group_count+qa52_group_count+qa50_group_count+qa49_group_count+qa48_group_count+qa47_group_count+qa46_group_count+qa45_group_count+qa44_group_count+qa43_group_count+qa39_group_count+qa37_group_count+qa38_group_count+qa36_carrier_group_count+qa35_carrier_group_count+qa34_area_group_count+qa33_group_count+area_visual_group_count+qa31_group_count+qa30_performance_group_count+qa30_group_count+qa29_group_count+qa28_group_count+qa26_group_count+qa17_group_count+qa16_group_count+qa15_group_count+qa14_group_count+qa13_group_count+qa12_extra_group_count+qa12_group_count+qa9_group_count+qa10_group_count+campaign_research_group_count+talent_power_group_count+std::size(combat_audit::cases)+max_hp_engine_group_count+samase_status_ui_group_count+samase_weapon_ui_group_count+samase_armor_ui_group_count+trampoline_unwind_group_count+wave_targeting_group_count+wave_progression_group_count+talent_rank_group_count+rework_wave_group_count+enemy_progression_group_count+enemy_performance_group_count+targeting_bridge_group_count+rework_cargo_group_count+rework_carrier_group_count+rework_economy_group_count+rework_binding_group_count+rework_lighting_v5_group_count+rework_combat_v5_group_count+rework_economy_ui_group_count+rework_shield_ui_v5_group_count,checks);return 0;
     } catch(const std::exception& e){std::fprintf(stderr,"FAIL %s reason=%s\n",e.what(),g.apply_failure ? g.apply_failure : "none");return 1;}
 }

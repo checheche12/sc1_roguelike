@@ -184,6 +184,7 @@ inline void focus_tick(bw::Unit* u,UnitState& s) {
    if(s.shadow_count<5)s.shadow_targets[s.shadow_count++]=identity(target);
    const U32 w=original_stat({0,17,u->unit_id}),base=owner_stat(u->player,{1,14,w})+owner_stat(u->player,{1,15,w})*upgrade_level(u->player,original_stat({1,6,w}));
    if(g.lone_sprite)g.lone_sprite(361,u->flingy.position.x,u->flingy.position.y,u->player);
+   shadow_feedback::strike(u);
    weapon_hurt(target,U32(std::min<std::uint64_t>(0x7fffffffu,std::uint64_t(base)*256*legend_focus::shadow_damage_percent/100)),w,u,u->player);
   }
   u->order=old_order;u->order_state=old_stage;u->order_signal=old_signal;u->order_timer=old_timer;u->order_wait=old_wait;u->order_target=old_target;s.shadow_due=now()+4;

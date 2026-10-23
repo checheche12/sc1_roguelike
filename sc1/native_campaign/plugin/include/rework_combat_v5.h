@@ -587,31 +587,55 @@ struct CommandScope {
     struct StimBefore{Identity who;U32 hp;U8 timer;};std::vector<StimBefore> stimulants;
     explicit CommandScope(U32 player,bool motion=true,bool stim=true){if(player!=player_owner())return;living_units([&](bw::Unit* u){
         if(!own(u))return;
-        // The native command predicates reject disabled units before changing
-        // orders or queues. Scope that predicate to command parsing only;
-        // simulation, cast progress, and other selected units stay unaffected.
-        if(in(u->unit_id,{61,74,75})&&!u->lockdown_timer)if(auto s=state(u))if(s->shadow_active){shadow_command_locks.push_back(identity(u));u->lockdown_timer=1;}
+        // Never synthesize Lockdown: it is also a real cast-cancel condition.
+        // Scope only the native command-disabled flag, including GUI checks.
+        if(in(u->unit_id,{61,74,75})&&!(u->flags&0x400u))if(auto s=state(u))if(s->shadow_active){shadow_command_locks.push_back(identity(u));u->flags|=0x400u;}
         if(motion&&rank(91)&&u->unit_id==103&&(u->flags&0x10u))lurkers.push_back(identity(u));
         if(stim&&rank(39)&&in(u->unit_id,{0,10,20,32}))stimulants.push_back({identity(u),U32(u->flingy.hitpoints),u->stim_timer});
     });for(const auto& i:lurkers)if(auto u=resolve(i))u->flags&=~0x10u;}
-    ~CommandScope(){for(const auto& i:shadow_command_locks)if(auto u=resolve(i))if(u->lockdown_timer==1)u->lockdown_timer=0;
+    ~CommandScope(){for(const auto& i:shadow_command_locks)if(auto u=generation(i))u->flags&=~0x400u;
         for(const auto& i:lurkers)if(auto u=resolve(i))u->flags|=0x10u;
         for(const auto& before:stimulants)if(auto u=resolve(before.who))if(u->stim_timer&&before.hp>=U32(u->flingy.hitpoints)+10*256){u->stim_timer=U8(std::min(255u,talent_power::duration(39,u->stim_timer)));heal(u,talent_power::v5(39,5*256)>9*256?9*256:talent_power::v5(39,5*256));}
     }
 };
 using CommandNext=void (__cdecl*)(const U8*,U32);
-inline void __cdecl motion_command(const U8* data,U32 length,U32 player,U32,CommandNext original){
+using GetSelections=bw::Unit** (__cdecl*)();
+inline GetSelections command_selections=nullptr;
+struct ShadowSelectionScope {
+    bw::Unit** selection=nullptr;std::array<Identity,12> saved{};
+    explicit ShadowSelectionScope(U32 player,U32 unique_player) noexcept {
+        if(!g.active||!g.applied||player!=player_owner()||unique_player>=8||!command_selections)return;
+        auto all=command_selections();if(!all)return;auto row=all+unique_player*12;
+        bool blocked=false;std::array<bw::Unit*,12> kept{};std::size_t count=0;
+        for(std::size_t i=0;i<12;i++){
+            auto u=row[i];saved[i]=identity(u);
+            auto s=own(u)&&in(u->unit_id,{61,74,75})?state(u):nullptr;
+            if(s&&s->shadow_active){blocked=true;continue;}
+            if(u)kept[count++]=u;
+        }
+        if(blocked){selection=row;std::copy(kept.begin(),kept.end(),row);}
+    }
+    ~ShadowSelectionScope(){if(selection)for(std::size_t i=0;i<12;i++)selection[i]=resolve(saved[i]);}
+};
+inline void __cdecl motion_command(const U8* data,U32 length,U32 player,U32 unique_player,CommandNext original){
+    ShadowSelectionScope selected(player,unique_player);
     OwnerDatScope owner(player,player);SpellCommandEnergyScope energy(player,data,length);CommandScope motion(player,true,false);original(data,length);
 }
+inline void __cdecl shadow_command(const U8* data,U32 length,U32 player,U32 unique_player,CommandNext original){
+    ShadowSelectionScope selected(player,unique_player);CommandScope locked(player,false,false);original(data,length);
+}
 inline bool bind_motion_commands(const samase::PluginApi* api) noexcept {
-    if(!api||!api->hook_ingame_command)return false;
+    if(!api||!api->hook_ingame_command||!api->selections)return false;
+    command_selections=reinterpret_cast<GetSelections>(reinterpret_cast<GenericFn (__cdecl*)()>(api->selections)());
+    if(!command_selections)return false;
     using Hook=void (__cdecl*)(const U8*,U32,U32,U32,CommandNext);
     using Length=U32 (__cdecl*)(const U8*,U32);
     using Register=U32 (__cdecl*)(U32,Hook,Length);
     auto bind=reinterpret_cast<Register>(api->hook_ingame_command);
     // Classic14/15 and Remastered60/61 carry right click/targeted orders.
     // Do not mask burrow/unburrow or unrelated packets in ProcessCommands.
-    return bind(0x14,motion_command,nullptr)&&bind(0x15,motion_command,nullptr)&&bind(0x60,motion_command,nullptr)&&bind(0x61,motion_command,nullptr);
+    return bind(0x14,motion_command,nullptr)&&bind(0x15,motion_command,nullptr)&&bind(0x60,motion_command,nullptr)&&bind(0x61,motion_command,nullptr)&&
+        bind(0x1a,shadow_command,nullptr)&&bind(0x2b,shadow_command,nullptr);
 }
 inline bool source_blocked(bw::Unit*) noexcept;
 inline bool allow_primary(bw::Unit* source) noexcept {
@@ -1156,6 +1180,7 @@ inline movement_effects::Ratio movement_extension(bw::Unit* u) noexcept {
     try{const double value=std::max(1.0/65536,std::min(64.0,speed_ratio(u)));return {std::uint64_t(value*65536)*rework_curses::speed_percent(u),6553600};}catch(...){return {};}
 }
 inline void script_transform(U8* bytes,std::size_t size) noexcept {
+    shadow_feedback::append(bytes,size);
     if(!bytes||size<4)return;
     const auto read=[&](std::size_t at){return U32(bytes[at])|(U32(bytes[at+1])<<8);};
     const auto write=[&](std::size_t at,U32 value){bytes[at]=U8(value);bytes[at+1]=U8(value>>8);};

@@ -883,6 +883,7 @@ struct DamageObservationScope {
 };
 #include "include/combat_effects_runtime.h"
 #include "include/movement_effects_runtime.h"
+#include "include/shadow_feedback.h"
 #include "include/rework_relocation_v5.h"
 #include "include/rework_combat_v5.h"
 #include "include/area_visuals.h"
@@ -1593,6 +1594,7 @@ bool bind_api(const samase::PluginApi* api) noexcept {
     const auto create_bullet=reinterpret_cast<CreateBulletFn>(reinterpret_cast<GenericFn (__cdecl*)()>(api->create_bullet)());
     multi_target::bind(can_attack,outside_range,create_bullet);
     log_event("Area visual renderer: registered=%u",area_visuals::bind(api)?1u:0u);
+    if(!shadow_feedback::bind(api))return false;
     return g.game && g.first_active && g.first_hidden && g.unit_array && g.create && g.finish_pre &&
            g.finish_post && g.order && g.text && g.read_map && g.multiplayer && g.replay &&
             g.set_hp && g.damage && rework_waves::native_tech_target && rework_combat_v5::native_weapon_target && can_attack && outside_range && create_bullet && g.lone_sprite && g.add_overlay && g.dat_getters[0] && g.dat_getters[1] && g.dat_getters[2] && g.dat_getters[4] && (!g.extended_count || g.extended);

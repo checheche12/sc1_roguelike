@@ -52,7 +52,7 @@ inline void qa77_shadow_commands_ignored_until_cast_finishes(){
   int old_queue=0;u->order_queue_begin=u->order_queue_end=&old_queue;u->highlight_order_count=1;selected={u,other};
   const auto saved=combat_effects::original_weapon_damage;combat_effects::original_weapon_damage=qa76_fixture::damage;qa75_fixture::victims.clear();qa76_fixture::strike_positions.clear();
   rework_combat_v5::shadow_begin(u,enemy);auto s=rework_combat_v5::state(u);CHECK(s->shadow_active);
-  {rework_combat_v5::CommandScope outer(1);CHECK(u->lockdown_timer==1);{rework_combat_v5::CommandScope inner(1);CHECK(u->lockdown_timer==1);}CHECK(u->lockdown_timer==1);}CHECK(!u->lockdown_timer);
+  {rework_combat_v5::CommandScope outer(1);CHECK((u->flags&0x400u)&&!u->lockdown_timer);{rework_combat_v5::CommandScope inner(1);CHECK((u->flags&0x400u)&&!u->lockdown_timer);}CHECK((u->flags&0x400u)&&!u->lockdown_timer);}CHECK(!u->lockdown_timer);
   const U8 data[11]={0x15,0,0,0,0,0,0,0,0,6,0};saved_handle=1;
   for(U32 i=0;i<5;i++){
    game.frame_count=100+i*4;requested_order=i%2?1u:6u;queued=i==2;accepted=0;
