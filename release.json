@@ -1,0 +1,32 @@
+{
+  "version": "v2026.10.23-qa83",
+  "file": "SC1_Roguelike_QA83.zip",
+  "sha256": "212afbfc27343fff10b668458e48266e73e4722c6f47b24c7d943252fc0fa1d2",
+  "bytes": 24927294,
+  "runtime_source_commit": "e0fa424423b6e4f239ffaaa5f419a8e33fedc0f6",
+  "native_dll_sha256": "966bca2c4721d299e78bdedb8da0423503b4c574900d4af14faaebd5a23e1de1",
+  "maps": 63,
+  "changed_maps": [],
+  "starting_base_first_range": [
+    180,
+    270
+  ],
+  "settlement_first_seconds": 340,
+  "starting_base_missions": 41,
+  "settlement_missions": 13,
+  "combat_upgrade_offsets": [
+    120,
+    360,
+    600
+  ],
+  "special_technology_offsets": [
+    120,
+    240,
+    360,
+    480,
+    600,
+    720
+  ],
+  "personal_database_included": false,
+  "actual_gameplay_verified": false
+}
