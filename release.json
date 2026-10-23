@@ -1,0 +1,18 @@
+{
+  "version": "v2026.10.24-qa86",
+  "file": "SC1_Roguelike_QA86.zip",
+  "sha256": "84f6c3163a52a58806171ee348945f074a47a3f857a4f078b8b32cb2070fd920",
+  "bytes": 25032411,
+  "runtime_source_commit": "6f6f5b1aa492717b37386dcadf9dcc0f11a33c8a",
+  "native_dll_sha256": "b815dc789518804abff670323601e1d88d1c18e3f96c214fb31027cd6fb0ba6b",
+  "maps": 63,
+  "maps_changed": 0,
+  "base_release": "v2026.10.23-qa85",
+  "valkyrie_backshot_ground_and_air": true,
+  "valkyrie_backshot_requires_legendary": true,
+  "native_volley_and_weapon_stats_unchanged": true,
+  "move_only_does_not_fire": true,
+  "personal_database_included": false,
+  "actual_gameplay_verified": false,
+  "root_cause_live_reproduction": false
+}
