@@ -136,6 +136,9 @@ def decorate(catalog):
     catalog['talent_power_quarters']=POWER_QUARTERS.copy()
     catalog['economy_talents_scaled']=False
     for item in catalog['talents']:
+        if item.get('rework_revision')==5 and item.get('effect_ordinal')==113 and item.get('balance_revision')==9:
+            item['description']='프로토스 병력·영웅: 보호막 방어력 +3.'
+            item['effect'].update(shield_armor_bonus=3,qa_revision=2026102378)
         if item.get('rework_revision')==5 and item.get('effect_ordinal')==46:
             item['description']=DESCRIPTIONS[46]
             item['effect'].update(nuclear_warning_frames=36,nuclear_build_time_frames=720,nuclear_supply_required=2,qa_revision=2026102268)
@@ -185,6 +188,9 @@ def decorate(catalog):
             if ordinal==130:item['effect'].update(qa_revision=2026102035,capacity_bonus=0,burst_launch_limit=8,interceptor_health_multiplier=2,interceptor_shield_multiplier=2,native_capacity_unchanged=True)
             if ordinal==31:item['effect'].update(qa_revision=2026102037,wraith_ground_attack_per_rank=6,wraith_air_attack_per_rank=12,battlecruiser_attack_per_rank=6,valkyrie_attack_per_rank=3)
             if ordinal==112:item['effect'].update(qa_revision=2026102037,scout_ground_attack_per_rank=6,scout_air_projectile_attack_per_rank=6,scout_air_projectiles=2,scout_air_salvo_attack_per_rank=12,interceptor_attack_per_rank=1,other_air_attack_per_rank=3)
+            if ordinal==113:
+                item['description']='프로토스 병력·영웅: 보호막 방어력 +3.'
+                item['effect'].update(shield_armor_bonus=3,qa_revision=2026102378)
         else:
             # Old set-valued cards depend on the map's original DAT values.
             # Keep that reference explicit rather than inventing a fixed total.

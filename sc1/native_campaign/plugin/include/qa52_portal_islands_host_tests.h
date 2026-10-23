@@ -85,6 +85,46 @@ inline void qa52_island_transport_death_and_capture_preserve_identity(){
   rework_fixture::relocation_end();rework_fixture::finish();
  }
 }
-inline constexpr std::size_t qa52_group_count=3;
-inline void run_qa52_groups(){qa52_portal_repeat_visuals_follow_fixed_endpoints_and_expire();qa52_island_all_grades_board_fly_unload_and_attack();qa52_island_transport_death_and_capture_preserve_identity();}
+inline void qa74_unloaded_ultras_survive_transport_loss(){
+ // P05 has disconnected ground routes. Two Ultras fit in one native ship.
+ // Observe loss immediately after unloading, during retreat, and mid-unload.
+ for(U32 phase:{0u,1u,2u})for(bool capture:{false,true}){
+  qa52_fixture::island_begin(305);
+  CHECK(rework_waves::island_create(39,28,100,100,12));
+  CHECK(rework_waves::island_create(39,28,100,100,12));
+  CHECK(rework_waves::island_convoys.size()==1);qa52_fixture::board_all();
+  auto& c=rework_waves::island_convoys.front();auto ship=rework_waves::island_unit(c.ship);CHECK(ship&&c.passengers.size()==2);
+  auto first=rework_waves::island_unit(c.passengers[0]),second=rework_waves::island_unit(c.passengers[1]);CHECK(first&&second);
+  ship->flingy.position={std::int16_t(c.land_x),std::int16_t(c.land_y)};ship->order=111;
+  owner_unit_hook(ship,qa52_fixture::unload);CHECK(!(first->flags&0x40u));
+  if(phase!=2)owner_unit_hook(ship,qa52_fixture::unload);
+  if(phase==1){++game.frame_count;rework_waves::island_step();CHECK(!rework_curses::transport_hold(first)&&first->order==14);}
+  const auto first_hp=first->flingy.hitpoints,second_hp=second->flingy.hitpoints;
+  if(capture)owner_give_hook(ship,player_owner(),rework_cargo_tests::native_give);else owner_kill_hook(ship,rework_cargo_tests::native_kill);
+  ++game.frame_count;rework_waves::island_step();
+  CHECK(first->flingy.hitpoints==first_hp&&!rework_curses::transport_hold(first)&&first->order==14);
+  if(phase!=2)CHECK(second->flingy.hitpoints==second_hp&&!rework_curses::transport_hold(second)&&second->order==14);
+  else if(capture)CHECK(second->player==player_owner()&&second->flingy.hitpoints==second_hp);
+  else CHECK(second->flingy.hitpoints<=0);
+  CHECK(rework_waves::island_convoys.empty());
+  rework_fixture::relocation_end();rework_fixture::finish();
+ }
+}
+inline void qa74_grounded_passengers_survive_cancelled_boarding(){
+ for(bool timeout:{false,true}){
+  qa52_fixture::island_begin(305);
+  auto first=rework_waves::island_create(39,28,100,100,12),second=rework_waves::island_create(39,28,100,100,12);CHECK(first&&second);
+  CHECK(rework_waves::island_convoys.size()==1);auto ship=rework_waves::island_unit(rework_waves::island_convoys.front().ship);CHECK(ship);
+  rework_waves::timeline.active_ticks+=4*24;game.frame_count+=96;rework_waves::release_and_orders();
+  const auto first_hp=first->flingy.hitpoints,second_hp=second->flingy.hitpoints;
+  if(timeout)game.frame_count+=45*24;else owner_kill_hook(ship,rework_cargo_tests::native_kill);
+  rework_waves::island_step();
+  CHECK(first->flingy.hitpoints==first_hp&&second->flingy.hitpoints==second_hp);
+  CHECK(!rework_curses::transport_hold(first)&&!rework_curses::transport_hold(second));
+  CHECK(first->order==14&&second->order==14&&rework_waves::island_convoys.empty());
+  rework_fixture::relocation_end();rework_fixture::finish();
+ }
+}
+inline constexpr std::size_t qa52_group_count=5;
+inline void run_qa52_groups(){qa74_unloaded_ultras_survive_transport_loss();qa74_grounded_passengers_survive_cancelled_boarding();qa52_portal_repeat_visuals_follow_fixed_endpoints_and_expire();qa52_island_all_grades_board_fly_unload_and_attack();qa52_island_transport_death_and_capture_preserve_identity();}
 }

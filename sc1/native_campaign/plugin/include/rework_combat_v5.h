@@ -10,6 +10,8 @@ void __cdecl owner_give_hook(bw::Unit*,U32,void (__cdecl*)(bw::Unit*,U32)) noexc
 #include "legend_focus.generated.h"
 #include "legend_base_balance.generated.h"
 namespace rework_combat_v5 {
+// Explicit Shield Refraction value; do not rarity-scale the requested +3.
+inline U32 shield_armor_bonus() noexcept {return talent_power::enabled?3u:1u;}
 inline U32 expansion_static_bonus(const bw::Unit*,U32) noexcept;
 inline U32 focus_base(const bw::Unit*) noexcept;
 using AreaVisualEvent=void (*)(U32,U32,int,int) noexcept;
@@ -1030,7 +1032,7 @@ struct DamageScope {
             else if(type==2)half_armor_reduction=size==1?fraction:size==2?fraction/2:size==3?fraction/4:0u;
         }
         if(normal&&own(target)&&rank(113)&&target->shields>0&&soldier(target->unit_id)&&race_type(target->unit_id,2)){
-            const auto level=upgrade_level(target->player,15);shield_upgrade.begin(target->player,15,U8(std::min(255u,level+talent_power::v5(113,1))));
+            const auto level=upgrade_level(target->player,15);shield_upgrade.begin(target->player,15,U8(std::min(255u,level+shield_armor_bonus())));
         }
         // The missile scope exposes its per-launch scale through current_hit.
         if(talent_power::enabled&&w==34&&rank(61)&&combat_effects::damage_player==player_owner())damage=std::int32_t(std::min<std::int64_t>(0x7fffffff,std::int64_t(damage)*legend_base_balance::irradiate_damage_multiplier));

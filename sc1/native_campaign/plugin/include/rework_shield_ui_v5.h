@@ -1,6 +1,6 @@
 #pragma once
 // Presentation-only shield armor113. The simulation publishes stable research
-// outside DamageScope; rendering never sees its temporary native upgrade+1.
+// outside DamageScope; rendering never sees temporary damage-scope research.
 namespace rework_shield_ui_v5 {
 using Native=U32 (__cdecl*)(const bw::Unit*);
 inline Native original=nullptr;
@@ -9,10 +9,11 @@ inline std::atomic<bool> enabled{false},activated{false};
 inline std::atomic<std::uintptr_t> array_base{0};
 inline std::atomic<std::size_t> array_count{0};
 inline std::atomic<U32> owner{12},base_level{0};
+inline std::atomic<U32> bonus_level{0};
 inline std::array<std::atomic<bool>,228> beneficiary{};
 inline void reset() noexcept {
  enabled.store(false,std::memory_order_release);sequence.fetch_add(1,std::memory_order_acq_rel);
- array_base.store(0,std::memory_order_relaxed);array_count.store(0,std::memory_order_relaxed);owner.store(12,std::memory_order_relaxed);
+ array_base.store(0,std::memory_order_relaxed);array_count.store(0,std::memory_order_relaxed);owner.store(12,std::memory_order_relaxed);bonus_level.store(0,std::memory_order_relaxed);
  sequence.fetch_add(1,std::memory_order_release);
 }
 inline bool publish(bool=false) noexcept {
@@ -20,13 +21,14 @@ inline bool publish(bool=false) noexcept {
  auto native=rework_upgrade_storage::slot(player_owner(),15);if(!native){reset();return false;}
  // Research refresh is one atomic store, not a temporarily invalid cache. A
  // render fallback during a per-frame odd epoch could otherwise race the next
- // DamageScope and observe its transient+1. Rebind only at a map/array boundary.
+ // DamageScope and observe its transient bonus. Rebind at a map/array boundary.
  if(enabled.load(std::memory_order_acquire)&&array_base.load(std::memory_order_relaxed)==reinterpret_cast<std::uintptr_t>(g.units)&&array_count.load(std::memory_order_relaxed)==g.units_count&&owner.load(std::memory_order_relaxed)==player_owner()){
-  base_level.store(*native,std::memory_order_release);return true;
+  base_level.store(*native,std::memory_order_release);bonus_level.store(rework_combat_v5::shield_armor_bonus(),std::memory_order_release);return true;
  }
  sequence.fetch_add(1,std::memory_order_acq_rel);
  array_base.store(reinterpret_cast<std::uintptr_t>(g.units),std::memory_order_relaxed);array_count.store(g.units_count,std::memory_order_relaxed);
  owner.store(player_owner(),std::memory_order_relaxed);base_level.store(*native,std::memory_order_relaxed);
+ bonus_level.store(rework_combat_v5::shield_armor_bonus(),std::memory_order_relaxed);
  for(U32 id=0;id<228;id++)beneficiary[id].store(rework_combat_v5::soldier(id)&&rework_combat_v5::race_type(id,2),std::memory_order_relaxed);
  sequence.fetch_add(1,std::memory_order_release);enabled.store(true,std::memory_order_release);return true;
 }
@@ -38,7 +40,7 @@ inline bool cached(const bw::Unit* unit,U32& value) noexcept {
  const U32 key=max_hp_cache::identity(unit),id=key&0xffffu,player=(key>>16)&255u;
  if(id>=228||player!=owner.load(std::memory_order_relaxed))return false;
  const auto illusion=unit->flags&0x40000000u;
- const U32 bonus=!illusion&&beneficiary[id].load(std::memory_order_relaxed)?1u:0u;
+ const U32 bonus=!illusion&&beneficiary[id].load(std::memory_order_relaxed)?bonus_level.load(std::memory_order_acquire):0u;
  const U32 result=std::min(255u,base_level.load(std::memory_order_acquire)+bonus);
  if(sequence.load(std::memory_order_acquire)!=before||!enabled.load(std::memory_order_acquire)||max_hp_cache::identity(unit)!=key||(unit->flags&0x40000000u)!=illusion)return false;
  value=result;return true;

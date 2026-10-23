@@ -10053,7 +10053,7 @@
       "id": "b1767caa-63a3-5a03-839a-683b1f78520a",
       "name": "보호막 굴절",
       "target": "프로토스 병력·영웅",
-      "description": "프로토스 병력·영웅: 프로토스 병력과 영웅의 보호막 방어력 +2.",
+      "description": "프로토스 병력·영웅: 보호막 방어력 +3.",
       "trigger": "",
       "numbers": "",
       "notes": "일꾼·구조물 제외.",
@@ -10076,8 +10076,9 @@
         "type": "rework_v5",
         "ordinal": 113,
         "source_id": "b1767caa-63a3-5a03-839a-683b1f78520a",
-        "qa_revision": 2026101610,
-        "benefit_power_quarters": 7
+        "qa_revision": 2026102378,
+        "benefit_power_quarters": 7,
+        "shield_armor_bonus": 3
       },
       "target_units": [
         60,

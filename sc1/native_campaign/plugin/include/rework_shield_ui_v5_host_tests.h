@@ -80,6 +80,20 @@ void rework_shield_ui_concurrent_transient_research(){
  for(U32 i=0;i<20000;i++){synthetic_level=6;YieldProcessor();synthetic_level=5;CHECK(rework_shield_ui_v5::publish());}
  done=true;render.join();CHECK(samples.load()>0);CHECK(!bad.load());CHECK(native_calls==before);synthetic_transient=false;
 }
-inline constexpr std::size_t rework_shield_ui_v5_group_count=4;
-inline void run_rework_shield_ui_v5_groups(){rework_shield_ui_native_branch_and_eligibility();rework_shield_ui_scoped_research_and_lifecycle();rework_shield_ui_unwind_and_integrity();rework_shield_ui_concurrent_transient_research();}
+void qa74_shield_refraction_three_matches_native_damage_and_display(){
+ using namespace shield_ui_fixture;reset();Image image;image.install();
+ auto soldier=add(65,1,0,0),hero=add(77,1,0,0),probe=add(64,1,0,0),building=add(154,1,0,0),enemy=add(65,6,0,0),attacker=add(0,6,0,0);
+ soldier->shields=10*256;CHECK(apply_snapshot(nullptr,snapshot()));talent_power::enabled=true;
+ for(U32 level:{0u,2u,250u}){
+  set_level(1,U8(level));set_level(6,6);publish();
+  CHECK(image.query(soldier)==level+3&&image.query(hero)==level+3);
+  CHECK(image.query(probe)==level&&image.query(building)==level&&image.query(enemy)==6);
+  g.normal_hit=true;std::int32_t damage=10*256;
+  {rework_combat_v5::DamageScope scope(soldier,attacker,0,6,damage);CHECK(rework_combat_v5::upgrade_level(1,15)==level+3);CHECK(image.query(soldier)==level+3);}
+  CHECK(rework_combat_v5::upgrade_level(1,15)==level);
+ }
+ talent_power::enabled=false;
+}
+inline constexpr std::size_t rework_shield_ui_v5_group_count=5;
+inline void run_rework_shield_ui_v5_groups(){qa74_shield_refraction_three_matches_native_damage_and_display();rework_shield_ui_native_branch_and_eligibility();rework_shield_ui_scoped_research_and_lifecycle();rework_shield_ui_unwind_and_integrity();rework_shield_ui_concurrent_transient_research();}
 }

@@ -46,6 +46,11 @@ inline const IslandRoute* island_plan(U32 owner=12) {
 }
 inline bool island_available(){return island_plan()!=nullptr;}
 inline void island_discard(bw::Unit* u) {if(u&&rework_curses::marked(u)&&rework_combat_v5::native_kill)owner_kill_hook(u,rework_combat_v5::native_kill);}
+inline void island_release_ground(bw::Unit* u,U32 reason) {
+ if(!u || !rework_curses::marked(u) || (u->flags&0x40u))return;
+ island_hold(u,false);wave_targeting::issue(u);
+ log_event("Island convoy released grounded passenger: unit=%u owner=%u reason=%u frame=%u",U32(u->unit_id),U32(u->player),reason,g.game()->frame_count);
+}
 inline bw::Unit* island_create(U32 id,U32 slot,U32 hp,U32 attack,U32 required_owner) {
  const auto route=island_plan(required_owner<12?required_owner:primary?primary->owner:12u);
  if(!route||!g.order||!island_slot(slot))return nullptr;
@@ -78,7 +83,10 @@ inline void island_step() {
  for(auto it=island_convoys.begin();it!=island_convoys.end();){
   auto& c=*it;auto ship=island_unit(c.ship);
   if(!ship||!is_enemy(ship->player)){
-   for(const auto& token:c.passengers)if(auto p=island_unit(token)){if(!(p->flags&0x40u))island_discard(p);}
+   // The native cargo hook owns passengers still aboard. Grounded units may
+   // already be fighting after a partial/full unload; losing or capturing
+   // their former transport must never kill them.
+   for(const auto& token:c.passengers)if(auto p=island_unit(token))island_release_ground(p,1);
    it=island_convoys.erase(it);continue;
   }
   if(rework_curses::appearing(ship)){++it;continue;}
@@ -86,7 +94,7 @@ inline void island_step() {
   for(const auto& token:c.passengers)if(auto p=island_unit(token)){
    if((p->flags&0x40u)&&p->related==ship){++aboard;continue;}
    if(!c.phase){
-    if(frame-c.started>=45u*24u){island_discard(p);continue;}
+    if(frame-c.started>=45u*24u){island_release_ground(p,2);continue;}
     ++waiting;if(!rework_curses::appearing(p)&&!(p->flags&0x40u)&&(p->order!=92||p->order_target.unit!=ship))g.order(p,92,ship->flingy.position.x,ship->flingy.position.y,ship,ship->unit_id);
    }else {island_hold(p,false);wave_targeting::issue(p);}
   }
