@@ -1,0 +1,11 @@
+{
+  "version": "v2026.10.23-qa73",
+  "file": "SC1_Roguelike_20261023_QA73.zip",
+  "sha256": "8c12a08a9b0f8515a713e40ac4b9f6b4d2fc18ff8c0619bf686defc10fa2abac",
+  "bytes": 24942958,
+  "runtime_source_commit": "51a5a1679d2e471d47bd728e581113bc3e894149",
+  "native_dll_sha256": "eb04519c5fe086e69fb4be8a37a0eb809ebda8a0b6ed2d8ecd8d778f5e9d4cde",
+  "maps": 63,
+  "resource_grants": 85,
+  "personal_database_included": false
+}
