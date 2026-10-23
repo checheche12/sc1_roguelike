@@ -20,6 +20,10 @@ inline void actual_loader_dispatch_reproduces_pointer_loss(){
  CHECK(VirtualFree(executable,0,MEM_RELEASE));
 }
 inline std::vector<U32> registered;
+inline std::vector<U32> opcodes;
+inline U32 __cdecl opcode(U32 id,movement_effects::Opcode callback){
+ opcodes.push_back(id);CHECK(callback==(id==0xd0?rework_combat_v5::valkyrie_volley::select:rework_combat_v5::valkyrie_volley::detach));return 1;
+}
 inline U32 __cdecl hook(std::uint16_t id,std::uintptr_t callback){registered.push_back(id);if(id==25)CHECK(callback==reinterpret_cast<std::uintptr_t>(rework_combat_v5::order_target_hook));CHECK(id!=24);return 1;}
 inline GenericFn __cdecl get(std::uint16_t){return reinterpret_cast<GenericFn>(original_tech);}
 inline void __cdecl load(const std::uint16_t*,U8* values,std::size_t length){for(std::size_t i=0;i<length;i++)values[i]=3;}
@@ -28,8 +32,10 @@ inline void __cdecl write_vars(const std::uint16_t*,const std::size_t*,std::size
 inline void registration_avoids_broken_func24_entirely(){
  reset();registered.clear();samase::PluginApi provider{};provider.hook_func=reinterpret_cast<GenericFn>(hook);provider.get_func=get;
  provider.load_vars=load;provider.read_vars=read_vars;provider.write_vars=reinterpret_cast<GenericFn>(write_vars);
+ opcodes.clear();provider.hook_iscript_opcode=reinterpret_cast<GenericFn>(opcode);
  auto saved_kill=rework_combat_v5::native_kill;auto saved_give=rework_combat_v5::native_give;auto saved_read=rework_combat_v5::script_context_read;auto saved_write=rework_combat_v5::script_context_write;
  CHECK(rework_combat_v5::bind_engine(&provider));CHECK(registered.size()==5&&std::count(registered.begin(),registered.end(),25u)==1&&std::count(registered.begin(),registered.end(),24u)==0&&std::count(registered.begin(),registered.end(),1u)==0);
+ CHECK(opcodes==std::vector<U32>({0xd0,0xd1}));
  rework_combat_v5::native_kill=saved_kill;rework_combat_v5::native_give=saved_give;rework_combat_v5::script_context_read=saved_read;rework_combat_v5::script_context_write=saved_write;
 }
 inline bw::Unit* expected_target=nullptr;

@@ -311,7 +311,6 @@ struct UnitState {
     U32 energy_reserve=0,energy_cap=0,cloak_fraction=0;bool energy_granted=false,energy_pending=false;
     bool materialized=false,detonated=false,legendary_death_done=false;U32 swarm_heal_frame=~0u;
     bool chase=false;int chase_x=0,chase_y=0;
-    bool valkyrie_backshot=false;U32 valkyrie_backshot_frame=0;Identity valkyrie_backshot_target{};
     U32 last_effect_token=~0u;
     U32 retreat_due=0,blink_due=0,reposition_due=0,leap_due=0,charge_due=0,charge_until=0;
     int move_x=0,move_y=0,retreat_x=0,retreat_y=0;U32 saved_attack_flag=0;bool nuke_adjusted=false;
@@ -463,6 +462,7 @@ inline U32 __cdecl max_energy_hook(bw::Unit* u,UnitValueFn original) noexcept {
     const U32 base=original(u);if(!g.active||!g.applied||!own(u))return base;
     try{auto s=state(u);if(s)s->energy_cap=base;return std::min(65535u,base+energy_bonus(u)+unit_trait_value(g.growth,u->unit_id,4)*256);}catch(...){return base;}
 }
+inline bool bind_valkyrie_volley(const samase::PluginApi*) noexcept;
 inline bool bind_engine(const samase::PluginApi* api) noexcept {
     if(!api||!api->hook_func||!api->get_func||!api->load_vars||!api->read_vars||!api->write_vars)return false;
     U8 context_support[3]{};api->load_vars(script_context_ids,context_support,3);
@@ -480,7 +480,7 @@ inline bool bind_engine(const samase::PluginApi* api) noexcept {
         // preserves the pointer. Never register Func24, including pass-through.
         hook(static_cast<std::uint16_t>(samase::FuncId::CheckOrderTargeting),reinterpret_cast<std::uintptr_t>(order_target_hook)) &&
         hook(static_cast<std::uint16_t>(samase::FuncId::CheckWeaponTargetingFlags),reinterpret_cast<std::uintptr_t>(weapon_target_hook)) &&
-        hook(static_cast<std::uint16_t>(samase::FuncId::CanAttackUnit),reinterpret_cast<std::uintptr_t>(can_attack_hook));
+        hook(static_cast<std::uint16_t>(samase::FuncId::CanAttackUnit),reinterpret_cast<std::uintptr_t>(can_attack_hook)) && bind_valkyrie_volley(api);
 }
 inline U32 energy_total_cap(bw::Unit* u,UnitState& s) noexcept {
     const U32 native=s.energy_cap ? s.energy_cap : ((original_stat({0,22,u->unit_id})&0x40u) ? 250u : 200u)*256;
@@ -760,6 +760,7 @@ inline bool air_flame_position(bw::Unit* source,U32 w,int& x,int& y) noexcept {
     x=target->flingy.position.x;y=target->flingy.position.y;return true;
 }
 inline void queue(bw::Unit* source,bw::Unit* target,U32 w,U32 percent,U32 delay=0) {pending_shots.push_back({identity(source),identity(target),w,percent,now()+delay});}
+#include "valkyrie_volley_runtime.h"
 inline bool lockdown_committed(bw::Unit* target) {
     // Prefer fresh targets across consecutive casts, including the interval
     // between scheduling, native projectile creation and its actual impact.
@@ -782,7 +783,7 @@ inline void launched(U32 w,bw::Unit* source,bw::Bullet* b) {
         if(talent_power::enabled&&rank(106)&&p.source.id==62)p.percent=p.layer ? p.percent*2:p.percent*legend_base_balance::devourer_ground_damage_percent/100;
         if(talent_power::enabled&&rank(60)&&p.source.id==13&&p.layer)p.percent=p.percent*150/100;
         // Lurker air shots retain the ordinary100% launch scale.
-        if(rank(58)&&p.source.id==58&&!p.layer)p.percent=p.percent*(talent_power::enabled&&rank(140)&&in(p.source.id,{68,76})?100u:talent_power::v5(rank(140)&&in(p.source.id,{68,76})?140u:58u,60))/100;
+        if(rank(58)&&p.source.id==58&&!p.layer)p.percent=p.percent*(talent_power::enabled?150u:60u)/100;
         if((rank(95)&&p.source.id==50&&p.layer)||(rank(96)&&p.source.id==47&&!p.layer))p.percent=p.percent*talent_power::v5(p.source.id==50?95u:96u,70)/100;
         if(talent_power::enabled&&rank(144)&&w==84)p.percent*=2;
         if(talent_power::enabled&&rank(64)&&w==30&&!p.secondary)p.percent*=2;
@@ -1210,6 +1211,7 @@ inline void script_transform(U8* bytes,std::size_t size) noexcept {
             if((read(b)==0||id==362)&&read(a))write(b,read(a));
         }
     }
+    valkyrie_volley::append(bytes,size);
 }
 inline void bind(RankLookup lookup=nullptr) noexcept {
     rank_lookup=lookup;combat_effects::damage_enter=enter_damage;combat_effects::damage_leave=leave_damage;combat_effects::damage_filter=damage_allowed;combat_effects::damage_skip=skip_damage;movement_effects::ratio_extension=movement_extension;movement_effects::script_transform=script_transform;
@@ -1245,36 +1247,6 @@ inline void borrowed_order(bw::Unit* u,UnitFn dispatch,U32 order,bw::Unit* targe
     ++spell_depth;{HallucinationCreationScope hallucinations(order==148);OwnerDatScope view(u->player,u->player,u);dispatch(u);}--spell_depth;
     u->order=saved_order;u->order_state=saved_state;u->order_signal=saved_signal;u->order_timer=saved_timer;u->order_target=saved_target;
     u->order_queue_begin=queue_begin;u->order_queue_end=queue_end;u->flags=flags;u->energy=energy;u->shields=shields;
-}
-inline bool valkyrie_backshot_order(bw::Unit* u,UnitFn dispatch) {
-    if(!dispatch||!own(u)||u->unit_id!=58||!rank(58))return false;
-    auto s=state(u);if(!s)return false;
-    // Once a moving attack has begun, AttackUnit's continuing-order branch
-    // must not brake the ship before/during its native NoBrkCode volley.
-    // The native GotoRepeatAttk clears StartingAttack (flingy bit 8).
-    if(s->valkyrie_backshot){
-        const bool continuing=u->order==10&&u->order_target.unit==resolve(s->valkyrie_backshot_target)&&
-            resolve(s->valkyrie_backshot_target)&&can_fire(u)&&!u->stasis_timer&&
-            (u->flingy.flingy_flags&8u)&&U32(now()-s->valkyrie_backshot_frame)<48u;
-        if(continuing)return true;
-        s->valkyrie_backshot=false;return false;
-    }
-    // Patrol acquires an ordinary AttackUnit order. Only its initial moving
-    // attack uses native AttackFixedRange, which keeps momentum and still
-    // checks the weapon's angle/range/cooldown and runs the real animation.
-    // Move, stationary attacks, chasing, other units and unowned Valkyries
-    // retain their original order processing. No synthetic missiles are used.
-    if(u->order!=10||u->order_state!=0||u->flingy.current_speed<=0||
-       u->ground_cooldown||u->air_cooldown||(u->flingy.flingy_flags&8u)||
-       !can_fire(u)||u->stasis_timer)return false;
-    auto target=u->order_target.unit;
-    if(!target_ok(u,target,weapon(u,air(target))))return false;
-    borrowed_order(u,dispatch,11,target,target->flingy.position.x,target->flingy.position.y);
-    if((u->flingy.flingy_flags&8u)&&(u->ground_cooldown||u->air_cooldown)){
-        s->valkyrie_backshot=true;s->valkyrie_backshot_frame=now();s->valkyrie_backshot_target=identity(target);
-        u->order_state=1; // Resume normal pursuit/stopping after this one volley.
-    }
-    return true;
 }
 inline std::int32_t post_armor_damage(bw::Unit* target,std::int32_t amount) {
     if(!g.normal_hit||generated_depth||amount<=0)return amount;auto s=state(target);
@@ -1576,7 +1548,6 @@ struct OrderScope {
     OrderScope(bw::Unit* u,UnitFn original=nullptr){previous_caster=active_caster;if(auto s=state(u))if(s->shadow_active){intercepted=true;return;}if(!own(u)||spell_depth)return;
         active_caster=u;dispatch=original;who=identity(u);target=identity(u->order_target.unit);order=u->order;energy=u->energy;hp=U32(u->flingy.hitpoints);shields=U32(u->shields);stim=u->stim_timer;auto to=resolve(target);target_hp=to ? U32(to->flingy.hitpoints):0;
         prior_state=u->order_state;prior_timer=u->order_timer;origin_x=u->order_target.x;origin_y=u->order_target.y;
-        if(valkyrie_backshot_order(u,original)){intercepted=true;return;}
         if(talent_power::enabled&&rank(91)&&u->unit_id==103&&(u->flags&0x10u)&&order==11&&to&&
            target_ok(u,to,weapon(u,air(to)))&&u->flingy.current_speed){
             // A mobile burrowed Lurker must stop at an acquired Patrol target.
@@ -1679,7 +1650,7 @@ inline void reset() noexcept {
     expansion_support_frame=~0u;
     impact_weapon=130;impact_owner=12;impact_layer=2;
     if(state_base==g.units&&states.size()==g.units_count)for(auto& s:states)if(auto u=generation(s.who)){restore_motion(u,s);if(s.shadow_active)shadow_restore(u,s);if(s.fade_until)u->flags=(u->flags&~(0x200000u|0x8000u))|s.saved_collision|s.saved_attack_flag;}
-    irradiation::reset();states.clear();state_base=nullptr;storm_cells.clear();storm_cells_frame=~0u;acid_states.clear();acid_base=nullptr;matrices.clear();matrix_base=nullptr;projectiles.clear();pending_shots.clear();pending_work.clear();persistent.clear();morph_completions.clear();morph_rewarded.clear();generated_depth=spell_depth=0;DamageScope::current_percent=100;DamageScope::current_secondary=false;DamageScope::current_mobility_bonus=0;emission_percent=100;emission_secondary=false;
+    valkyrie_volley::reset();irradiation::reset();states.clear();state_base=nullptr;storm_cells.clear();storm_cells_frame=~0u;acid_states.clear();acid_base=nullptr;matrices.clear();matrix_base=nullptr;projectiles.clear();pending_shots.clear();pending_work.clear();persistent.clear();morph_completions.clear();morph_rewarded.clear();generated_depth=spell_depth=0;DamageScope::current_percent=100;DamageScope::current_secondary=false;DamageScope::current_mobility_bonus=0;emission_percent=100;emission_secondary=false;
 }
 inline void step() {
     if(!g.active||!g.applied||!g.game||GetCurrentThreadId()!=g.game_thread.load())return;
@@ -1702,7 +1673,7 @@ inline void step() {
         }
         ++it;
     }
-    pending_work.clear();pending_work.swap(pending_shots);
+    valkyrie_volley::step();pending_work.clear();pending_work.swap(pending_shots);
     for(auto& shot:pending_work){if(std::int32_t(frame-shot.due)<0){pending_shots.push_back(shot);continue;}auto source=resolve(shot.source),target=resolve(shot.target);if(source&&target)emit(source,target,shot.weapon,shot.percent);}
     pending_work.clear();
     living_units([&](bw::Unit* u){auto s=state(u);if(!s)return;focus_tick(u,*s);configure_motion(u,*s);finish_idle_melee_animation(u);
@@ -1811,6 +1782,7 @@ inline void step() {
         }
         refill_energy(u,*s);s->last_energy=u->energy;s->energy_seen=true;
         lurker_air_attack(u,*s,frame);
+        valkyrie_volley::mobile(u,*s,frame);
         const bool moving=u->order==6;
         if(moving&&rank(47)&&in(u->unit_id,{8,12,21,27,28,29,102})&&can_fire(u)){
             const auto due=std::max({s->next_ground,s->next_air,U32(u->ground_cooldown)+frame,U32(u->air_cooldown)+frame});

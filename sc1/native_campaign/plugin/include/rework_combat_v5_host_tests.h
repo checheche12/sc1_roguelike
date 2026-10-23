@@ -439,84 +439,8 @@ inline void rework_spell_recast_native_timer_write_witness(){
     for(U32 w:{32u,83u,108u}){target->lockdown_timer=target->stasis_timer=target->maelstrom_timer=200;auto shot=bullet(caster,target,w);{rework_combat_v5::MissileScope impact(shot);}CHECK(target->lockdown_timer==200&&target->stasis_timer==200&&target->maelstrom_timer==200);}finish();
 }
 inline void rework_native_upgrade_storage_and_shield_beneficiaries();
-namespace qa86_valkyrie {
-inline U32 fixed_calls=0,ordinary_calls=0;
-// Model only the order adapter contract; this is not a live engine test.
-inline void __cdecl native_order(bw::Unit* u){
-    if(u->order!=11){++ordinary_calls;u->flingy.current_speed=0;return;}
-    ++fixed_calls;const auto target=u->order_target.unit;
-    const U32 w=raw_value(0,rework_combat_v5::air(target)?19:17,u->unit_id);
-    CHECK(w==103&&raw_value(1,3,w)==3);
-    const auto direction=multi_target::direction_to(u,target);
-    const auto delta=(U32(u->flingy.facing_direction)-direction)&255u;
-    if(std::min(delta,256u-delta)>raw_value(1,18,w)){u->order_wait=0;return;}
-    u->flingy.flingy_flags|=8;u->ground_cooldown=u->air_cooldown=64;
-}
-inline U32 __cdecl outside(bw::Unit* u,bw::Unit* target){
-    const U32 w=raw_value(0,rework_combat_v5::air(target)?19:17,u->unit_id),range=raw_value(1,5,w);
-    return multi_target::distance_sq(u,target)>std::uint64_t(range)*range;
-}
-inline void begin(){rework_fixture::begin({58});rework_fixture::install();multi_target::outside_range=outside;fixed_calls=ordinary_calls=0;}
-inline bw::Unit* ship(bw::Unit* target){
-    auto u=rework_fixture::unit(58,1,100,100,true);u->order=10;u->order_state=0;
-    u->flingy.current_speed=1536;u->flingy.current_speed_x=-1536;u->flingy.facing_direction=64;
-    u->flingy.move_target={20,100,nullptr};multi_fixture::target(u,target);return u;
-}
-}
-inline void rework_valkyrie_backshot_both_layers_and_volley_end(){
-    using namespace qa86_valkyrie;
-    for(bool air:{false,true}){
-        begin();auto target=rework_fixture::unit(air?43:37,6,120,100,air),u=ship(target);
-        std::array<U8,64> queued{};void* queue=queued.data();u->order_queue_begin=u->order_queue_end=queue;
-        u->energy=1234;const auto move=u->flingy.move_target;
-        owner_order_hook(u,native_order);
-        CHECK(fixed_calls==1&&ordinary_calls==0&&u->order==10&&u->order_state==1);
-        CHECK(u->flingy.current_speed==1536&&u->flingy.current_speed_x==-1536);
-        CHECK(u->order_target.unit==target&&u->order_queue_begin==queue&&u->order_queue_end==queue&&u->energy==1234);
-        CHECK(u->flingy.move_target.x==move.x&&u->flingy.move_target.y==move.y);
-        // StartingAttack covers the initial wait as well as all four salvos.
-        for(U32 frame=101;frame<142;frame++){
-            game.frame_count=frame;owner_order_hook(u,native_order);
-            CHECK(fixed_calls==1&&ordinary_calls==0&&u->flingy.current_speed==1536);
-        }
-        u->flingy.flingy_flags&=~8u;game.frame_count=142;owner_order_hook(u,native_order);
-        CHECK(ordinary_calls==1&&u->flingy.current_speed==0&&!rework_combat_v5::state(u)->valkyrie_backshot);
-        CHECK(multi_fixture::shots.empty()); // The adapter adds no extra shots.
-        u->order_queue_begin=u->order_queue_end=nullptr;rework_fixture::finish();
-    }
-}
-inline void rework_valkyrie_backshot_guards_angle_and_cancellation(){
-    using namespace qa86_valkyrie;
-    for(U32 test=0;test<18;test++){
-        begin();auto target=rework_fixture::unit(37,6,120,100),u=ship(target);
-        switch(test){
-        case 0:rework_fixture::ranks[58]=0;break;case 1:u->player=6;break;
-        case 2:u->flags|=0x40000000u;break;case 3:u->order=6;break;case 4:u->order=1;break;
-        case 5:u->order=14;break;case 6:u->flingy.current_speed=0;break;case 7:u->order_state=1;break;
-        case 8:u->air_cooldown=1;break;case 9:u->lockdown_timer=1;break;case 10:u->stasis_timer=1;break;
-        case 11:u->maelstrom_timer=1;break;case 12:static_cast<bw::SpriteScr*>(target->flingy.sprite)->visibility_mask=0;break;
-        case 13:target->flingy.position.x=3000;break;case 14:target->player=1;break;
-        case 15:target->flingy.hitpoints=0;break;case 16:u->order_target.unit=nullptr;break;case 17:u->flingy.flingy_flags|=8;break;
-        }
-        CHECK(!rework_combat_v5::valkyrie_backshot_order(u,native_order)&&fixed_calls==0);
-        rework_fixture::finish();
-    }
-    for(U32 delta:{0u,32u,33u,128u}){
-        begin();auto target=rework_fixture::unit(43,6,120,100,true),u=ship(target);u->flingy.facing_direction=U8(64u-delta);
-        owner_order_hook(u,native_order);CHECK(fixed_calls==1&&ordinary_calls==0);
-        CHECK(bool(u->flingy.flingy_flags&8u)==(delta<=32)&&u->flingy.current_speed==1536);
-        rework_fixture::finish();
-    }
-    for(U32 test=0;test<6;test++){
-        begin();auto target=rework_fixture::unit(37,6,120,100),u=ship(target);owner_order_hook(u,native_order);
-        CHECK(rework_combat_v5::state(u)->valkyrie_backshot);
-        if(test==0)u->order=6;else if(test==1)target->flingy.hitpoints=0;else if(test==2)++target->minor_unique_index;
-        else if(test==3)u->lockdown_timer=1;else if(test==4)game.frame_count+=48;else ++u->minor_unique_index;
-        CHECK(!rework_combat_v5::valkyrie_backshot_order(u,native_order));
-        CHECK(!rework_combat_v5::state(u)->valkyrie_backshot);rework_fixture::finish();
-    }
-}
-inline void run_rework_combat_v5_groups(){rework_half_armor_native_health_callback();rework_ghost_zero_armor_five_seconds();rework_infantry_percentage_damage();rework_stats_and_repeatable_fractional();rework_medic_actual_pulses_and_lifecycle();rework_projectile_counts_and_moving_orders();rework_emp_storm_and_armor_semantics();rework_mobile_siege_burrow_and_ownership();rework_native_area_replay_and_restoration();rework_matrix_reserve_and_energy_overflow();rework_feedback_targeting_and_spell_costs();rework_acid_twelve_ground_lifecycle_and_native_hit();rework_hallucination_mind_chain_and_native_orders();rework_split_bounce_and_dying_ammunition();rework_medic_rate_network_emergency_and_stim();rework_nuclear_warning_morph_once_and_reset();rework_native_fields_owner_and_air_rules();rework_actual_iscript_layer_cfg_and_stat_weapons();rework_idle_melee_finishes_native_attack_animation();rework_relocation_jump_fixed_recall_and_native_placement();rework_lethal_plague_chain_irradiate_and_brood_count();rework_storm_multiple_centers_and_consume_real_cap();rework_native_script_source_scope_restore();rework_goliath_body_weapon_and_ground_suicide_guards();rework_synthetic_native_weapon_factors();rework_bc_dual_triple_counts_once_per_layer();rework_dead_caster_spell_scalars_durations_and_yamato();rework_spell_recast_native_timer_write_witness();rework_native_upgrade_storage_and_shield_beneficiaries();rework_valkyrie_backshot_both_layers_and_volley_end();rework_valkyrie_backshot_guards_angle_and_cancellation();}
+#include "qa87_valkyrie_host_tests.h"
+inline void run_rework_combat_v5_groups(){qa87_valkyrie_mobile_acquires_one_target_and_shared_cycle();qa87_valkyrie_unlocked_ground_air_and_eight_native_missiles();qa87_valkyrie_stock_isolation_and_script_validation();qa87_valkyrie_death_capture_disable_and_no_repeat();rework_half_armor_native_health_callback();rework_ghost_zero_armor_five_seconds();rework_infantry_percentage_damage();rework_stats_and_repeatable_fractional();rework_medic_actual_pulses_and_lifecycle();rework_projectile_counts_and_moving_orders();rework_emp_storm_and_armor_semantics();rework_mobile_siege_burrow_and_ownership();rework_native_area_replay_and_restoration();rework_matrix_reserve_and_energy_overflow();rework_feedback_targeting_and_spell_costs();rework_acid_twelve_ground_lifecycle_and_native_hit();rework_hallucination_mind_chain_and_native_orders();rework_split_bounce_and_dying_ammunition();rework_medic_rate_network_emergency_and_stim();rework_nuclear_warning_morph_once_and_reset();rework_native_fields_owner_and_air_rules();rework_actual_iscript_layer_cfg_and_stat_weapons();rework_idle_melee_finishes_native_attack_animation();rework_relocation_jump_fixed_recall_and_native_placement();rework_lethal_plague_chain_irradiate_and_brood_count();rework_storm_multiple_centers_and_consume_real_cap();rework_native_script_source_scope_restore();rework_goliath_body_weapon_and_ground_suicide_guards();rework_synthetic_native_weapon_factors();rework_bc_dual_triple_counts_once_per_layer();rework_dead_caster_spell_scalars_durations_and_yamato();rework_spell_recast_native_timer_write_witness();rework_native_upgrade_storage_and_shield_beneficiaries();}
 inline void rework_native_upgrade_storage_and_shield_beneficiaries(){
     using namespace rework_fixture;begin({113});install();
     std::array<U8,61*12> levels{};samase::ExtendedArray native_levels{levels.data(),levels.data()+levels.size(),0,0};g.extended=&native_levels;g.extended_count=1;
@@ -541,5 +465,5 @@ inline void rework_native_upgrade_storage_and_shield_beneficiaries(){
     CHECK(rework_combat_v5::upgrade_level(1,15)==7);{rework_combat_v5::DamageScope scope(target,attacker,0,1,damage);CHECK(game.upgrade_level_sc[1][15]==8);}CHECK(game.upgrade_level_sc[1][15]==7);
     finish();
 }
-inline constexpr std::size_t rework_combat_v5_group_count=31;
+inline constexpr std::size_t rework_combat_v5_group_count=33;
 }

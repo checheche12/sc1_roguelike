@@ -31561,7 +31561,7 @@
       "id": "484803cb-9456-57c1-a263-c8cfcd7a8fa1",
       "name": "지상 유도탄",
       "target": "발키리",
-      "description": "발키리가 지상 적에게도 8발의 광역 미사일을 쏩니다. 지상 피해 150%.",
+      "description": "발키리가 이동 중에도 공중·지상 적에게 8발의 광역 미사일을 쏩니다. 첫 탄 발사 직후 이동·패트롤 명령이 가능합니다. 공중 피해 100%, 지상 피해 150%(공중의 1.5배).",
       "trigger": "",
       "numbers": "",
       "notes": "같은 주기에 공중/지상 중 주 표적 1개.",
@@ -31586,7 +31586,12 @@
         "source_id": "484803cb-9456-57c1-a263-c8cfcd7a8fa1",
         "qa_revision": 2026102038,
         "benefit_power_quarters": 10,
-        "rarity_promoted": true
+        "rarity_promoted": true,
+        "moving_fire": true,
+        "ground_damage_percent": 150,
+        "air_damage_percent": 100,
+        "missiles_per_volley": 8,
+        "immediate_movement_after_first_shot": true
       },
       "target_units": [
         58
