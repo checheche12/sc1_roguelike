@@ -1,0 +1,16 @@
+{
+  "version": "v2026.10.24-qa91",
+  "file": "SC1_Roguelike_QA91.zip",
+  "sha256": "7ccfe66ab1ab73ebd936ed23134bca999f3e2f062f36ef5289650f8b56d8d186",
+  "bytes": 25035489,
+  "runtime_source_commit": "77ed8e4fe34c6fb9d3850015b71f47b9d024663b",
+  "native_dll_sha256": "59dea63a092597c3ae280c87aa92a5c7fb0f6c763b548fc1c4dc8598ca204701",
+  "maps": 63,
+  "maps_changed": 0,
+  "base_release": "v2026.10.24-qa90",
+  "tower_candidate_weight_percent": 400,
+  "previous_tower_candidate_weight_percent": 300,
+  "tower_effects_unchanged": true,
+  "personal_database_included": false,
+  "actual_gameplay_verified": false
+}
