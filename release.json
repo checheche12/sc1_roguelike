@@ -1,0 +1,10 @@
+{
+  "version": "v2026.10.23-qa74",
+  "file": "SC1_Roguelike_20261023_QA74.zip",
+  "sha256": "9bdddbb5912001c3821fb65c9dcaa06d1b7a7d3178c6a125db492b857b08fb7b",
+  "bytes": 24943127,
+  "runtime_source_commit": "30c735ed7b584b752a8640e72cb3b3459d48e766",
+  "native_dll_sha256": "753a43c5fa4310136914f7e7ac378943c6fa998ab5aede9a0e441da2c940bfa4",
+  "shield_refraction_bonus": 3,
+  "personal_database_included": false
+}
