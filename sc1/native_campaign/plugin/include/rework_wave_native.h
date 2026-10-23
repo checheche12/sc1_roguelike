@@ -112,7 +112,8 @@ inline bool live_hero(U32 slot) {
  bool found=false;living_units([&](bw::Unit* u){const auto v=rework_curses::identity(u);if(v && rework_curses::marked(u) && v->slot==slot && (original_stat({0,22,u->unit_id})&0x40u))found=true;});return found;
 }
 inline void select_specials() {
- selected={0,0};const auto caps=capabilities();U32 n=0;const auto start=timeline.cursor;
+ selected={0,0};if(!timeline.ordinal)return;
+ const auto caps=capabilities();U32 n=0;const auto start=timeline.cursor;
  std::array<bool,std::size(policy::kRosters)> allowed{};
  for(std::size_t i=0;i<std::size(policy::kRosters);i++){
   const auto& r=policy::kRosters[i];if(r.slot==policy::Reserve || !rework_curses::count(r.slot))continue;
@@ -207,7 +208,7 @@ inline bw::Unit* add_detector(U32 slot=0) {
  if(!primary)for(const auto& origin:sc1_native::campaign_wave_config::kOrigins)if(origin.mission_id==g.mission->mission_id&&origin.owner==leader->player){race=origin.race;break;}
  return create(policy::detector(race),slot,100,100,false,leader->player);
 }
-inline void normal_units(U32 half_supply,U32 slot=0) {
+inline void normal_units(U32 half_supply,U32 slot=0,bool opening=false) {
  // Main waves, death support and reserves share this one reduction. Keep the
  // stored main/reserve budgets unscaled to avoid reducing reserves twice.
  half_supply=policy::normal_amount(policy::reduced_amount(half_supply));
@@ -224,7 +225,7 @@ inline void normal_units(U32 half_supply,U32 slot=0) {
  if(detection||queued_detector)half_supply-=detection_cost;
  half_supply=policy::normal_combat_amount(half_supply,air_only);
  for(U32 i=0;i<480 && used<half_supply;i++){
-  const auto pick=sc1_native::wave_progression::select(race,air_only,timeline.second(),timeline.ordinal,i,half_supply-used,wave_supply,anti_air);if(!pick.valid)break;
+  const auto pick=sc1_native::wave_progression::select(race,air_only,opening?0u:timeline.second(),timeline.ordinal,i,half_supply-used,wave_supply,anti_air);if(!pick.valid)break;
   if(!request_spawn(pick.unit_id,slot))break;used+=pick.supply;}
  if(used && !detection)add_detector(slot);
 }
@@ -259,10 +260,10 @@ inline void main_wave() {
  reset_dispatch();collecting=true;deferred_wave=g.current_wave_id;deferred_ordinal=timeline.ordinal+1;deferred_origin=primary;
  deferred_until=timeline.second()+30;deferred_second=timeline.second();
  last_main_budget=policy::scaled_count(policy::normal_budget(timeline.ordinal,g.mission->mission_id),rework_curses::count(16));
- // Every mission reserves special compositions before ordinary filler.
- // Keep detection and all existing composition, supply and safety limits.
+ // The opening contains ordinary units only. From the second normal wave,
+ // reserve special compositions before filler as before. Curse scaling stays.
  if(primary)request_spawn(policy::detector(primary->race),0);
- selected_units();normal_units(last_main_budget);collecting=false;deferred_created=unit_ordinal;
+ if(timeline.ordinal)selected_units();normal_units(last_main_budget,0,!timeline.ordinal);collecting=false;deferred_created=unit_ordinal;
  if(!deferred.empty())log_event("V5 wave placement deferred: wave=%u remaining=%u retry_seconds=30",deferred_wave,U32(deferred.size()));
 }
 inline void retry_dispatch() {
@@ -346,8 +347,8 @@ inline void tick(bool ready,bool blocked,bool goal) {
  if(!raid_next)raid_next=std::max(current->first,timeline.ready_at+current->base_grace);
  if(!pending_kind){
   if(timeline.due(*current)){pending_kind=1;timeline.warn();pending_spawn_at=timeline.departure_at-4;select_specials();}
-  else if(support_due && !reserve_at && timeline.second()>=opening_second() && (!support_last || timeline.second()-support_last>=60)){pending_kind=2;timeline.warn();pending_spawn_at=timeline.departure_at-4;support_due=false;support_last=timeline.second();selected={0,0};}
-  else if(rework_curses::count(15) && !reserve_at && timeline.second()>=raid_next && (capabilities()&policy::AntiAir)){pending_kind=3;timeline.warn();pending_spawn_at=timeline.departure_at-4;raid_next=timeline.second()+current->interval;selected={0,0};}
+  else if(timeline.ordinal>=2 && support_due && !reserve_at && timeline.second()>=opening_second() && (!support_last || timeline.second()-support_last>=60)){pending_kind=2;timeline.warn();pending_spawn_at=timeline.departure_at-4;support_due=false;support_last=timeline.second();selected={0,0};}
+  else if(timeline.ordinal>=2 && rework_curses::count(15) && !reserve_at && timeline.second()>=raid_next && (capabilities()&policy::AntiAir)){pending_kind=3;timeline.warn();pending_spawn_at=timeline.departure_at-4;raid_next=timeline.second()+current->interval;selected={0,0};}
   if(pending_kind){primary=pending_kind==3?raid_owner():choose_origin(true);if(!primary&&pending_kind!=3)primary=choose_origin(false);if(!primary){pending_kind=0;timeline.finished(*current);return;}spawned_pending=false;unit_ordinal=0;g.wave_spawn_number=0;g.current_wave_id=++g.next_wave_id;log_event("V5 added wave warning kind=%u departure=%u normal_ordinal=%u",pending_kind,timeline.departure_at,timeline.ordinal+1);message(warning_text(pending_kind));}
  }
  if(pending_kind && !spawned_pending && timeline.second()>=pending_spawn_at){
