@@ -62,6 +62,77 @@ inline void indexed_ranks_and_movement_match_original_lookup(){
   CHECK(actual==expected); // Same members AND original multiplication order.
  }
 }
-inline constexpr std::size_t dat_performance_group_count=3;
-inline void run_dat_performance_groups(){dat_fixed_width_access_preserves_unaligned_bytes();dat_prepared_views_preserve_nested_mutation_and_phase_updates();indexed_ranks_and_movement_match_original_lookup();}
+inline void unit_growth_index_matches_linear_reference(){
+ using namespace rework_combat_v5;
+ reset();const auto prior=rank_lookup;rank_lookup=nullptr;GrowthSnapshot snapshot{};U32 random=0xc1041025;
+ const auto next=[&](){random^=random<<13;random^=random>>17;random^=random<<5;return random;};
+ for(bool enabled:{false,true}){talent_power::enabled=enabled;
+  for(U32 trial=0;trial<24;++trial){
+   for(auto& word:snapshot.talent_bits)word=next();for(auto& word:snapshot.talent_ranks)word=next();
+   for(U32 id=0;id<258;++id)for(bool ammo:{false,true}){
+    std::vector<std::uint16_t> expected;
+    for(std::size_t i=0;i<std::size(unit_growth::rules);++i)if(unit_growth_matches(unit_growth::rules[i],id,ammo))expected.push_back(static_cast<std::uint16_t>(i));
+    if(id<256)CHECK(unit_growth_index[ammo][id]==expected);
+    for(U32 kind=0;kind<4;++kind){U32 value=0;if(enabled)for(auto i:expected){const auto& r=unit_growth::rules[i];if(r.kind==kind)value=std::max(value,rank(snapshot,r.ordinal));}CHECK(unit_growth_rank(snapshot,id,kind,ammo)==value);}
+    for(U32 field=0;field<6;++field){U32 value=0;if(enabled)for(auto i:expected){const auto& r=unit_growth::rules[i];if(r.kind==2&&rank(snapshot,r.ordinal))value=std::max(value,field==0?r.armor:field==1?r.hp:field==2?r.damage:field==3?r.speed:r.energy);}CHECK(unit_trait_value(snapshot,id,field,ammo)==value);}
+    U32 parent=0;for(const auto& r:unit_growth::rules)if(r.kind==1&&unit_growth_matches(r,id,true)){parent=r.parent;break;}CHECK(unit_attack_parent(id)==parent);
+   }
+  }
+ }
+ CHECK(unit_growth_rank(snapshot,0xffffffffu,1,true)==0);CHECK(unit_trait_value(snapshot,0xffffffffu,3,true)==0);CHECK(unit_attack_parent(0xffffffffu)==0);
+ rank_lookup=prior;talent_power::enabled=false;
+}
+
+inline void health_plan_preserves_nested_views_and_fallback(){
+ using namespace hp_engine_fixture;reset();Image image;
+ GrowthSnapshot snapshot{};snapshot.talent_bits[0]=1u<<1;snapshot.curse_counts[2]=1;CHECK(apply_snapshot(nullptr,snapshot));
+ auto own=add(0,1,100,100),enemy=add(0,6,100,100);bw::SpriteScr sprite{};movement_effects::Image main{};sprite.main_image=&main;own->flingy.sprite=enemy->flingy.sprite=&sprite;own->flags=enemy->flags=1;
+ max_hp_engine::image_dat_getter=get_images;refresh_units();CHECK(owner_dat_query::narrow_health_allowed(own));
+ const auto fields=[&](){std::vector<U32> v;for(const auto& e:g.owner_edits)v.push_back(read_entry(e.table,e.key.id));return v;};
+ const auto base=fields();
+ {OwnerDatScope outer(6,6,enemy);const auto before=fields();
+  for(U32 phase=0;phase<2;++phase){
+   if(phase){for(auto& e:g.owner_edits)if(e.key.table==0&&e.key.field==8&&e.key.id==0)e.friendly+=256;owner_dat_query::reset();}
+   {OwnerHpScope health(own);
+    for(std::size_t i=0;i<g.owner_edits.size();++i){const auto& e=g.owner_edits[i];const bool included=e.key.table==0&&e.key.id==0&&(e.key.field==6||e.key.field==7||e.key.field==8||e.key.field==22);CHECK(read_entry(e.table,e.key.id)==(included?e.friendly:before[i]));}
+    const auto hp=raw_value(0,8,0);write_entry(&dat[0][8],0,123);
+    {OwnerHpScope inner(own);CHECK(raw_value(0,8,0)!=123);}
+    CHECK(raw_value(0,8,0)==123);write_entry(&dat[0][8],0,hp);
+   }CHECK(fields()==before);
+  }
+ }CHECK(fields()==base);
+ const auto check_full=[&](){std::vector<U32> expected;{OwnerDatScope full(1,1,own);expected=fields();}{OwnerHpScope health(own);CHECK(fields()==expected);}CHECK(fields()==base);};
+ void* nonnull=reinterpret_cast<void*>(1);std::memcpy(image_dat[10].data,&nonnull,sizeof(nonnull));CHECK(!owner_dat_query::narrow_health_allowed(own));check_full();
+ std::memset(image_dat[10].data,0,sizeof(void*));own->unit_id=125;CHECK(!owner_dat_query::narrow_health_allowed(own));check_full();own->unit_id=0;
+ own->flingy.sprite=nullptr;CHECK(!owner_dat_query::narrow_health_allowed(own));check_full();own->flingy.sprite=&sprite;
+ max_hp_engine::image_dat_getter=nullptr;CHECK(!owner_dat_query::narrow_health_allowed(own));check_full();
+}
+
+#include "hp_scope_native_fixture.generated.h"
+inline void health_scopes_match_original_native_hp_and_strength(){
+ using namespace hp_engine_fixture;reset();Image image;hp_scope_native_fixture::populate(image.base);
+ struct FlagsAlias {bw::DatTable before;FlagsAlias(U8* p):before(dat[0][22]){std::memcpy(p,before.data,228*4);dat[0][22].data=p;}~FlagsAlias(){abandon_session();dat[0][22]=before;}} flags(image.base+0xe5a3e0);
+ // Native strength is precomputed by type; preserve it and exercise both
+ // native recomputation outputs after HP changes (including energy users).
+ for(U32 id=0;id<456;++id){const U32 score=id+100;std::memcpy(image.base+0xeb2ac0+id*4,&score,4);}
+ bw::SpriteScr sprite{};movement_effects::Image main{},selection{};sprite.main_image=&main;sprite.first_image=&selection;sprite.flags=8;sprite.visibility_mask=1;selection.drawfunc=11;image.base[0x10908e0]=1;
+ auto u=add(0,1,0,0);u->flingy.sprite=&sprite;refresh_units();
+ GrowthSnapshot snapshot{};snapshot.talent_bits[0]=1u<<1;snapshot.curse_counts[2]=1;CHECK(apply_snapshot(nullptr,snapshot));image.install();
+ const auto native_set=reinterpret_cast<SetHp>(image.base+0x1a8430);
+ const auto fields=[&](){std::vector<U32> v;for(const auto& e:g.owner_edits)v.push_back(read_entry(e.table,e.key.id));return v;};
+ for(bool cached:{false,true})for(U32 id=0;id<106;++id)for(U32 owner:{1u,6u,11u})for(U32 mode=0;mode<3;++mode){
+  u->unit_id=static_cast<std::uint16_t>(id);u->player=static_cast<U8>(owner);u->flags=1u|(mode==1?0x40000000u:0u);u->energy=25000;u->shields=7777;
+  auto track=track_unit(u);track->elite=mode==2;if(cached)CHECK(max_hp_cache::publish(true));else max_hp_cache::reset();CHECK(owner_dat_query::narrow_health_allowed(u));
+  for(bool addition:{false,true})for(int amount:{0,255,256,999999}){
+   OwnerDatScope outer(owner==6?1u:6u,owner==6?1u:6u);const auto before=fields();
+   u->flingy.hitpoints=static_cast<int>(effective_max_hp(u)/2);const auto initial=*u;selection.flags=0;
+   {OwnerDatScope full(owner,owner,u);if(addition)max_hp_engine::original_add(u,amount);else native_set(u,amount);}
+   const auto expected=*u;const auto selection_expected=selection.flags;CHECK(fields()==before);*u=initial;selection.flags=0;
+   if(addition)max_hp_engine::add_hp(u,amount);else owner_hp_hook(u,amount,native_set);
+   CHECK(u->flingy.hitpoints==expected.flingy.hitpoints);CHECK(std::memcmp(reinterpret_cast<const U8*>(u)+0x1d0,reinterpret_cast<const U8*>(&expected)+0x1d0,4)==0);CHECK(selection.flags==selection_expected);CHECK(fields()==before);
+  }
+ }
+}
+inline constexpr std::size_t dat_performance_group_count=6;
+inline void run_dat_performance_groups(){dat_fixed_width_access_preserves_unaligned_bytes();dat_prepared_views_preserve_nested_mutation_and_phase_updates();indexed_ranks_and_movement_match_original_lookup();unit_growth_index_matches_linear_reference();health_plan_preserves_nested_views_and_fallback();health_scopes_match_original_native_hp_and_strength();}
 }

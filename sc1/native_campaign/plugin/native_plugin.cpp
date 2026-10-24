@@ -559,14 +559,16 @@ class OwnerDatScope {
 public:
     OwnerDatScope(U32 unit_owner,U32 weapon_owner,bw::Unit* subject=nullptr) noexcept
         :OwnerDatScope(unit_owner,weapon_owner,subject,subject){}
-    OwnerDatScope(U32 unit_owner,U32 weapon_owner,bw::Unit* subject,bw::Unit* weapon_subject,bool query_only=false) noexcept {
+    OwnerDatScope(U32 unit_owner,U32 weapon_owner,bw::Unit* subject,bw::Unit* weapon_subject,bool query_only=false,bool health_only=false) noexcept {
         if(!g.active || !g.applied || GetCurrentThreadId()!=g.game_thread.load())return;
         if(hallucination(subject) || hallucination_creation_depth)unit_owner=12;
         if(hallucination(weapon_subject) || hallucination_creation_depth)weapon_owner=12;
         const U32 unit_view=unit_owner==player_owner()?1u:is_enemy(unit_owner)?2u:0u;
         const U32 weapon_view=weapon_owner==player_owner()?1u:is_enemy(weapon_owner)?2u:0u;
-        native_tech_cost_.begin(unit_owner);
-        const auto& edits=owner_dat_query::plan(query_only,unit_view,weapon_view,weapon_subject && weapon_subject->unit_id==98);
+        health_only=health_only && owner_dat_query::narrow_health_allowed(subject);
+        if(!health_only)native_tech_cost_.begin(unit_owner);
+        const auto& edits=health_only ? owner_dat_query::health_plan(unit_view,subject->unit_id) :
+            owner_dat_query::plan(query_only,unit_view,weapon_view,weapon_subject && weapon_subject->unit_id==98);
         ++frame_profile::dat_scopes;if(query_only)++frame_profile::query_scopes;frame_profile::dat_entries+=edits.size();
         for(const auto& e:edits){
             const U32 current=read_entry(e.table,e.id);
@@ -612,6 +614,13 @@ public:
     }
     ~OwnerDatScope(){while(size_){const auto& e=saved_[--size_];write_entry(e.table,e.id,e.value);}}
     OwnerDatScope(const OwnerDatScope&)=delete;OwnerDatScope& operator=(const OwnerDatScope&)=delete;
+};
+
+// Used only for native HP setters/adders and wrappers whose only native call
+// is SetHp. Damage, orders, transforms and creation retain the full view.
+class OwnerHpScope : public OwnerDatScope {
+public:
+ explicit OwnerHpScope(bw::Unit* u) noexcept:OwnerDatScope(u?u->player:12u,u?u->player:12u,u,u,false,true){}
 };
 
 bool ordinary_weapon(U32 weapon) noexcept {
@@ -825,10 +834,11 @@ using CommandFn=void (__cdecl*)(const void*,U32,U32);
 using CreateBulletFn=bw::Bullet* (__cdecl*)(U32,int,int,U32,U32,bw::Unit*);
 bw::Bullet* __cdecl owner_bullet_create_hook(U32,int,int,U32,U32,bw::Unit*,CreateBulletFn) noexcept;
 // Owns only additional ordinary attacks; engine damage/range/detection rules remain native.
+#include "include/unit_area_search.h"
 #include "include/multi_target_runtime.h"
 void __cdecl owner_unit_hook(bw::Unit* u,UnitFn original) noexcept;
 void __cdecl owner_order_hook(bw::Unit* u,UnitFn original) noexcept;
-void __cdecl owner_hp_hook(bw::Unit* u,std::int32_t hp,SetHp original) noexcept {OwnerDatScope scope(unit_owner(u),unit_owner(u),u);original(u,hp);}
+void __cdecl owner_hp_hook(bw::Unit* u,std::int32_t hp,SetHp original) noexcept {OwnerHpScope scope(u);original(u,hp);}
 U32 __cdecl owner_range_hook(bw::Unit* u,U32 id,RangeFn original) noexcept {OwnerDatScope scope(unit_owner(u),unit_owner(u),u,u,true);return original(u,id);}
 U32 __cdecl owner_acquire_hook(bw::Unit* u,UnitValueFn original) noexcept {OwnerDatScope scope(unit_owner(u),unit_owner(u),u,u,true);return original(u);}
 bw::Unit* verified_projectile_source(const ProjectileSource& source) noexcept {
@@ -1135,7 +1145,7 @@ void mark_wave_unit(bw::Unit* u) {
     t->elite=g.growth.curse_counts[7] && g.wave_spawn_number<g.growth.curse_counts[7];
     t->barrier=g.growth.curse_counts[8] && g.wave_spawn_number<4u+2u*(g.growth.curse_counts[8]-1u);
     max_hp_cache::publish_unit(u);
-    if(t->elite){OwnerDatScope scope(u->player,u->player,u);g.set_hp(u,static_cast<std::int32_t>(std::min<std::uint64_t>(0x7fffffffu,std::uint64_t(u->flingy.hitpoints)*3/2)));}
+    if(t->elite){OwnerHpScope scope(u);g.set_hp(u,static_cast<std::int32_t>(std::min<std::uint64_t>(0x7fffffffu,std::uint64_t(u->flingy.hitpoints)*3/2)));}
     assign_wave_roles(u,*t);wave_marker(u,*t,t->spawn_second);
     ++g.wave_spawn_number;
 }
@@ -1246,7 +1256,7 @@ void regenerate_waves(U32 second) {
         if(t->spawned && regular_enemy(u) && g.growth.curse_counts[5] && second-t->last_damage>=6){
             const U32 maximum=effective_max_hp(u);
             const U32 gain=static_cast<U32>(std::min<std::uint64_t>(0x7fffffffu,std::uint64_t(maximum)*g.growth.curse_counts[5]/100));
-            if(u->flingy.hitpoints<static_cast<std::int32_t>(maximum)){OwnerDatScope scope(u->player,u->player,u);g.set_hp(u,static_cast<std::int32_t>(std::min<std::uint64_t>(maximum,std::uint64_t(u->flingy.hitpoints)+gain)));}
+            if(u->flingy.hitpoints<static_cast<std::int32_t>(maximum)){OwnerHpScope scope(u);g.set_hp(u,static_cast<std::int32_t>(std::min<std::uint64_t>(maximum,std::uint64_t(u->flingy.hitpoints)+gain)));}
         }
         t->hp=u->flingy.hitpoints;t->shields=u->shields;
     });
@@ -1595,6 +1605,7 @@ bool bind_api(const samase::PluginApi* api) noexcept {
     g.replay=reinterpret_cast<GetFlag>(api->is_replay());
     g.set_hp=function<SetHp>(api,samase::FuncId::UnitSetHp);
     g.damage=function<DamageFn>(api,samase::FuncId::DamageUnit);
+    unit_area_search::native_search=function<unit_area_search::Search>(api,samase::FuncId::ForEachUnitInArea);
     rework_waves::native_tech_target=function<rework_waves::TechTargetFn>(api,samase::FuncId::CheckTechTargeting);
     rework_combat_v5::native_tech_target=rework_waves::native_tech_target;
     rework_combat_v5::native_weapon_target=function<rework_combat_v5::WeaponTargetFn>(api,samase::FuncId::CheckWeaponTargetingFlags);

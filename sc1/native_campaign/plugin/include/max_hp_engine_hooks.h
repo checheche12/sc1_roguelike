@@ -51,7 +51,7 @@ inline native_engine_hooks::Hook add_hook;
 inline void __cdecl add_hp(bw::Unit* unit,std::int32_t amount) noexcept {
     // Medic, repair and Zerg regeneration share this helper, which reads DAT
     // directly. Its target's owner and elite instance must determine the cap.
-    OwnerDatScope scope(unit_owner(unit),unit_owner(unit),unit);
+    OwnerHpScope scope(unit);
     original_add(unit,amount);
 }
 inline bool register_at(U8* base,const Entry& entry,native_engine_hooks::Hook& hook,native_engine_hooks::WriteExeMemory writer) noexcept {
@@ -127,5 +127,24 @@ inline bool verify_installation() noexcept {
         if(!native_engine_hooks::match(native_engine_hooks::verified_base+w.rva,w.expected,w.length))
             return native_engine_hooks::install_failed("hp_add_remainder_changed");
     ready=true;return true;
+}
+}
+
+namespace { namespace owner_dat_query {
+inline bool narrow_health_allowed(const bw::Unit* unit) noexcept {
+ // The 13515 SetHp/AddHp bodies read HP, shield enable/max and flags for
+ // this type, then update selection images and cached AI strength. Bunker
+ // cargo and damage overlays reach broader routines: retain the full view.
+ if(!valid_unit(unit)||unit->unit_id>=106||!unit->flingy.sprite)return false;
+ if(!(unit->flags&1u))return true; // Both broader branches require Completed.
+ const auto sprite=static_cast<const bw::SpriteScr*>(unit->flingy.sprite);
+ if(!sprite->main_image||!max_hp_engine::image_dat_getter)return false;
+ std::size_t fields=0;const auto tables=max_hp_engine::image_dat_getter(&fields);
+ if(!tables||fields<=10||tables[10].entry_size!=sizeof(void*)||!tables[10].data)return false;
+ std::uint16_t id=0;std::memcpy(&id,static_cast<const U8*>(sprite->main_image)+0x10,sizeof(id));
+ if(id>=tables[10].entries)return false;
+ void* overlay=nullptr;std::memcpy(&overlay,static_cast<const U8*>(tables[10].data)+std::size_t(id)*sizeof(void*),sizeof(overlay));
+ return overlay==nullptr;
+}
 }
 }

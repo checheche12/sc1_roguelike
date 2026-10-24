@@ -92,9 +92,19 @@ inline bool unit_growth_matches(const unit_growth::Rule& rule,U32 id,bool ammo=f
         return alias<256&&(rule.units[alias/32]&(1u<<(alias%32)));}
     return false;
 }
+// Immutable rule membership only: ranks are always read from the current
+// snapshot. Retain source order and merge ammo aliases without duplicates.
+static_assert(std::size(unit_growth::rules)<=65535,"Growth rule index width");
+inline const auto unit_growth_index=[](){
+    std::array<std::array<std::vector<std::uint16_t>,256>,2> index;
+    for(U32 ammo=0;ammo<2;++ammo)for(U32 id=0;id<256;++id)
+        for(std::size_t n=0;n<std::size(unit_growth::rules);++n)
+            if(unit_growth_matches(unit_growth::rules[n],id,ammo!=0))index[ammo][id].push_back(static_cast<std::uint16_t>(n));
+    return index;
+}();
 inline U32 unit_growth_rank(const GrowthSnapshot& snapshot,U32 id,U32 kind,bool ammo=false) noexcept {
-    U32 result=0;if(!talent_power::enabled)return 0;
-    for(const auto& rule:unit_growth::rules)if(rule.kind==kind&&unit_growth_matches(rule,id,ammo))result=std::max(result,rank(snapshot,rule.ordinal));
+    U32 result=0;if(!talent_power::enabled||id>=256)return 0;
+    for(auto n:unit_growth_index[ammo][id]){const auto& rule=unit_growth::rules[n];if(rule.kind==kind)result=std::max(result,rank(snapshot,rule.ordinal));}
     return result;
 }
 inline U32 unit_attack_rank(const GrowthSnapshot& snapshot,U32 id) noexcept {
@@ -104,15 +114,16 @@ inline U32 unit_attack_rank(const GrowthSnapshot& snapshot,U32 id) noexcept {
     return std::min(4u,old+unit_growth_rank(snapshot,id,1,true));
 }
 inline U32 unit_trait_value(const GrowthSnapshot& snapshot,U32 id,U32 field,bool ammo=false) noexcept {
-    U32 value=0;if(!talent_power::enabled)return 0;
-    for(const auto& r:unit_growth::rules)if(r.kind==2&&unit_growth_matches(r,id,ammo)&&rank(snapshot,r.ordinal)){
+    U32 value=0;if(!talent_power::enabled||id>=256)return 0;
+    for(auto n:unit_growth_index[ammo][id]){const auto& r=unit_growth::rules[n];if(r.kind!=2||!rank(snapshot,r.ordinal))continue;
         const U32 amount=field==0?r.armor:field==1?r.hp:field==2?r.damage:field==3?r.speed:r.energy;
         value=std::max(value,amount);
     }
     return value;
 }
 inline U32 unit_attack_parent(U32 id) noexcept {
-    for(const auto& rule:unit_growth::rules)if(rule.kind==1&&unit_growth_matches(rule,id,true))return rule.parent;
+    if(id>=256)return 0;
+    for(auto n:unit_growth_index[1][id]){const auto& rule=unit_growth::rules[n];if(rule.kind==1)return rule.parent;}
     return 0;
 }
 // QA13: shared defense manuals grant +0.5 armor and +28% health per rank.
@@ -373,7 +384,7 @@ inline std::vector<bw::Unit*> around(int x,int y,U32 radius,bw::Unit* excluded,U
     result.reserve(std::min<std::size_t>(g.units_count,128));
     // living_units also traverses the hidden list. Loaded passengers share the
     // carrier's position, but external area effects must not reach inside it.
-    living_units([&](bw::Unit* u){if(u==excluded || !eligible(u) || (u->flags&0x40u) || (enemy ? !is_enemy(u->player) : u->player!=player_owner()) ||
+    unit_area_search::nearby(x,y,radius,[&](bw::Unit* u){if(u==excluded || !eligible(u) || (u->flags&0x40u) || (enemy ? !is_enemy(u->player) : u->player!=player_owner()) ||
         (layer>=0 && air(u)!=(layer!=0)) || (bio && !organic(u)) || dist(x,y,u->flingy.position.x,u->flingy.position.y)>std::uint64_t(radius)*radius)return;result.push_back(u);});
     frame_profile::nearby_matches+=result.size();
     const auto nearer=[&](bw::Unit* a,bw::Unit* b){const auto da=dist(x,y,a->flingy.position.x,a->flingy.position.y),db=dist(x,y,b->flingy.position.x,b->flingy.position.y);return da==db ? a<b : da<db;};
@@ -456,7 +467,7 @@ inline void weapon_hurt(bw::Unit* target,U32 amount,U32 w,bw::Unit* source,U32 o
 inline void heal(bw::Unit* u,U32 amount) noexcept {
     if(!eligible(u) || !g.set_hp || !amount)return;
     const auto cap=effective_max_hp(u);if(u->flingy.hitpoints>=std::int32_t(cap))return;
-    OwnerDatScope view(u->player,u->player,u);g.set_hp(u,std::int32_t(std::min<std::uint64_t>(cap,std::uint64_t(u->flingy.hitpoints)+amount)));
+    OwnerHpScope view(u);g.set_hp(u,std::int32_t(std::min<std::uint64_t>(cap,std::uint64_t(u->flingy.hitpoints)+amount)));
 }
 #include "legendary_irradiate.h"
 inline U32 energy_bonus(bw::Unit* u) noexcept {

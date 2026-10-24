@@ -91,14 +91,20 @@ inline std::uint64_t distance_sq(bw::Unit* a,bw::Unit* b) noexcept {
     return static_cast<std::uint64_t>(x*x+y*y);
 }
 inline bw::Unit* choose(bw::Unit* main,bw::Unit* spawner,int layer,bw::Unit* excluded,bw::Unit* excluded2=nullptr) {
+    if(!firing_allowed(main,spawner))return nullptr;
     bw::Unit* best=nullptr;std::uint64_t distance=~std::uint64_t(0);
     living_units([&](bw::Unit* candidate){
-        if(candidate==excluded || candidate==excluded2 || (layer>=0 && flying(candidate)!=(layer!=0)) || !target_ok(main,spawner,candidate))return;
+        if(candidate==excluded || candidate==excluded2 || (layer>=0 && flying(candidate)!=(layer!=0)))return;
         const auto d=distance_sq(main,candidate);
-        if(d<distance || (d==distance && (!best || candidate<best))){best=candidate;distance=d;}
+        // A candidate that cannot beat the current nearest valid target need
+        // not enter the owner DAT scope or either native targeting query.
+        if(d>distance || (d==distance && best && candidate>=best))return;
+        if(!target_ok(main,spawner,candidate))return;
+        best=candidate;distance=d;
     });
     return best;
 }
+
 inline U32 direction_to(bw::Unit* from,bw::Unit* target) noexcept {
     const double dx=double(target->flingy.position.x)-from->flingy.position.x;
     const double dy=double(target->flingy.position.y)-from->flingy.position.y;

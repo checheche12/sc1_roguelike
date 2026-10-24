@@ -9,16 +9,35 @@ inline std::vector<OwnerEdit> edits;
 struct Prepared {bw::DatTable* table;U32 id,value;};
 struct Plan {bool ready=false;std::vector<Prepared> edits;};
 inline std::array<Plan,36> plans;
-inline void reset() noexcept {source=nullptr;count=~std::size_t(0);edits.clear();for(auto& p:plans)p.ready=false;}
+inline std::array<std::array<Plan,228>,3> health_plans;
+inline void invalidate_plans() noexcept {
+ for(auto& p:plans)p.ready=false;
+ for(auto& view:health_plans)for(auto& p:view)p.ready=false;
+}
+// Defined alongside the pinned health adapter. Unverified image/overlay paths
+// keep the full view; only the witnessed simple HP path can use four fields.
+bool narrow_health_allowed(const bw::Unit*) noexcept;
+inline void reset() noexcept {source=nullptr;count=~std::size_t(0);edits.clear();invalidate_plans();}
 inline const std::vector<OwnerEdit>& values() {
  if(source!=g.owner_edits.data()||count!=g.owner_edits.size()){
   edits.clear();source=g.owner_edits.data();count=g.owner_edits.size();
-  for(auto& p:plans)p.ready=false;
+  invalidate_plans();
   for(const auto& e:g.owner_edits)
    if((e.key.table==0&&(e.key.field==17||e.key.field==19||e.key.field==22||e.key.field==23||e.key.field==24))||
       (e.key.table==1&&(e.key.field==3||e.key.field==5)))edits.push_back(e);
  }
  return edits;
+}
+inline const std::vector<Prepared>& health_plan(U32 view,U32 id) {
+ values();auto& p=health_plans[view][id];
+ if(!p.ready){
+  p.edits.clear();
+  for(const auto& e:g.owner_edits)
+   if(e.key.table==0&&e.key.id==id&&(e.key.field==6||e.key.field==7||e.key.field==8||e.key.field==22))
+    p.edits.push_back({e.table,id,view==1?e.friendly:view==2?e.enemy:e.original});
+  p.ready=true;
+ }
+ return p.edits;
 }
 // Cache only immutable target values, never the current DAT contents or
 // whether a write is needed. Every nested scope still observes and restores

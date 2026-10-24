@@ -49,7 +49,7 @@ struct Image {
         for(auto& h:max_hp_engine::hooks){if(h.allocation){RtlDeleteFunctionTable(&h.runtime);VirtualFree(h.allocation,0,MEM_RELEASE);}h={};}
         auto& add=max_hp_engine::add_hook;if(add.allocation){RtlDeleteFunctionTable(&add.runtime);VirtualFree(add.allocation,0,MEM_RELEASE);}add={};max_hp_engine::original_add=nullptr;
         for(auto& f:max_hp_engine::originals)f=nullptr;
-        max_hp_engine::ready=false;native_engine_hooks::verified_base=saved_base;
+        max_hp_engine::ready=false;max_hp_engine::image_dat_getter=nullptr;native_engine_hooks::verified_base=saved_base;
         if(base)VirtualFree(base,0,MEM_RELEASE);
     }
     void hp(U32 id,U32 value){std::memcpy(base+0xe59420+id*4,&value,4);}
