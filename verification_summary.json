@@ -1,0 +1,29 @@
+{
+  "version": "v1.0.1",
+  "release_channel": "stable",
+  "base_release": "v1.0.0",
+  "gameplay_unchanged": false,
+  "native_dll_sha256": "0e7f36178286cd462f7a14ebb171dfd143f1d12cda947e0d6bd745270b18fe7a",
+  "native_tests_fresh": true,
+  "unchanged_map_resource_proof_reused": true,
+  "fresh_checkpoint_replays": 63,
+  "p8_fresh_map_rebuild": true,
+  "p8_static_route_cells": 73,
+  "p8_collision_footprints": 5,
+  "native_pathfinder_verified": false,
+  "host": {
+    "groups": 498,
+    "checks": 1890074,
+    "passed": true
+  },
+  "ui": {
+    "groups": 22,
+    "assertions": 177059,
+    "passed": true
+  },
+  "python_tests": 23,
+  "unchanged_campaign_maps": 63,
+  "new_live_game_test": false,
+  "portable_self_test_passed": true,
+  "portable_window_title": "스타1 성장 기록 관리자 · 1.0.1"
+}
