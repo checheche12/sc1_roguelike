@@ -36,7 +36,7 @@ def portable_zip(manifest, output):
     files = {p.relative_to(output).as_posix(): p for p in sorted(output.rglob('*')) if p.is_file()}
     if any(n.lower().endswith(('.lnk', '.sqlite3', '.db')) or n.startswith('sc1/data/') for n in files):
         raise ValueError('User records or shortcuts must not be distributed')
-    archive = output.with_suffix('.zip')
+    archive = output.with_name(output.name + '.zip')
     with zipfile.ZipFile(archive, 'x', zipfile.ZIP_DEFLATED, compresslevel=6) as zipped:
         for name, path in files.items():
             zipped.write(path, output.name + '/' + name)

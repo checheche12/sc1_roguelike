@@ -14,6 +14,7 @@ import threading
 import tkinter as tk
 from tkinter import filedialog, messagebox, ttk
 
+from sc1 import __version__
 from .store import open_campaign_store
 from .lifecycle import ManagerInstance
 from .preferences import (PREFERENCES_PATH, startup_database, remember_database,
@@ -77,7 +78,6 @@ def launch(database: Path | None = None, *, new_profile: str = ORIGINAL_PROFILE,
             messagebox.showinfo("이미 실행 중", "스타1 성장 기록 관리자가 이미 열려 있습니다.\n작업 표시줄에서 기존 관리자 창을 사용해 주세요.", parent=root)
             root.destroy()
             return
-        root.title("스타1 성장 기록 관리자 · 시험판")
         root.geometry(f"900x{min(930, root.winfo_screenheight() - 80)}")
         root.minsize(730, 660)
         try:
@@ -114,6 +114,7 @@ class ManagerWindow:
                  command_channel: Path | None = None, prior_command_token=None,
                  preferences_path: Path | None = None):
         self.root = root
+        root.title(f"스타1 성장 기록 관리자 · {__version__}")
         self.database = database.resolve()
         self.store = open_campaign_store(self.database, new_profile=new_profile)
         self.preferences_path = preferences_path

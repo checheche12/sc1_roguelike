@@ -14,6 +14,7 @@ import zipfile
 ROOT=Path(__file__).resolve().parents[1]
 NATIVE=ROOT/"sc1/native_campaign"
 sys.path.insert(0,str(ROOT))
+from sc1 import __version__, RELEASE_CHANNEL
 CAMPAIGN_DATA=("missions.json","runtime_talents.json","runtime_talents_all.json",
                "runtime_talents_v5.json","runtime_v5_contract.json","talent_rank_catalog.json")
 LAB_ASSETS=('SC1_Effect_Lab.scx','Effect_Checklist.html','build_evidence.json')
@@ -143,7 +144,7 @@ def build(output, manifest_path=None):
         if source.is_file(): copy(source,licenses/source.name)
     # Tcl/Tk license files travel with the original runtime tree.
     (output/"사용방법.txt").write_text(
-        "스타크래프트 캠페인 관리자\n\n"
+        "스타크래프트 캠페인 관리자 "+__version__+"\n\n"
         "1. ZIP 파일 전체를 쓰기 가능한 폴더에 압축 해제하세요. 파이썬 설치는 필요 없습니다.\n"
         "2. Start_Campaign.exe 또는 Campaign_Patcher.exe를 실행하세요.\n"
         "3. 저장 기록을 선택하고 스타크래프트 설치 경로를 지정하세요.\n"
@@ -155,7 +156,8 @@ def build(output, manifest_path=None):
         "임무는 새로 시작해 주세요. 임무 중 저장·불러오기는 지원하지 않습니다.\n"
         "재능·저주와 완료 기록은 자동 저장됩니다.\n"
         "전체 63개 지도는 구현·자동 검사되었으며 모든 임무 실전 완주 검증은 아직 진행 중입니다.\n",encoding="utf-8-sig")
-    receipt={"schema_version":1,"built_at_utc":datetime.now(timezone.utc).isoformat(),"runtime":"CPython 3.11.8 x64 + Tk",
+    receipt={"schema_version":1,"version":__version__,"release_channel":RELEASE_CHANNEL,
+             "built_at_utc":datetime.now(timezone.utc).isoformat(),"runtime":"CPython 3.11.8 x64 + Tk",
              "source_manifest_sha256":package["sha256"],"external_python_required":False,
              "includes_user_databases":False,"includes_workshop_data":False,
              'growth_wire_version':package['manifest'].get('growth_wire_version',1),

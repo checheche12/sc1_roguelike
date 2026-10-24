@@ -1,1 +1,4 @@
-"""Isolated StarCraft campaign-growth prototype; no SC2 dependencies."""
+"""StarCraft campaign roguelike; no SC2 dependencies."""
+
+__version__ = "1.0.0"
+RELEASE_CHANNEL = "stable"

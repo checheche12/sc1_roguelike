@@ -9,6 +9,7 @@ import sys
 import tempfile
 import tkinter
 import traceback
+from sc1 import __version__, RELEASE_CHANNEL
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -28,6 +29,8 @@ def main():
         from sc1.bridge import __main__ as bridge
         package = installation._package()
         distribution=json.loads((ROOT/"distribution.json").read_text(encoding="utf-8"))
+        assert distribution['version']==__version__ and distribution['release_channel']==RELEASE_CHANNEL
+        report.update(version=__version__,release_channel=RELEASE_CHANNEL)
         for row in distribution["files"]:
             source=(ROOT/row["path"]).resolve()
             assert source.is_relative_to(ROOT)
@@ -60,6 +63,8 @@ def main():
             window.withdraw()
             report["tk_version"] = window.tk.call("info", "patchlevel")
             manager = ui.ManagerWindow(window,Path(temporary)/"record.sqlite3",preferences_path=Path(temporary)/"preferences.json")
+            assert window.title().endswith(" · "+__version__)
+            report['manager_window_title']=window.title()
             assert not manager.auto_connect_enabled
             assert manager.process is None
             assert any(button.cget("text")=="스타크래프트 시작" for button in manager.installation_buttons)
