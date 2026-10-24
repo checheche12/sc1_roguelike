@@ -45,7 +45,7 @@ inline const IslandRoute* island_plan(U32 owner=12) {
  }return nullptr;
 }
 inline bool island_available(){return island_plan()!=nullptr;}
-inline void island_discard(bw::Unit* u) {if(u&&rework_curses::marked(u)&&rework_combat_v5::native_kill)owner_kill_hook(u,rework_combat_v5::native_kill);}
+inline void island_discard(bw::Unit* u) {if(u&&rework_curses::marked(u)&&rework_combat_v5::native_kill){owner_kill_hook(u,rework_combat_v5::native_kill);placement::invalidate();}}
 inline void island_release_ground(bw::Unit* u,U32 reason) {
  if(!u || !rework_curses::marked(u) || (u->flags&0x40u))return;
  island_hold(u,false);wave_targeting::issue(u);

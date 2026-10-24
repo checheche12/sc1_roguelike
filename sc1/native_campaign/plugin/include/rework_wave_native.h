@@ -42,6 +42,7 @@ inline void transformed(bw::Unit* u,U32 old_id) noexcept {
 }
 }
 namespace rework_waves {
+#include "wave_placement_cache.h"
 void reset_spells() noexcept;
 void reset_islands() noexcept;
 bool island_available();
@@ -103,7 +104,7 @@ inline bool major_original_assault() {
 inline const sc1_native::campaign_wave_config::Origin* choose_origin(bool ground,bool alternate=false) {
  const sc1_native::campaign_wave_config::Origin* found=nullptr;
  for(U32 pass=0;pass<2;pass++)for(const auto& o:sc1_native::campaign_wave_config::kOrigins){
-  if(!origin_safe(o) || (!pass && !origin_has_live_base(o)))continue;
+  if(!placement::safe(o) || (!pass && !placement::base(o)))continue;
   const bool only_air=sc1_native::wave_progression::air_only_unit(static_cast<std::uint16_t>(o.unit1)) && sc1_native::wave_progression::air_only_unit(static_cast<std::uint16_t>(o.unit2));
   if(ground && only_air)continue;if(alternate && &o==primary)continue;found=&o;return found;}
  return found;
@@ -128,10 +129,11 @@ inline void select_specials() {
  log_event("V5 special curse selection: slots=%u,%u normal_ordinal=%u",selected[0],selected[1],timeline.ordinal+1);
 }
 inline bool clear_cell(int x,int y,bool worker_raid=false) {
+ if(placement::depth)return placement::clear(x,y,worker_raid);
  bool clear=true;U32 alive=0;living_units([&](bw::Unit* u){++alive;const auto p=u->flingy.position;const auto dx=std::int64_t(x)-p.x,dy=std::int64_t(y)-p.y;
   if(dx*dx+dy*dy<40ll*40)clear=false;if(!worker_raid && wave_protected_unit(u) && dx*dx+dy*dy<512ll*512)clear=false;});return clear && alive<1550;
 }
-inline U32 live_supply() {U32 supply=0;living_units([&](bw::Unit* u){auto t=existing_track(u);if(t && t->spawned && is_enemy(u->player))supply+=std::max(1u,original_stat({0,46,u->unit_id}));});return supply;}
+inline U32 live_supply() {if(placement::depth){placement::refresh();return placement::supply;}U32 supply=0;living_units([&](bw::Unit* u){auto t=existing_track(u);if(t && t->spawned && is_enemy(u->player))supply+=std::max(1u,original_stat({0,46,u->unit_id}));});return supply;}
 inline U32 supply_cap() noexcept {
  const auto game=g.game?g.game():nullptr;
  return policy::live_supply_cap(g.mission?g.mission->mission_id:0,game?game->elapsed_seconds:0,rework_curses::count(policy::Reinforcements));
@@ -156,6 +158,7 @@ inline bw::Unit* mining_worker_target() noexcept {
  });raid_worker=best;raid_worker_unique=best?best->minor_unique_index:0;raid_worker_frame=frame;raid_worker_sampled=true;return best;
 }
 inline bw::Unit* finish_created(bw::Unit* u,U32 slot,U32 hp,U32 attack,int x,int y) {
+ placement::invalidate();++frame_profile::spawn_successes;
  mark_wave_unit(u);if(rework_curses::identities.size()!=g.units_count)rework_curses::identities.assign(g.units_count,{});
  auto& v=rework_curses::identities[static_cast<std::size_t>(u-g.units)];v={};v.unique=u->minor_unique_index;v.owner=u->player;v.type=u->unit_id;v.wave=g.current_wave_id;v.slot=slot;v.hp=hp;v.attack=attack;
  v.elite=unit_ordinal<std::min(3u,rework_curses::count(21));const U32 barrier=rework_curses::count(22);v.barrier=barrier && unit_ordinal<4+2*(std::min(3u,barrier)-1);
@@ -169,6 +172,7 @@ inline bw::Unit* finish_created(bw::Unit* u,U32 slot,U32 hp,U32 attack,int x,int
 }
 #include "island_convoys.h"
 inline bw::Unit* create(U32 id,U32 slot,U32 hp=100,U32 attack=100,bool alternate=false,U32 required_owner=12) {
+ placement::Batch batch;
  if(slot==policy::Reserve || slot==policy::Rear)return nullptr;
  if(!enabled() || live_supply()+std::max(1u,original_stat({0,46,id}))>supply_cap())return nullptr;
  // Explicit user exception: only worker-raid Mutalisks appear directly at the
@@ -178,18 +182,18 @@ inline bw::Unit* create(U32 id,U32 slot,U32 hp=100,U32 attack=100,bool alternate
   for(int radius=64;radius<=384;radius+=32)for(int dy=-radius;dy<=radius;dy+=32)for(int dx=-radius;dx<=radius;dx+=32){
    if(std::max(std::abs(dx),std::abs(dy))!=radius)continue;const int x=int(center.x)+dx,y=int(center.y)+dy;
    if(x<16||y<16||x>=int(g.mission->width*32)-16||y>=int(g.mission->height*32)-16||!clear_cell(x,y,true))continue;
-   OwnerDatScope scope(owner->owner,owner->owner);auto u=spawn(id,x,y,owner->owner);if(u)return finish_created(u,slot,hp,attack,x,y);
+   OwnerDatScope scope(owner->owner,owner->owner);++frame_profile::spawn_attempts;auto u=spawn(id,x,y,owner->owner);if(u)return finish_created(u,slot,hp,attack,x,y);
   }return nullptr;
  }
  const bool ground=!(original_stat({0,22,id})&4u);auto preferred=choose_origin(ground,alternate);if(!preferred && alternate)preferred=choose_origin(ground);
  if(!preferred)return ground&&island_slot(slot)?island_create(id,slot,hp,attack,required_owner):nullptr;
  for(U32 pass=0;pass<2;pass++)for(const auto& candidate:sc1_native::campaign_wave_config::kOrigins){
- const auto origin=&candidate;if((pass==0)!=(origin==preferred) || !origin_safe(*origin))continue;
+ const auto origin=&candidate;if((pass==0)!=(origin==preferred) || !placement::safe(*origin))continue;
  if(required_owner<12&&origin->owner!=required_owner)continue;
  const bool only_air=sc1_native::wave_progression::air_only_unit(static_cast<std::uint16_t>(origin->unit1)) && sc1_native::wave_progression::air_only_unit(static_cast<std::uint16_t>(origin->unit2));if(ground && only_air)continue;
  for(U32 i=0;i<origin->cell_count;i++){
   const auto p=origin->cells[(i+unit_ordinal)%origin->cell_count];if(!clear_cell(p.x,p.y))continue;
-  OwnerDatScope scope(origin->owner,origin->owner);auto u=spawn(id,p.x,p.y,origin->owner);if(!u)continue;
+  OwnerDatScope scope(origin->owner,origin->owner);++frame_profile::spawn_attempts;auto u=spawn(id,p.x,p.y,origin->owner);if(!u)continue;
   return finish_created(u,slot,hp,attack,p.x,p.y);
  }}
  return nullptr;
@@ -261,6 +265,7 @@ inline void selected_units() {
  for(auto slot:selected)if(slot)for(const auto& r:policy::kRosters)if(r.slot==slot)roster(r);
 }
 inline void main_wave() {
+ placement::Batch batch;
  reset_dispatch();collecting=true;deferred_wave=g.current_wave_id;deferred_ordinal=timeline.ordinal+1;deferred_origin=primary;
  deferred_until=timeline.second()+30;deferred_second=timeline.second();
  last_main_budget=policy::normal_dispatch_budget(timeline.ordinal,g.mission->mission_id,rework_curses::count(16));
@@ -273,6 +278,7 @@ inline void main_wave() {
 inline void retry_dispatch() {
  if(deferred.empty()||timeline.second()==deferred_second)return;
  deferred_second=timeline.second();
+ placement::Batch batch;
  if(timeline.second()>deferred_until){log_event("V5 wave placement expired: wave=%u remaining=%u live_half_supply=%u",deferred_wave,U32(deferred.size()),live_supply());reset_dispatch();return;}
  const auto saved_wave=g.current_wave_id,saved_spawn=g.wave_spawn_number,saved_ordinal=unit_ordinal;const auto saved_origin=primary;
  g.current_wave_id=deferred_wave;g.wave_spawn_number=unit_ordinal=deferred_created;primary=deferred_origin;

@@ -560,16 +560,18 @@ public:
         if(!g.active || !g.applied || GetCurrentThreadId()!=g.game_thread.load())return;
         if(hallucination(subject) || hallucination_creation_depth)unit_owner=12;
         if(hallucination(weapon_subject) || hallucination_creation_depth)weapon_owner=12;
+        const U32 unit_view=unit_owner==player_owner()?1u:is_enemy(unit_owner)?2u:0u;
+        const U32 weapon_view=weapon_owner==player_owner()?1u:is_enemy(weapon_owner)?2u:0u;
         native_tech_cost_.begin(unit_owner);
         const auto& edits=query_only?owner_dat_query::values():g.owner_edits;
         ++frame_profile::dat_scopes;if(query_only)++frame_profile::query_scopes;frame_profile::dat_entries+=edits.size();
         for(const auto& e:edits){
-            const U32 owner=e.key.table==1 ? weapon_owner : unit_owner;
-            U32 next=owner==player_owner() ? e.friendly : is_enemy(owner) ? e.enemy : e.original;
+            const U32 view=e.key.table==1 ? weapon_view : unit_view;
+            U32 next=view==1 ? e.friendly : view==2 ? e.enemy : e.original;
             if(e.key.table==0 && e.key.field==48 && (e.key.id==11 || e.key.id==42 || e.key.id==57 || e.key.id==69))next=std::min(next,8u);
             // Corsairs and Raszagal share weapon 100. This talent excludes
             // heroes: an owner-only DAT view must not extend Raszagal's range.
-            if(owner==player_owner() && weapon_subject && weapon_subject->unit_id==98 &&
+            if(view==1 && weapon_subject && weapon_subject->unit_id==98 &&
                e.key.table==1 && e.key.field==5 && e.key.id==100)next=e.original;
             // Cooldowns are owner-adjusted after simulation, independent of the
             // engine's iscript execution pass (which is outside step_order).
@@ -753,6 +755,16 @@ void note_attack_launch(bw::Unit* u,U32 weapon) noexcept {
 #include "include/enemy_progression.h"
 void apply_unit_motion() {
     if(!g.applied)return;
+    // These legacy talent factors are shared by unit/weapon type for this
+    // simulation pass. Recompute once so rank changes remain immediate.
+    struct Ratio {std::uint64_t numerator=1,denominator=1;};
+    std::array<Ratio,228> movement{};std::array<Ratio,130> attack{};
+    for(const auto& p:frozen::movement_patches)if(p.unit_id<movement.size() && (g.growth.talent_bits[p.bit/32]&(1u<<(p.bit%32)))){
+        auto& r=movement[p.unit_id];talent_power::multiply(r.numerator,r.denominator,p.bit,p.numerator,p.denominator);
+    }
+    for(const auto& p:frozen::patches)if(p.table==1 && p.field==16 && p.id<attack.size() && (g.growth.talent_bits[p.bit/32]&(1u<<(p.bit%32)))){
+        auto& r=attack[p.id];talent_power::multiply(r.numerator,r.denominator,p.bit,p.numerator,p.denominator);
+    }
     const auto step=[&](bw::Unit* u){
         auto t=track_unit(u);if(!t || t->seen)return;t->seen=true;
         if(hallucination(u)){
@@ -760,8 +772,7 @@ void apply_unit_motion() {
             t->base_speed=t->applied_speed=0;t->cooldown[0]={};t->cooldown[1]={};return;
         }
         std::uint64_t speed_num=1,speed_den=1;
-        if(u->player==player_owner())for(const auto& p:frozen::movement_patches)
-            if(u->unit_id==p.unit_id && (g.growth.talent_bits[p.bit/32]&(1u<<(p.bit%32)))){talent_power::multiply(speed_num,speed_den,p.bit,p.numerator,p.denominator);}
+        if(u->player==player_owner() && u->unit_id<movement.size()){speed_num=movement[u->unit_id].numerator;speed_den=movement[u->unit_id].denominator;}
         if(regular_enemy(u) && g.growth.curse_counts[3]){speed_num*=40+3*g.growth.curse_counts[3];speed_den*=40;}
         if(regular_enemy(u) && t->command_until>g.game()->frame_count){speed_num*=6;speed_den*=5;}
         const auto speed_divisor=std::gcd(speed_num,speed_den);speed_num/=speed_divisor;speed_den/=speed_divisor;
@@ -778,8 +789,7 @@ void apply_unit_motion() {
             // primary projectile launch consumes a fractional cooldown share.
             if(clock.launched && !clock.processed && current && weapon<130){
                 std::uint64_t numerator=1,denominator=1;
-                if(u->player==player_owner())for(const auto& patch:frozen::patches)
-                    if(patch.table==1 && patch.field==16 && patch.id==weapon && (g.growth.talent_bits[patch.bit/32]&(1u<<(patch.bit%32)))){talent_power::multiply(numerator,denominator,patch.bit,patch.numerator,patch.denominator);}
+                if(u->player==player_owner()){numerator=attack[weapon].numerator;denominator=attack[weapon].denominator;}
                 if(is_enemy(u->player) && g.growth.curse_counts[3]){numerator*=40;denominator*=40+3*g.growth.curse_counts[3];}
                 // Rank and legacy ratios can share large common factors.
                 // Reduce before storing the carry denominator in its U32 field.
