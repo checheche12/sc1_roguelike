@@ -1,0 +1,23 @@
+{
+  "version": "v1.0.0",
+  "release_channel": "stable",
+  "base_release": "v2026.10.24-qa93",
+  "gameplay_unchanged": true,
+  "native_dll_sha256": "5681050307399da44f36b5a0c44ae78b1637be4fde19c83bc76e2c85921bfb1f",
+  "native_and_map_verification_reused_from_qa93": true,
+  "host": {
+    "groups": 497,
+    "checks": 1888388,
+    "passed": true
+  },
+  "ui": {
+    "groups": 22,
+    "assertions": 177059,
+    "passed": true
+  },
+  "python_tests": 12,
+  "unchanged_campaign_maps": 63,
+  "new_live_game_test": false,
+  "portable_self_test_passed": true,
+  "portable_window_title": "스타1 성장 기록 관리자 · 1.0.0"
+}
