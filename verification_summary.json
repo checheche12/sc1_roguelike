@@ -1,0 +1,22 @@
+{
+  "version": "v2026.10.24-qa93",
+  "native_dll_sha256": "5681050307399da44f36b5a0c44ae78b1637be4fde19c83bc76e2c85921bfb1f",
+  "change": "Remove Creep March selection, movement and attack speed bonuses, attack animation scaling, periodic expansion, and PlaceCreepRect binding.",
+  "host": {
+    "groups": 497,
+    "checks": 1888388,
+    "passed": true
+  },
+  "ui": {
+    "groups": 22,
+    "assertions": 177059,
+    "passed": true
+  },
+  "python_tests": 20,
+  "mission_phase_offers_checked": 189,
+  "complete_candidate_pools_checked": 176,
+  "unchanged_campaign_maps": 63,
+  "saved_game_migration_added": false,
+  "new_live_game_test": false,
+  "portable_self_test_passed": true
+}
