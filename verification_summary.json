@@ -1,0 +1,67 @@
+{
+  "version": "v1.0.4",
+  "release_channel": "stable",
+  "base_release": "v1.0.3",
+  "gameplay_unchanged": true,
+  "native_dll_sha256": "d100b4b8c75cb855e37a332c9ca5fad4af4e768e7e8d70360ac3e06ccff8cc04",
+  "native_tests_fresh": true,
+  "unchanged_map_resource_proof_reused": true,
+  "fresh_checkpoint_replays": 0,
+  "host": {
+    "groups": 509,
+    "checks": 2379182,
+    "passed": true
+  },
+  "ui": {
+    "groups": 22,
+    "assertions": 177059,
+    "passed": true
+  },
+  "python_tests": 23,
+  "unchanged_campaign_maps": 63,
+  "new_live_game_test": true,
+  "portable_self_test_passed": true,
+  "portable_window_title": "스타1 성장 기록 관리자 · 1.0.4",
+  "native_rebuild": {
+    "native_sources_identical": true,
+    "manager_changes": [
+      "sc1/__init__.py"
+    ],
+    "previous_dll_sha256": "33700b66a2f324f1c15315ddb3808c44048986368339a89b9fe5646fdf179a1e",
+    "release_dll_sha256": "d100b4b8c75cb855e37a332c9ca5fad4af4e768e7e8d70360ac3e06ccff8cc04",
+    "fresh_build": true
+  },
+  "search_actual_game_runs": 3,
+  "final_search_checks": {
+    "event": "terminal",
+    "status": "performance_complete",
+    "area_checks": 211008,
+    "target_checks": 134,
+    "pid": 36516
+  },
+  "actual_game_lifecycle": {
+    "event": "lifecycle_pass",
+    "spawn": true,
+    "same_frame_move": true,
+    "teleport": true,
+    "give": true,
+    "kill": true,
+    "respawn": true
+  },
+  "changes": [
+    "Immutable per-unit growth rule lists; preserve ammo aliases, original membership/order, and live rank lookup.",
+    "Guarded HP view for native SetHp/AddHp: subject HP, shield enable/max and unit flags only; full view retained for buildings, damage overlays and unavailable evidence.",
+    "Use the same HP scope in direct restoration/elite-HP wrappers; preserve owner, hallucination, elite and nested restore behavior.",
+    "Skip native attack/range checks for candidates unable to beat the current nearest valid target; preserve pointer tie order.",
+    "Skip all candidate work when the source cannot currently fire.",
+    "Use SAMASE current native area query for radius <=256, supplement the hidden list, deduplicate and retain exact final distance/eligibility/order.",
+    "Keep full scan for wider radii, off-map/unrepresentable rectangles, unavailable native API, or inactive/wrong-thread contexts. No frame position cache."
+  ],
+  "limitations": [
+    "Timing is for target-search calls in the test army, not overall game FPS or complete combat frame time.",
+    "Three private game runs exercised initial, radius-measurement and final variants. Final timings use five interleaved before/after repetitions on identical state in one run.",
+    "No complete mission playthrough or every possible ability combination; no claim of zero possible bugs.",
+    "Some final timing batches show large scheduling variation, including apparent changes on radius>256 where both versions use the same full scan. Do not interpret these as wide-radius speedups or an overall FPS gain; target equivalence checks remain exact.",
+    "HP/index full-frame timings varied across runs; no overall combat FPS improvement is claimed."
+  ]
+}

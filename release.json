@@ -1,0 +1,15 @@
+{
+  "version": "v1.0.4",
+  "release_channel": "stable",
+  "prerelease": false,
+  "file": "SC1_Roguelike_1.0.4.zip",
+  "sha256": "bd130690b248352c351a8dd619259b956324b32d4a8f73b602f515677c382180",
+  "bytes": 25048323,
+  "runtime_source_commit": "f57b633824e0635b477ee698c2df3f24586081a0",
+  "native_dll_sha256": "d100b4b8c75cb855e37a332c9ca5fad4af4e768e7e8d70360ac3e06ccff8cc04",
+  "maps": 63,
+  "maps_changed": 0,
+  "base_release": "v1.0.3",
+  "gameplay_unchanged": true,
+  "personal_database_included": false
+}
