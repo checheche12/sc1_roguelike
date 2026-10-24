@@ -132,6 +132,10 @@ inline bool clear_cell(int x,int y,bool worker_raid=false) {
   if(dx*dx+dy*dy<40ll*40)clear=false;if(!worker_raid && wave_protected_unit(u) && dx*dx+dy*dy<512ll*512)clear=false;});return clear && alive<1550;
 }
 inline U32 live_supply() {U32 supply=0;living_units([&](bw::Unit* u){auto t=existing_track(u);if(t && t->spawned && is_enemy(u->player))supply+=std::max(1u,original_stat({0,46,u->unit_id}));});return supply;}
+inline U32 supply_cap() noexcept {
+ const auto game=g.game?g.game():nullptr;
+ return policy::live_supply_cap(g.mission?g.mission->mission_id:0,game?game->elapsed_seconds:0,rework_curses::count(policy::Reinforcements));
+}
 inline const sc1_native::campaign_wave_config::Origin* raid_owner() noexcept {
  for(const auto& origin:sc1_native::campaign_wave_config::kOrigins)if(g.mission&&origin.mission_id==g.mission->mission_id&&is_enemy(origin.owner))return &origin;return nullptr;
 }
@@ -166,7 +170,7 @@ inline bw::Unit* finish_created(bw::Unit* u,U32 slot,U32 hp,U32 attack,int x,int
 #include "island_convoys.h"
 inline bw::Unit* create(U32 id,U32 slot,U32 hp=100,U32 attack=100,bool alternate=false,U32 required_owner=12) {
  if(slot==policy::Reserve || slot==policy::Rear)return nullptr;
- if(!enabled() || live_supply()+std::max(1u,original_stat({0,46,id}))>policy::live_supply_cap(g.mission->mission_id))return nullptr;
+ if(!enabled() || live_supply()+std::max(1u,original_stat({0,46,id}))>supply_cap())return nullptr;
  // Explicit user exception: only worker-raid Mutalisks appear directly at the
  // mining line. Other waves retain the512px allied clearance at real origins.
  if(slot==policy::Raid&&(id==43 || id==9 || id==42 || id==84)){
@@ -251,7 +255,7 @@ inline void roster(const policy::Roster& r) {
   created+=count_spawn(m.unit,m.count,r.slot,(boosted?r.hp_percent:100)*110u/100u,boosted?r.attack_percent:100,r.slot==policy::Flank);
  }
  if(created)timeline.mark_delivered(r.slot);
- log_event("V5 special curse delivery: slot=%u units=%u live_half_supply=%u cap=%u normal_ordinal=%u",r.slot,created,live_supply(),policy::live_supply_cap(g.mission->mission_id),timeline.ordinal+1);
+ log_event("V5 special curse delivery: slot=%u units=%u live_half_supply=%u cap=%u normal_ordinal=%u",r.slot,created,live_supply(),supply_cap(),timeline.ordinal+1);
 }
 inline void selected_units() {
  for(auto slot:selected)if(slot)for(const auto& r:policy::kRosters)if(r.slot==slot)roster(r);

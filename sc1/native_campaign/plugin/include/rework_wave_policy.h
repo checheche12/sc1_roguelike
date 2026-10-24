@@ -62,7 +62,12 @@ inline constexpr U32 wave_percent(U32 ordinal) noexcept {return ordinal==0?100u:
 inline constexpr U32 wave_amount(U32 amount,U32 ordinal) noexcept {return U32((std::uint64_t(amount)*wave_percent(ordinal)+50u)/100u);}
 inline U32 normal_dispatch_budget(U32 ordinal,U32 mission,U32 stacks=0) noexcept {return wave_amount(scaled_count(normal_budget(ordinal,mission),stacks),ordinal);}
 inline constexpr U32 interval_after(U32 ordinal,U32 base=120) noexcept {return base+(ordinal%2?30u:0u);}
-inline constexpr U32 live_supply_cap(U32) noexcept {return 480u;}
+// Native supply uses half-points. Reinforcements add 15,17,19,... full
+// supply per choice, on top of the mission-clock thresholds.
+inline constexpr U32 live_supply_cap(U32,U32 elapsed_seconds=0,U32 reinforcement_stacks=0) noexcept {
+ const U32 base=elapsed_seconds>=2400?900u:elapsed_seconds>=1800?800u:elapsed_seconds>=1200?640u:480u;
+ return U32(std::min<std::uint64_t>(0xffffffffu,std::uint64_t(base)+curse_scaling::bonus(reinforcement_stacks,30,4)));
+}
 inline U32 raid_count(U32 stacks,U32 reinforcements=0) noexcept {stacks=std::min(stacks,3u);return scaled_count(stacks==0?0u:stacks==1?2u:stacks==2?6u:10u,reinforcements);}
 inline U32 stacked_count(U32 amount,U32 stacks) noexcept {return U32(std::min<std::uint64_t>(480u,std::uint64_t(amount)*stacks));}
 struct Timeline {

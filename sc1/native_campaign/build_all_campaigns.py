@@ -559,7 +559,8 @@ def strengthen(chk,row):
    origins.append({'mission_id':row['mission_id'],'owner':p,'race':race,'unit1':unit1,'unit2':unit2,'cell_count':len(cells),'center':[sx,sy],'target':target,'cells':cells,'source_unit':su,'ground_route_connected':ground,'flying_only':not ground,'source_is_original_hostile_position':True,'friendly_clearance_pixels':512,'original_occupancy_clearance_pixels':[40,80]})
    if len(origins)==4:break
  assert origins,('No safe original enemy reinforcement origin',row['mission_id'],len(hostile),len(sources))
- return {'static_added':len(added),'static_reinforcements':static,'wave_origins':origins,'terrain':terrain,'hostile_owners':sorted(hostile),'original_unit_records_preserved':len(records),'first_elapsed_seconds':360 if row['no_production'] else 300,'interval_seconds':180 if row['no_production'] else 120,'wave_progression_seconds':[300,600,900],'wave_policy':'plugin/include/wave_progression.h','wave_composition':'deterministic race/elapsed-time variants; live DAT half-supply budget; flying-only origin restriction preserved','limits':['Offline terrain connectivity and placement checks, not native pathfinder or combat playtest.','Native runtime rechecks current allies, occupancy and hostile ownership immediately before each spawn.']}
+ result={'static_added':len(added),'static_reinforcements':static,'wave_origins':origins,'terrain':terrain,'hostile_owners':sorted(hostile),'original_unit_records_preserved':len(records),'first_elapsed_seconds':360 if row['no_production'] else 300,'interval_seconds':180 if row['no_production'] else 120,'wave_progression_seconds':[300,600,900],'wave_policy':'plugin/include/wave_progression.h','wave_composition':'deterministic race/elapsed-time variants; live DAT half-supply budget; flying-only origin restriction preserved','limits':['Offline terrain connectivity and placement checks, not native pathfinder or combat playtest.','Native runtime rechecks current allies, occupancy and hostile ownership immediately before each spawn.']}
+ return result
 
 def mineral_reserved_points(difficulty):
  return [point for origin in difficulty['wave_origins'] for point in origin['cells']]
@@ -621,6 +622,9 @@ def make_map(raw,row):
  terrain=settlement_terrain.apply(chk,row)
  from sc1.native_campaign import base_defenses
  defenses=base_defenses.apply(chk,row,difficulty)
+ # Select P8's forward cells after resource and defense placement so both a
+ # fresh map build and the unchanged-map revalidation use final obstacles.
+ if row['mission_id']==308:difficulty['wave_origins']=protoss8_front_origins(chk,row,difficulty)
  permitted={b'UNIT',b'PUNI',b'UPGR',b'PUPx',b'PTEC',b'PTEx',b'TRIG',b'STR '}
  if terrain:permitted|={tag.encode() for tag in settlement_terrain.TAGS}
  if row['mission_id']==101:permitted|={b'OWNR',b'SIDE',b'FORC'}
@@ -644,6 +648,52 @@ def make_map(raw,row):
   report['original_briefing_wav_locations_terrain_heroes_preserved']=False
   report['original_briefing_wav_locations_heroes_preserved']=True
  return rawout,report
+
+def protoss8_front_origins(chk,mission,difficulty):
+ # P8's old farthest-first origins all feed the narrow six-o'clock rear
+ # corridor. Stage beside original hostile positions on its northern side.
+ # Require a full 40px body route with stationary collision obstacles; never
+ # edit terrain, delete buildings, teleport a wave, or spawn beside the player.
+ from sc1.native_campaign import mining_layout_audit as geometry
+ raw=geometry._raw_walk(chk);height,width=len(raw),len(raw[0])
+ free=[bytearray(width) for _ in range(height)]
+ for y in range(2,min(height-2,3072//8)):
+  for x in range(2,width-2):
+   free[y][x]=int(all(raw[yy][x-2:x+3]==b'\x01'*5 for yy in range(y-2,y+3)))
+ info=list(map(unit_info,units(chk)))
+ for x,y,u,_ in info:
+  if u<106 or u==214:continue
+  left,top,right,bottom=geometry._footprint(x,y,u)
+  x1=max(0,(left-20-4)//8+1);x2=min(width-1,(right+20-4-1)//8)
+  y1=max(0,(top-20-4)//8+1);y2=min(height-1,(bottom+20-4-1)//8)
+  for yy in range(y1,y2+1):free[yy][x1:x2+1]=bytes(x2-x1+1)
+ target=difficulty['wave_origins'][0]['target'];connected,goal=connected_cells(free,target)
+ original=info[:difficulty['original_unit_records_preserved']];hostile=set(difficulty['hostile_owners'])
+ protected=[p[:2] for p in original if p[3] not in hostile and p[2]!=214]+[target]
+ occupied=[(x,y,80 if 106<=u<176 else 40) for x,y,u,p in info if u!=214]
+ sources=[p for p in original if p[3] in hostile and (p[2] in COMBAT or 106<=p[2]<176)]
+ preferred_owner=difficulty['wave_origins'][0]['owner']
+ sources.sort(key=lambda p:(p[3]!=preferred_owner,not(106<=p[2]<176),-((p[0]-target[0])**2+(p[1]-target[1])**2)))
+ origins=[]
+ for sx,sy,su,owner in sources:
+  if any((sx-o['center'][0])**2+(sy-o['center'][1])**2<640**2 for o in origins):continue
+  choices=[]
+  for y in range(max(28,sy-384)//32*32+20,min(height*8-24,sy+385,3072),32):
+   for x in range(max(28,sx-384)//32*32+20,min(width*8-24,sx+385),32):
+    if not connected[y//8][x//8]:continue
+    if any((x-a)**2+(y-b)**2<512**2 for a,b in protected):continue
+    if any((x-a)**2+(y-b)**2<radius**2 for a,b,radius in occupied):continue
+    choices.append(((x-sx)**2+(y-sy)**2,y,x))
+  cells=[]
+  for _,y,x in sorted(choices):
+   if all((x-a)**2+(y-b)**2>=48**2 for a,b in cells):cells.append([x,y])
+   if len(cells)==32:break
+  if len(cells)<4:continue
+  race=chk.getsection('SIDE')[owner];assert race==2
+  origins.append(dict(mission_id=308,owner=owner,race=race,unit1=65,unit2=66,cell_count=len(cells),center=[sx,sy],target=target,cells=cells,source_unit=su,ground_route_connected=True,flying_only=False,source_is_original_hostile_position=True,friendly_clearance_pixels=512,original_occupancy_clearance_pixels=[40,80],route_clearance_pixels=40,route_south_limit_pixels=3072))
+  if len(origins)==4:break
+ assert len(origins)==4,('P8 needs four reachable forward staging origins',len(origins),goal)
+ return origins
 
 def wave_header(rows):
  h=['// Generated from offline original terrain/occupancy analysis.','#pragma once','#include <cstdint>','namespace sc1_native { namespace campaign_wave_config {','struct Point { std::int32_t x,y; };','struct Origin { std::uint32_t mission_id,owner,race,unit1,unit2,cell_count; Point center,target; Point cells[32]; };','inline constexpr Origin kOrigins[] = {']

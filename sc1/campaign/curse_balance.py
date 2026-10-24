@@ -4,14 +4,17 @@ RESERVE_ID = '9abf9771-866f-55b7-a4ba-ba28bb5e6faf'
 QA_REVISION = 2026102038
 HEALTH_REVISION = 2026102048
 ATTACK_REVISION = 2026102049
+SUPPLY_CAP_REVISION = 2026102494
 
 
 def decorate(catalog):
     updates = {
         15: ('뮤탈리스크가 1/2/3중첩에 따라 2·6·10기씩 일꾼 근처에 직접 등장합니다. 최대 3중첩이며 증원량 증가가 적용됩니다.',
              {'units_formula': '2,6,10 (capped at3)', 'units_sequence': [2, 6, 10]}),
-        16: ('추가 공세 병력 수가 선택할 때마다 기본 편성 대비 +20%, +24%, +28%…씩 누적 증가합니다. 중첩 상한 없음. 1/2/3중첩 누적 +20/+44/+72%.',
-             {'first_increment_percent': 20, 'increment_step_percent': 4, 'unlimited_stacks': True}),
+        16: ('추가 공세 병력 수가 선택할 때마다 기본 편성 대비 +20%, +24%, +28%…씩 누적 증가합니다. 중첩 상한 없음. 1/2/3중첩 누적 +20/+44/+72%. 공세 최대 인구도 선택마다 +15·+17·+19…씩 누적 증가합니다.',
+             {'first_increment_percent': 20, 'increment_step_percent': 4, 'unlimited_stacks': True,
+              'supply_cap_first_increment': 15, 'supply_cap_increment_step': 2,
+              'supply_cap_base_schedule': [[0,240],[1200,320],[1800,400],[2400,450]]}),
         17: ('추가 공세 병력의 일반 공격력이 선택할 때마다 기본 공격력 대비 +10%, +12%, +14%…씩 누적 증가합니다. 중첩 상한 없음. 1/2/3중첩 누적 +10/+22/+36%. 5중첩 누적 +70%.',
              {'first_increment_percent': 10, 'increment_step_percent': 2, 'unlimited_stacks': True}),
         18: ('추가 공세 병력의 최대 체력과 최대 보호막이 선택할 때마다 각각 기본 수치 대비 +10%, +12%, +14%…씩 누적 증가합니다. 중첩 상한 없음. 1/2/3중첩 누적 각각 +10/+22/+36%. 5중첩 누적 +70%.',
@@ -55,7 +58,7 @@ def decorate(catalog):
             if not item['description'].endswith(note):
                 item['description'] += note
             effect['roster_hp_percent'] = 110
-        effect['qa_revision'] = QA_REVISION
+        effect['qa_revision'] = SUPPLY_CAP_REVISION if slot==16 else QA_REVISION
         if slot == 18:
             effect['qa_revision'] = HEALTH_REVISION
         elif slot == 17:

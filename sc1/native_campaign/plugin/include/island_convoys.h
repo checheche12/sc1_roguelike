@@ -59,7 +59,7 @@ inline bw::Unit* island_create(U32 id,U32 slot,U32 hp,U32 attack,U32 required_ow
  for(auto& c:island_convoys)if(!c.phase&&c.wave==g.current_wave_id&&c.route==route&&c.space+space<=8&&island_unit(c.ship)){convoy=&c;break;}
  const U32 carrier_id=route->race==0?42u:route->race==2?69u:11u;
  const U32 budget=std::max(1u,original_stat({0,46,id}))+(convoy?0u:std::max(1u,original_stat({0,46,carrier_id})));
- if(live_supply()+budget>policy::live_supply_cap(g.mission->mission_id)||(!convoy&&island_convoys.size()>=64))return nullptr;
+ if(live_supply()+budget>supply_cap()||(!convoy&&island_convoys.size()>=64))return nullptr;
  bw::Unit* ship=convoy?island_unit(convoy->ship):nullptr;
  if(!ship){
   for(U32 i=0;i<route->loading_count&&!ship;i++){const auto p=route->loading[i];if(!clear_cell(p.x,p.y))continue;OwnerDatScope scope(route->owner,route->owner);ship=spawn(carrier_id,p.x,p.y,route->owner);if(ship)finish_created(ship,0,100,100,p.x,p.y);}
