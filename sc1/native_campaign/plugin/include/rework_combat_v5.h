@@ -20,7 +20,7 @@ using RankLookup=U32 (*)(const GrowthSnapshot&,U32) noexcept;
 inline RankLookup rank_lookup=nullptr;
 inline U32 raw_rank(U32 ordinal) noexcept {return rank_lookup?rank_lookup(g.growth,ordinal):rework_catalog::rank(g.growth,ordinal);}
 inline U32 rank(const GrowthSnapshot& s,U32 ordinal) noexcept {
-    if(ordinal>=rework_catalog::kTalentCount||ordinal==60||ordinal==85)return 0;
+    if(ordinal>=rework_catalog::kTalentCount||ordinal==60||ordinal==75||ordinal==85)return 0;
     if(talent_power::enabled)switch(ordinal){case 51:case 66:case 95:case 107:case 183:case 187:case 188:case 189:case 192:case 193:case 195:case 196:return 0;default:break;}
     if(talent_power::enabled&&legend_focus::converted(ordinal)&&ordinal!=54&&ordinal!=55)return 0;
     if(rank_lookup)return rank_lookup(s,ordinal);
@@ -312,7 +312,6 @@ struct UnitState {
     bool mobility=false;U32 mobility_flags=0,mobility_speed=0;U8 mobility_type=2,mobility_turn=0,mobility_state=0;std::uint16_t mobility_acceleration=0;
     U32 energy_reserve=0,energy_cap=0,cloak_fraction=0,energy_grant_frame=~0u;bool energy_granted=false,energy_pending=false;
     bool materialized=false,detonated=false,legendary_death_done=false;U32 swarm_heal_frame=~0u;
-    U32 creep_script_pos=0,creep_script_wait=0,creep_script_carry=0;
     bool chase=false;int chase_x=0,chase_y=0;
     U32 last_effect_token=~0u;
     U32 retreat_due=0,blink_due=0,reposition_due=0,leap_due=0,charge_due=0,charge_until=0;
@@ -384,21 +383,6 @@ inline std::vector<bw::Unit*> around(int x,int y,U32 radius,bw::Unit* excluded,U
 inline U32 generated_depth=0,spell_depth=0;
 inline UnitFn native_kill=nullptr;
 using GetTiles=U32* (__cdecl*)();inline GetTiles get_tiles=nullptr;
-#include "creep_march.h"
-inline void creep_attack_animation(bw::Unit* u,UnitState& s) noexcept {
-    if(!creep_march::boosted(u)||!u->flingy.sprite){s.creep_script_pos=s.creep_script_wait=s.creep_script_carry=0;return;}
-    auto sprite=static_cast<bw::SpriteScr*>(u->flingy.sprite);auto image=static_cast<movement_effects::Image*>(sprite->main_image);
-    if(!image||!in(image->script.animation,{2,3,5,6})){s.creep_script_pos=s.creep_script_wait=0;return;}
-    auto& script=image->script;
-    // Cooldown alone can become ready before the melee animation ends, causing
-    // the native order to miss its next attack check (observed on Ultralisk).
-    // Scale each newly assigned animation wait once, carrying fifths of frames.
-    if(script.pos!=s.creep_script_pos||script.wait>s.creep_script_wait){
-        const U32 total=(U32(script.wait)+1)*4+s.creep_script_carry;
-        script.wait=U8(std::max(1u,total/5)-1);s.creep_script_carry=total%5;
-    }
-    s.creep_script_pos=script.pos;s.creep_script_wait=script.wait;
-}
 using GetSpritePosition=void (__cdecl*)(void*,std::uint16_t*);using SetSpritePosition=void (__cdecl*)(void*,const std::uint16_t*);
 inline GetSpritePosition get_sprite_position=nullptr;inline SetSpritePosition set_sprite_position=nullptr;
 using GiveFn=void (__cdecl*)(bw::Unit*,U32);
@@ -491,8 +475,6 @@ inline bool bind_engine(const samase::PluginApi* api) noexcept {
     native_kill=reinterpret_cast<UnitFn>(api->get_func(static_cast<std::uint16_t>(samase::FuncId::KillUnit)));
     native_give=reinterpret_cast<GiveFn>(api->get_func(static_cast<std::uint16_t>(samase::FuncId::GiveUnit)));
     if(api->map_tile_flags)get_tiles=reinterpret_cast<GetTiles>(reinterpret_cast<GenericFn (__cdecl*)()>(api->map_tile_flags)());
-    creep_march::place=reinterpret_cast<creep_march::Place>(api->get_func(static_cast<std::uint16_t>(samase::FuncId::PlaceCreepRect)));
-    if(!creep_march::place)return false;
     if(api->get_sprite_position)get_sprite_position=reinterpret_cast<GetSpritePosition>(reinterpret_cast<GenericFn (__cdecl*)()>(api->get_sprite_position)());
     if(api->set_sprite_position)set_sprite_position=reinterpret_cast<SetSpritePosition>(reinterpret_cast<GenericFn (__cdecl*)()>(api->set_sprite_position)());
     auto hook=reinterpret_cast<FuncHookRegister>(api->hook_func);
@@ -682,7 +664,6 @@ inline double speed_ratio(bw::Unit* u) {
         if(talent_power::enabled&&raw_rank(141)&&in(u->unit_id,{81,83}))value*=2.0;
         if(air_control(g.growth,u->unit_id))value*=1.2;
         value*=1.0+unit_trait_value(g.growth,u->unit_id,3)/100.0;
-        if(creep_march::boosted(u))value*=talent_power::rate(75,1.25);
         if(s&&s->charge_until>now())value*=talent_power::rate(132,1.7);
     }
     if(s && s->slow_until>now())value*=s->slow_percent/100.0;
@@ -695,7 +676,6 @@ inline double cooldown_ratio(bw::Unit* u,U32 weapon_id) {
     if(in(u->unit_id,{72,82}))stacks+=rank(112); // Carrier itself has no weapon.
     if(unit_growth_rank(g.growth,u->unit_id,1,true))stacks=unit_attack_rank(g.growth,u->unit_id);
     double value=std::pow(talent_power::rate(29,0.97),double(stacks));auto s=state(effect_body(u));
-    if(creep_march::boosted(u))value*=0.8;
     if(s&&now()-s->last_launch<=72){double warmup=rank(16)?talent_power::rate(16,1-0.1*std::min(3u,s->streak)):1.0;
         if(talent_power::enabled&&rank(162))warmup=std::min(warmup,1-0.1*std::min(3u,s->streak));value*=warmup;}
     return std::max(1.0/65536.0,value*debuff);
@@ -1713,7 +1693,6 @@ struct OrderScope {
     }
 };
 inline void reset() noexcept {
-    creep_march::reset();
     expansion_support_frame=~0u;
     impact_weapon=130;impact_owner=12;impact_layer=2;
     if(state_base==g.units&&states.size()==g.units_count)for(auto& s:states)if(auto u=generation(s.who)){restore_motion(u,s);if(s.shadow_active)shadow_restore(u,s);if(s.fade_until)u->flags=(u->flags&~(0x200000u|0x8000u))|s.saved_collision|s.saved_attack_flag;}
@@ -1722,7 +1701,7 @@ inline void reset() noexcept {
 inline void step() {
     if(!g.active||!g.applied||!g.game||GetCurrentThreadId()!=g.game_thread.load())return;
     const auto frame=now();
-    expansion_support();expansion_radiation();creep_march::step();
+    expansion_support();expansion_radiation();
     for(auto it=morph_completions.begin();it!=morph_completions.end();){auto u=resolve(it->who);if(!u){it=morph_completions.erase(it);continue;}if(!(u->flags&1u)){++it;continue;}
         for(auto friend_unit:around(u->flingy.position.x,u->flingy.position.y,64,nullptr,65536,false))if(race_type(friend_unit->unit_id,1)&&soldier(friend_unit->unit_id))heal(friend_unit,talent_power::v5(101,20*256));
         morph_rewarded.emplace_back(u,u->minor_unique_index);it=morph_completions.erase(it);
@@ -1743,7 +1722,7 @@ inline void step() {
     valkyrie_volley::step();pending_work.clear();pending_work.swap(pending_shots);
     for(auto& shot:pending_work){if(std::int32_t(frame-shot.due)<0){pending_shots.push_back(shot);continue;}auto source=resolve(shot.source),target=resolve(shot.target);if(source&&target)emit(source,target,shot.weapon,shot.percent);}
     pending_work.clear();
-    living_units([&](bw::Unit* u){auto s=state(u);if(!s)return;focus_tick(u,*s);configure_motion(u,*s);creep_attack_animation(u,*s);finish_idle_melee_animation(u);
+    living_units([&](bw::Unit* u){auto s=state(u);if(!s)return;focus_tick(u,*s);configure_motion(u,*s);finish_idle_melee_animation(u);
         if(!u->matrix_timer||!u->defensive_matrix_dmg)if(auto shield=matrix_state(u))shield->reserve=0;
         if(auto a=acid_state(u)){
             if(!u->acid_spore_count)a->extra.fill(0);
