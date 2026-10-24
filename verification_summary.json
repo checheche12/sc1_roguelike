@@ -1,0 +1,30 @@
+{
+  "version": "v2026.10.24-qa92",
+  "native_dll_sha256": "ffa3905dd55c8f42f951e5a4f3b53cd40121f84a0270b0d6d1c416ab74b6c1eb",
+  "native_matrix": {
+    "ability_entries": 184,
+    "unit_ability_rows": 856,
+    "damage_checks": 28976,
+    "all_conditions_verified": false
+  },
+  "host": {
+    "groups": 498,
+    "checks": 1888473,
+    "passed": true
+  },
+  "ui": {
+    "groups": 22,
+    "assertions": 177059,
+    "passed": true
+  },
+  "focused": {
+    "mutalisk_cases": 80,
+    "reaver_checks": 84,
+    "creep_checks": 64,
+    "archon_checks": 104,
+    "suicide_checks": 44
+  },
+  "unchanged_campaign_maps": 63,
+  "stationary_archon": "Idle/Hold/direct attack/Move-Stop normal; user report not reproduced.",
+  "limits": "Some trigger/cadence/spell-input conditions and campaign completion remain unverified. Audio engine dispatch was checked, not a listening test."
+}
