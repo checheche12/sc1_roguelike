@@ -108,7 +108,16 @@ inline void qa75_reaver_speed_is_double_for_parent_and_hero_only(){
  using namespace rework_fixture;qa9_fixture::begin({141});
  for(U32 id:{81u,83u}){auto u=unit(id,1,100,100);CHECK(std::abs(rework_combat_v5::speed_ratio(u)-2.0)<0.000001);u->player=6;CHECK(std::abs(rework_combat_v5::speed_ratio(u)-1.0)<0.000001);}
  for(U32 id:{85u,69u,65u}){auto u=unit(id,1,100,100);CHECK(std::abs(rework_combat_v5::speed_ratio(u)-1.0)<0.000001);}
- auto scarab=unit(85,1,100,100),target=unit(39,6,120,100);CHECK(rework_combat_v5::focus_damage(scarab,target,82,1000,true)==2500);qa9_fixture::end();
+ auto target=unit(39,6,120,100),neighbor=unit(39,6,130,100);
+ for(U32 id:{81u,83u,85u}){
+  auto source=unit(id,1,100,100);CHECK(rework_combat_v5::focus_damage(source,target,82,1000,true)==2500);
+  CHECK(rework_combat_v5::focus_damage(source,neighbor,82,1000,false)==2500);
+  const auto before=target->flingy.hitpoints,near_before=neighbor->flingy.hitpoints;
+  qa75_fixture::splash=neighbor;qa75_fixture::projectile(source,target,82,1000);qa75_fixture::splash=nullptr;
+  CHECK(target->flingy.hitpoints==before-2500&&neighbor->flingy.hitpoints==near_before-2500);
+  source->player=6;CHECK(rework_combat_v5::focus_damage(source,target,82,1000,true)==1000);
+ }
+ qa9_fixture::end();
 }
 inline constexpr std::size_t qa75_group_count=4;
 inline void run_qa75_groups(){qa75_retaliation_real_melee_and_projectile_callback_chain();qa75_archon_natural_shield_regeneration_eleven_times();qa75_shadow_pre_hit_six_tiles_chain_five_buildings_ground_and_return();qa75_reaver_speed_is_double_for_parent_and_hero_only();}

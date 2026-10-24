@@ -124,7 +124,7 @@ struct State {
     std::unordered_map<bw::Bullet*,bool> bullet_elites;
     std::unordered_map<bw::Bullet*,U32> bullet_bonuses;
     std::unordered_map<bw::Bullet*,ProjectileSource> bullet_sources;
-    ProjectileSource hit_identity{};bool bullet_hit_context=false;
+    ProjectileSource hit_identity{};bool bullet_hit_context=false;U32 hit_divisor=1;
     std::vector<DeathBomb> bombs;U32 hit_bonus=0,last_diversity_frame=0;bw::Unit* hit_source=nullptr;
     bool active = false, applied = false, offer_active = false, hooks_ready = false;
     bool pumping = false;
@@ -839,11 +839,11 @@ ProjectileSource projectile_identity(bw::Bullet* bullet) noexcept {
     const auto source=found->second;
     // The engine may clear a dead parent. Never infer a source from a reused
     // unit-array slot, a changed owner, or an unobserved projectile launch.
-    // Scourge launches are witnessed before native suicide clears the parent.
+    // Suicide weapon launches are witnessed before native death clears the parent.
     // Retain that exact dead generation; never infer a parent for other shots.
-    const bool detached_scourge=!bullet->parent && bullet->weapon_id==55 && source.id==47 &&
+    const bool detached_suicide=!bullet->parent && ((bullet->weapon_id==55 && source.id==47)||(bullet->weapon_id==54 && source.id==50)||(bullet->weapon_id==6 && source.id==13)) &&
         verified_projectile_source(source) && source.unit->order==0;
-    return (bullet->parent==source.unit || detached_scourge) && bullet->player==source.owner ? source : ProjectileSource{};
+    return (bullet->parent==source.unit || detached_suicide) && bullet->player==source.owner ? source : ProjectileSource{};
 }
 struct DamageObservation {
     bw::Unit* unit=nullptr;DamageObservation* previous=nullptr;
@@ -944,13 +944,14 @@ void observe_bullet_launch(U32 id,bw::Unit* parent,bw::Bullet* bullet) {
         g.bullet_elites.erase(bullet);g.bullet_bonuses.erase(bullet);g.bullet_sources.erase(bullet);
         g.bullet_elites[bullet]=t&&t->elite&&regular_enemy(effect_body(parent));g.bullet_bonuses[bullet]=charged_attack(parent,id);
         auto source=effect_body(bullet->parent);
-        if(source&&source==bullet->parent&&source->player==bullet->player)g.bullet_sources[bullet]={source,source->unit_id,source->player,source->minor_unique_index};
+        if(!source&&valid_unit(parent)&&((id==55&&parent->unit_id==47)||(id==54&&parent->unit_id==50)||(id==6&&parent->unit_id==13)))source=parent;
+        if(source&&(source==bullet->parent||(!bullet->parent&&source==parent))&&source->player==bullet->player)g.bullet_sources[bullet]={source,source->unit_id,source->player,source->minor_unique_index};
     }
     rework_waves::spell_launched(parent,id);multi_target::launched(id,parent,bullet);rework_combat_v5::launched(id,parent,bullet);
 }
 void observe_instant_launch(bw::Bullet* bullet) noexcept {
     auto pending=BulletCreation::current;
-    if(!pending||!bullet||pending->observed==bullet||bullet->parent!=pending->parent||bullet->player!=pending->owner||bullet->weapon_id!=pending->weapon)return;
+    if(!pending||!bullet||pending->observed==bullet||(bullet->parent!=pending->parent&&!(bullet->parent==nullptr&&valid_unit(pending->parent)&&((pending->weapon==55&&pending->parent->unit_id==47)||(pending->weapon==54&&pending->parent->unit_id==50)||(pending->weapon==6&&pending->parent->unit_id==13))))||bullet->player!=pending->owner||bullet->weapon_id!=pending->weapon)return;
     pending->observed=bullet;
     try{observe_bullet_launch(pending->weapon,pending->parent,bullet);}catch(...){log_event("Instant projectile observation failed; original damage retained.");}
 }
@@ -966,7 +967,8 @@ void __cdecl owner_hit_hook(bw::Unit* u,bw::Bullet* bullet,U32 divisor,HitFn ori
     const bool previous_context=g.bullet_hit_context;const auto previous_identity=g.hit_identity;
     g.bullet_hit_context=true;g.hit_identity=projectile_identity(bullet);
     g.hit_bonus=found==g.bullet_bonuses.end() ? 0 : found->second;g.hit_source=verified_projectile_source(g.hit_identity);
-    original(u,bullet,divisor);g.normal_hit=previous;g.elite_hit=previous_elite;g.hit_bonus=bonus;g.hit_source=source;g.bullet_hit_context=previous_context;g.hit_identity=previous_identity;
+    const U32 previous_divisor=g.hit_divisor;g.hit_divisor=std::max(1u,divisor);
+    original(u,bullet,divisor);g.hit_divisor=previous_divisor;g.normal_hit=previous;g.elite_hit=previous_elite;g.hit_bonus=bonus;g.hit_source=source;g.bullet_hit_context=previous_context;g.hit_identity=previous_identity;
 }
 void __cdecl owner_missile_hook(bw::Bullet* bullet,BulletFn original) noexcept {
     observe_instant_launch(bullet);

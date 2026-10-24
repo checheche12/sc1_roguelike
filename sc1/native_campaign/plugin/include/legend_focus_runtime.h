@@ -1,6 +1,13 @@
 #pragma once
 // Included inside rework_combat_v5 after weapon_hurt and before ordinary_hit.
-inline bool focus_match(const legend_focus::Rule& r,const bw::Unit* u) noexcept {return valid_unit(u)&&u->unit_id<256&&(r.units[u->unit_id/32]&(1u<<(u->unit_id%32)));}
+inline bool focus_match(const legend_focus::Rule& r,const bw::Unit* u) noexcept {
+ if(!valid_unit(u)||u->unit_id>=256)return false;
+ // Native scarab explosions credit the parent Reaver, including Warbringer.
+ return (r.ordinal==141&&in(u->unit_id,{81,83})) || (r.units[u->unit_id/32]&(1u<<(u->unit_id%32)));
+}
+inline bool focus_scarab_splash(const bw::Unit* u,U32 weapon) noexcept {
+ return valid_unit(u)&&weapon==82&&in(u->unit_id,{81,83,85});
+}
 inline bool erosion_source(bw::Unit* u) noexcept {
  if(!talent_power::enabled||!valid_unit(u)||u->player!=player_owner()||hallucination(u)||!raw_rank(190))return false;
  for(const auto& r:legend_focus::rules)if(r.ordinal==190)return focus_match(r,u);return false;
@@ -28,7 +35,7 @@ inline UnitState* focus_state(bw::Unit* u) {
  return state(u);
 }
 inline std::int32_t focus_damage(bw::Unit* u,bw::Unit* target,U32 weapon,std::int32_t amount,bool primary) {
- if(!focus_source(u)||!ordinary_weapon(weapon)||amount<=0||!primary)return amount;
+ if(!focus_source(u)||!ordinary_weapon(weapon)||amount<=0||(!primary&&!focus_scarab_splash(u,weapon)))return amount;
  auto s=focus_state(u);U32 bonus=0;
  for(auto r:legend_focus::rules)if(raw_rank(r.ordinal)&&focus_match(r,u)){
   if(!(r.ordinal==105&&mutal_bounce_numerator))bonus+=r.base;
@@ -106,10 +113,28 @@ inline void hold_ensnare_cooldown(bw::Unit* u,U32 layer,U8& timer,U32 scaled) {
   if(due>frame)timer=U8(std::min(255u,due-frame));else due=0;
  }else if(due){const U32 left=due>frame?due-frame:0;timer=U8(std::min(255u,U32(std::ceil(left/std::max(1.0,s->ensnare_factor[layer])))));due=0;}
 }
+inline bool shadow_origin_clear(bw::Unit* u,int x,int y) {
+ const auto a=multi_target::dimensions(u->unit_id);bool clear=true;
+ living_units([&](bw::Unit* other){
+  if(!clear||other==u||!live(other)||air(other)||(other->flags&(0x20u|0x40u|0x200000u))||!other->flingy.sprite)return;
+  const auto b=multi_target::dimensions(other->unit_id);const auto p=other->flingy.position;
+  if(x-int(a.left)<=p.x+int(b.right)&&x+int(a.right)>=p.x-int(b.left)&&
+     y-int(a.top)<=p.y+int(b.bottom)&&y+int(a.bottom)>=p.y-int(b.top))clear=false;
+ });return clear;
+}
 inline void shadow_restore(bw::Unit* u,UnitState& s) {
  if(!s.shadow_active)return;u->flags=(u->flags&~0x4000000u)|s.shadow_invincible;s.shadow_active=false;
  if(live(u)){const auto order=u->order,stage=u->order_state,signal=u->order_signal,timer=u->order_timer,wait=u->order_wait;const auto target=u->order_target;
-  rework_relocation::move(u,s.shadow_x,s.shadow_y,96,false);u->order=order;u->order_state=stage;u->order_signal=signal;u->order_timer=timer;u->order_wait=wait;u->order_target=target;
+   if(u->flingy.position.x!=s.shadow_x||u->flingy.position.y!=s.shadow_y){
+    // The saved origin already passed native terrain placement. A nearby final
+    // strike can overlap that point with this same unit, causing native Recall
+    // search to reject its own footprint. Ignore only that self obstruction;
+    // newly arrived units still require native adjusted placement.
+    const auto bounds=multi_target::dimensions(u->unit_id);
+    const bool overlaps_self=std::abs(int(u->flingy.position.x)-s.shadow_x)<=int(bounds.left+bounds.right)&&std::abs(int(u->flingy.position.y)-s.shadow_y)<=int(bounds.top+bounds.bottom);
+    if(overlaps_self&&rework_relocation::native_move&&shadow_origin_clear(u,s.shadow_x,s.shadow_y)){rework_relocation::stop_preserving_queue(u);rework_relocation::native_move(u,U32(s.shadow_x),U32(s.shadow_y));}
+    else rework_relocation::move(u,s.shadow_x,s.shadow_y,96,false);
+   }u->order=order;u->order_state=stage;u->order_signal=signal;u->order_timer=timer;u->order_wait=wait;u->order_target=target;
   if(!live(target.unit)&&multi_target::attack_order(order))rework_relocation::stop_preserving_queue(u);}
 }
 inline bool shadow_candidate(bw::Unit* u,bw::Unit* target) {
@@ -165,7 +190,12 @@ inline bool shadow_cross_target(bw::Unit* u,bw::Unit* target) {
  }else{
   offset_y=dy>=0?edge_y:-edge_y;offset_x=int(std::int64_t(dx)*edge_y/std::abs(dy));
  }
- return rework_relocation::move(u,int(center.x)+offset_x,int(center.y)+offset_y,48,false,&center);
+ // Dense formations can push native placement just beyond the old 48px
+ // tolerance. Try farther points along the crossing ray; every accepted
+ // placement must still be on the opposite side and clear native collision.
+ const int length=std::max(std::abs(dx),std::abs(dy));
+ for(int extra:{0,32,64})if(rework_relocation::move(u,int(center.x)+offset_x+dx*extra/length,int(center.y)+offset_y+dy*extra/length,96,false,&center))return true;
+ return false;
 }
 inline void focus_tick(bw::Unit* u,UnitState& s) {
  if(s.strong_ensnare&&!u->ensnare_timer)s.strong_ensnare=false;

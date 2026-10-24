@@ -171,6 +171,8 @@ def build(coverage=None):
     clean_effect_copy(catalog)
     from .air_legend_balance import decorate as air_legend_balance
     air_legend_balance(catalog);generate_expansion(catalog,ROOT)
+    from .creep_march import decorate as extend_creep_march
+    extend_creep_march(catalog)
     contract['new_curses']=copy.deepcopy(catalog['curses'][15:])
     contract['balance_revision']=9
     contract['new_talents']=copy.deepcopy(catalog['talents'][238:])

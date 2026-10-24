@@ -7074,7 +7074,7 @@
       "id": "7c46a79c-240e-5f99-bf29-84ab7ac0fd48",
       "name": "점막 행군",
       "target": "점막 위 저그 지상 병력",
-      "description": "점막 위 저그 지상 병력: 점막 위에 있는 저그 지상 병력의 이동 속도가 50% 빨라집니다.",
+      "description": "점막 위 저그 지상 병력(드론 제외): 이속 +50%, 공속 +25%. 아군 해처리·콜로니에 연결된 점막이 3초마다 한 겹씩 확장됩니다.",
       "trigger": "",
       "numbers": "",
       "notes": "일꾼·알·애벌레 제외.",
@@ -7097,8 +7097,17 @@
         "type": "rework_v5",
         "ordinal": 75,
         "source_id": "7c46a79c-240e-5f99-bf29-84ab7ac0fd48",
-        "qa_revision": 2026101610,
-        "benefit_power_quarters": 8
+        "qa_revision": 2026102492,
+        "benefit_power_quarters": 8,
+        "creep_move_multiplier": 1.5,
+        "creep_attack_speed_multiplier": 1.25,
+        "creep_attack_interval_multiplier": 0.8,
+        "creep_spread_interval_frames": 72,
+        "creep_spread_frontier_layers": 1,
+        "creep_spread_from_owned_completed_providers": true,
+        "creep_excluded_units": [
+          41
+        ]
       },
       "target_units": [
         37,
@@ -7153,7 +7162,7 @@
         "source_id": "7c46a79c-240e-5f99-bf29-84ab7ac0fd48"
       },
       "effect_subject": "점막 위 저그 지상 병력",
-      "description_revision": 2026102042
+      "description_revision": 2026102492
     },
     {
       "id": "b5521a38-81d0-5f52-9b4e-1b8454831afa",

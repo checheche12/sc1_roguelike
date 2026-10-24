@@ -10,8 +10,9 @@ inline bw::Unit** __cdecl selected(){return selections.data();}
 inline void __cdecl sound(movement_effects::Image* img,movement_effects::Script* s,U32 dry,U32* speed){
  CHECK(!dry&&speed&&casting&&s!=&img->script&&img->parent==casting->flingy.sprite);
  // Decode only the native sound and terminating wait; no weapon/attack opcode.
- CHECK(s->pos==shadow_feedback::offset&&code[s->pos++]==0x18);
- CHECK((code[s->pos]|U32(code[s->pos+1])<<8)==111);s->pos+=2;
+ const U32 expected=s->pos==shadow_feedback::archon_offset?58u:111u;
+ CHECK((s->pos==shadow_feedback::offset||s->pos==shadow_feedback::archon_offset)&&code[s->pos++]==0x18);
+ CHECK((code[s->pos]|U32(code[s->pos+1])<<8)==expected);s->pos+=2;
  CHECK(code[s->pos++]==5&&code[s->pos++]==1);++sounds;
 }
 inline void __cdecl command(const U8*,U32){
@@ -77,6 +78,22 @@ inline void qa80_commands_filter_unique_selection_and_never_cancel_cast(){
  CHECK(registered==std::vector<U32>({0x14,0x15,0x60,0x61,0x1a,0x2b}));rework_combat_v5::command_selections=old_selections;
  std::printf("QA80_SHADOW_COMMANDS classic_remastered=1 unique_player_row=1 mixed_selection=1 queued_ignored=1 no_synthetic_lockdown=1 reentrant_cast_survives=1 selection_restored=1 five_hits_return=1 unlock=1\n");
 }
-inline constexpr std::size_t qa80_group_count=2;
-inline void run_qa80_groups(){qa80_sound_per_successful_strike_only();qa80_commands_filter_unique_selection_and_never_cancel_cast();}
+inline void qa92_archon_audio_preserves_native_scripts(){
+ using namespace qa80_fixture;using namespace rework_fixture;
+ const auto old_bin=movement_effects::get_bin;const auto old_step=shadow_feedback::step;
+ for(U32 id:{68u,76u}){
+  qa9_fixture::begin({378});auto u=unit(id,1,500,500);casting=u;
+  bw::SpriteScr sprite{};movement_effects::Image image{};sprite.main_image=&image;image.parent=&sprite;image.script={7,8,9,10,11};u->flingy.sprite=&sprite;
+  const auto animation=image.script;code.fill(0);std::memcpy(code.data(),movement_effects::data::kIscript,sizeof(movement_effects::data::kIscript));
+  rework_combat_v5::script_transform(code.data(),code.size());shadow_feedback::step=sound;movement_effects::get_bin=bin;sounds=0;
+  CHECK(std::memcmp(code.data()+9780,movement_effects::data::kIscript+9780,300)==0);
+  CHECK(std::memcmp(code.data()+rework_combat_v5::valkyrie_volley::entry,rework_combat_v5::valkyrie_volley::program,sizeof(rework_combat_v5::valkyrie_volley::program))==0);
+  shadow_feedback::archon_strike(u);CHECK(sounds==1&&std::memcmp(&animation,&image.script,sizeof(animation))==0);
+  u->flingy.sprite=nullptr;shadow_feedback::archon_strike(u);CHECK(sounds==1);
+  qa9_fixture::end();
+ }
+ casting=nullptr;shadow_feedback::step=old_step;movement_effects::get_bin=old_bin;
+}
+inline constexpr std::size_t qa80_group_count=3;
+inline void run_qa80_groups(){qa92_archon_audio_preserves_native_scripts();qa80_sound_per_successful_strike_only();qa80_commands_filter_unique_selection_and_never_cancel_cast();}
 }

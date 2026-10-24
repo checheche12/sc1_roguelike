@@ -296,7 +296,13 @@ inline void rework_split_bounce_and_dying_ammunition(){
     {rework_combat_v5::MissileScope impact(shot);std::int32_t amount=100*256;{rework_combat_v5::DamageScope hit(primary,scarab,82,1,amount);}}
     CHECK(multi_fixture::shots.size()==3);CHECK(multi_fixture::shots[1].x==a->flingy.position.x&&multi_fixture::shots[2].x==b->flingy.position.x);kill(scarab);pulse(101);CHECK(multi_fixture::shots.size()==3);finish();
     begin({93});auto muta=unit(43,1,100,100,true);primary=unit(43,6,120,100,true);shot=bullet(muta,primary,48);shot->bounces_remaining=2;
-    const U32 expected[4]={2700,900,300,100};for(U32 n=0;n<4;n++){if(n)shot->bounces_remaining=U8(3-n);rework_combat_v5::MissileScope impact(shot);CHECK(shot->bounces_remaining==3-n);std::int32_t amount=2700;rework_combat_v5::DamageScope hit(primary,muta,48,n<2 ? 1:n==2 ? 3:9,amount);CHECK(U32(amount/(n<2 ? 1:n==2 ? 3:9))==expected[n]);}finish();
+    const U32 expected[4]={2700,900,300,100};for(U32 n=0;n<4;n++){
+        if(n)shot->bounces_remaining=U8(3-n);
+        {rework_combat_v5::MissileScope impact(shot);CHECK(shot->bounces_remaining==2);
+         // Native damage always sees its valid first-hit slot; routing is restored below.
+         std::int32_t amount=2700;rework_combat_v5::DamageScope hit(primary,muta,48,1,amount);CHECK(U32(amount)==expected[n]);}
+        CHECK(shot->bounces_remaining==3-n);
+    }CHECK(rework_combat_v5::DamageScope::current_bounce_divisor==1);finish();
 }
 inline void rework_medic_rate_network_emergency_and_stim(){
     using namespace rework_fixture;begin({40,50,66,39});auto medic=unit(34,1,100,100),patient=unit(0,1,120,100),a=unit(0,1,125,100),b=unit(0,1,130,100),c=unit(0,1,135,100);medic->order=176;medic->energy=100*256;multi_fixture::target(medic,patient);

@@ -18,7 +18,7 @@ inline void portal_buff(bw::Unit* unit) {
  if(own(unit)&&!building(unit)&&!(unit->flags&(0x10u|0x20u|0x40u)))if(auto s=state(unit))s->portal_buff_until=now()+720;
 }
 inline void expansion_hit(bw::Unit* source,bw::Unit* target,U32 amount,U32 weapon) {
- if(!talent_power::enabled||!own(source)||!eligible(target)||!is_enemy(target->player))return;
+ if(!talent_power::enabled||(!own(source)&&!witnessed_suicide_source(source,weapon))||!valid_unit(target)||(live(target)&&!eligible(target))||!is_enemy(target->player))return;
  auto s=state(source);if(!s)return;
  for(const auto& r:unit_legend_expansion::rules){
   if(r.ordinal==185||legend_focus::converted(r.ordinal)||r.mode!=1||!r.count||!rank(r.ordinal)||!expansion_matches(r,source->unit_id)||s->shot_count%std::max(1u,r.cadence))continue;

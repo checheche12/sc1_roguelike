@@ -19,8 +19,9 @@ inline void qa39_focus_damage_ui_owner_and_primary_boundary(){
   CHECK(rework_combat_v5::infantry_ui_value(u,w,100)==100+r.base);
   CHECK(rework_combat_v5::focus_damage(u,target,w,1000,true)==int(1000*(100+r.base)/100));
   auto hp=other->flingy.hitpoints;g.normal_hit=true;rework_combat_v5::DamageScope::current_primary=target;
-  {std::int32_t amount=1000;rework_combat_v5::DamageScope scope(other,u,w,1,amount);if(r.ordinal==197)CHECK(amount==1000);else {if(amount)std::fprintf(stderr,"FOCUS ordinal=%u weapon=%u normal=%d active=%d applied=%d source=%d amount=%d\n",r.ordinal,w,scope.normal,g.active,g.applied,rework_combat_v5::focus_source(u),amount);CHECK(amount==0);}other->flingy.hitpoints-=amount;}
-  CHECK(other->flingy.hitpoints==hp-(r.ordinal==197?1000:0));rework_combat_v5::DamageScope::current_primary=nullptr;
+  const auto splash_amount=r.ordinal==141?2500:r.ordinal==197?1000:0;
+  {std::int32_t amount=1000;rework_combat_v5::DamageScope scope(other,u,w,1,amount);CHECK(amount==splash_amount);other->flingy.hitpoints-=amount;}
+  CHECK(other->flingy.hitpoints==hp-splash_amount);rework_combat_v5::DamageScope::current_primary=nullptr;
   u->player=6;CHECK(rework_combat_v5::focus_damage(u,target,w,1000,true)==1000);qa9_fixture::end();
  }
 }
