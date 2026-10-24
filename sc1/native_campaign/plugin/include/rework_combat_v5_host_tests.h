@@ -19,6 +19,7 @@ inline void begin(std::initializer_list<U32> talents={}){
 inline void install(){
     GrowthSnapshot s{};std::vector<Edit> edits;CHECK(rework_combat_v5::plan_stats(s,edits));
     g.baseline=edits;g.friendly_edits=edits;g.owner_edits.clear();for(const auto& e:edits)g.owner_edits.push_back({e.key,e.table,e.before,e.after,e.before});
+    owner_dat_query::reset(); // Fixture publishes a phase just like apply_snapshot.
 }
 inline bw::Unit* unit(U32 id,U32 owner,int x,int y,bool flying=false){return multi_fixture::unit(id,owner,x,y,flying);}
 inline bw::Bullet* bullet(bw::Unit* source,bw::Unit* target,U32 w){multi_fixture::target(source,target);return hooked(w,source->flingy.position.x,source->flingy.position.y,source->player,0,source);}

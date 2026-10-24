@@ -1,5 +1,6 @@
 #pragma once
 #include <cstdint>
+#include <array>
 namespace rework_catalog {
 inline constexpr std::uint32_t kTalentBase=238, kTalentCount=323, kCurseBase=15, kCurseCount=35;
 inline constexpr std::uint32_t kRankCount=28;
@@ -133,7 +134,9 @@ inline constexpr Field kPackedFields[]={
 };
 inline constexpr unsigned kOwnershipMasks[16]={4294967295u,4294967295u,4294967295u,4294967295u,4294967295u,4294967295u,4294967295u,4294967295u,4294967295u,4294967295u,4294967295u,4294967295u,4294967295u,2097151u,0u,0u};
 template<class S> inline unsigned word(const S& s,unsigned w) noexcept {return w<=16?s.talent_bits[w-1]:s.talent_ranks[w-33];}
-template<class S> inline unsigned packed_rank(const S& s,unsigned ordinal) noexcept {for(auto f:kPackedFields)if(f.ordinal==ordinal)return (word(s,f.word)>>f.shift)&((1u<<f.width)-1u);return 0;}
+// Immutable wire locations, not cached ranks: snapshot changes remain immediate.
+inline constexpr auto kPackedIndex=[](){std::array<Field,kTalentCount> result{};for(auto f:kPackedFields)result[f.ordinal]=f;return result;}();
+template<class S> inline unsigned packed_rank(const S& s,unsigned ordinal) noexcept {if(ordinal>=kTalentCount)return 0;const auto& f=kPackedIndex[ordinal];return f.width?(word(s,f.word)>>f.shift)&((1u<<f.width)-1u):0;}
 template<class S> inline bool valid_packed(const S& s) noexcept {for(auto f:kPackedFields)if(f.width==3&&packed_rank(s,f.ordinal)>4)return false;
  if(packed_rank(s,322u)>2u)return false;
  if(s.talent_ranks[21]&~1073741823u)return false;

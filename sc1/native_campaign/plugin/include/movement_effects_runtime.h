@@ -34,14 +34,23 @@ inline void reset() noexcept {
 struct Ratio {std::uint64_t numerator=1,denominator=1;};
 using RatioExtension=Ratio (*)(bw::Unit*) noexcept;
 inline RatioExtension ratio_extension=nullptr;
+struct LegacyIndex {std::array<int,228> head{};std::array<int,std::size(frozen::movement_patches)> next{};};
+inline constexpr auto legacy_index=[](){
+ LegacyIndex result{};for(auto& h:result.head)h=-1;
+ for(std::size_t i=std::size(frozen::movement_patches);i>0;--i){const auto at=i-1;const auto id=frozen::movement_patches[at].unit_id;
+  result.next[at]=id<result.head.size()?result.head[id]:-1;if(id<result.head.size())result.head[id]=int(at);
+ }return result;
+}();
 inline Ratio ratio(bw::Unit* u) noexcept {
     Ratio r;
     if(!g.active || !g.applied || !valid_unit(u) || hallucination(u) ||
        u->unit_id>=228 || u->flingy.hitpoints<=0 || u->order==0)return r;
-    if(u->player==player_owner())for(const auto& p:frozen::movement_patches)
-        if(p.unit_id==u->unit_id && (g.growth.talent_bits[p.bit/32]&(1u<<(p.bit%32)))){
+    if(u->player==player_owner())for(int i=legacy_index.head[u->unit_id];i>=0;i=legacy_index.next[std::size_t(i)]){
+        const auto& p=frozen::movement_patches[std::size_t(i)];
+        if(g.growth.talent_bits[p.bit/32]&(1u<<(p.bit%32))){
             talent_power::multiply(r.numerator,r.denominator,p.bit,p.numerator,p.denominator);
         }
+    }
     if(regular_enemy(u)){
         if(g.growth.curse_counts[3]){r.numerator*=40+3*g.growth.curse_counts[3];r.denominator*=40;}
         auto t=existing_track(u);auto game=g.game ? g.game() : nullptr;

@@ -187,7 +187,7 @@ def build(coverage=None):
 def generate_rank_header(catalog,root=ROOT):
     talents=catalog['talents'][238:];curses=catalog['curses'][15:]
     rank_slots=[x.get('rank_slot',-1) for x in talents]
-    lines=['#pragma once','#include <cstdint>','namespace rework_catalog {',
+    lines=['#pragma once','#include <cstdint>','#include <array>','namespace rework_catalog {',
            f'inline constexpr std::uint32_t kTalentBase=238, kTalentCount={len(talents)}, kCurseBase=15, kCurseCount=35;',
            f'inline constexpr std::uint32_t kRankCount=28;',
            'inline constexpr int kRankSlots[kTalentCount]={'+','.join(map(str,rank_slots))+'};',
@@ -207,7 +207,9 @@ def generate_rank_header(catalog,root=ROOT):
         masks[f['word']]|=((1<<f['width'])-1)<<f['shift']
     packed+=['};','inline constexpr unsigned kOwnershipMasks[16]={'+','.join(str(x)+'u' for x in owned)+'};',
       'template<class S> inline unsigned word(const S& s,unsigned w) noexcept {return w<=16?s.talent_bits[w-1]:s.talent_ranks[w-33];}',
-      'template<class S> inline unsigned packed_rank(const S& s,unsigned ordinal) noexcept {for(auto f:kPackedFields)if(f.ordinal==ordinal)return (word(s,f.word)>>f.shift)&((1u<<f.width)-1u);return 0;}',
+      '// Immutable wire locations, not cached ranks: snapshot changes remain immediate.',
+      'inline constexpr auto kPackedIndex=[](){std::array<Field,kTalentCount> result{};for(auto f:kPackedFields)result[f.ordinal]=f;return result;}();',
+      'template<class S> inline unsigned packed_rank(const S& s,unsigned ordinal) noexcept {if(ordinal>=kTalentCount)return 0;const auto& f=kPackedIndex[ordinal];return f.width?(word(s,f.word)>>f.shift)&((1u<<f.width)-1u):0;}',
       'template<class S> inline bool valid_packed(const S& s) noexcept {for(auto f:kPackedFields)if(f.width==3&&packed_rank(s,f.ordinal)>4)return false;']
     packed.append(' if(packed_rank(s,322u)>2u)return false;')
     for w in range(54,61):packed.append(f' if(s.talent_ranks[{w-33}]&~{masks[w]}u)return false;')

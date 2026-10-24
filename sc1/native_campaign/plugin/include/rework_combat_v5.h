@@ -105,7 +105,7 @@ inline U32 unit_attack_rank(const GrowthSnapshot& snapshot,U32 id) noexcept {
 }
 inline U32 unit_trait_value(const GrowthSnapshot& snapshot,U32 id,U32 field,bool ammo=false) noexcept {
     U32 value=0;if(!talent_power::enabled)return 0;
-    for(const auto& r:unit_growth::rules)if(r.kind==2&&rank(snapshot,r.ordinal)&&unit_growth_matches(r,id,ammo)){
+    for(const auto& r:unit_growth::rules)if(r.kind==2&&unit_growth_matches(r,id,ammo)&&rank(snapshot,r.ordinal)){
         const U32 amount=field==0?r.armor:field==1?r.hp:field==2?r.damage:field==3?r.speed:r.energy;
         value=std::max(value,amount);
     }
@@ -118,9 +118,9 @@ inline U32 unit_attack_parent(U32 id) noexcept {
 // QA13: shared defense manuals grant +0.5 armor and +28% health per rank.
 inline std::uint64_t armor_eighths(U32 stacks) noexcept {return std::uint64_t(stacks)*4u;}
 inline bool air_control(const GrowthSnapshot& snapshot,U32 id) noexcept {
-    return (rank(snapshot,47)&&in(id,{8,12,21,27,28,29,58,102})) ||
-        (rank(snapshot,69)&&in(id,{44,56,62})) ||
-        (rank(snapshot,110)&&in(id,{70,71,72,80,82,86,88}));
+    return (in(id,{8,12,21,27,28,29,58,102})&&rank(snapshot,47)) ||
+        (in(id,{44,56,62})&&rank(snapshot,69)) ||
+        (in(id,{70,71,72,80,82,86,88})&&rank(snapshot,110));
 }
 inline constexpr U32 tower_ordinal=322;
 inline bool tower_type(U32 id) noexcept {return in(id,{124,144,162});}
@@ -656,12 +656,12 @@ inline double speed_ratio(bw::Unit* u) {
     if(!live(u) || hallucination(u))return 1;
     double value=ensnare_move_ratio(u);auto s=state(u);
     if(own(u)){
-        if(soldier(u->unit_id))value*=std::pow(talent_power::rate(air(u)?9u:8u,1.03),double(rank(air(u) ? 9u : 8u)));
-        if(rank(6) && in(u->unit_id,{7,41,64}))value*=talent_power::rate(6,1.5);
-        if(rank(32) && group(32,u->unit_id))value*=talent_power::rate(32,1.15);
-        if((rank(33)&&u->unit_id==11)||(rank(74)&&in(u->unit_id,{42,57}))||(rank(115)&&u->unit_id==69))value*=talent_power::rate(u->unit_id==11?33u:u->unit_id==69?115u:74u,1.2);
-        if(rank(136)&&u->unit_id==73)value*=talent_power::rate(136,1.5);
-        if(talent_power::enabled&&raw_rank(141)&&in(u->unit_id,{81,83}))value*=2.0;
+        if(soldier(u->unit_id)){const auto ordinal=air(u)?9u:8u;const auto stacks=rank(ordinal);if(stacks)value*=std::pow(talent_power::rate(ordinal,1.03),double(stacks));}
+        if(in(u->unit_id,{7,41,64}) && rank(6))value*=talent_power::rate(6,1.5);
+        if(group(32,u->unit_id) && rank(32))value*=talent_power::rate(32,1.15);
+        if((u->unit_id==11&&rank(33))||(in(u->unit_id,{42,57})&&rank(74))||(u->unit_id==69&&rank(115)))value*=talent_power::rate(u->unit_id==11?33u:u->unit_id==69?115u:74u,1.2);
+        if(u->unit_id==73&&rank(136))value*=talent_power::rate(136,1.5);
+        if(talent_power::enabled&&in(u->unit_id,{81,83})&&raw_rank(141))value*=2.0;
         if(air_control(g.growth,u->unit_id))value*=1.2;
         value*=1.0+unit_trait_value(g.growth,u->unit_id,3)/100.0;
         if(s&&s->charge_until>now())value*=talent_power::rate(132,1.7);

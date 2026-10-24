@@ -282,12 +282,15 @@ bw::DatTable* table_for(Key k,bool mutate) noexcept {
     return t;
 }
 U32 read_entry(const bw::DatTable* t,U32 id) noexcept {
-    U32 value=0;
-    std::memcpy(&value,static_cast<const U8*>(t->data)+std::size_t(id)*t->entry_size,t->entry_size);
+    U32 value=0;const auto p=static_cast<const U8*>(t->data)+std::size_t(id)*t->entry_size;
+    // Constant-width memcpy compiles to unaligned loads/stores without a
+    // dynamic memcpy call for every DAT field. Preserve the fallback contract.
+    switch(t->entry_size){case 1:std::memcpy(&value,p,1);break;case 2:std::memcpy(&value,p,2);break;case 4:std::memcpy(&value,p,4);break;default:std::memcpy(&value,p,t->entry_size);break;}
     return value;
 }
 void write_entry(bw::DatTable* t,U32 id,U32 value) noexcept {
-    std::memcpy(static_cast<U8*>(t->data)+std::size_t(id)*t->entry_size,&value,t->entry_size);
+    const auto p=static_cast<U8*>(t->data)+std::size_t(id)*t->entry_size;
+    switch(t->entry_size){case 1:std::memcpy(p,&value,1);break;case 2:std::memcpy(p,&value,2);break;case 4:std::memcpy(p,&value,4);break;default:std::memcpy(p,&value,t->entry_size);break;}
 }
 U32 maximum(const bw::DatTable* t) noexcept {
     return t->entry_size==1 ? 255u : t->entry_size==2 ? 65535u : 0xffffffffu;
@@ -563,23 +566,13 @@ public:
         const U32 unit_view=unit_owner==player_owner()?1u:is_enemy(unit_owner)?2u:0u;
         const U32 weapon_view=weapon_owner==player_owner()?1u:is_enemy(weapon_owner)?2u:0u;
         native_tech_cost_.begin(unit_owner);
-        const auto& edits=query_only?owner_dat_query::values():g.owner_edits;
+        const auto& edits=owner_dat_query::plan(query_only,unit_view,weapon_view,weapon_subject && weapon_subject->unit_id==98);
         ++frame_profile::dat_scopes;if(query_only)++frame_profile::query_scopes;frame_profile::dat_entries+=edits.size();
         for(const auto& e:edits){
-            const U32 view=e.key.table==1 ? weapon_view : unit_view;
-            U32 next=view==1 ? e.friendly : view==2 ? e.enemy : e.original;
-            if(e.key.table==0 && e.key.field==48 && (e.key.id==11 || e.key.id==42 || e.key.id==57 || e.key.id==69))next=std::min(next,8u);
-            // Corsairs and Raszagal share weapon 100. This talent excludes
-            // heroes: an owner-only DAT view must not extend Raszagal's range.
-            if(view==1 && weapon_subject && weapon_subject->unit_id==98 &&
-               e.key.table==1 && e.key.field==5 && e.key.id==100)next=e.original;
-            // Cooldowns are owner-adjusted after simulation, independent of the
-            // engine's iscript execution pass (which is outside step_order).
-            if(e.key.table==1 && e.key.field==16)continue;
-            const U32 current=read_entry(e.table,e.key.id);
-            if(current==next)continue;
+            const U32 current=read_entry(e.table,e.id);
+            if(current==e.value)continue;
             if(size_==saved_.size())break; // apply_snapshot enforces this bound.
-            saved_[size_++]={e.table,e.key.id,current};write_entry(e.table,e.key.id,next);++frame_profile::dat_writes;
+            saved_[size_++]={e.table,e.id,current};write_entry(e.table,e.id,e.value);++frame_profile::dat_writes;
         }
         const auto t=existing_track(subject);
         if(!query_only && t && ((t->elite && regular_enemy(subject)) || (rework_curses::marked(subject) && rework_curses::hp_percent(subject)!=100)) && unit_owner==subject->player){
