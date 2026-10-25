@@ -1,0 +1,64 @@
+{
+  "version": "v1.0.5",
+  "release_channel": "stable",
+  "base_release": "v1.0.4",
+  "gameplay_unchanged": false,
+  "native_dll_sha256": "079cd35e3d3bebad9a5bd51ec85b992e21429362864a2fcec2e5643aa95dbb6c",
+  "native_tests_fresh": true,
+  "fresh_checkpoint_replays": 63,
+  "fresh_resource_and_defense_replays": [
+    206,
+    407
+  ],
+  "host": {
+    "groups": 512,
+    "checks": 2379301,
+    "passed": true
+  },
+  "ui": {
+    "groups": 22,
+    "assertions": 177059,
+    "passed": true
+  },
+  "python_tests": 33,
+  "changed_campaign_maps": [
+    206,
+    407
+  ],
+  "unchanged_campaign_maps": 61,
+  "portable_self_test_passed": true,
+  "portable_window_title": "스타1 성장 기록 관리자 · 1.0.5",
+  "actual_game_runs": 2,
+  "mind_control_comparisons": [
+    {
+      "case": "talent_off",
+      "baseline": 1,
+      "candidate": 1
+    },
+    {
+      "case": "chain_talent_seven_targets",
+      "baseline": 2,
+      "candidate": 5
+    },
+    {
+      "case": "chain_talent_three_targets",
+      "baseline": 2,
+      "candidate": 3
+    },
+    {
+      "case": "cancelled_before_cast",
+      "baseline": 0,
+      "candidate": 0
+    }
+  ],
+  "candidate_source_matches_native_demo": true,
+  "changes": [
+    "Remove the final Insurgent and original Zerg06 cinematics while retaining growth and durable save ACK.",
+    "Reset native order wait and temporarily align facing for each secondary Mind Control target; restore caster state afterward."
+  ],
+  "limitations": [
+    "Actual native game processes and cast/ownership logs verified. Screen capture helpers timed out, so no screenshot inspection is claimed.",
+    "This demo covers nearby ground SCVs, talent off/on, three/seven targets and immediate cancellation. Immune, hidden, loaded, flying and queued/moving cases were not covered by this run.",
+    "The two revised mission endings have offline trigger and map validation; no native mission-completion playtest."
+  ]
+}
