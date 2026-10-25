@@ -123,6 +123,8 @@ def verify_mineral_layout(source_chk, output_chk, mission, row):
     report = row.get('mission_balance')
     if not report:raise ValueError('Mission-specific balance proof missing')
     baseline = CHK(output_chk.save())
+    # Match the builder's original spatial constraints for the removed ending.
+    if mission['mission_id']==407:baseline.setsection('TRIG',source_chk.getsection('TRIG'))
     if row.get('base_defenses'):base_defenses.undo(baseline,row['base_defenses'])
     if row.get('settlement_terrain'):
         settlement_terrain.verify(source_chk,output_chk,mission,row['settlement_terrain'])
@@ -147,6 +149,7 @@ def verify_mineral_layout(source_chk, output_chk, mission, row):
         if row.get('base_defenses'):
             defenses=base_defenses.apply(baseline,mission,row['difficulty'])
             if defenses!=row['base_defenses']:raise ValueError('Base fortifications differ from deterministic replay')
+        baseline.setsection('TRIG',output_chk.getsection('TRIG'))
         if expected != report or baseline.save() != output_chk.save():
             raise ValueError('Mission balance differs from deterministic replay')
     except AssertionError as error:

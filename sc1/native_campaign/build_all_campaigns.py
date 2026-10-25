@@ -1,9 +1,9 @@
 """Build every shipped base-game/Brood War campaign CHK without game access.
 
-Original scenario sections and ending actions are preserved. Ending conditions
-are latched before their cinematic, then the exact original ending runs after
-native phase-three growth has been durably acknowledged. Ordinary switches carry
-the handshake; ordinary death counters remain diagnostic mirrors only.
+Reviewed objective corrections run before progression gates are added. The
+resulting ending conditions are latched, then their actions run after phase-four
+growth has been durably acknowledged. Ordinary switches carry the handshake;
+ordinary death counters remain diagnostic mirrors only.
 """
 from __future__ import annotations
 from collections import deque
@@ -333,6 +333,7 @@ def quarter_milestone(chk,row,middle_cs,middle):
 
 
 def patch_progression(chk,row):
+ """Preserve input actions after any reviewed campaign objective corrections."""
  original=triggers(chk);result=[];receipt=[];original_indices=[]
  opening_workers=None
  survival=timed_survival_plan(chk,row)
@@ -613,6 +614,11 @@ def make_map(raw,row):
  if opening_balance is not None:progression['opening_balance']=opening_balance
  chk.setsection('STR ',append_marker(chk.getsection('STR '),row['fingerprint'].encode('ascii')))
  assert_original_units_preserved(original[b'UNIT'],chk.getsection('UNIT'),mineral_bonus=500)
+ # The Insurgent ending used to reserve resource-sensitive locations. Keep
+ # those original spatial constraints when removing its gameplay actions, so
+ # a cinematic-only edit cannot rearrange resources or the added defenders.
+ final_triggers=chk.getsection('TRIG')
+ if row['mission_id']==407:chk.setsection('TRIG',original[b'TRIG'])
  from sc1.native_campaign import corner_resource_layout,scripted_openings
  corners=corner_resource_layout.apply(chk,row,minerals,reserved_points=mineral_reserved_points(difficulty))
  balance=mission_balance.apply(chk,row,difficulty)
@@ -622,6 +628,7 @@ def make_map(raw,row):
  terrain=settlement_terrain.apply(chk,row)
  from sc1.native_campaign import base_defenses
  defenses=base_defenses.apply(chk,row,difficulty)
+ chk.setsection('TRIG',final_triggers)
  # Select P8's forward cells after resource and defense placement so both a
  # fresh map build and the unchanged-map revalidation use final obstacles.
  if row['mission_id']==308:difficulty['wave_origins']=protoss8_front_origins(chk,row,difficulty)

@@ -1284,12 +1284,14 @@ inline void borrowed_order(bw::Unit* u,UnitFn dispatch,U32 order,bw::Unit* targe
     if(!dispatch||!live(u))return;
     const auto saved_order=u->order,saved_state=u->order_state,saved_signal=u->order_signal,saved_timer=u->order_timer;
     const auto saved_target=u->order_target;auto queue_begin=u->order_queue_begin,queue_end=u->order_queue_end;
-    const auto flags=u->flags;const auto energy=u->energy;const auto shields=u->shields;
+    const auto flags=u->flags;const auto energy=u->energy;const auto shields=u->shields;const auto saved_wait=u->order_wait,saved_facing=u->flingy.facing_direction;
     u->order=U8(order);u->order_state=U8(order_state);u->order_signal=0;u->order_timer=0;u->order_queue_begin=u->order_queue_end=nullptr;
     u->order_target={std::int16_t(x),std::int16_t(y),target};if(order!=6)u->energy=65535;
+    if(order==182){u->order_wait=0;u->flingy.facing_direction=U8(multi_target::direction_to(u,target));}
     ++spell_depth;{HallucinationCreationScope hallucinations(order==148);OwnerDatScope view(u->player,u->player,u);dispatch(u);}--spell_depth;
     u->order=saved_order;u->order_state=saved_state;u->order_signal=saved_signal;u->order_timer=saved_timer;u->order_target=saved_target;
     u->order_queue_begin=queue_begin;u->order_queue_end=queue_end;u->flags=flags;u->energy=energy;u->shields=shields;
+    if(order==182){u->order_wait=saved_wait;u->flingy.facing_direction=saved_facing;}
 }
 inline std::int32_t post_armor_damage(bw::Unit* target,std::int32_t amount) {
     if(!g.normal_hit||generated_depth||amount<=0)return amount;auto s=state(target);

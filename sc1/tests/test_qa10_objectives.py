@@ -24,7 +24,8 @@ class Qa10ObjectivesTests(unittest.TestCase):
         ending=b.triggers(output)[route['ending_trigger_index']]
         self.assertFalse(machine.run(ending));machine.switches[242]=machine.switches[243]=True
         self.assertTrue(machine.run(ending));self.assertTrue(machine.victory)
-        self.assertEqual(ending[320:],b.triggers(source)[5][320:])
+        self.assertEqual([a[26] for _,a in b.actions(ending)],[1])
+        self.assertTrue(receipt['final_cinematic_removed'])
         self.assertFalse(receipt['mobile_units_required']);self.assertFalse(receipt['tassadar_encounter_required'])
 
     def test_any_remaining_building_or_dead_kerrigan_prevents_win(self):
