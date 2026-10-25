@@ -1,0 +1,116 @@
+{
+  "version": "v1.0.7",
+  "release_channel": "stable",
+  "base_release": "v1.0.6",
+  "gameplay_unchanged": false,
+  "native_dll_sha256": "d69e5050d42468aa42346511286f31c9e0f602784e9fcaacce81556972f73954",
+  "native_tests_fresh": true,
+  "host": {
+    "groups": 521,
+    "checks": 2380713,
+    "passed": true
+  },
+  "ui": {
+    "groups": 22,
+    "assertions": 177059,
+    "passed": true
+  },
+  "python_tests": 33,
+  "changed_campaign_maps": [],
+  "unchanged_campaign_maps": 63,
+  "map_validation": "All 63 maps are byte-identical to stable 1.0.6; original capture trigger and every map/source dependency hash verified.",
+  "portable_self_test_passed": true,
+  "portable_window_title": "스타1 성장 기록 관리자 · 1.0.7",
+  "candidate_source_matches_native_demo": true,
+  "temple_capture_contract": {
+    "raw_sha256": "173dcdae54120018888165da61745110f24742ec23a89566394263d4cd22de9c",
+    "packaged_sha256": "0c975f53416df59568e92d97d84f2b5cde761d06049920a4fc2e2b4e42ed6067",
+    "human_owner": 1,
+    "temple_unit": 175,
+    "original_owner": 6,
+    "temple_position": [
+      3728,
+      2304
+    ],
+    "activation_trigger": 10,
+    "activation_switch": 2,
+    "failure_switch": 4,
+    "ending_switch": 9,
+    "existing_packaged_capture_signal_verified": true,
+    "map_files_changed": false,
+    "stable_chk_alias_hashes_verified": 189
+  },
+  "native_movement_cases": [
+    {
+      "event": "result",
+      "case": "native_movement",
+      "unit": 43,
+      "owner": 4,
+      "from": [
+        4734,
+        4804
+      ],
+      "to": [
+        5324,
+        4883
+      ],
+      "toward_temple": true
+    },
+    {
+      "event": "result",
+      "case": "native_movement",
+      "unit": 43,
+      "owner": 5,
+      "from": [
+        4734,
+        5000
+      ],
+      "to": [
+        5325,
+        5027
+      ],
+      "toward_temple": true
+    },
+    {
+      "event": "result",
+      "case": "native_movement",
+      "unit": 42,
+      "owner": 4,
+      "from": [
+        4803,
+        5187
+      ],
+      "to": [
+        4880,
+        5175
+      ],
+      "toward_temple": true
+    },
+    {
+      "event": "result",
+      "case": "native_movement",
+      "unit": 38,
+      "owner": 0,
+      "from": [
+        4394,
+        5336
+      ],
+      "to": [
+        4726,
+        5336
+      ],
+      "toward_temple": true
+    }
+  ],
+  "changes": [
+    "활성화 스위치 2와 플레이어 소유 젤나가 사원(175)을 확인한 뒤 실제 사원 위치를 공통 목표로 선택한다.",
+    "일반·특수·처치 지원·일꾼 기습 공세와 탐지기, 이미 출발한 추가 공세가 사원을 향한다.",
+    "점령 이후 일꾼 기습은 적 진영의 검증된 생성 위치에서 출발하며 채광 지점을 목표로 삼지 않는다.",
+    "원본 임무의 공격 이동 중이거나 플레이어를 공격 중인 병력도 전환한다. 대기 수비 병력·일꾼·건물은 동원하지 않는다.",
+    "등장 대기·수송·주문·변신·행동 불가 상태를 보존하고, 사원 파괴·패배·엔딩 이후 새 목표 명령을 중단한다.",
+    "다른 임무의 목표 선택과 공세 주기·구성·물량은 유지한다."
+  ],
+  "limitations": [
+    "격리 Effect Lab 지도에서 사원 소유권 이전·신호·명령 및 실제 이동을 검증했다. 원본 408 지도 지형에서의 임무 완주나 화면 외관 검증은 아니다."
+  ]
+}
