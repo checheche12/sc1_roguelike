@@ -124,6 +124,9 @@ inline bool shadow_origin_clear(bw::Unit* u,int x,int y) {
 }
 inline void shadow_restore(bw::Unit* u,UnitState& s) {
  if(!s.shadow_active)return;u->flags=(u->flags&~0x4000000u)|s.shadow_invincible;s.shadow_active=false;
+ // A cast with no legal landing did no damage. Release the command lock and
+ // retry briefly instead of spending the full twelve-second combat cooldown.
+ if(!s.shadow_count)s.shadow_cooldown=std::min(s.shadow_cooldown,now()+8);
  if(live(u)){const auto order=u->order,stage=u->order_state,signal=u->order_signal,timer=u->order_timer,wait=u->order_wait;const auto target=u->order_target;
    if(u->flingy.position.x!=s.shadow_x||u->flingy.position.y!=s.shadow_y){
     // The saved origin already passed native terrain placement. A nearby final
@@ -146,13 +149,16 @@ inline bool shadow_attack_order(bw::Unit* u) {
  return live(u)&&(in(u->order,{8,9,10,11,12,14,21,22,157,158}) ||
   (u->order==107&&shadow_candidate(u,u->order_target.unit)));
 }
+inline U32 shadow_priority(const UnitState& s,bw::Unit* target) {
+ U32 rank=0;for(U32 i=0;i<s.shadow_count;i++)if(generation(s.shadow_targets[i])==target)rank=1;
+ if(s.shadow_count&&generation(s.shadow_targets[s.shadow_count-1])==target)rank=2;
+ return rank;
+}
 inline bw::Unit* shadow_pick(bw::Unit* u,UnitState& s,int x,int y,U32 radius) {
  bw::Unit* best=nullptr;U32 priority=3;std::uint64_t nearest=~std::uint64_t(0);
  for(auto candidate:around(x,y,radius,nullptr,65536,true,0)){
-  if(!shadow_candidate(u,candidate))continue;U32 rank=0;
-  for(U32 i=0;i<s.shadow_count;i++)if(generation(s.shadow_targets[i])==candidate)rank=1;
+  if(!shadow_candidate(u,candidate))continue;const U32 rank=shadow_priority(s,candidate);
   // The previous victim is eligible only when no other candidate exists.
-  if(s.shadow_count&&generation(s.shadow_targets[s.shadow_count-1])==candidate)rank=2;
   const auto distance=dist(x,y,candidate->flingy.position.x,candidate->flingy.position.y);
   if(rank<priority||(rank==priority&&distance<nearest)){best=candidate;priority=rank;nearest=distance;}
  }return best;
@@ -178,8 +184,9 @@ inline void shadow_prepare(bw::Unit* u) {
 inline bool shadow_cross_target(bw::Unit* u,bw::Unit* target) {
  const auto center=target->flingy.position;
  const auto a=multi_target::dimensions(target->unit_id),b=multi_target::dimensions(u->unit_id);
- int dx=int(center.x)-u->flingy.position.x,dy=int(center.y)-u->flingy.position.y;
- if(!dx&&!dy)dx=1;
+ int incoming_x=int(center.x)-u->flingy.position.x,incoming_y=int(center.y)-u->flingy.position.y;
+ if(!incoming_x&&!incoming_y)incoming_x=1;
+ const auto ray=[&](int dx,int dy){
  const int edge_x=(dx>=0?a.right+b.left:a.left+b.right)+8;
  const int edge_y=(dy>=0?a.bottom+b.top:a.top+b.bottom)+8;
  int offset_x=0,offset_y=0;
@@ -196,6 +203,23 @@ inline bool shadow_cross_target(bw::Unit* u,bw::Unit* target) {
  const int length=std::max(std::abs(dx),std::abs(dy));
  for(int extra:{0,32,64})if(rework_relocation::move(u,int(center.x)+offset_x+dx*extra/length,int(center.y)+offset_y+dy*extra/length,96,false,&center))return true;
  return false;
+ };
+ // Keep the straight crossing as the first choice. Walls and packed units can
+ // obstruct that ray while leaving the target's far flank open. All five rays
+ // still use native collision placement and the original opposite-side check.
+ return ray(incoming_x,incoming_y)||ray(incoming_x-incoming_y,incoming_y+incoming_x)||ray(incoming_x+incoming_y,incoming_y-incoming_x)||ray(incoming_x-2*incoming_y,incoming_y+2*incoming_x)||ray(incoming_x+2*incoming_y,incoming_y-2*incoming_x);
+}
+inline bw::Unit* shadow_land_target(bw::Unit* u,UnitState& s,bw::Unit* preferred) {
+ if(preferred&&shadow_cross_target(u,preferred))return preferred;
+ const int x=s.shadow_step?s.shadow_anchor_x:s.shadow_x,y=s.shadow_step?s.shadow_anchor_y:s.shadow_y;
+ const U32 radius=s.shadow_step?legend_focus::shadow_chain_radius_pixels:legend_focus::shadow_trigger_radius_pixels;
+ auto candidates=around(x,y,radius,nullptr,65536,true,0);
+ std::stable_sort(candidates.begin(),candidates.end(),[&](auto a,auto b){
+  const auto pa=shadow_priority(s,a),pb=shadow_priority(s,b);
+  return pa!=pb?pa<pb:dist(x,y,a->flingy.position.x,a->flingy.position.y)<dist(x,y,b->flingy.position.x,b->flingy.position.y);
+ });
+ for(auto candidate:candidates)if(candidate!=preferred&&shadow_candidate(u,candidate)&&shadow_cross_target(u,candidate))return candidate;
+ return nullptr;
 }
 inline void focus_tick(bw::Unit* u,UnitState& s) {
  if(s.strong_ensnare&&!u->ensnare_timer)s.strong_ensnare=false;
@@ -209,7 +233,9 @@ inline void focus_tick(bw::Unit* u,UnitState& s) {
   if(!target)target=shadow_pick(u,s,s.shadow_anchor_x,s.shadow_anchor_y,legend_focus::shadow_chain_radius_pixels);
   if(!target){shadow_restore(u,s);return;}
   const auto old_order=u->order,old_stage=u->order_state,old_signal=u->order_signal,old_timer=u->order_timer,old_wait=u->order_wait;const auto old_target=u->order_target;
-  if(shadow_cross_target(u,target)){
+  target=shadow_land_target(u,s,target);
+  if(!target){shadow_restore(u,s);return;}
+  {
    s.shadow_anchor_x=target->flingy.position.x;s.shadow_anchor_y=target->flingy.position.y;
    if(s.shadow_count<5)s.shadow_targets[s.shadow_count++]=identity(target);
    const U32 w=original_stat({0,17,u->unit_id}),base=owner_stat(u->player,{1,14,w})+owner_stat(u->player,{1,15,w})*upgrade_level(u->player,original_stat({1,6,w}));
