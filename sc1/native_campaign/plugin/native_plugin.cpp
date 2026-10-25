@@ -59,6 +59,7 @@ struct UnitTrack {bool seen=false,spawned=false;U8 unique=0,owner=12,ground=0,ai
     U32 wave_id=0,last_attack_frame=0,last_damage_frame=0,first_attack_end=0,first_attack_bonus=0,command_until=0;
     U32 healed_frame=0,bomb_hit_frame=0,pair_index=0xffffffffu,pair_due=0;U8 pair_unique=0;
     bool medic=false,commander=false,pair_used=false,death_processed=false;
+    bool temple_assault=false,temple_ordered=false;
     bool wave_ordered=false,wave_position_seen=false;U32 wave_order_frame=0,wave_position_frame=0;int wave_position_x=0,wave_position_y=0;
 };
 struct DeathBomb{int x,y;U32 created,due,damage,owner;};

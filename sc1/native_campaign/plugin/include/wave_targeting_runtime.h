@@ -1,8 +1,8 @@
 #pragma once
-// Only plugin-created wave identities receive orders. Coordinates are refreshed
-// from current player units; original map/AI troops are never commandeered.
+// Added waves follow current player units. During BW Protoss 8 temple defense,
+// active original assaults also converge on the captured temple; idle guards do not.
 namespace wave_targeting {
-struct Target {bool valid=false;int x=0,y=0;bw::Unit* base=nullptr;U8 unique=0;};
+struct Target {bool valid=false;int x=0,y=0;bw::Unit* base=nullptr;U8 unique=0;bool temple=false;};
 inline Target target{};
 inline bool sampled=false;
 inline U32 sample_frame=0;
@@ -20,11 +20,32 @@ inline bool usable(const bw::Unit* u) noexcept {
 inline std::int64_t distance(int x,int y,int tx,int ty) noexcept {
     const auto dx=std::int64_t(x)-tx,dy=std::int64_t(y)-ty;return dx*dx+dy*dy;
 }
+// Original Countdown trigger 10 sets switch 2 after transferring temple 175
+// to the human player. Switches 4 and 9 enter defeat and the ending respectively.
+inline bool temple_phase() noexcept {
+    const auto game=g.game?g.game():nullptr;
+    return g.active && g.mission && g.mission->mission_id==408 && game && switch_set(game,2);
+}
+inline bool temple_finished() noexcept {
+    return temple_phase() && (switch_set(g.game(),4) || switch_set(g.game(),9));
+}
 inline void refresh(bool force=false) {
     const auto game=g.game ? g.game():nullptr;if(!g.active || !g.mission || !game){reset();return;}
     const U32 frame=game->frame_count;
-    if(!force && sampled && frame-sample_frame<24)return;
+    const bool temple=temple_phase();
+    if(!force && sampled && frame-sample_frame<24 && temple==target.temple &&
+       (!temple || (target.valid && usable(target.base) && target.base->unit_id==175 &&
+                    target.base->minor_unique_index==target.unique && !temple_finished())))return;
     sampled=true;sample_frame=frame;
+    if(temple){
+        target={};target.temple=true;
+        if(temple_finished())return;
+        living_units([&](bw::Unit* u){if(!target.valid && usable(u) && u->unit_id==175){
+            const auto p=u->flingy.position;target={true,p.x,p.y,u,u->minor_unique_index,true};
+        }});
+        // A destroyed or not-yet-transferred objective must not revert to a base.
+        return;
+    }
     std::vector<bw::Unit*> own;
     living_units([&](bw::Unit* u){if(usable(u))own.push_back(u);});
     bw::Unit* best=nullptr;U32 best_rank=0,best_score=0,current_rank=0,current_score=0;
@@ -70,6 +91,18 @@ inline bool marked(const bw::Unit* u) noexcept {
     const auto t=existing_track(u);
     return t && t->spawned && t->wave_id!=0 && (regular_enemy(u) || rework_curses::marked(u)) && u->flingy.hitpoints>0 && u->order!=0;
 }
+inline bool original_assault(bw::Unit* u) {
+    if(!target.temple || !target.valid || !regular_enemy(u) || u->flingy.hitpoints<=0 || !u->order)return false;
+    auto t=existing_track(u);if(t && t->spawned)return false;
+    if(t && t->temple_assault)return true;
+    const auto victim=u->order_target.unit;
+    const bool marching=u->order==14 || u->order==157 || u->order==158;
+    const bool attacking=(u->order==8 || u->order==10 || u->order==11 || u->order==12 || u->order==21) &&
+        usable(victim);
+    if(!marching && !attacking)return false;
+    t=track_unit(u);if(!t)return false;t->temple_assault=true;return true;
+}
+inline bool controlled(bw::Unit* u) {return marked(u) || original_assault(u);}
 inline bool engaged(const bw::Unit* u,U32 frame,const UnitTrack& t) noexcept {
     if(u->ground_cooldown || u->air_cooldown || (t.last_attack_frame && frame-t.last_attack_frame<48))return true;
     const auto victim=u->order_target.unit;
@@ -93,15 +126,16 @@ inline bool reorderable(U32 order) noexcept {
 inline bool detector(const bw::Unit* u) noexcept {return valid_unit(u) && u->unit_id<228 && (original_stat({0,22,u->unit_id})&0x8001u)==0x8000u;}
 inline bool escort(const bw::Unit* u) noexcept {return detector(u);}
 inline void issue(bw::Unit* u) {
-    if(!g.order || !g.active || counter(kGoalCounter) || !marked(u) || rework_curses::appearing(u) || rework_curses::transport_hold(u))return;
+    if(!g.order || !g.active || counter(kGoalCounter) || (!marked(u) && !temple_phase()) || rework_curses::appearing(u) || rework_curses::transport_hold(u))return;
+    refresh();if(!target.valid || !controlled(u))return;
     // Deployed tanks keep their native firing/guard order until the tactical
     // controller requests Unsieging. AttackMove cannot move a deployed tank.
     if((u->unit_id==30 || u->unit_id==25)&&rework_curses::marked(u))return;
-    refresh();if(!target.valid)return;
-    auto raid=rework_curses::raid_target(u);int aim_x=raid?raid->flingy.position.x:target.x,aim_y=raid?raid->flingy.position.y:target.y;
+    auto raid=target.temple?nullptr:rework_curses::raid_target(u);int aim_x=raid?raid->flingy.position.x:target.x,aim_y=raid?raid->flingy.position.y:target.y;
     const auto game=g.game();const U32 frame=game->frame_count;auto t=existing_track(u);if(!t)return;
     const bool support=escort(u),arbiter=u->unit_id==71 || u->unit_id==86;
-    if(support){
+    const bool redirect=target.temple && !t->temple_ordered;
+    if(support && !target.temple){
         // Detectors follow the army. Arbiters use the same player-base attack
         // destination as ordinary combat troops and are never escort followers.
         bw::Unit* leader=nullptr;std::int64_t best=std::numeric_limits<std::int64_t>::max();
@@ -131,11 +165,11 @@ inline void issue(bw::Unit* u) {
     // their initial order and preserving active weapons, cloak and spell orders.
     const bool shooting=u->ground_cooldown || u->air_cooldown || (t->last_attack_frame && frame-t->last_attack_frame<48);
     const bool arbiter_idle=arbiter&&(u->order==49 || u->order==163);
-    if((u->flags&0x40u) || u->lockdown_timer || u->stasis_timer || u->maelstrom_timer || (!reorderable(u->order) && !support_idle && !arbiter_idle) || (engaged(u,frame,*t) && (!stalled_arbiter || shooting)))return;
-    if(t->wave_ordered && frame-t->wave_order_frame<48)return;
+    if((u->flags&0x40u) || u->lockdown_timer || u->stasis_timer || u->maelstrom_timer || (!reorderable(u->order) && !support_idle && !arbiter_idle) || (!redirect && engaged(u,frame,*t) && (!stalled_arbiter || shooting)))return;
+    if(!redirect && t->wave_ordered && frame-t->wave_order_frame<48)return;
     const bool moving=u->order==6 || u->order==14 || u->order==157 || u->order==158 || u->order==159;
-    if(t->wave_ordered && moving && distance(u->order_target.x,u->order_target.y,aim_x,aim_y)<64ll*64 && frame-t->wave_position_frame<8u*24u)return;
-    t->wave_ordered=true;t->wave_order_frame=frame;if(!arbiter)t->wave_position_frame=frame;
+    if(!redirect && t->wave_ordered && moving && distance(u->order_target.x,u->order_target.y,aim_x,aim_y)<64ll*64 && frame-t->wave_position_frame<8u*24u)return;
+    t->temple_ordered=target.temple;t->wave_ordered=true;t->wave_order_frame=frame;if(!arbiter)t->wave_position_frame=frame;
     g.order(u,(detector(u)||stalled_arbiter)?6u:kAttackMove,static_cast<U32>(aim_x),static_cast<U32>(aim_y),nullptr,228);
 }
 inline void step(bool ready,bool goal) {
@@ -146,6 +180,6 @@ inline void step(bool ready,bool goal) {
     // cache must never suppress the independent marching/escort scan.
     if(orders_sampled && game->frame_count-order_scan_frame<24)return;
     orders_sampled=true;order_scan_frame=game->frame_count;
-    refresh();living_units([&](bw::Unit* u){if(marked(u))issue(u);});
+    refresh();living_units([&](bw::Unit* u){if(controlled(u))issue(u);});
 }
 }

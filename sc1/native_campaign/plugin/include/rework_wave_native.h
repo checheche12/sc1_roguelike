@@ -177,7 +177,7 @@ inline bw::Unit* create(U32 id,U32 slot,U32 hp=100,U32 attack=100,bool alternate
  if(!enabled() || live_supply()+std::max(1u,original_stat({0,46,id}))>supply_cap())return nullptr;
  // Explicit user exception: only worker-raid Mutalisks appear directly at the
  // mining line. Other waves retain the512px allied clearance at real origins.
- if(slot==policy::Raid&&(id==43 || id==9 || id==42 || id==84)){
+ if(slot==policy::Raid && !wave_targeting::temple_phase() && (id==43 || id==9 || id==42 || id==84)){
   const auto owner=raid_owner();auto worker=mining_worker_target();if(!owner||!worker||(required_owner<12&&owner->owner!=required_owner))return nullptr;const auto center=worker->flingy.position;
   for(int radius=64;radius<=384;radius+=32)for(int dy=-radius;dy<=radius;dy+=32)for(int dx=-radius;dx<=radius;dx+=32){
    if(std::max(std::abs(dx),std::abs(dy))!=radius)continue;const int x=int(center.x)+dx,y=int(center.y)+dy;
@@ -379,5 +379,5 @@ inline sc1_native::WaveCountdown countdown(bool ready,bool goal) noexcept {
 }
 }
 namespace rework_curses {
-inline bw::Unit* raid_target(const bw::Unit* u) noexcept {const auto value=identity(u);return value&&value->slot==sc1_native::rework_wave::Raid&&marked(u)?rework_waves::mining_worker_target():nullptr;}
+inline bw::Unit* raid_target(const bw::Unit* u) noexcept {if(wave_targeting::temple_phase())return nullptr;const auto value=identity(u);return value&&value->slot==sc1_native::rework_wave::Raid&&marked(u)?rework_waves::mining_worker_target():nullptr;}
 }
