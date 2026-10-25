@@ -1,0 +1,127 @@
+{
+  "version": "v1.0.6",
+  "release_channel": "stable",
+  "base_release": "v1.0.5",
+  "gameplay_unchanged": false,
+  "native_dll_sha256": "bf15227a9f1e1d7689e21b0649d194306fde72ac5e2d61cb32ea7b6b59e069d3",
+  "native_tests_fresh": true,
+  "host": {
+    "groups": 515,
+    "checks": 2379531,
+    "passed": true
+  },
+  "ui": {
+    "groups": 22,
+    "assertions": 177059,
+    "passed": true
+  },
+  "python_tests": 33,
+  "changed_campaign_maps": [],
+  "unchanged_campaign_maps": 63,
+  "map_validation": "Exact hash equality to the 1.0.5 map receipt, 63 outputs, all source/dependency pins and generated headers; prior trigger/resource replay reused.",
+  "portable_self_test_passed": true,
+  "portable_window_title": "스타1 성장 기록 관리자 · 1.0.6",
+  "actual_final_comparison_runs": 2,
+  "actual_game_runs_total": 5,
+  "shadow_fury_comparisons": [
+    {
+      "case": "open_ground",
+      "baseline_hits": 5,
+      "candidate_hits": 5,
+      "baseline_cooldown_left": 272,
+      "candidate_cooldown_left": 272,
+      "returned_to_origin": true
+    },
+    {
+      "case": "narrow_far_side",
+      "baseline_hits": 0,
+      "candidate_hits": 5,
+      "baseline_cooldown_left": 272,
+      "candidate_cooldown_left": 272,
+      "returned_to_origin": true
+    },
+    {
+      "case": "blocked_target_with_alternative",
+      "baseline_hits": 0,
+      "candidate_hits": 5,
+      "baseline_cooldown_left": 272,
+      "candidate_cooldown_left": 272,
+      "returned_to_origin": true
+    },
+    {
+      "case": "all_landings_blocked",
+      "baseline_hits": 0,
+      "candidate_hits": 0,
+      "baseline_cooldown_left": 272,
+      "candidate_cooldown_left": 8,
+      "returned_to_origin": true
+    },
+    {
+      "case": "blocked_then_opened",
+      "baseline_hits": 0,
+      "candidate_hits": 0,
+      "baseline_cooldown_left": 272,
+      "candidate_cooldown_left": 8,
+      "returned_to_origin": true
+    },
+    {
+      "case": "hero_dark_templar_narrow",
+      "baseline_hits": 0,
+      "candidate_hits": 5,
+      "baseline_cooldown_left": 272,
+      "candidate_cooldown_left": 272,
+      "returned_to_origin": true
+    },
+    {
+      "case": "zeratul_narrow",
+      "baseline_hits": 0,
+      "candidate_hits": 5,
+      "baseline_cooldown_left": 272,
+      "candidate_cooldown_left": 272,
+      "returned_to_origin": true
+    },
+    {
+      "case": "building_target",
+      "baseline_hits": 5,
+      "candidate_hits": 5,
+      "baseline_cooldown_left": 272,
+      "candidate_cooldown_left": 272,
+      "returned_to_origin": true
+    }
+  ],
+  "retry_comparison": {
+    "baseline": {
+      "event": "retry",
+      "round": 4,
+      "hits": 0,
+      "cooldown_changed": 0,
+      "active": 0,
+      "position": [
+        5341,
+        5400
+      ]
+    },
+    "candidate": {
+      "event": "retry",
+      "round": 4,
+      "hits": 5,
+      "cooldown_changed": 1,
+      "active": 0,
+      "position": [
+        5238,
+        5400
+      ]
+    }
+  },
+  "candidate_source_matches_native_demo": true,
+  "changes": [
+    "Search clear far-side flanks when straight Shadow Fury landings are blocked.",
+    "Skip unlandable enemies without spending strikes. Release a zero-hit cast and retry after eight frames instead of consuming the full cooldown."
+  ],
+  "limitations": [
+    "Native engine state/damage logs were checked; screenshots and animation appearance were not inspected.",
+    "Fixtures use allied supply depots as collision obstacles on a flat test map. This is not a complete campaign playthrough or every terrain shape.",
+    "Small targets were refilled immediately before native damage application to keep them alive for all five hits; actual native damage, placement and command handling ran unchanged.",
+    "Eight scout layouts overlapped their target and were excluded from the 24 valid narrow-layout comparisons."
+  ]
+}
