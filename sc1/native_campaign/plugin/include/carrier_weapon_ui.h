@@ -22,13 +22,16 @@ inline bool subject(const bw::Unit* unit,U32 weapon) noexcept {
 }
 inline U32 __cdecl base_value(const bw::Unit* unit,U32 weapon) noexcept {
  weapon&=255u;U32 value=0;
- if(activated.load(std::memory_order_acquire)&&subject(unit,weapon)&&max_hp_cache::read_weapon(unit,14,weapon,value))
+ if(activated.load(std::memory_order_acquire)&&subject(unit,weapon)&&max_hp_cache::read_weapon(unit,14,weapon,value)){
+  U32 total=0;if(samase_weapon_ui::scaled_total(unit,weapon,1,total))return total;
   return rework_combat_v5::infantry_ui_value(unit,weapon,value);
+ }
  return unit&&original_base?original_base(unit,weapon):0;
 }
 inline U32 __cdecl bonus_value(const bw::Unit* unit,U32 weapon) noexcept {
  weapon&=255u;const U32 native=unit&&original_bonus?original_bonus(unit,weapon):0;U32 value=0;
  if(!activated.load(std::memory_order_acquire)||!subject(unit,weapon)||!max_hp_cache::read_weapon(unit,15,weapon,value))return native;
+ U32 total=0;if(samase_weapon_ui::scaled_total(unit,weapon,1,total))return 0;
  const U32 baseline=max_hp_cache::original_weapon_values[130+79].load(std::memory_order_relaxed);
  // Preserve the original native research level and display factor, including
  // extended upgrade storage. Weapon79's pinned baseline bonus is one.

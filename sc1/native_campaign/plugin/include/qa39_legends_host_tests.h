@@ -16,7 +16,7 @@ inline void primary(bw::Unit* u,bw::Unit* target,U32 weapon,std::int32_t amount,
 inline void qa39_focus_damage_ui_owner_and_primary_boundary(){
  using namespace rework_fixture;
  for(auto r:legend_focus::rules){qa9_fixture::begin({r.ordinal});auto u=unit(qa39_fixture::first(r),1,100,100),target=unit(37,6,120,100),other=unit(37,6,125,100);const auto w=u->unit_id==85?82u:qa39_fixture::weapon(u->unit_id);
-  CHECK(rework_combat_v5::infantry_ui_value(u,w,100)==100+r.base);
+  CHECK(rework_combat_v5::infantry_ui_value(u,w,100)==(r.ordinal==105?86u:100+r.base));
   CHECK(rework_combat_v5::focus_damage(u,target,w,1000,true)==int(1000*(100+r.base)/100));
   auto hp=other->flingy.hitpoints;g.normal_hit=true;rework_combat_v5::DamageScope::current_primary=target;
   const auto splash_amount=r.ordinal==141?2500:r.ordinal==197?1000:0;

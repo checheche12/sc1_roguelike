@@ -13,10 +13,23 @@ inline std::array<RUNTIME_FUNCTION,3> unwind{};
 inline std::array<U8,sizeof(base_original)> base_branch{};
 inline std::array<U8,sizeof(bonus_original)> bonus_branch{};
 inline const char* last_error="not_bound";
+inline bool scaled_total(const bw::Unit* unit,U32 weapon,U32 multiplier,U32& result) noexcept {
+    U32 base=0,bonus=0;
+    if(!rework_combat_v5::scaled_weapon_ui(unit,weapon)||!max_hp_cache::read_weapon(unit,14,weapon,base)||
+        !max_hp_cache::read_weapon(unit,15,weapon,bonus))return false;
+    const U32 upgrade=owner_stat(unit->player,{1,6,weapon});
+    const U32 level=rework_upgrade_storage::level(unit->player,upgrade);
+    const auto raw=std::min<std::uint64_t>(0x7fffffffu,(std::uint64_t(base)+std::uint64_t(bonus)*level)*256);
+    const auto damage=rework_combat_v5::weapon_ui_damage_q8(unit,weapon,std::int32_t(raw));
+    result=U32(std::min<std::uint64_t>(0xffffffffu,(std::uint64_t(damage)*multiplier+128)/256));return true;
+}
 inline std::uint64_t __cdecl field_value(const bw::Unit* unit,U32 weapon,U32 field) noexcept {
     U32 value=0;
     if(activated.load(std::memory_order_acquire) && max_hp_cache::read_weapon(unit,field,weapon,value)){
-        if(field==15)value=rework_combat_v5::infantry_ui_value(unit,weapon,value);
+        // Scaled attacks display one rounded total. Rounding a per-level
+        // bonus first would disagree with actual damage after research.
+        if(field==15){U32 total=0;if(scaled_total(unit,weapon,1,total))value=0;
+            else value=rework_combat_v5::infantry_ui_value(unit,weapon,value);}
         return (std::uint64_t(value)<<32)|1u;
     }
     return raw_read ? raw_read(weapon,field):0;
@@ -26,6 +39,7 @@ inline U32 __cdecl base_value(const bw::Unit* unit,U32 weapon) noexcept {
     // Preserve SAMASE's exact type-specific factor (Firebat/Zealot=2,
     // Valkyrie=1, otherwise weapons.dat factor), including its fallback.
     const U32 multiplier=factor(unit->unit_id,weapon);
+    U32 total=0;if(activated.load(std::memory_order_acquire)&&scaled_total(unit,weapon,multiplier,total))return total;
     const auto raw=field_value(unit,weapon,14);if(!(raw&1u))return 0;
     const std::uint64_t product=(raw>>32)*multiplier;
     return rework_combat_v5::infantry_ui_value(unit,weapon,static_cast<U32>(std::min<std::uint64_t>(product,0xffffffffu)));

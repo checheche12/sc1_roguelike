@@ -1,4 +1,4 @@
 """StarCraft campaign roguelike; no SC2 dependencies."""
 
-__version__ = "1.0.10"
+__version__ = "1.0.11"
 RELEASE_CHANNEL = "stable"

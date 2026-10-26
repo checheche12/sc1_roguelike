@@ -250,16 +250,27 @@ inline U32 frontline_rank(const bw::Unit* u) noexcept {
     if(in(u->unit_id,{61,65,74,75,77}))return unit_attack_rank(g.growth,u->unit_id);
     return 0;
 }
+inline U32 ui_expansion_bonus(const bw::Unit*,U32) noexcept;
+inline bool scaled_weapon_ui(const bw::Unit* unit,U32 weapon) noexcept {
+    return ordinary_weapon(weapon)&&(infantry_damage_rank(unit,weapon)||mobility_damage_bonus(unit,weapon)||
+        tower_air_bonus(unit,weapon)||ui_expansion_bonus(unit,weapon)||focus_base(unit));
+}
+inline std::int32_t weapon_ui_damage_q8(const bw::Unit* unit,U32 weapon,std::int32_t value) noexcept {
+    if(value<=0||!ordinary_weapon(weapon))return value;
+    // Match a primary hit's Q8 arithmetic, including each native truncation.
+    // Conditional target bonuses and additional projectiles are separate hits.
+    if(own(unit)&&in(unit->unit_id,{43,55})&&weapon==48&&talent_power::enabled&&raw_rank(105))
+        value=std::int32_t(std::int64_t(value)*6/7);
+    else value=mobility_damage(value,focus_base(unit));
+    value=infantry_damage(value,infantry_damage_rank(unit,weapon));
+    value=mobility_damage(value,mobility_damage_bonus(unit,weapon));
+    value=mobility_damage(value,tower_air_bonus(unit,weapon));
+    return mobility_damage(value,ui_expansion_bonus(unit,weapon));
+}
 inline U32 infantry_ui_value(const bw::Unit* unit,U32 weapon,U32 value) noexcept {
-    const U32 stacks=infantry_damage_rank(unit,weapon);
-    if(!value)return value;
-    const auto factor=std::uint64_t(stacks)*talent_power::quarters(267);
-    if(factor>((0xffffffffull-value)*40)/value)return 0xffffffffu;
-    value+=U32((std::uint64_t(value)*factor+20)/40);
-    value=U32(std::min<std::uint64_t>(0xffffffffu,(std::uint64_t(value)*(100ull+tower_air_bonus(unit,weapon))+50)/100));
-    const auto bonus=mobility_damage_bonus(unit,weapon);
-    value=U32(std::min<std::uint64_t>(0xffffffffu,(std::uint64_t(value)*(100ull+bonus)+50)/100));
-    return U32(std::min<std::uint64_t>(0xffffffffu,(std::uint64_t(value)*(100ull+expansion_static_bonus(unit,weapon)+focus_base(unit))+50)/100));
+    if(!scaled_weapon_ui(unit,weapon))return value;
+    if(value>0x7fffffffu/256u)return 0xffffffffu;
+    return U32((std::uint64_t(weapon_ui_damage_q8(unit,weapon,std::int32_t(value*256u)))+128)/256);
 }
 inline constexpr U32 kNuclearWarningFrames=36u;
 inline void finish_idle_melee_animation(bw::Unit* u) noexcept {
@@ -372,6 +383,15 @@ inline UnitState* state(bw::Unit* u) {
     return &s;
 }
 inline U32 now() noexcept {const auto game=g.game ? g.game() : nullptr;return game ? game->frame_count : 0;}
+inline U32 ui_expansion_bonus(const bw::Unit* unit,U32 weapon) noexcept {
+    U32 value=expansion_static_bonus(unit,weapon);
+    if(!own(unit)||!ordinary_weapon(weapon)||state_base!=g.units||states.size()!=g.units_count)return value;
+    const auto& s=states[std::size_t(unit-g.units)];
+    if(s.who.p==unit&&s.who.id==unit->unit_id&&s.who.owner==unit->player&&s.who.unique==unit->minor_unique_index){
+        if(s.portal_buff_until>now())value+=20;if(s.fleet_buff_until>now())value+=30;
+    }
+    return value;
+}
 inline std::uint64_t dist(int ax,int ay,int bx,int by) noexcept {const auto dx=std::int64_t(ax)-bx,dy=std::int64_t(ay)-by;return std::uint64_t(dx*dx+dy*dy);}
 inline std::uint64_t dist(bw::Unit* a,bw::Unit* b) noexcept {return dist(a->flingy.position.x,a->flingy.position.y,b->flingy.position.x,b->flingy.position.y);}
 inline bool visible(bw::Unit* u,U32 player) noexcept {

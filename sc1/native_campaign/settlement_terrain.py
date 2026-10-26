@@ -17,6 +17,7 @@ def _tile_flags(tile,cv5,vf4):
     return struct.unpack_from('<16H',vf4,mega*32)
 
 def apply(chk,row):
+    if row['mission_id']==608:return _gas_exit(chk)
     if row['mission_id']!=MISSION:return None
     width,height=struct.unpack('<HH',chk.getsection('DIM '))
     assert (width,height)==(128,128) and int.from_bytes(chk.getsection('ERA '),'little')&7==4
@@ -53,6 +54,31 @@ def apply(chk,row):
         chk.setsection(tag,b''.join(keep));removed[tag]=entries
     assert all(flat(terrain[y*width+x]) for y in range(y1,y2) for x in range(x1,x2))
     return dict(revision=1,mission=MISSION,bounds_tiles=list(BOUNDS),changed_tiles=changed,removed_decorations=removed,all_patch_tiles_walkable_low_ground=True,units_and_resources_unchanged=True,isometric_brush_metadata_preserved=True,actual_gameplay_verified=False)
+
+def _gas_exit(chk):
+    """Open the trapped south exit of EXPZerg08's right-hand main geyser."""
+    width,height=struct.unpack('<HH',chk.getsection('DIM '))
+    assert (width,height)==(192,96) and int.from_bytes(chk.getsection('ERA '),'little')&7==3
+    cv5,vf4=mining._terrain_bytes(3)
+    flat=lambda tile:all((flags&7)==1 for flags in _tile_flags(tile,cv5,vf4))
+    variants=[i for i in range(16) if flat(32+i) and flat(48+i)]
+    terrain=bytearray(chk.getsection('MTXM'));changed=[]
+    # A 64x64 opening joins the pocket to the base below the mineral line.
+    # Keep every resource, unit, trigger and the rest of the hill in place.
+    for y in range(71,73):
+        variant=variants[(22*5+y*3)%len(variants)]
+        for x,group in ((44,2),(45,3)):
+            at=(y*width+x)*2;old=struct.unpack_from('<H',terrain,at)[0];new=group*16+variant
+            if old!=new:
+                struct.pack_into('<H',terrain,at,new);changed.append(dict(x=x,y=y,before=old,after=new))
+    chk.setsection('MTXM',bytes(terrain))
+    if b'TILE' in chk.sections:
+        editor=bytearray(chk.getsection('TILE'));assert len(editor)==width*height*2
+        for change in changed:struct.pack_into('<H',editor,(change['y']*width+change['x'])*2,change['after'])
+        chk.setsection('TILE',bytes(editor))
+    return dict(revision=1,mission=608,bounds_tiles=[44,71,46,73],changed_tiles=changed,
+        removed_decorations={},all_patch_tiles_walkable_low_ground=True,units_and_resources_unchanged=True,
+        isometric_brush_metadata_preserved=True,actual_gameplay_verified=False)
 
 def verify(source_chk,output_chk,row,report):
     from .build_all_campaigns import CHK
