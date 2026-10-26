@@ -1,0 +1,34 @@
+{
+  "version": "v1.0.8",
+  "release_channel": "stable",
+  "base_release": "v1.0.7",
+  "gameplay_unchanged": false,
+  "native_dll_sha256": "c3bdb7a3ccfc819a0f5e07b68bc09fc1fd1bd6f7825effc52c7a751579baccb1",
+  "native_tests_fresh": true,
+  "host": {
+    "groups": 526,
+    "checks": 2381518,
+    "passed": true
+  },
+  "ui": {
+    "groups": 22,
+    "assertions": 177282,
+    "passed": true
+  },
+  "python_tests": 35,
+  "changed_campaign_maps": [],
+  "unchanged_campaign_maps": 63,
+  "map_validation": "All 63 maps and source dependencies are byte-identical to the previously validated stable release.",
+  "portable_self_test_passed": true,
+  "portable_window_title": "스타1 성장 기록 관리자 · 1.0.8",
+  "standalone_phase_echo_offer_verified": true,
+  "legacy_wire_fields_unchanged": true,
+  "changes": [
+    "Rupture Warhead: epic, up to 2 additional targets, 50% damage each.",
+    "Combat Morph: fully restore allied Zerg troop health within 5 tiles after Lurker, Guardian or Devourer morph completion.",
+    "Phase Echo: standalone Protoss epic; successful spell cast restores 20% maximum shields to allied Protoss troops within 5 tiles, once per recipient per 5 seconds."
+  ],
+  "limitations": [
+    "Synthetic native host, UI, protocol and disposable database validation; live combat balance and appearance remain unverified."
+  ]
+}
