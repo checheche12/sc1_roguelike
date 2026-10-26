@@ -10,9 +10,9 @@ def decorate(catalog):
     by[18]['description']='아군 일반 공격마다 원래 피해의 50%인 공격을 한 번 더 합니다. 원거리는 탄환을 추가 발사하며, 러커의 관통 가시는 명중한 적마다 50% 추가 타격합니다.'
     by[18]['effect'].update(qa_revision=REVISION,instant_projectile_supported=True,lurker_bonus_per_pierced_target=True)
     mutal=by[105]
-    mutal['description']='뮤탈리스크의 일반 공격 피해 +100%. 쐐기벌레가 최대 6번 튕깁니다. 튕길 때마다 첫 명중 피해의 1/7씩 감소합니다(7/7→6/7→5/7→4/7→3/7→2/7→1/7).'
-    mutal['notes']='한 쐐기벌레당 최초 명중 포함 최대 7회. 다른 튕김 재능과 함께 획득해도 최대 6번 튕깁니다.'
-    mutal['effect'].update(qa_revision=REVISION,design_role='bouncing_attack',legendary_bounces=6,bounce_damage_numerators=[7,6,5,4,3,2,1],bounce_damage_denominator=7,bounce_decay='linear_from_first_hit',projectile_damage_percent=200,projectile_count=1)
+    mutal['description']='뮤탈리스크의 쐐기벌레가 최초 명중 포함 최대 7회 타격합니다. 원래 공격 피해의 200%를 기준으로 3/7→3/7→3/7→1/7→1/7→1/7→1/7 피해를 줍니다.'
+    mutal['notes']='기본 7회 타격. 네 번째 쐐기벌레와 조합하면 기준 피해의 1/7인 타격 3회가 뒤에 추가되어 최대 10회.'
+    mutal['effect'].update(qa_revision=2026102698,design_role='bouncing_attack',legendary_bounces=6,bounce_damage_numerators=[3,3,3,1,1,1,1],bounce_damage_denominator=7,bounce_decay='three_strong_then_constant_tail',projectile_damage_percent=200,projectile_count=1,extra_bounce_synergy_ordinal=93,extra_bounce_damage_numerators=[1,1,1])
     guardian=by[191]
     guardian['description']='가디언의 일반 공격 피해 +150%. 명중하면 3타일 안 다른 지상 적 최대 6기에도 강화된 공격의 100% 피해를 줍니다.'
     guardian['effect'].update(qa_revision=REVISION,bonus=150,secondary_uses_boosted_attack=True)

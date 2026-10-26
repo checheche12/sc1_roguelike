@@ -73,22 +73,28 @@ inline void qa31_arbiter_rejoins_own_wave_preserving_cast_and_cloak_orders(){
   wave_targeting::issue(unmarked);CHECK(std::memcmp(unmarked,&saved,sizeof(saved))==0);
  }
 }
-inline void qa31_guardian_manual_matches_mutalisk_without_other_air_buff(){
- for(U32 rank:{1u,4u}){
+inline void qa31_mutal_manual_four_and_other_air_profiles(){
+ for(U32 mode=0;mode<3;mode++)for(U32 rank:{1u,2u,3u,4u}){
   qa13_fixture::begin();GrowthSnapshot snapshot{};snapshot.wire_version=2;
-  snapshot.talent_bits[(238+72)/32]|=1u<<((238+72)%32);snapshot.talent_ranks[rework_catalog::kRankSlots[72]]=rank;
+  const U32 old_rank=mode!=1?rank:0u,new_rank=mode!=0?rank:0u;
+  if(old_rank){snapshot.talent_bits[(238+72)/32]|=1u<<((238+72)%32);snapshot.talent_ranks[rework_catalog::kRankSlots[72]]=old_rank;}
+  bool found=false;for(auto f:rework_catalog::kPackedFields)if(f.ordinal==238){
+   auto& word=f.word<=16?snapshot.talent_bits[f.word-1]:snapshot.talent_ranks[f.word-33];word|=new_rank<<f.shift;found=true;
+  }CHECK(found);
   CHECK(apply_snapshot(nullptr,snapshot));
   for(U32 id:{43u,44u,55u,56u,47u,62u}){
    auto own=add(id,player_owner(),100,100);
-   const U32 increase=(id==43||id==44||id==55||id==56)?6u:3u;
+   const bool mutal=id==43||id==55;
+   const U32 stacks=mutal?std::min(4u,old_rank+new_rank):old_rank;
+   const U32 increase=mutal?4u:(id==44||id==56)?6u:3u;
    U32 weapons=0;for(U32 field:{17u,19u}){const auto weapon=original_stat({0,field,id});if(weapon>=130)continue;++weapons;
-   CHECK(owner_stat(player_owner(),{1,14,weapon})==original_stat({1,14,weapon})+rank*increase);
+   CHECK(owner_stat(player_owner(),{1,14,weapon})==original_stat({1,14,weapon})+stacks*increase);
    CHECK(owner_stat(6,{1,14,weapon})==original_stat({1,14,weapon}));
-   CHECK(std::abs(rework_combat_v5::cooldown_ratio(own,weapon)-std::pow(0.955,double(rank)))<0.00001);
+   CHECK(std::abs(rework_combat_v5::cooldown_ratio(own,weapon)-std::pow(0.955,double(stacks)))<0.00001);
    }CHECK(weapons>0);
   }
   qa13_fixture::end();
  }
 }
-inline void run_qa31_groups(){qa31_four_curse_totals_and_large_counts();qa31_attack_and_movement_speed_are_additive_and_owner_scoped();qa31_haste_wide_counter_cannot_decrease_across_checkpoint();qa31_arbiter_rejoins_own_wave_preserving_cast_and_cloak_orders();qa31_guardian_manual_matches_mutalisk_without_other_air_buff();}
+inline void run_qa31_groups(){qa31_four_curse_totals_and_large_counts();qa31_attack_and_movement_speed_are_additive_and_owner_scoped();qa31_haste_wide_counter_cannot_decrease_across_checkpoint();qa31_arbiter_rejoins_own_wave_preserving_cast_and_cloak_orders();qa31_mutal_manual_four_and_other_air_profiles();}
 }

@@ -78,6 +78,8 @@ inline U32 manual_base(U32 ordinal,U32 id,U32 field=17) noexcept {
     return in(ordinal,{29,70,111})?1u:2u;
 }
 inline U32 manual_damage_bonus(U32 ordinal,U32 id,U32 field,U32 stacks) noexcept {
+    // Mutalisk manuals use an exact +4 per rank, including historical ranks.
+    if(talent_power::enabled&&ordinal==72&&in(id,{43,55}))return stacks*4u;
     // Halo fires eight missiles; the requested manual bonus is +1 per missile.
     if(talent_power::enabled&&ordinal==31&&id==58)return stacks;
     // Eight independently attacking Interceptors must not inherit the same
@@ -1353,13 +1355,13 @@ struct MissileScope {
         DamageScope::current_infantry_rank=p.infantry_rank;DamageScope::current_mobility_bonus=p.mobility_bonus;DamageScope::current_projectile=true;
         DamageScope::current_bounce_divisor=1;
         if(p.legend_bounce){
-            // Native routing decrements before impact. Keep the first seven
-            // hits at 7/7 through 1/7; the three synergy hits stay at 1/7.
+            // Native routing decrements before impact. The first three hits
+            // use 3/7; the remaining base and synergy hits use 1/7.
             // Suppress stock /3 and /9 only during damage dispatch, then restore
             // the routing counter. Launch metadata survives later rank changes.
             saved_bounces=b->bounces_remaining;native_bounce_scoped=true;
             const U32 hit=p.initial_bounces>saved_bounces?p.initial_bounces-U32(saved_bounces)-1u:0u;
-            mutal_bounce_numerator=7u-std::min(6u,hit);b->bounces_remaining=2;
+            mutal_bounce_numerator=hit<3u?3u:1u;b->bounces_remaining=2;
             DamageScope::current_primary=valid_unit(b->target.unit)?b->target.unit:generation(p.primary);
         }else if(p.source.owner==player_owner()&&in(p.source.id,{43,55})&&rank(93)&&original_stat({1,8,p.weapon})==7){
             if(!p.bounce_adjusted){

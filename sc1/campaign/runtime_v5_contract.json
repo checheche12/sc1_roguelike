@@ -6829,7 +6829,7 @@
       "id": "16cf5d07-b1b7-5697-a7c3-220a82bbad55",
       "name": "비행 군체 화력 교범",
       "target": "뮤탈·가디언·디바우러·스커지",
-      "description": "중첩당 뮤탈리스크·가디언(영웅 포함)의 공격력 +6, 다른 저그 공중 전투 유닛의 공격력 +3. 공격 간격 -4.5%. 최대 4회.",
+      "description": "중첩당 뮤탈리스크(영웅 포함) 공격력 +4, 가디언(영웅 포함) +6, 다른 저그 공중 전투 유닛 +3. 공격 간격 -4.5%. 최대 4회.",
       "trigger": "",
       "numbers": "선택 횟수 제한 없음. 같은 창에서는 동일 재능 1개만 표시. 공격주기 = 원래 주기 × 0.97^중첩 수(해당 교범에만 적용). 엔진 최소 1틱, 매 단계 원본에서 다시 계산.",
       "notes": "일반 병력 교범은 보유 후에도 재등장합니다. 공격력·방어력은 중첩당 수치를 합산하고, 이동 속도는 원래 속도 × (1 + 0.03 × 중첩 수)로 계산합니다. 일꾼·건물·탄약은 제외하며, 인터셉터는 함대 교범의 공격력만 캐리어를 통해 1회 상속합니다. 지상/공중 분류는 겹치지 않습니다. 자폭·튀김의 타격 수와 마법 피해는 늘리지 않습니다. 기존 발급 선택과 과거 기록은 재해석하지 않습니다.",
@@ -6852,11 +6852,12 @@
         "type": "rework_v5",
         "ordinal": 72,
         "source_id": "16cf5d07-b1b7-5697-a7c3-220a82bbad55",
-        "qa_revision": 2026102038,
+        "qa_revision": 2026102698,
         "benefit_power_quarters": 6,
-        "mutalisk_guardian_attack_per_rank": 6,
         "other_air_attack_per_rank": 3,
-        "offer_retired": true
+        "offer_retired": true,
+        "mutalisk_attack_per_rank": 4,
+        "guardian_attack_per_rank": 6
       },
       "target_units": [
         43,
@@ -9413,10 +9414,10 @@
       "id": "051c93bb-ca5d-5a11-8728-e640cad23f20",
       "name": "집중 쐐기",
       "target": "뮤탈 일반 공격",
-      "description": "뮤탈리스크의 일반 공격 피해 +100%. 쐐기벌레가 최대 6번 튕깁니다. 튕길 때마다 첫 명중 피해의 1/7씩 감소합니다(7/7→6/7→5/7→4/7→3/7→2/7→1/7).",
+      "description": "뮤탈리스크의 쐐기벌레가 최초 명중 포함 최대 7회 타격합니다. 원래 공격 피해의 200%를 기준으로 3/7→3/7→3/7→1/7→1/7→1/7→1/7 피해를 줍니다.",
       "trigger": "",
       "numbers": "",
-      "notes": "한 쐐기벌레당 최초 명중 포함 최대 7회. 다른 튕김 재능과 함께 획득해도 최대 6번 튕깁니다.",
+      "notes": "기본 7회 타격. 네 번째 쐐기벌레와 조합하면 기준 피해의 1/7인 타격 3회가 뒤에 추가되어 최대 10회.",
       "updatedAt": "2026-10-15T17:38:57.822780+00:00",
       "race": "zerg",
       "status": "draft",
@@ -9436,7 +9437,7 @@
         "type": "rework_v5",
         "ordinal": 105,
         "source_id": "051c93bb-ca5d-5a11-8728-e640cad23f20",
-        "qa_revision": 2026102265,
+        "qa_revision": 2026102698,
         "benefit_power_quarters": 16,
         "projectile_damage_percent": 200,
         "projectile_count": 1,
@@ -9453,16 +9454,22 @@
         "reflection_only_releases_on_attack": false,
         "legendary_bounces": 6,
         "bounce_damage_numerators": [
-          7,
-          6,
-          5,
-          4,
           3,
-          2,
+          3,
+          3,
+          1,
+          1,
+          1,
           1
         ],
         "bounce_damage_denominator": 7,
-        "bounce_decay": "linear_from_first_hit"
+        "bounce_decay": "three_strong_then_constant_tail",
+        "extra_bounce_synergy_ordinal": 93,
+        "extra_bounce_damage_numerators": [
+          1,
+          1,
+          1
+        ]
       },
       "target_units": [
         43,
@@ -21194,12 +21201,12 @@
         43,
         55
       ],
-      "description": "뮤탈리스크의 공격력이 중첩당 +6, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회.",
+      "description": "뮤탈리스크의 공격력이 중첩당 +4, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회.",
       "source_description": "뮤탈리스크의 공격력이 중첩당 +6, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회. 소수점 공격력은 중첩 합계를 반올림합니다. 기존 병과 교범과 합산해 최대 4중첩.",
       "effect": {
         "type": "rework_v5",
         "ordinal": 238,
-        "qa_revision": 2026102038,
+        "qa_revision": 2026102698,
         "benefit_power_quarters": 4,
         "unit_growth": {
           "race": "zerg",
@@ -21212,7 +21219,7 @@
           "rarity": "common",
           "name": "뮤탈리스크 화력 교범",
           "parent": 72,
-          "description": "뮤탈리스크의 공격력이 중첩당 +6, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회. 소수점 공격력은 중첩 합계를 반올림합니다. 기존 병과 교범과 합산해 최대 4중첩.",
+          "description": "뮤탈리스크의 공격력이 중첩당 +4, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회. 소수점 공격력은 중첩 합계를 반올림합니다. 기존 병과 교범과 합산해 최대 4중첩.",
           "ordinal": 238,
           "index": 476,
           "storage": {
@@ -21220,7 +21227,8 @@
             "shift": 27,
             "width": 3
           }
-        }
+        },
+        "attack_per_rank": 4
       },
       "bit_index": 476,
       "wire_storage": {

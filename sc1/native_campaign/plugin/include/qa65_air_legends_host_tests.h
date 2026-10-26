@@ -50,13 +50,15 @@ inline void qa65_mutal_single_talents_and_combined_native_damage(){
  // legendary only, then both. All expected values are exact fixed-point hits.
  constexpr U32 hits[4]={3,6,7,10};
  constexpr U32 expected[4][10]={{63,21,7},{63,21,7,7,7,7},
-  {126,108,90,72,54,36,18},{126,108,90,72,54,36,18,18,18,18}};
- for(U32 id:{43u,55u})for(U32 mode=0;mode<4;mode++){
+  {54,54,54,18,18,18,18},{54,54,54,18,18,18,18,18,18,18}};
+ for(U32 id:{43u,55u})for(U32 mode=0;mode<4;mode++)for(U32 percent:{100u,50u}){
   qa9_fixture::begin({});const bool extra=(mode&1u)!=0,legend=(mode&2u)!=0;
   if(extra)ranks[93]=1;if(legend)ranks[105]=1;
   auto source=unit(id,1,100,100,true);std::array<bw::Unit*,10> targets{};
   for(U32 i=0;i<hits[mode];i++)targets[i]=unit(43,6,140+int(i)*10,100,true);
+  rework_combat_v5::emission_percent=percent;rework_combat_v5::emission_secondary=percent==50;
   auto b=bullet(source,targets[0],48);
+  rework_combat_v5::emission_percent=100;rework_combat_v5::emission_secondary=false;
   CHECK(rework_combat_v5::projectiles.at(b).legend_bounce==legend);
   if(legend){CHECK(b->bounces_remaining==hits[mode]);CHECK(rework_combat_v5::projectiles.at(b).initial_bounces==hits[mode]);}
   else b->bounces_remaining=3; // The raw fixture does not initialize native routing.
@@ -64,7 +66,7 @@ inline void qa65_mutal_single_talents_and_combined_native_damage(){
    b->target.unit=targets[i];b->target.x=targets[i]->flingy.position.x;--b->bounces_remaining;
    const U32 before=b->bounces_remaining;owner_missile_hook(b,qa65_fixture::native_bounce_63);
    CHECK(b->bounces_remaining==before+U32(extra&&!legend&&i==0?3:0));
-   CHECK(targets[i]->flingy.hitpoints==256000-int(expected[mode][i]*256));
+   CHECK(targets[i]->flingy.hitpoints==256000-int(expected[mode][i]*256*percent/100));
    CHECK(rework_combat_v5::mutal_bounce_numerator==0&&rework_combat_v5::pending_shots.empty());
    CHECK(rework_combat_v5::DamageScope::current_bounce_divisor==1);
   }
@@ -79,12 +81,12 @@ inline void qa65_mutal_snapshot_survives_source_loss_and_nested_scopes(){
   const U8 remaining=U8(extra?6u:3u);
   auto b=bullet(source,target,48);b->bounces_remaining=remaining;ranks[93]=extra?0u:1u;source->flingy.hitpoints=0;source->order=0;
   const auto before=target->flingy.hitpoints;owner_missile_hook(b,qa65_fixture::native_bounce);
-  CHECK(target->flingy.hitpoints==before-80*256&&b->bounces_remaining==remaining);
+  CHECK(target->flingy.hitpoints==before-20*256&&b->bounces_remaining==remaining);
   source->order=2;source->flingy.hitpoints=256000;
   auto other=unit(0,1,100,200),enemy=unit(37,6,150,200);auto ordinary=bullet(other,enemy,0);
-  {rework_combat_v5::MissileScope outer(b);CHECK(rework_combat_v5::mutal_bounce_numerator==4);
+  {rework_combat_v5::MissileScope outer(b);CHECK(rework_combat_v5::mutal_bounce_numerator==1);
    {rework_combat_v5::MissileScope inner(ordinary);CHECK(!rework_combat_v5::mutal_bounce_numerator);}
-   CHECK(rework_combat_v5::mutal_bounce_numerator==4&&b->bounces_remaining==2);
+   CHECK(rework_combat_v5::mutal_bounce_numerator==1&&b->bounces_remaining==2);
   }
   CHECK(!rework_combat_v5::mutal_bounce_numerator&&b->bounces_remaining==remaining);qa9_fixture::end();
  }
