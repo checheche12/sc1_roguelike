@@ -1,0 +1,43 @@
+{
+  "version": "v1.0.12",
+  "release_channel": "stable",
+  "base_release": "v1.0.11",
+  "gameplay_unchanged": false,
+  "native_dll_sha256": "80f6c48fdba41a5d7d0cc60788cb782d3828ec52c906a433aef30b9473fbe3dc",
+  "native_tests_fresh": true,
+  "host": {
+    "groups": 529,
+    "checks": 2399559,
+    "passed": true
+  },
+  "ui": {
+    "groups": 22,
+    "assertions": 177282,
+    "passed": true
+  },
+  "python_tests": 13,
+  "changed_campaign_maps": [],
+  "unchanged_campaign_maps": 63,
+  "map_validation": "Exact verified hashes of all63 maps and map dependencies from1.0.11; gas exit fix retained.",
+  "portable_self_test_passed": true,
+  "portable_window_title": "스타1 성장 기록 관리자 · 1.0.12",
+  "mutal_manual_behavior": {
+    "mutal_manual_attack_per_rank": 5,
+    "maximum_manual_rank": 4,
+    "maximum_manual_attack_bonus": 20,
+    "ui_matches_primary_damage": true
+  },
+  "frozen_source_text_preserved": true,
+  "changed_talent_indices": [
+    310,
+    476
+  ],
+  "legacy_wire_fields_unchanged": true,
+  "changes": [
+    "Mutalisk firepower manuals grant +5 attack per rank, maximum +20. Applies to ordinary and hero Mutalisks, including previously owned shared air manuals; old and current manual ranks still share a four-rank cap.",
+    "Current descriptions and metadata updated. Previous accurate damage displays, Focused Glaive bounce ratios and Brood War Zerg08 gas exit fix are retained."
+  ],
+  "limitations": [
+    "Native host/UI/protocol, disposable database, package and launcher checks; live combat balance remains unverified."
+  ]
+}
