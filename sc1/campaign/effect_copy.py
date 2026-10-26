@@ -140,13 +140,13 @@ def decorate(catalog):
      after='퀸의 인스네어가 적의 공격 속도·이동 속도를 각각 85% 감소시킵니다.'
      item['target']='퀸 인스네어'
     elif ordinal==72:
-     after='중첩당 뮤탈리스크(영웅 포함) 공격력 +4, 가디언(영웅 포함) +6, 다른 저그 공중 전투 유닛 +3. 공격 간격 -4.5%. 최대 4회.'
+     after='중첩당 뮤탈리스크(영웅 포함) 공격력 +5, 가디언(영웅 포함) +6, 다른 저그 공중 전투 유닛 +3. 공격 간격 -4.5%. 최대 4회.'
      item['effect'].pop('mutalisk_guardian_attack_per_rank',None)
-     item['effect'].update(qa_revision=2026102698,mutalisk_attack_per_rank=4,guardian_attack_per_rank=6,other_air_attack_per_rank=3)
+     item['effect'].update(qa_revision=2026102699,mutalisk_attack_per_rank=5,guardian_attack_per_rank=6,other_air_attack_per_rank=3)
     elif ordinal==238:
-     after='뮤탈리스크의 공격력이 중첩당 +4, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회.'
-     item['effect'].update(qa_revision=2026102698,attack_per_rank=4)
-     item['effect']['unit_growth']['description']=item['effect']['unit_growth']['description'].replace('중첩당 +6','중첩당 +4')
+     after='뮤탈리스크의 공격력이 중첩당 +5, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회.'
+     item['effect'].update(qa_revision=2026102699,attack_per_rank=5)
+     item['effect']['unit_growth']['description']=item['effect']['unit_growth']['description'].replace('중첩당 +6','중첩당 +5').replace('중첩당 +4','중첩당 +5')
     elif ordinal==91:after='러커가 잠복 상태로 기본 속도의 62.5%로 이동합니다. 정지 시 공격합니다.'
     elif ordinal==97:after='러커가 공중 적에게도 원래 공격의 100% 피해로 가시를 쏩니다.'
     elif ordinal==101:

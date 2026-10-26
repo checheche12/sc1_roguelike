@@ -73,7 +73,7 @@ inline void qa31_arbiter_rejoins_own_wave_preserving_cast_and_cloak_orders(){
   wave_targeting::issue(unmarked);CHECK(std::memcmp(unmarked,&saved,sizeof(saved))==0);
  }
 }
-inline void qa31_mutal_manual_four_and_other_air_profiles(){
+inline void qa31_mutal_manual_five_and_other_air_profiles(){
  for(U32 mode=0;mode<3;mode++)for(U32 rank:{1u,2u,3u,4u}){
   qa13_fixture::begin();GrowthSnapshot snapshot{};snapshot.wire_version=2;
   const U32 old_rank=mode!=1?rank:0u,new_rank=mode!=0?rank:0u;
@@ -86,7 +86,7 @@ inline void qa31_mutal_manual_four_and_other_air_profiles(){
    auto own=add(id,player_owner(),100,100);
    const bool mutal=id==43||id==55;
    const U32 stacks=mutal?std::min(4u,old_rank+new_rank):old_rank;
-   const U32 increase=mutal?4u:(id==44||id==56)?6u:3u;
+   const U32 increase=mutal?5u:(id==44||id==56)?6u:3u;
    U32 weapons=0;for(U32 field:{17u,19u}){const auto weapon=original_stat({0,field,id});if(weapon>=130)continue;++weapons;
    CHECK(owner_stat(player_owner(),{1,14,weapon})==original_stat({1,14,weapon})+stacks*increase);
    CHECK(owner_stat(6,{1,14,weapon})==original_stat({1,14,weapon}));
@@ -96,5 +96,5 @@ inline void qa31_mutal_manual_four_and_other_air_profiles(){
   qa13_fixture::end();
  }
 }
-inline void run_qa31_groups(){qa31_four_curse_totals_and_large_counts();qa31_attack_and_movement_speed_are_additive_and_owner_scoped();qa31_haste_wide_counter_cannot_decrease_across_checkpoint();qa31_arbiter_rejoins_own_wave_preserving_cast_and_cloak_orders();qa31_mutal_manual_four_and_other_air_profiles();}
+inline void run_qa31_groups(){qa31_four_curse_totals_and_large_counts();qa31_attack_and_movement_speed_are_additive_and_owner_scoped();qa31_haste_wide_counter_cannot_decrease_across_checkpoint();qa31_arbiter_rejoins_own_wave_preserving_cast_and_cloak_orders();qa31_mutal_manual_five_and_other_air_profiles();}
 }

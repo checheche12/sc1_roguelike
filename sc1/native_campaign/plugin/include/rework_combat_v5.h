@@ -79,7 +79,7 @@ inline U32 manual_base(U32 ordinal,U32 id,U32 field=17) noexcept {
 }
 inline U32 manual_damage_bonus(U32 ordinal,U32 id,U32 field,U32 stacks) noexcept {
     // Mutalisk manuals use an exact +4 per rank, including historical ranks.
-    if(talent_power::enabled&&ordinal==72&&in(id,{43,55}))return stacks*4u;
+    if(talent_power::enabled&&ordinal==72&&in(id,{43,55}))return stacks*5u;
     // Halo fires eight missiles; the requested manual bonus is +1 per missile.
     if(talent_power::enabled&&ordinal==31&&id==58)return stacks;
     // Eight independently attacking Interceptors must not inherit the same

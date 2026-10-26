@@ -111,7 +111,7 @@ inline void qa9_mutalisk_manual_compensates_slower_attack(){
     using namespace rework_fixture;qa9_fixture::begin({70,71,72});install();
     const U32 hydra=original_stat({0,17,38}),muta=original_stat({0,17,43}),guardian=original_stat({0,17,44});
     CHECK(owner_stat(1,{1,14,hydra})==original_stat({1,14,hydra})+3);
-    CHECK(owner_stat(1,{1,14,muta})==original_stat({1,14,muta})+4);
+    CHECK(owner_stat(1,{1,14,muta})==original_stat({1,14,muta})+5);
     CHECK(owner_stat(1,{1,14,guardian})==original_stat({1,14,guardian})+6);
     auto h=unit(38,1,100,100),m=unit(43,1,200,100,true);
     CHECK(std::abs(rework_combat_v5::cooldown_ratio(h,hydra)-0.955)<0.00001);
@@ -121,7 +121,7 @@ inline void qa9_mutalisk_manual_compensates_slower_attack(){
     CHECK(owner_stat(1,{1,14,ultra})==original_stat({1,14,ultra})+6);
     ranks[70]=ranks[71]=ranks[72]=2;install();
     CHECK(owner_stat(1,{1,14,ling})==original_stat({1,14,ling})+3);
-    CHECK(owner_stat(1,{1,14,ultra})==original_stat({1,14,ultra})+12);CHECK(owner_stat(1,{1,14,muta})==original_stat({1,14,muta})+8);
+    CHECK(owner_stat(1,{1,14,ultra})==original_stat({1,14,ultra})+12);CHECK(owner_stat(1,{1,14,muta})==original_stat({1,14,muta})+10);
     qa9_fixture::end();
 }
 inline void run_qa9_groups(){qa9_mutalisk_manual_compensates_slower_attack();qa9_lockdown_extra_projectiles_follow_real_launch();qa9_yamato_returns_to_attack_after_witnessed_launch();qa9_irradiate_five_branches_five_generations();qa9_irradiate_native_damage_outer_ring_and_cure();qa9_goliath_three_targets_infinite_fire_bundle();qa9_emp_hits_energyless_enemies_only();qa9_all_unit_legendaries_and_native_damage();qa9_air_wave_requires_real_counter();qa9_enemy_detector_reacts_to_burrowed_fire();qa9_upgrade_announcements_are_separate();}

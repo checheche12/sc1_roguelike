@@ -63,7 +63,7 @@ inline void weapon_ui_mutal_every_manual_trait_legend_and_upgrade(){
             *slot=U8(level);const U32 raw=owner_stat(1,{1,14,48})+owner_stat(1,{1,15,48})*level;
             target->flingy.hitpoints=256000;
             CHECK(image.damage(source,48)+image.bonus(source,48,level)==weapon_damage_ui_audit::observed(source,target,48,raw));
-            if(id==43&&manual==3&&mode==3&&level==0)CHECK(image.damage(source,48)==22);
+            if(id==43&&manual==3&&mode==3&&level==0)CHECK(image.damage(source,48)==25);
         }
         qa9_fixture::end();
     }
