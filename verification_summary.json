@@ -1,0 +1,80 @@
+{
+  "version": "v1.0.10",
+  "release_channel": "stable",
+  "base_release": "v1.0.9",
+  "gameplay_unchanged": false,
+  "native_dll_sha256": "030a84f0b782c76f41db517381acb71577afdc2c8adc785a4dd5987aa719dbb8",
+  "native_tests_fresh": true,
+  "host": {
+    "groups": 526,
+    "checks": 2382567,
+    "passed": true
+  },
+  "ui": {
+    "groups": 22,
+    "assertions": 177282,
+    "passed": true
+  },
+  "python_tests": 13,
+  "changed_campaign_maps": [],
+  "unchanged_campaign_maps": 63,
+  "map_validation": "All 63 maps and source dependencies are byte-identical to the previously validated stable release.",
+  "portable_self_test_passed": true,
+  "portable_window_title": "스타1 성장 기록 관리자 · 1.0.10",
+  "mutal_damage_behavior": {
+    "mutal_manual_attack_per_rank": 4,
+    "maximum_manual_rank": 4,
+    "maximum_manual_attack_bonus": 16,
+    "guardian_manual_attack_per_rank": 6,
+    "other_zerg_air_manual_attack_per_rank": 3,
+    "manual_attack_interval_multiplier_per_rank": 0.955,
+    "legacy_and_current_manual_combined_rank_cap": 4,
+    "legend_damage_basis_percent": 200,
+    "legend_damage_numerators": [
+      3,
+      3,
+      3,
+      1,
+      1,
+      1,
+      1
+    ],
+    "denominator": 7,
+    "combined_damage_numerators": [
+      3,
+      3,
+      3,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "standalone_fourth_glaive_divisors": [
+      1,
+      3,
+      9,
+      9,
+      9,
+      9
+    ],
+    "frozen_source_text_preserved": true
+  },
+  "frozen_source_text_preserved": true,
+  "changed_talent_indices": [
+    310,
+    343,
+    476
+  ],
+  "legacy_wire_fields_unchanged": true,
+  "changes": [
+    "Mutalisk firepower manual: +4 attack per rank, maximum +16. Guardian and other Zerg air manual values are unchanged.",
+    "Focused Glaive: seven base hits use numerators 3,3,3,1,1,1,1 over 7, against the existing 200% damage basis.",
+    "Fourth Glaive synergy retains three additional 1/7 hits. Its standalone extra hits retain 1/9 damage."
+  ],
+  "limitations": [
+    "Synthetic native host, UI, protocol, disposable database and package/launcher validation; live combat balance and appearance remain unverified."
+  ]
+}
