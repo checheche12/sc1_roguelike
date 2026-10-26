@@ -1,0 +1,42 @@
+{
+  "version": "v1.0.11",
+  "release_channel": "stable",
+  "base_release": "v1.0.10",
+  "gameplay_unchanged": false,
+  "native_dll_sha256": "ec062b0f53d1e11b5efd06e8e98d6ac03ae2ff47ae666df8aeb09e1dccd2b392",
+  "native_tests_fresh": true,
+  "host": {
+    "groups": 529,
+    "checks": 2399559,
+    "passed": true
+  },
+  "ui": {
+    "groups": 22,
+    "assertions": 177282,
+    "passed": true
+  },
+  "python_tests": 13,
+  "changed_campaign_maps": [
+    608
+  ],
+  "unchanged_campaign_maps": 62,
+  "map_validation": "Fresh terrain replays on all63 maps, full resource/checkpoint replay for608, exact hashes for62 unchanged maps.",
+  "portable_self_test_passed": true,
+  "portable_window_title": "스타1 성장 기록 관리자 · 1.0.11",
+  "damage_display_and_terrain": {
+    "ui_matches_primary_damage": true,
+    "gas_exit_tiles_changed": 4
+  },
+  "frozen_source_text_preserved": true,
+  "changed_talent_indices": [],
+  "legacy_wire_fields_unchanged": true,
+  "changes": [
+    "Damage tooltips use the same Q8 multiplication/truncation order as primary hits. Focused Glaive uses the actual first-hit 3/7 multiplier; static legend and trait bonuses multiply as in combat.",
+    "Scaled weapon displays include current research before final rounding. Carrier tooltips and active portal/fleet buffs use the same calculation. Combat damage and talent descriptions are unchanged.",
+    "Brood War Zerg08: lower four cliff tiles south of the right-hand main geyser, connecting every extractor exit to the base. Resources, units, triggers and other62 maps are unchanged."
+  ],
+  "limitations": [
+    "Damage tooltips round to whole points and show primary damage before enemy armor or target-conditional procs.",
+    "Synthetic native host/UI, offline terrain and package verification; live mining and combat HUD appearance remain unverified."
+  ]
+}
