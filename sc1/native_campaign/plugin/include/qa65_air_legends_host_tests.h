@@ -9,6 +9,11 @@ inline void __cdecl native_bounce(bw::Bullet* b){
  const U32 divisor=b->bounces_remaining==0?9:b->bounces_remaining==1?3:1;
  combat_effects::weapon_damage(b->target.unit,70*256/divisor,b->weapon_id,1,0,b->parent,b->player,qa9_fixture::damage);
 }
+inline void __cdecl native_bounce_63(bw::Bullet* b){
+ CHECK(b->bounces_remaining<=2); // The native divisor table has only three entries.
+ const U32 divisor=b->bounces_remaining==0?9:b->bounces_remaining==1?3:1;
+ combat_effects::weapon_damage(b->target.unit,63*256/divisor,b->weapon_id,1,0,b->parent,b->player,qa9_fixture::damage);
+}
 inline U32 __cdecl native_weapon(bw::Unit* source,U32 w,bw::Unit* target){
  CHECK(valid_unit(source)&&valid_unit(target));CHECK(reinterpret_cast<std::uintptr_t>(target)>0xffffffffu);
  return w<130&&(raw_value(1,3,w)&((target->flags&4u)?1u:2u));
@@ -39,34 +44,50 @@ inline bw::Bullet* __cdecl instant_create(U32 w,int x,int y,U32 owner,U32 direct
 inline U32 chat_original_calls=0;
 inline void __cdecl original_chat(const U8*,U32){++chat_original_calls;}
 }
-inline void qa65_mutal_seven_native_hits_linear_and_extra_bounce_cap(){
+inline void qa65_mutal_single_talents_and_combined_native_damage(){
  using namespace rework_fixture;
- for(U32 id:{43u,55u})for(bool extra:{false,true}){
-  qa9_fixture::begin({105});if(extra)ranks[93]=1;
-  auto source=unit(id,1,100,100,true);std::array<bw::Unit*,7> targets{};
-  for(U32 i=0;i<7;i++)targets[i]=unit(43,6,140+int(i)*10,100,true);
-  auto b=bullet(source,targets[0],48);CHECK(b->bounces_remaining==7&&rework_combat_v5::projectiles.at(b).legend_bounce);
-  for(U32 i=0;i<7;i++){
+ // Actual HP loss for base attack 63: neither talent, extra bounces only,
+ // legendary only, then both. All expected values are exact fixed-point hits.
+ constexpr U32 hits[4]={3,6,7,10};
+ constexpr U32 expected[4][10]={{63,21,7},{63,21,7,7,7,7},
+  {126,108,90,72,54,36,18},{126,108,90,72,54,36,18,18,18,18}};
+ for(U32 id:{43u,55u})for(U32 mode=0;mode<4;mode++){
+  qa9_fixture::begin({});const bool extra=(mode&1u)!=0,legend=(mode&2u)!=0;
+  if(extra)ranks[93]=1;if(legend)ranks[105]=1;
+  auto source=unit(id,1,100,100,true);std::array<bw::Unit*,10> targets{};
+  for(U32 i=0;i<hits[mode];i++)targets[i]=unit(43,6,140+int(i)*10,100,true);
+  auto b=bullet(source,targets[0],48);
+  CHECK(rework_combat_v5::projectiles.at(b).legend_bounce==legend);
+  if(legend){CHECK(b->bounces_remaining==hits[mode]);CHECK(rework_combat_v5::projectiles.at(b).initial_bounces==hits[mode]);}
+  else b->bounces_remaining=3; // The raw fixture does not initialize native routing.
+  for(U32 i=0;i<hits[mode];i++){
    b->target.unit=targets[i];b->target.x=targets[i]->flingy.position.x;--b->bounces_remaining;
-   const auto before=b->bounces_remaining;owner_missile_hook(b,qa65_fixture::native_bounce);
-   CHECK(b->bounces_remaining==before&&targets[i]->flingy.hitpoints==256000-int((7-i)*20*256));
+   const U32 before=b->bounces_remaining;owner_missile_hook(b,qa65_fixture::native_bounce_63);
+   CHECK(b->bounces_remaining==before+U32(extra&&!legend&&i==0?3:0));
+   CHECK(targets[i]->flingy.hitpoints==256000-int(expected[mode][i]*256));
    CHECK(rework_combat_v5::mutal_bounce_numerator==0&&rework_combat_v5::pending_shots.empty());
+   CHECK(rework_combat_v5::DamageScope::current_bounce_divisor==1);
   }
   CHECK(!b->bounces_remaining);qa9_fixture::end();
  }
 }
 inline void qa65_mutal_snapshot_survives_source_loss_and_nested_scopes(){
- using namespace rework_fixture;qa9_fixture::begin({105});auto source=unit(43,1,100,100,true),target=unit(43,6,150,100,true);
- auto b=bullet(source,target,48);b->bounces_remaining=3;source->flingy.hitpoints=0;source->order=0;
- const auto before=target->flingy.hitpoints;owner_missile_hook(b,qa65_fixture::native_bounce);
- CHECK(target->flingy.hitpoints==before-80*256&&b->bounces_remaining==3);
- source->order=2;source->flingy.hitpoints=256000;
- auto other=unit(0,1,100,200),enemy=unit(37,6,150,200);auto ordinary=bullet(other,enemy,0);
- {rework_combat_v5::MissileScope outer(b);CHECK(rework_combat_v5::mutal_bounce_numerator==4);
-  {rework_combat_v5::MissileScope inner(ordinary);CHECK(!rework_combat_v5::mutal_bounce_numerator);}
-  CHECK(rework_combat_v5::mutal_bounce_numerator==4&&b->bounces_remaining==2);
+ using namespace rework_fixture;
+ for(bool extra:{false,true}){
+  qa9_fixture::begin({105});if(extra)ranks[93]=1;
+  auto source=unit(43,1,100,100,true),target=unit(43,6,150,100,true);
+  const U8 remaining=U8(extra?6u:3u);
+  auto b=bullet(source,target,48);b->bounces_remaining=remaining;ranks[93]=extra?0u:1u;source->flingy.hitpoints=0;source->order=0;
+  const auto before=target->flingy.hitpoints;owner_missile_hook(b,qa65_fixture::native_bounce);
+  CHECK(target->flingy.hitpoints==before-80*256&&b->bounces_remaining==remaining);
+  source->order=2;source->flingy.hitpoints=256000;
+  auto other=unit(0,1,100,200),enemy=unit(37,6,150,200);auto ordinary=bullet(other,enemy,0);
+  {rework_combat_v5::MissileScope outer(b);CHECK(rework_combat_v5::mutal_bounce_numerator==4);
+   {rework_combat_v5::MissileScope inner(ordinary);CHECK(!rework_combat_v5::mutal_bounce_numerator);}
+   CHECK(rework_combat_v5::mutal_bounce_numerator==4&&b->bounces_remaining==2);
+  }
+  CHECK(!rework_combat_v5::mutal_bounce_numerator&&b->bounces_remaining==remaining);qa9_fixture::end();
  }
- CHECK(!rework_combat_v5::mutal_bounce_numerator&&b->bounces_remaining==3);qa9_fixture::end();
 }
 inline void qa65_mutal_without_legend_enemy_and_hallucination_keep_stock(){
  using namespace rework_fixture;
@@ -187,5 +208,5 @@ inline void qa65_lab_custom_map_activation_and_repeatable_effect_updates(){
  CHECK(effect_lab::command("-clear"));CHECK(rework_catalog::rank(g.growth,105)==0&&g.growth.curse_counts[49]==0);
  abandon_session();CHECK(!effect_lab::enabled&&!g.active);
 }
-inline void run_qa65_groups(){qa66_instant_secondary_native_damage_is_exactly_half();qa66_lurker_instant_air_primary_keeps_per_victim_extra_hit();qa65_mutal_seven_native_hits_linear_and_extra_bounce_cap();qa65_mutal_snapshot_survives_source_loss_and_nested_scopes();qa65_mutal_without_legend_enemy_and_hallucination_keep_stock();qa65_manual_A_and_right_click_query_all_added_attack_layers();qa65_manual_launch_without_initialized_bullet_target_preserves_air_splash();qa65_guardian_primary_and_six_secondary_hits_include_150_percent_once();qa65_transport_cards_keep_speed_without_capacity_expansion();qa65_hydra_instant_creation_records_once_before_damage_and_extra_shot();qa65_lurker_extra_hit_per_pierced_victim_without_duplicate_spines();qa65_lab_all_talent_rank_encodings_and_command_boundary();qa65_lab_custom_map_activation_and_repeatable_effect_updates();}
+inline void run_qa65_groups(){qa66_instant_secondary_native_damage_is_exactly_half();qa66_lurker_instant_air_primary_keeps_per_victim_extra_hit();qa65_mutal_single_talents_and_combined_native_damage();qa65_mutal_snapshot_survives_source_loss_and_nested_scopes();qa65_mutal_without_legend_enemy_and_hallucination_keep_stock();qa65_manual_A_and_right_click_query_all_added_attack_layers();qa65_manual_launch_without_initialized_bullet_target_preserves_air_splash();qa65_guardian_primary_and_six_secondary_hits_include_150_percent_once();qa65_transport_cards_keep_speed_without_capacity_expansion();qa65_hydra_instant_creation_records_once_before_damage_and_extra_shot();qa65_lurker_extra_hit_per_pierced_victim_without_duplicate_spines();qa65_lab_all_talent_rank_encodings_and_command_boundary();qa65_lab_custom_map_activation_and_repeatable_effect_updates();}
 }

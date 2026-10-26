@@ -822,7 +822,9 @@ inline void launched(U32 w,bw::Unit* source,bw::Bullet* b) {
     if(!b)return;projectiles.erase(b);
     if(!valid_unit(effect_body(source)))return;
     auto target=b->target.unit;if(!valid_unit(target)&&ordinary_weapon(w))target=source->order_target.unit;Projectile p{identity(effect_body(source)),identity(target),w,emission_percent,now(),!emission_primary&&(emission_secondary || multi_target::secondary()),false,false,b->target.x,b->target.y,air(target) ? 1u : 0u};
-    if(talent_power::enabled&&source->player==player_owner()&&!hallucination(source)&&raw_rank(105)&&in(source->unit_id,{43,55})&&original_stat({1,8,w})==7){p.legend_bounce=true;b->bounces_remaining=7;}
+    if(talent_power::enabled&&source->player==player_owner()&&!hallucination(source)&&raw_rank(105)&&in(source->unit_id,{43,55})&&original_stat({1,8,w})==7){
+        p.legend_bounce=true;p.initial_bounces=7u+(raw_rank(93)?3u:0u);b->bounces_remaining=U8(p.initial_bounces);
+    }
     p.infantry_rank=infantry_damage_rank(effect_body(source),w);p.mobility_bonus=mobility_damage_bonus(source,w);
     // Suicide weapons may kill and detach their native parent during creation.
     // Layer damage belongs to this witnessed launch, including a dead source.
@@ -1351,11 +1353,13 @@ struct MissileScope {
         DamageScope::current_infantry_rank=p.infantry_rank;DamageScope::current_mobility_bonus=p.mobility_bonus;DamageScope::current_projectile=true;
         DamageScope::current_bounce_divisor=1;
         if(p.legend_bounce){
-            // Native bounce state decrements before impact. Six remaining means
-            // the first of seven hits. Suppress stock /3 and /9 only while the
-            // native damage dispatcher runs; restore its actual routing state.
+            // Native routing decrements before impact. Keep the first seven
+            // hits at 7/7 through 1/7; the three synergy hits stay at 1/7.
+            // Suppress stock /3 and /9 only during damage dispatch, then restore
+            // the routing counter. Launch metadata survives later rank changes.
             saved_bounces=b->bounces_remaining;native_bounce_scoped=true;
-            mutal_bounce_numerator=std::min(7u,U32(saved_bounces)+1);b->bounces_remaining=2;
+            const U32 hit=p.initial_bounces>saved_bounces?p.initial_bounces-U32(saved_bounces)-1u:0u;
+            mutal_bounce_numerator=7u-std::min(6u,hit);b->bounces_remaining=2;
             DamageScope::current_primary=valid_unit(b->target.unit)?b->target.unit:generation(p.primary);
         }else if(p.source.owner==player_owner()&&in(p.source.id,{43,55})&&rank(93)&&original_stat({1,8,p.weapon})==7){
             if(!p.bounce_adjusted){
@@ -1368,8 +1372,9 @@ struct MissileScope {
             // remaining=5 produced divisor19 and minimum damage on the FIRST hit.
             saved_bounces=b->bounces_remaining;native_bounce_scoped=true;
             const U32 hit=p.initial_bounces>saved_bounces?p.initial_bounces-saved_bounces:0u;
-            for(U32 n=0;n<hit;n++)DamageScope::current_bounce_divisor=
-                U32(std::min<std::uint64_t>(0x7fffffffu,std::uint64_t(DamageScope::current_bounce_divisor)*3u));
+            // Additional hits keep the third native hit's damage instead of
+            // continuing to decay below 1/9 of the first hit.
+            DamageScope::current_bounce_divisor=hit==0?1u:hit==1?3u:9u;
             b->bounces_remaining=2;
         }
         const bool gained_layer=p.source.owner==player_owner()&&ordinary_weapon(p.weapon)&&

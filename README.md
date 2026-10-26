@@ -4,7 +4,7 @@
 
 ## 다운로드
 
-[정식 버전 1.0.8 받기](https://github.com/checheche12/sc1_roguelike/releases/download/v1.0.8/SC1_Roguelike_1.0.8.zip) · [릴리스 안내](https://github.com/checheche12/sc1_roguelike/releases/tag/v1.0.8)
+[정식 버전 1.0.9 받기](https://github.com/checheche12/sc1_roguelike/releases/download/v1.0.9/SC1_Roguelike_1.0.9.zip) · [릴리스 안내](https://github.com/checheche12/sc1_roguelike/releases/tag/v1.0.9)
 
 Windows 64비트·스타크래프트 리마스터용입니다. ZIP 전체를 압축 해제한 뒤 `Start_Campaign.exe`를 실행하세요. Python은 따로 설치하지 않아도 됩니다.
 
