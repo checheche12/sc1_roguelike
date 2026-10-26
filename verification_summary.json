@@ -1,0 +1,70 @@
+{
+  "version": "v1.0.9",
+  "release_channel": "stable",
+  "base_release": "v1.0.8",
+  "gameplay_unchanged": false,
+  "native_dll_sha256": "e00f77fe6b0ba1afdbaee1cae3e433abd0dcadf345589c7c23bfd2f017063550",
+  "native_tests_fresh": true,
+  "host": {
+    "groups": 526,
+    "checks": 2381769,
+    "passed": true
+  },
+  "ui": {
+    "groups": 22,
+    "assertions": 177282,
+    "passed": true
+  },
+  "python_tests": 12,
+  "changed_campaign_maps": [],
+  "unchanged_campaign_maps": 63,
+  "map_validation": "All 63 maps and source dependencies are byte-identical to the previously validated stable release.",
+  "portable_self_test_passed": true,
+  "portable_window_title": "스타1 성장 기록 관리자 · 1.0.9",
+  "mutal_damage_behavior": {
+    "legend_only_hits": 7,
+    "combined_hits": 10,
+    "first_hit_original_damage_percent": 200,
+    "combined_damage_numerators": [
+      7,
+      6,
+      5,
+      4,
+      3,
+      2,
+      1,
+      1,
+      1,
+      1
+    ],
+    "denominator": 7,
+    "extra_hits": 3,
+    "standalone_hits": 6,
+    "standalone_damage_divisors": [
+      1,
+      3,
+      9,
+      9,
+      9,
+      9
+    ],
+    "standalone_legendary_behavior_unchanged": true,
+    "verified_modes": [
+      "neither",
+      "fourth_glaive_only",
+      "legendary_only",
+      "both"
+    ],
+    "launch_snapshot_preserved": true
+  },
+  "catalogs_and_descriptions_unchanged": true,
+  "legacy_wire_fields_unchanged": true,
+  "changes": [
+    "Fourth Glaive alone: three extra bounces each retain 1/9 of the first hit damage.",
+    "Fourth Glaive with Focused Glaive: seven legendary hits followed by three extra hits, each retaining 1/7 of the legendary first hit.",
+    "No-talent and legendary-only damage remain unchanged. In-game descriptions are unchanged."
+  ],
+  "limitations": [
+    "Synthetic native host, UI, protocol and package/launcher validation; live combat balance and appearance remain unverified."
+  ]
+}
