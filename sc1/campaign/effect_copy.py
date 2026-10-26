@@ -123,7 +123,9 @@ def decorate(catalog):
    before=item['description'];after=clean_description(before)
    if kind=='talents':
     ordinal=item['effect_ordinal']
-    if ordinal==48:after='테란 기계의 단일 원거리 일반 공격이 주변 적 최대 3기에 50% 피해를 줍니다.'
+    if ordinal==48:
+     after='테란 기계의 단일 원거리 일반 공격이 주변 적 최대 2기에 50% 피해를 줍니다.'
+     item['effect'].update(qa_revision=2026102694,additional_targets=2,additional_target_damage_percent=50)
     elif ordinal==58:
      after='발키리가 이동 중에도 공중·지상 적에게 8발의 광역 미사일을 연속 발사합니다. 공중 피해 100%, 지상 피해 150%(공중의 1.5배).'
      item['effect'].pop('immediate_movement_after_first_shot',None)
@@ -139,6 +141,9 @@ def decorate(catalog):
      item['target']='퀸 인스네어'
     elif ordinal==91:after='러커가 잠복 상태로 기본 속도의 62.5%로 이동합니다. 정지 시 공격합니다.'
     elif ordinal==97:after='러커가 공중 적에게도 원래 공격의 100% 피해로 가시를 쏩니다.'
+    elif ordinal==101:
+     after='러커·가디언·디바우러의 변태가 끝나면 5타일 안 아군 저그 병력의 체력을 전부 회복합니다.'
+     item['effect'].update(qa_revision=2026102696,morph_heal_full_health=True,morph_heal_radius_pixels=160)
     elif ordinal==96:after=after.replace('과잉 자폭을 피하도록 주변 표적을 분배합니다.','공중 표적을 자동으로 분산 추격합니다.')
     elif ordinal==149:after=after.replace('기존 보호막','보호막')
     elif ordinal==223:

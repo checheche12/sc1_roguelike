@@ -57,16 +57,21 @@ def specifications():
  rows.append(dict(race='shared',target='미사일 터렛·스포어 콜로니·포톤 캐논',units=[124,144,162],
   kind='tower',rarity='common',name='대공 방어 교범',hp=100,damage=50,max_rank=2,
   description='미사일 터렛·스포어 콜로니·포톤 캐논: 획득마다 최대체력+100%, 대공피해+50%, 대공표적+1기. 포톤 캐논 보호막도+100%. 최대2회.'))
+ # Standalone racial support uses the next free bit of the same packed contract.
+ rows.append(dict(race='protoss',target='프로토스 마법 유닛',units=[60,63,67,71,79,86,87,98],
+  kind='phase_echo',rarity='epic',name='위상 잔향',
+  description='주문 시전 성공 시 시전자 주위 5타일 안 아군 프로토스 병력의 보호막을 최대치의 20% 회복합니다. 같은 대상은 5초에 한 번만 회복합니다.'))
  # The order is a durable field contract. No field crosses a word boundary.
  word,shift=54,0  # growth words33+21, through33+27
  for i,spec in enumerate(rows):
-  width=2 if spec['kind']=='tower' else 1 if spec['kind'] in ('trait','shadow') else 3
+  width=2 if spec['kind']=='tower' else 1 if spec['kind'] in ('trait','shadow','phase_echo') else 3
   if shift+width>32:word+=1;shift=0
   if word==61:word,shift=14,21 # physical bit437 starts in growth word14
   spec.update(ordinal=BASE-238+i,index=BASE+i,storage=dict(word=word,shift=shift,width=width))
   shift+=width
   assert 54<=word<=60 or 14<=word<=16
- assert len(rows)==124 and rows[-1]['storage']==dict(word=16,shift=28,width=2)
+ assert len(rows)==125 and rows[-2]['storage']==dict(word=16,shift=28,width=2)
+ assert rows[-1]['storage']==dict(word=16,shift=30,width=1)
  return rows
 
 def decorate(catalog):
@@ -109,6 +114,9 @@ def decorate(catalog):
   if s['kind']=='tower':
    item.update(bundle_family=124,bundle_families=[124,144,162],candidate_weight_percent=400)
    item['effect'].update(qa_revision=2026102376,health_percent_per_rank=100,shield_percent_per_rank=100,air_damage_percent_per_rank=50,additional_air_targets_per_rank=1)
+  if s['kind']=='phase_echo':
+   item.pop('bundle_family',None)
+   item['effect'].update(qa_revision=2026102697,shield_restore_percent=20,radius_pixels=160,recipient_cooldown_frames=120,successful_cast_only=True)
   if s['index']<len(catalog['talents']):
    assert catalog['talents'][s['index']]['id']==item['id']
    catalog['talents'][s['index']]=item
@@ -125,7 +133,7 @@ def generate_header(catalog,root):
  for s in rows:
   mask=[0]*8
   for unit in s['units']:mask[unit//32]|=1<<(unit%32)
-  fields=[s['ordinal'],{'health':0,'attack':1,'trait':2,'shadow':3,'tower':4}[s['kind']],s.get('parent',0),*[s.get(k,0) for k in ('armor','hp','damage','speed','energy')]]
+  fields=[s['ordinal'],{'health':0,'attack':1,'trait':2,'shadow':3,'tower':4,'phase_echo':5}[s['kind']],s.get('parent',0),*[s.get(k,0) for k in ('armor','hp','damage','speed','energy')]]
   lines.append('{'+','.join(str(x)+'u' for x in fields)+',{'+','.join(str(x)+'u' for x in mask)+'}},')
  lines+=['};','}']
  target=root/'sc1/native_campaign/plugin/include/unit_growth.generated.h';target.write_text('\n'.join(lines)+'\n',encoding='utf8')

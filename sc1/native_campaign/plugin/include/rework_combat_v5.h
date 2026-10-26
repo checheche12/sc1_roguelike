@@ -327,7 +327,7 @@ struct UnitState {
     U32 last_effect_token=~0u;
     U32 retreat_due=0,blink_due=0,reposition_due=0,leap_due=0,charge_due=0,charge_until=0;
     int move_x=0,move_y=0,retreat_x=0,retreat_y=0;U32 saved_attack_flag=0;bool nuke_adjusted=false;
-    U32 aid_due=0,care_due=0,last_heal_frame=0;Identity healed_target{};
+    U32 aid_due=0,care_due=0,last_heal_frame=0,phase_echo_due=0;Identity healed_target{};
     U32 last_fire_damage=0;bool fire_seen=false;
     U32 portal_buff_until=0,fleet_buff_until=0,shuttle_guard_until=0,observer_mark_until=0;
     U32 support_frame=~0u,support_hp=0,support_shields=0,mechanical_irradiate_timer=0;
@@ -544,6 +544,20 @@ inline void __cdecl hallucination_hit_hook(bw::Unit* target,U32 w,U32 direction,
     }catch(...){}
 }
 #include "spell_energy_requirements.h"
+inline constexpr U32 kPhaseEchoOrdinal=323,kPhaseEchoRadius=160,kPhaseEchoPercent=20,kPhaseEchoCooldown=120;
+inline void phase_echo(bw::Unit* caster,U32 order){
+    if(!talent_power::enabled||!rank(kPhaseEchoOrdinal)||!own(caster)||!group(120,caster->unit_id)||
+       !in(order,{142,148,137,147,181,182,184,186}))return;
+    for(auto target:around(caster->flingy.position.x,caster->flingy.position.y,kPhaseEchoRadius,nullptr,65536,false)){
+        if(!own(target)||!race_type(target->unit_id,2)||!soldier(target->unit_id))continue;
+        auto s=state(target);if(!s||now()<s->phase_echo_due)continue;
+        const auto cap=std::min<std::uint64_t>(0x7fffffff,std::uint64_t(effective_max_shields(target))*256);
+        const auto current=std::uint64_t(std::max(0,target->shields));
+        if(!cap||current>=cap)continue;
+        target->shields=std::int32_t(std::min(cap,current+cap*kPhaseEchoPercent/100));
+        s->phase_echo_due=now()+kPhaseEchoCooldown;
+    }
+}
 inline U32 __cdecl order_target_hook(bw::Unit* caster,U32 order,bw::Unit* target,U32 x,U32 y,std::uint16_t* error,OrderTargetFn original) noexcept {
     if(rework_curses::spell_disabled(caster)&&in(order,{122,141,143}))return 0;
     SpellEnergyRequirementScope energy_requirement(caster,order);
@@ -1047,7 +1061,7 @@ inline void ordinary_hit(bw::Unit* source,bw::Unit* target,U32 damage,U32 w,bool
         Persist p{};p.kind=52;p.x=target->flingy.position.x;p.y=target->flingy.position.y;p.until=now()+talent_power::v5(52,48);p.due=now()+12;p.owner=source->player;p.source=identity(source);if(old==persistent.end())persistent.push_back(p);else *old=p;
     }
     U32 radius=0,count=0,percent=0;
-    if(rank(48)&&race_type(source->unit_id,0)&&!organic(source)&&original_stat({1,13,w})==0){radius=24;count=3;percent=talent_power::v5(rank(48)?48u:88u,25);}
+    if(rank(48)&&race_type(source->unit_id,0)&&!organic(source)&&original_stat({1,13,w})==0){radius=24;count=2;percent=talent_power::v5(48,25);}
     if(rank(88)&&in(source->unit_id,{44,56})){radius=32;count=3;percent=talent_power::v5(rank(48)?48u:88u,25);}
     if(radius)for(auto other:around(target->flingy.position.x,target->flingy.position.y,radius,target,count,true,air(target)))weapon_hurt(other,damage*percent/100,w,source,source->player);
     if(rank(92)&&in(source->unit_id,{39,48})){
@@ -1650,10 +1664,11 @@ struct OrderScope {
         }
     }
     bool handled() const noexcept {return intercepted;}
-    ~OrderScope(){active_caster=previous_caster;try{auto u=resolve(who);if(!u)return;U32 effective_cast_spent=0;
+    ~OrderScope(){active_caster=previous_caster;try{auto u=resolve(who);if(!u)return;U32 effective_cast_spent=0;bool native_cast_spent=false;
         // A successful native cast actually spent energy; merely entering a
         // cast order, canceling it or failing validation cannot grant a refund.
         if(u->energy<energy && order!=6){
+            native_cast_spent=true;
             const U32 spent=energy-u->energy,refund=cast_energy_refund(u,order,spent);
             effective_cast_spent=spent-refund;
             u->energy=std::uint16_t(std::min(65535u,U32(u->energy)+refund));
@@ -1669,6 +1684,7 @@ struct OrderScope {
                 }
             }
         }
+        if(native_cast_spent)phase_echo(u,order);
         if(rank(39)&&u->stim_timer>stim){u->stim_timer=U8(std::min(255u,talent_power::duration(39,u->stim_timer)));if(U32(u->flingy.hitpoints)<hp)heal(u,std::min((hp-U32(u->flingy.hitpoints))*9/10,talent_power::v5(39,(hp-U32(u->flingy.hitpoints))/2)));}
         auto to=resolve(target);
         if(to&&order==141&&effective_cast_spent&&rank(42)&&to->defensive_matrix_dmg){
@@ -1716,7 +1732,7 @@ inline void step() {
     const auto frame=now();
     expansion_support();expansion_radiation();
     for(auto it=morph_completions.begin();it!=morph_completions.end();){auto u=resolve(it->who);if(!u){it=morph_completions.erase(it);continue;}if(!(u->flags&1u)){++it;continue;}
-        for(auto friend_unit:around(u->flingy.position.x,u->flingy.position.y,64,nullptr,65536,false))if(race_type(friend_unit->unit_id,1)&&soldier(friend_unit->unit_id))heal(friend_unit,talent_power::v5(101,20*256));
+        for(auto friend_unit:around(u->flingy.position.x,u->flingy.position.y,160,nullptr,65536,false))if(race_type(friend_unit->unit_id,1)&&soldier(friend_unit->unit_id))heal(friend_unit,effective_max_hp(friend_unit));
         morph_rewarded.emplace_back(u,u->minor_unique_index);it=morph_completions.erase(it);
     }
     // Projectile metadata expires with a conservative maximum lifetime. Slot
