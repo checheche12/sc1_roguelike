@@ -10,6 +10,57 @@ from sc1.tests.test_all_campaign_maps import OrdinaryTriggerMachine,cs
 ROOT=Path(__file__).resolve().parents[2]
 
 
+class SiloOpeningMachine(OrdinaryTriggerMachine):
+    """CHK unit/region fixture including addon neutralization, not a game engine.
+
+    Execute the stock opening's Remove Unit, Wait and Move Unit actions in
+    order. Bring counts use live unit rectangles, including neutral addons.
+    Combat, collision resolution, AI and asynchronous waits are not emulated.
+    """
+    def __init__(self,chk):
+        super().__init__()
+        self.chk=chk
+        self.units=[list(b.unit_info(u)) for u in b.units(chk)]
+        self.boxes,_=geo.load_unit_geometry()
+
+    def in_location(self,unit,location):
+        bounds=struct.unpack_from('<4I',self.chk.getsection('MRGN'),(location-1)*20)
+        return geo._overlap(geo._rect(*unit[:3],self.boxes),bounds)
+
+    def matching(self,player,kind,location=0):
+        return [u for u in self.units if (player==17 or u[3]==(6 if player==13 else player))
+                and (u[2]==kind or kind==231 and 106<=u[2]<176)
+                and (not location or self.in_location(u,location))]
+
+    def condition(self,c):
+        loc,p,n,u,op,kind,extra,flags,mask=self.unpack(c)
+        if kind in (2,3):return self.compare(len(self.matching(p,u,loc if kind==3 else 0)),n,op)
+        return super().condition(c)
+
+    def opening_steps(self,trigger):
+        yield 'loaded'
+        for _,a in b.actions(trigger):
+            loc,text,wav,time,p,value,u,kind,mod,flags,pad,mask=struct.unpack('<IIIIIIHBBBBH',a)
+            if kind==47:continue # Editor comment, no game effect.
+            if kind==25:
+                for parent in self.matching(p,u,loc):
+                    # These six stock CC/addon pairs are 96px/16px apart.
+                    for addon in self.matching(parent[3],108):
+                        if addon[:2]==[parent[0]+96,parent[1]+16]:addon[3]=11
+                    self.units.remove(parent)
+                yield 'parents_removed_addons_neutral'
+            elif kind==4:
+                self.clock_ms+=time
+                yield 'opening_wait'
+            elif kind==39:
+                left,top,right,bottom=struct.unpack_from('<4I',self.chk.getsection('MRGN'),(value-1)*20)
+                moving=self.matching(p,u,loc)
+                assert len(moving)==1,(loc,moving)
+                moving[0][:2]=[(left+right)//2,(top+bottom)//2]
+                yield 'moved_to_'+str(value)
+            else:raise AssertionError(('Unexpected opening action',kind))
+
+
 class Terran4RepairTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -28,12 +79,17 @@ class Terran4RepairTests(unittest.TestCase):
         cls.latch=cls.ts[cls.route['goal_trigger_index']]
         cls.ending=cls.ts[cls.route['ending_trigger_index']]
         cls.correction=cls.progress['objective_correction']
-        cls.seen=cls.ts[cls.progress['original_trigger_indices'][cls.correction['seen_trigger']]]
+        cls.objective=[cls.ts[cls.progress['original_trigger_indices'][i]] for i in range(9,22)]
 
-    def machine(self,count=6):
-        engine=OrdinaryTriggerMachine()
-        engine.values[2,1,108,0,0]=count
+    def machine(self,relocated=False):
+        engine=SiloOpeningMachine(self.fixed)
+        if relocated:
+            list(engine.opening_steps(b.triggers(self.source)[8]))
+            self.objective_pass(engine)
         return engine
+
+    def objective_pass(self,engine):
+        for t in self.objective:engine.run(t)
 
     def test_original_buildings_and_silo_move_actions_preserved(self):
         original=b.units(self.source);fixed=b.units(self.fixed)
@@ -58,27 +114,60 @@ class Terran4RepairTests(unittest.TestCase):
             if u not in (176,177,178,188):
                 self.assertTrue(scripted_openings.additional_spawn_allowed({'mission_id':504},x,y))
 
-    def test_no_empty_start_or_remaining_silo_can_trigger_success(self):
-        empty=self.machine(0)
-        self.assertFalse(empty.run(self.seen))
-        self.assertFalse(empty.run(self.latch))
-        engine=self.machine()
-        self.assertTrue(engine.run(self.seen))
-        for remaining in (6,5,4,3,2,1):
-            engine.values[2,1,108,0,0]=remaining
-            self.assertFalse(engine.run(self.latch))
-            self.assertFalse(engine.run(self.ending))
+    def test_original_objective_bytes_preserved_without_enemy_count_shortcut(self):
+        original=b.CHK(self.source.save());before=original.getsection('TRIG')
+        repair.correct_objective(original,{'mission_id':504,'owner':6})
+        self.assertEqual(original.getsection('TRIG'),before)
+        self.assertEqual(cs(self.latch)[:-1],cs(b.triggers(self.source)[22]))
+        for i in range(8,22):
+            self.assertEqual(self.ts[self.progress['original_trigger_indices'][i]],b.triggers(self.source)[i])
 
-    def test_destroyed_silos_finish_even_when_original_move_initialization_failed(self):
+    def test_startup_neutralization_wait_and_every_move_cannot_win(self):
         engine=self.machine()
-        self.assertTrue(engine.run(self.seen))
-        engine.values[2,1,108,0,0]=0
-        self.assertFalse(engine.switches.get(1,False))
-        self.assertFalse(engine.run(b.triggers(self.source)[22]))
-        self.assertTrue(engine.run(self.latch))
-        self.assertEqual(engine.deaths[11,223],2)
-        self.assertTrue(engine.switches[b.SWITCHES['goal']])
-        self.assertFalse(engine.run(self.ending))
+        engine.switches[b.SWITCHES['growth_ready']]=True
+        engine.switches[b.SWITCHES['ack']]=True
+        for step in engine.opening_steps(b.triggers(self.source)[8]):
+            with self.subTest(step=step):
+                self.objective_pass(engine)
+                self.assertEqual(len(engine.matching(17,108)),6)
+                self.assertFalse(engine.run(self.latch))
+                self.assertFalse(engine.run(self.ending))
+                self.assertFalse(engine.victory)
+                if step!='loaded':self.assertEqual(len(engine.matching(1,108)),0)
+        self.assertTrue(engine.switches[1])
+        self.assertEqual([len(engine.matching(17,108,loc)) for loc in range(46,52)],[1]*6)
+        # Reproduce 1.0.13's exact bad condition against surviving neutral silos.
+        engine.switches[252]=True
+        bad=b.new_trigger([b.switch_condition(0,False),b.switch_condition(252),b.cond(2,1,0,108,10)],
+                          [],b.owner_bytes(6))
+        self.assertTrue(engine.eligible(bad))
+        for _ in range(20):
+            self.objective_pass(engine)
+            self.assertFalse(engine.run(self.latch))
+
+    def test_empty_or_incompletely_initialized_world_does_not_win(self):
+        for missing in range(7):
+            engine=self.machine()
+            for u in engine.matching(17,108)[:missing]:engine.units.remove(u)
+            for _ in range(3):self.objective_pass(engine)
+            self.assertFalse(engine.switches.get(1,False))
+            self.assertFalse(engine.run(self.latch))
+
+    def test_each_of_six_targets_must_be_destroyed_or_captured(self):
+        # Every combination of destruction and player capture is a stock route.
+        for capture_mask in range(64):
+            engine=self.machine(relocated=True)
+            targets=engine.matching(17,108)
+            for i,target in enumerate(targets):
+                self.assertFalse(engine.run(self.latch),(capture_mask,i))
+                if capture_mask&(1<<i):target[3]=6
+                else:engine.units.remove(target)
+                self.objective_pass(engine)
+            self.assertTrue(engine.run(self.latch),capture_mask)
+            self.assertEqual(engine.deaths[11,223],2)
+            self.assertTrue(engine.switches[b.SWITCHES['goal']])
+            self.assertFalse(engine.run(self.ending))
+        # An actual completed route still waits for reward readiness and save ACK.
         engine.switches[b.SWITCHES['growth_ready']]=True
         self.assertFalse(engine.run(self.ending))
         engine.switches[b.SWITCHES['ack']]=True

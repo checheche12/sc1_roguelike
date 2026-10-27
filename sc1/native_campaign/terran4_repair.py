@@ -6,7 +6,6 @@ import struct
 from collections import deque
 from . import mineral_layout as geo, mining_layout_audit as mining
 
-SILO_SEEN_SWITCH=252
 SILO_DESTINATIONS=(32,33,34,37,36,35)
 ROUTE_RADIUS=20
 
@@ -22,29 +21,23 @@ def correct_objective(chk,mission):
     ts=b.triggers(chk)
     silos=[p for p in map(b.unit_info,b.units(chk)) if p[2]==108]
     assert len(silos)==6 and all(p[3]==1 for p in silos)
-    # Reserve one audited-unused switch without changing original event indices.
-    for t in ts:
-        assert not any(c[15]==11 and c[16]==SILO_SEEN_SWITCH for _,c in b.conditions(t))
-        assert not any(a[26]==13 and struct.unpack_from('<I',a,20)[0]==SILO_SEEN_SWITCH for _,a in b.actions(t))
     original=ts[22]
     assert [c[16] for _,c in b.conditions(original)]==[0,2,3,4,5,6,7]
     assert any(a[26]==1 for _,a in b.actions(original))
-    cs=[b.switch_condition(0,False),b.switch_condition(SILO_SEEN_SWITCH),b.cond(2,1,0,108,10)]
-    patched=bytearray(original);patched[:320]=bytes(320)
-    for i,c in enumerate(cs):patched[i*20:(i+1)*20]=c
-    ts[22]=bytes(patched)
-    # Do not mistake an uninitialized/empty world for destruction. Observe an
-    # actual enemy silo first. Capture/transfer also removes enemy ownership,
-    # matching the stock mission's alternative to destroying each target.
-    ts.append(b.new_trigger([b.cond(2,1,1,108)],
-                           [b.setswitch(SILO_SEEN_SWITCH)],b.owner_bytes(mission['owner'])))
-    chk.setsection('TRIG',b''.join(ts))
-    return dict(mission=504,kind='enemy_nuclear_silos_after_seen',target_owner=1,
-                initial_silos=6,seen_switch=SILO_SEEN_SWITCH,seen_trigger=len(ts)-1,
+    # The opening removes the six parent command centers. Their surviving
+    # addons become neutral, so an enemy-owned count of zero is NOT success.
+    # Keep the stock All Players Bring checks: first locate all six targets,
+    # then require every individual target to be destroyed or player-owned.
+    # Placement guards below address the actual relocation obstruction.
+    assert [struct.unpack_from('<I',c)[0] for _,c in b.conditions(ts[9])]==list(range(46,52))
+    assert all(c[15]==3 and struct.unpack_from('<I',c,4)[0]==17 for _,c in b.conditions(ts[9]))
+    return dict(mission=504,kind='original_silo_objective_preserved',
+                initial_silos=6,initialization_trigger=9,completion_triggers=list(range(10,22)),
                 victory_trigger=22,original_success_actions_preserved=True,
+                original_objective_triggers_preserved=True,
                 original_physics_lab_route_preserved=True,
                 scripted_silo_relocation_preserved=True,
-                location_initialization_required=False,live_game_verified=False)
+                location_initialization_required=True,live_game_verified=False)
 
 
 def verify_silo_destinations(chk):
