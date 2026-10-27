@@ -1,0 +1,34 @@
+{
+  "version": "v1.0.13",
+  "base_release": "v1.0.12",
+  "changed_map_ids": [
+    504
+  ],
+  "unchanged_maps": 62,
+  "changes": [
+    "Keep the six scripted silo destinations and holding strip free of added units.",
+    "Require observed enemy silos followed by zero remaining enemy silos for the original nuclear victory route; keep final rewards and durable-save acknowledgement.",
+    "Stage northern reinforcements south of the Barracks and validate40px routes with final structures/resources and post-opening silo footprints."
+  ],
+  "host_tests": {
+    "passed": true,
+    "groups": 529,
+    "checks": 2399559
+  },
+  "native_ui": {
+    "passed": true,
+    "groups": 22,
+    "assertions": 177282
+  },
+  "python_tests": 22,
+  "fresh_full_map_rebuilds": [
+    504
+  ],
+  "portable_self_test": true,
+  "native_dll_sha256": "7be6b0d56b9feb517209f921a2782e5323d12ed5e5c0e9b331ee5347fa4c92bc",
+  "readme_modified": false,
+  "live_gameplay_verified": false,
+  "limitations": [
+    "Offline/synthetic checks; live mission completion and wave movement await playtest."
+  ]
+}
