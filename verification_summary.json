@@ -1,0 +1,35 @@
+{
+  "version": "v1.0.14",
+  "base_release": "v1.0.13",
+  "changed_map_ids": [
+    504
+  ],
+  "unchanged_maps": 62,
+  "changes": [
+    "Remove the1.0.13 enemy-owner-count shortcut that confuses neutral addons with destroyed targets.",
+    "Restore all original silo initialization and per-target destruction/capture conditions.",
+    "Keep1.0.13 placement and wave routes byte-identical; only504 TRIG changes."
+  ],
+  "host_tests": {
+    "passed": true,
+    "groups": 529,
+    "checks": 2399559
+  },
+  "native_ui": {
+    "passed": true,
+    "groups": 22,
+    "assertions": 177282
+  },
+  "python_tests": 24,
+  "fresh_full_map_rebuilds": [
+    504
+  ],
+  "portable_self_test": true,
+  "native_dll_sha256": "1d975b91520e6a9217e62837aaee1aa53c3cde4cd8eba6e0b40cf84e53e421f6",
+  "readme_modified": true,
+  "readme_change_scope": "download_links_only",
+  "live_gameplay_verified": false,
+  "limitations": [
+    "Offline/synthetic checks; live mission completion and wave movement await playtest."
+  ]
+}
