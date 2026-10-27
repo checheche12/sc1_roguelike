@@ -11,6 +11,9 @@ FULL_VISION_MISSIONS=frozenset((103,105,108,109,201,203,206,207,301,303,
 
 
 def apply(chk,row):
+    if row['mission_id']==504:
+        from .terran4_repair import correct_objective
+        return correct_objective(chk,row)
     if row['mission_id']==407:return _insurgent(chk,row)
     if row['mission_id']!=206:return None
     from sc1.native_campaign import build_all_campaigns as b

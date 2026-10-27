@@ -5,6 +5,12 @@ SOUTHWEST_EXPANSION=(128,2704)
 SPAWN_EXCLUSION_RADIUS=768
 
 def additional_spawn_allowed(mission,x,y):
+    if mission['mission_id']==504:
+        # The original opening moves six silos from the east holding strip
+        # into the southeast base. Keep both areas clear of added units and
+        # foundations, including a margin around the destination footprints.
+        return not (3040<=x<=3520 and 3392<=y<=3776 or
+                    3808<=x<=4096 and 1888<=y<=2592)
     if mission['mission_id']!=402:return True
     return (x-SOUTHWEST_EXPANSION[0])**2+(y-SOUTHWEST_EXPANSION[1])**2>=SPAWN_EXCLUSION_RADIUS**2
 

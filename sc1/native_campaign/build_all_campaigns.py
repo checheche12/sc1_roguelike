@@ -632,6 +632,10 @@ def make_map(raw,row):
  # Select P8's forward cells after resource and defense placement so both a
  # fresh map build and the unchanged-map revalidation use final obstacles.
  if row['mission_id']==308:difficulty['wave_origins']=protoss8_front_origins(chk,row,difficulty)
+ if row['mission_id']==504:
+  from sc1.native_campaign import terran4_repair
+  terran4_repair.verify_silo_destinations(chk)
+  difficulty['wave_origins']=terran4_repair.reachable_origins(chk,row,difficulty)
  permitted={b'UNIT',b'PUNI',b'UPGR',b'PUPx',b'PTEC',b'PTEx',b'TRIG',b'STR '}
  if terrain:permitted|={tag.encode() for tag in settlement_terrain.TAGS}
  if row['mission_id']==101:permitted|={b'OWNR',b'SIDE',b'FORC'}
