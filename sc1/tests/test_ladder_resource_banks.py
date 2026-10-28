@@ -19,6 +19,45 @@ class LadderResourceBanksTests(unittest.TestCase):
         self.assertFalse(banks.compact_bank([(128,240,176,11),(512,240,176,11)],[0,1],self.boxes))
         self.assertTrue(banks.compact_bank([(128,240,176,11),(192,240,176,11)],[0,1],self.boxes))
 
+    def test_straight_rows_cannot_pass_as_ladder_curves(self):
+        for points in ([(x,160) for x in range(0,384,64)],
+                       [(192,y) for y in range(0,192,32)],
+                       [(x,x) for x in range(0,384,64)],
+                       [(x,160) for x in range(0,768,64)]+[(800,192)]):
+            self.assertFalse(banks.curved_bank(points)['passed'])
+        self.assertTrue(banks.curved_bank(banks.REFERENCE_EAST)['passed'])
+
+    def test_campaign_size_templates_have_no_straight_fallback(self):
+        for count in range(3,34):
+            candidates=list(banks.formations(count,(1024,1024)))
+            self.assertTrue(candidates,count)
+            for points,_,_ in candidates:
+                self.assertEqual(len(points),count)
+                self.assertTrue(banks.curved_bank(points)['passed'],(count,points))
+
+    def test_sunken_guard_includes_gas_and_worker_envelope(self):
+        threats=[((-32,-32,32,32),224)]
+        near=banks.rules.geometry._rect(352,0,188,self.boxes)
+        far=banks.rules.geometry._rect(448,0,188,self.boxes)
+        self.assertGreater(banks.native_rect_distance(near,threats[0][0]),224)
+        self.assertFalse(banks.sunken_clear(near,threats))
+        self.assertTrue(banks.sunken_clear(far,threats))
+        self.assertFalse(banks.sunken_route_clear((-400,0),(400,0),threats))
+
+    def test_bw_terran8_six_oclock_minerals_and_gas_avoid_sunkens(self):
+        row=next(r for r in self.rows if r['mission_id']==508)
+        protected=[b for b in row['ladder_resource_banks']['bases'] if b.get('sunken_avoidance')]
+        self.assertEqual(len(protected),1)
+        base=protected[0];self.assertEqual(base['anchor']['center'],[3168,5456])
+        self.assertEqual((len(base['mineral_indices']),len(base['gas_indices'])),(12,1))
+        chk=maps.CHK(Path(row['output']).read_bytes());info=list(map(banks.rules.geometry._info,banks.rules.geometry._records(chk)))
+        threats=banks.sunken_threats(info,[0,4,5],self.boxes)
+        self.assertEqual(len(threats),91)
+        for index in base['mineral_indices']+base['gas_indices']:
+            self.assertTrue(banks.sunken_clear(banks.rules.geometry._rect(*info[index][:2],info[index][2],self.boxes),threats))
+            self.assertTrue(banks.sunken_route_clear(base['anchor']['center'],info[index][:2],threats))
+        self.assertTrue(base['audit']['sunken_safety']['safe_mining_routes'])
+
     def test_mixed_height_and_cliff_footprints_are_rejected(self):
         heights=[bytearray([1]*16) for _ in range(16)]
         self.assertTrue(banks.flat_rect(heights,(32,32,64,64),1))
@@ -41,6 +80,7 @@ class LadderResourceBanksTests(unittest.TestCase):
                     self.assertNotEqual(base['status'],'unresolved')
                     proof=banks.audit_base(chk,info,base,heights,self.boxes)
                     self.assertTrue(proof['passed'],proof);self.assertEqual(base['audit'],proof)
+                    self.assertEqual(proof['curved_bank']['applicable'],len(base['mineral_indices'])>=3)
                     for gas in proof['gas_exits'].values():self.assertTrue(gas['preferred_32px_offset_exit_clear'])
         self.assertEqual(sites,345);self.assertGreater(expansions,100)
 
