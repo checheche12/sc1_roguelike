@@ -564,7 +564,7 @@ def strengthen(chk,row):
  return result
 
 def mineral_reserved_points(difficulty):
- return [point for origin in difficulty['wave_origins'] for point in origin['cells']]
+ return [point for origin in difficulty.get('resource_wave_origins',difficulty['wave_origins']) for point in origin['cells']]
 
 def assert_original_units_preserved(before,after,mineral_bonus=0):
  """Only mineral/geyser coordinates may change during the mining repair."""
@@ -628,9 +628,12 @@ def make_map(raw,row):
  terrain=settlement_terrain.apply(chk,row)
  from sc1.native_campaign import base_defenses
  defenses=base_defenses.apply(chk,row,difficulty)
+ from sc1.native_campaign import ladder_resource_banks
+ resource_banks=ladder_resource_banks.apply(chk,row,courtyard,reserved_points=mineral_reserved_points(difficulty))
  chk.setsection('TRIG',final_triggers)
  # Select P8's forward cells after resource and defense placement so both a
  # fresh map build and the unchanged-map revalidation use final obstacles.
+ if row['mission_id'] in (308,504):difficulty['resource_wave_origins']=difficulty['wave_origins']
  if row['mission_id']==308:difficulty['wave_origins']=protoss8_front_origins(chk,row,difficulty)
  if row['mission_id']==504:
   from sc1.native_campaign import terran4_repair
@@ -654,6 +657,7 @@ def make_map(raw,row):
  report['courtyard_resource_layout']=courtyard
  report['resource_grants']=resource_grants
  report['base_defenses']=defenses
+ report['ladder_resource_banks']=resource_banks
  if terrain:
   report['settlement_terrain']=terrain
   report['original_briefing_wav_locations_terrain_heroes_preserved']=False
@@ -752,11 +756,11 @@ def build(output=OUT,receipt=RECEIPT):
  report['mission_balance_source_sha256']=digest(Path(mission_balance.__file__).read_bytes())
  from sc1.native_campaign import corner_resource_layout,scripted_openings,courtyard_resource_layout
  from sc1.native_campaign import campaign_resource_grants
- from sc1.native_campaign import settlement_terrain,base_defenses
+ from sc1.native_campaign import settlement_terrain,base_defenses,ladder_resource_banks
  defense_header=base_defenses.generate_header(report['maps'],SC1.parent)
  report['base_defense_header']=str(defense_header)
  report['base_defense_header_sha256']=digest(defense_header.read_bytes())
- for module in (corner_resource_layout,scripted_openings,courtyard_resource_layout,campaign_resource_grants,settlement_terrain,base_defenses):
+ for module in (corner_resource_layout,scripted_openings,courtyard_resource_layout,campaign_resource_grants,settlement_terrain,base_defenses,ladder_resource_banks):
   name=module.__name__.rsplit('.',1)[-1]
   report[name+'_source']=str(Path(module.__file__).resolve())
   report[name+'_source_sha256']=digest(Path(module.__file__).read_bytes())

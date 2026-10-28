@@ -26,6 +26,7 @@ inline void melee(bw::Unit* source,bw::Unit* target,std::int32_t amount,U32 divi
 inline void barrier_before_shield_and_hp(){
     for(int shield:{20*256,2*256,0}){
         GrowthSnapshot s{};s.curse_counts[8]=1;start(s);auto target=curse_audit::wave(65,6);auto source=add(0,1,100,100);refresh_units();target->shields=shield;const auto hp=target->flingy.hitpoints;
+        bw::SpriteScr sprite{};source->flingy.sprite=&sprite;
         auto bullet=owner_bullet_create_hook(0,100,100,1,0,source,curse_audit::bullet);owner_hit_hook(target,bullet,1,hit_to_weapon);
         CHECK(calls==1 && seen_wrapped);CHECK(seen_amount==1152);CHECK(hp-target->flingy.hitpoints+shield-target->shields==1152);CHECK(seen_direction==91 && seen_weapon==0 && seen_divisor==1 && seen_attacker==source && seen_player==1);
         CHECK(!combat_effects::weapon_damage_active());CHECK(!g.normal_hit);

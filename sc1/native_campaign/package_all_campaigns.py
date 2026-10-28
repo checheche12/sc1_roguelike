@@ -119,12 +119,18 @@ def _verify_base_resource_layout(source_chk, output_chk, mission, row):
 
 def verify_mineral_layout(source_chk, output_chk, mission, row):
     from . import mission_balance,corner_resource_layout,scripted_openings,courtyard_resource_layout
-    from . import settlement_terrain,base_defenses
+    from . import settlement_terrain,base_defenses,ladder_resource_banks
+    # Placement precedes the final obstacle-aware route selection on P8/T4.
+    # Reconstruct that initial input for the resource and defense replays.
+    row=dict(row);row['difficulty']=dict(row['difficulty'])
+    if 'resource_wave_origins' in row['difficulty']:
+        row['difficulty']['wave_origins']=row['difficulty']['resource_wave_origins']
     report = row.get('mission_balance')
     if not report:raise ValueError('Mission-specific balance proof missing')
     baseline = CHK(output_chk.save())
     # Match the builder's original spatial constraints for the removed ending.
     if mission['mission_id']==407:baseline.setsection('TRIG',source_chk.getsection('TRIG'))
+    ladder_resource_banks.undo(baseline,row['ladder_resource_banks'])
     if row.get('base_defenses'):base_defenses.undo(baseline,row['base_defenses'])
     if row.get('settlement_terrain'):
         settlement_terrain.verify(source_chk,output_chk,mission,row['settlement_terrain'])
@@ -149,6 +155,9 @@ def verify_mineral_layout(source_chk, output_chk, mission, row):
         if row.get('base_defenses'):
             defenses=base_defenses.apply(baseline,mission,row['difficulty'])
             if defenses!=row['base_defenses']:raise ValueError('Base fortifications differ from deterministic replay')
+        banks=ladder_resource_banks.apply(baseline,mission,courtyard,
+            reserved_points=map_builder.mineral_reserved_points(row['difficulty']))
+        if banks!=row['ladder_resource_banks']:raise ValueError('Ladder resource banks differ from deterministic replay')
         baseline.setsection('TRIG',output_chk.getsection('TRIG'))
         if expected != report or baseline.save() != output_chk.save():
             raise ValueError('Mission balance differs from deterministic replay')
@@ -158,9 +167,10 @@ def verify_mineral_layout(source_chk, output_chk, mission, row):
 
 def verify_checkpoint_layout(source_chk, output_chk, mission, row):
     """A four-stage receipt cannot authorize different mission trigger code."""
-    from . import mission_balance, campaign_objectives,corner_resource_layout,courtyard_resource_layout,scripted_openings,campaign_resource_grants,base_defenses
+    from . import mission_balance, campaign_objectives,corner_resource_layout,courtyard_resource_layout,scripted_openings,campaign_resource_grants,base_defenses,ladder_resource_banks
     baseline=CHK(source_chk.save());units=CHK(output_chk.save())
     try:
+        ladder_resource_banks.undo(units,row['ladder_resource_banks'])
         if row.get('base_defenses'):base_defenses.undo(units,row['base_defenses'])
         courtyard_resource_layout.undo(units,row['courtyard_resource_layout'])
         mission_balance.undo(units,row['mission_balance'])
@@ -217,10 +227,10 @@ def validate_maps(receipt_path):
     from . import mission_balance
     balance_path, _ = legacy.checked_file(receipt['mission_balance_source'], receipt['mission_balance_source_sha256'])
     if balance_path != Path(mission_balance.__file__).resolve():raise ValueError('Unexpected mission balance implementation')
-    from . import corner_resource_layout,scripted_openings,courtyard_resource_layout,campaign_resource_grants,settlement_terrain,base_defenses
+    from . import corner_resource_layout,scripted_openings,courtyard_resource_layout,campaign_resource_grants,settlement_terrain,base_defenses,ladder_resource_banks
     header,_=legacy.checked_file(receipt['base_defense_header'],receipt['base_defense_header_sha256'])
     if header!=ROOT/'plugin/include/base_defenses.generated.h':raise ValueError('Unexpected base defense header')
-    for module in (corner_resource_layout,scripted_openings,courtyard_resource_layout,campaign_resource_grants,settlement_terrain,base_defenses):
+    for module in (corner_resource_layout,scripted_openings,courtyard_resource_layout,campaign_resource_grants,settlement_terrain,base_defenses,ladder_resource_banks):
         name=module.__name__.rsplit('.',1)[-1]
         pinned,_=legacy.checked_file(receipt[name+'_source'],receipt[name+'_source_sha256'])
         if pinned!=Path(module.__file__).resolve():raise ValueError('Unexpected '+name+' implementation')

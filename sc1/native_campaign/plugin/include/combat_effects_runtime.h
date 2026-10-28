@@ -34,6 +34,15 @@ using DamageSkip=bool (*)(void*) noexcept;
 inline DamageSkip damage_skip=nullptr;
 inline bool weapon_damage_active() noexcept {return weapon_depth!=0;}
 inline bool active_session() noexcept {return g.active && g.applied && g.game && GetCurrentThreadId()==g.game_thread.load();}
+// Lingering spells keep their damage and original player after the caster dies.
+// A non-null native attacker must still own a live sprite (mission 508 crash).
+// Keep dead launch identities available to effect accounting, but never forward
+// them, or a witnessed projectile's reused unit slot, into native damage.
+inline bw::Unit* native_attacker(bw::Unit* u,U32 player) noexcept {
+    if(!valid_unit(u)||!u->order||u->flingy.hitpoints<=0||!u->flingy.sprite||u->player!=player)return nullptr;
+    if(g.bullet_hit_context&&g.hit_identity.unit==u&&!verified_projectile_source(g.hit_identity))return nullptr;
+    return u;
+}
 inline ProjectileSource source_identity(bw::Unit* u) noexcept {
     return valid_unit(u) ? ProjectileSource{u,u->unit_id,u->player,u->minor_unique_index} : ProjectileSource{};
 }
@@ -84,7 +93,7 @@ inline void weapon_damage(bw::Unit* target,std::int32_t damage,U8 weapon,U32 div
     const bool normal=ordinary_weapon(weapon) && ((g.bullet_hit_context && g.normal_hit) || (melee && melee_frames[melee_depth-1].weapon==weapon));
     // Preserve the engine's original damage calculation. Only the incoming
     // ordinary attack amount changes, before the original armor/shield split.
-    // The original divisor, direction, attacker and player are forwarded once.
+    // Preserve divisor, direction and player even when the caster has expired.
     OwnerDatScope view(unit_owner(target),player,target,source);
     DamageObservationScope observed(target,player);
     g.normal_hit=normal;
@@ -98,7 +107,7 @@ inline void weapon_damage(bw::Unit* target,std::int32_t damage,U8 weapon,U32 div
         if(rework_curses::barrier(target))damage=percentage(damage,3,4);
     }
     auto extension=damage_enter ? damage_enter(target,source,weapon,divisor,damage) : nullptr;
-    if(!extension||!damage_skip||!damage_skip(extension)){++weapon_depth;original(target,damage,weapon,divisor,direction,attacker,player);--weapon_depth;}
+    if(!extension||!damage_skip||!damage_skip(extension)){++weapon_depth;original(target,damage,weapon,divisor,direction,native_attacker(attacker,player),player);--weapon_depth;}
     if(extension && damage_leave)damage_leave(extension);
     saved.restore();
 }

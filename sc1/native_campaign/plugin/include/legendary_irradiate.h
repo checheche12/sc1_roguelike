@@ -32,7 +32,7 @@ inline void forget(bw::Unit* u) noexcept {
 inline void enroll(bw::Unit* u,std::uint64_t root_id,U32 generation,bool visual){
     storage();forget(u);auto it=roots.find(root_id);if(it==roots.end())return;
     auto& root=it->second;root.visited[key(u)]=true;++root.active;
-    u->irradiate_timer=U8(root.duration);u->irradiated_by=generation ? rework_combat_v5::generation(root.source):u->irradiated_by;u->irradiate_player=U8(root.owner);
+    u->irradiate_timer=U8(root.duration);u->irradiated_by=combat_effects::native_attacker(resolve(root.source),root.owner);u->irradiate_player=U8(root.owner);
     nodes[std::size_t(u-g.units)]={identity(u),root_id,generation,u->irradiate_timer,true};
     if(visual&&g.add_overlay&&!(u->flags&0x10u))if(auto sprite=static_cast<bw::SpriteScr*>(u->flingy.sprite))if(sprite->main_image){
         const U32 size=std::max(1u,std::min(3u,original_stat({0,26,u->unit_id})));g.add_overlay(sprite->main_image,379u+size,0,0,1);
@@ -60,14 +60,15 @@ inline void step(){
     if(base!=g.units||nodes.size()!=g.units_count)return;
     std::vector<Node> due;for(auto& n:nodes){if(!n.active)continue;auto u=resolve(n.who);
         if(!u||!u->irradiate_timer){if(auto old=rework_combat_v5::generation(n.who))forget(old);else{auto r=roots.find(n.root);if(r!=roots.end()&&r->second.active)--r->second.active;n={};}continue;}
+        if(auto r=roots.find(n.root);r!=roots.end())u->irradiated_by=combat_effects::native_attacker(resolve(r->second.source),r->second.owner);
         if(U32(u->irradiate_timer)+1==n.timer)due.push_back(n);n.timer=u->irradiate_timer;
     }
     const U32 tick=original_stat({1,14,34})*256/std::max(1u,original_stat({1,16,34}));
     for(const auto& n:due){auto target=resolve(n.who);auto it=roots.find(n.root);if(!target||it==roots.end()||(target->flags&(0x10u|0x40u)))continue;
-        const U32 owner=it->second.owner;auto source=rework_combat_v5::generation(it->second.source);
+        const U32 owner=it->second.owner;const auto source=it->second.source;
         for(const auto& id:nearby(target->flingy.position.x,target->flingy.position.y,128)){auto other=resolve(id);
             if(!other||other==target||!organic(other)||building(other)||in(other->unit_id,{35,36,97})||(other->flags&(0x10u|0x40u)))continue;
-            const auto d=box_distance(target,other);if(d>32ull*32&&d<=128ull*128)weapon_hurt(other,tick*legend_base_balance::irradiate_damage_multiplier,34,source,owner);
+            const auto d=box_distance(target,other);if(d>32ull*32&&d<=128ull*128)weapon_hurt(other,tick*legend_base_balance::irradiate_damage_multiplier,34,resolve(source),owner);
         }
     }
     for(auto it=roots.begin();it!=roots.end();)if(!it->second.active)it=roots.erase(it);else ++it;

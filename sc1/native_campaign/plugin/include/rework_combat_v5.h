@@ -468,7 +468,7 @@ struct GeneratedScope {GeneratedScope(){++generated_depth;}~GeneratedScope(){--g
 inline void hurt(bw::Unit* target,U32 amount,bw::Unit* source=nullptr,U32 owner=12) noexcept {
     if(!eligible(target) || !amount || !g.damage)return;
     GeneratedScope recursion;const combat_effects::HitContext saved;g.normal_hit=false;g.hit_bonus=0;g.elite_hit=false;
-    g.damage(target,static_cast<std::int32_t>(std::min(amount,0x7fffffffu)),source,owner,1);saved.restore();
+    g.damage(target,static_cast<std::int32_t>(std::min(amount,0x7fffffffu)),combat_effects::native_attacker(source,owner),owner,1);saved.restore();
 }
 inline void heal(bw::Unit*,U32) noexcept;
 inline void weapon_hurt(bw::Unit* target,U32 amount,U32 w,bw::Unit* source,U32 owner,U32 divisor=1) noexcept {
@@ -483,7 +483,7 @@ inline void weapon_hurt(bw::Unit* target,U32 amount,U32 w,bw::Unit* source,U32 o
         armor=table_for({0,27,target->unit_id},false);upgrade=table_for({0,25,target->unit_id},false);
         if(armor&&upgrade){a=read_entry(armor,target->unit_id);b=read_entry(upgrade,target->unit_id);write_entry(armor,target->unit_id,0);write_entry(upgrade,target->unit_id,61);}
     }
-    ++combat_effects::weapon_depth;combat_effects::original_weapon_damage(target,std::int32_t(std::min(0x7fffffffu,amount)),U8(w),std::max(1u,divisor),0,live(source)?source:nullptr,owner);--combat_effects::weapon_depth;
+    ++combat_effects::weapon_depth;combat_effects::original_weapon_damage(target,std::int32_t(std::min(0x7fffffffu,amount)),U8(w),std::max(1u,divisor),0,combat_effects::native_attacker(source,owner),owner);--combat_effects::weapon_depth;
     if(armor&&upgrade){write_entry(armor,target->unit_id,a);write_entry(upgrade,target->unit_id,b);}saved.restore();leech();
 }
 inline void heal(bw::Unit* u,U32 amount) noexcept {

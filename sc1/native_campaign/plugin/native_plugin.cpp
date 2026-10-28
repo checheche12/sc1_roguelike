@@ -934,7 +934,7 @@ void __cdecl owner_damage_hook(bw::Unit* u,std::int32_t amount,bw::Unit* attacke
         if(rework_curses::barrier(u))amount=static_cast<std::int32_t>((std::int64_t(amount)*72+99)/100);
     }
     amount=rework_combat_v5::post_armor_damage(u,amount);
-    const auto hp=u ? u->flingy.hitpoints : 0;original(u,amount,attacker,player,show);
+    const auto hp=u ? u->flingy.hitpoints : 0;original(u,amount,combat_effects::active_session()?combat_effects::native_attacker(attacker,player):attacker,player,show);
     if(u&&u->flingy.hitpoints<hp)enemy_detection::note(u,attacking_body);
     auto source=g.bullet_hit_context ? verified_projectile_source(g.hit_identity) : effect_body(attacker ? attacker : g.hit_source);
     if(g.normal_hit && g.growth.curse_counts[11] && regular_enemy(source) && u && u!=source && u->player==player_owner() && hp>0){
