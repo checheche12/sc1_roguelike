@@ -114,7 +114,8 @@ class UnitGrowth(unittest.TestCase):
   c=self.catalog
   for index in (258,260):
    item=c['talents'][index]
-   other=next(x for x in c['talents'] if x['rarity']==item['rarity'] and compatible(item,x,historical=True))
+   other=next(x for x in c['talents'] if x['rarity']==item['rarity'] and compatible(item,x,historical=True)
+              and not rework_growth.retired(x) and not rework_growth.unit_offer_removed(x))
    saved=dict(item,bundled_talent_ids=[item['id'],other['id']])
    self.assertEqual(member_ids(saved,c),(item['id'],other['id']))
    self.assertFalse(compatible(item,other))

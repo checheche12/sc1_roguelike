@@ -4,6 +4,7 @@ from __future__ import annotations
 import copy
 from .runtime_catalog import GrowthError
 from .talent_balance import UNIT_LEGENDARIES
+from .talent_retirement import unit_cleanup_retired
 HISTORICAL_UNIT_LEGENDARIES=UNIT_LEGENDARIES|{49,54,55,56,57,58,60,90,92,95,96,97,136,137,138,139,140,141,142,51,183,184,185,186,187,188,189,190,191,192,193,194,195,196,197}
 
 
@@ -26,7 +27,7 @@ def paired_unit(item):
 
 def historical_member(item):
     # Keep already-issued economic pairs readable without creating new ones.
-    return unit_legendary(item) or unit_family(item) or (item.get('rework_revision')==5
+    return unit_legendary(item) or unit_family(item) or unit_cleanup_retired(item) or (item.get('rework_revision')==5
             and item.get('effect_ordinal') in HISTORICAL_UNIT_LEGENDARIES)
 
 

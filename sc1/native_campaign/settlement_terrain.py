@@ -17,6 +17,7 @@ def _tile_flags(tile,cv5,vf4):
     return struct.unpack_from('<16H',vf4,mega*32)
 
 def apply(chk,row):
+    if row['mission_id']==204:return _central_rock(chk)
     if row['mission_id']==608:return _gas_exit(chk)
     if row['mission_id']!=MISSION:return None
     width,height=struct.unpack('<HH',chk.getsection('DIM '))
@@ -79,6 +80,39 @@ def _gas_exit(chk):
     return dict(revision=1,mission=608,bounds_tiles=[44,71,46,73],changed_tiles=changed,
         removed_decorations={},all_patch_tiles_walkable_low_ground=True,units_and_resources_unchanged=True,
         isometric_brush_metadata_preserved=True,actual_gameplay_verified=False)
+
+
+def _central_rock(chk):
+    """Remove only Zerg04's 4x2 central rock and its editor/sprite records."""
+    width,height=struct.unpack('<HH',chk.getsection('DIM '))
+    assert (width,height)==(96,96) and int.from_bytes(chk.getsection('ERA '),'little')&7==3
+    cv5,vf4=mining._terrain_bytes(3);changed=[]
+    terrain=bytearray(chk.getsection('MTXM'))
+    for y in (57,58):
+        for x in range(56,60):
+            at=(y*width+x)*2;old=struct.unpack_from('<H',terrain,at)[0]
+            assert old==(1092+y-57)*16+x-56,('Unexpected central rock tile',x,y,old)
+            # A neighboring ordinary dirt row has the matching left/right pairs.
+            new=struct.unpack_from('<H',terrain,((y-2)*width+x)*2)[0]
+            assert new//16 in (2,3) and all((f&7)==1 for f in _tile_flags(new,cv5,vf4))
+            struct.pack_into('<H',terrain,at,new);changed.append(dict(x=x,y=y,before=old,after=new))
+    chk.setsection('MTXM',bytes(terrain))
+    editor=bytearray(chk.getsection('TILE'))
+    for c in changed:struct.pack_into('<H',editor,(c['y']*width+c['x'])*2,c['after'])
+    chk.setsection('TILE',bytes(editor));removed={}
+    for tag,stride,kind in (('DD2 ',8,40),('THG2',10,2)):
+        raw=chk.getsection(tag);keep=[];deleted=[]
+        for at in range(0,len(raw),stride):
+            record=raw[at:at+stride]
+            if struct.unpack_from('<3H',record)==(kind,1856,1856):deleted.append(record.hex())
+            else:keep.append(record)
+        assert len(deleted)==1,(tag,deleted)
+        chk.setsection(tag,b''.join(keep));removed[tag]=deleted
+    assert mining.foundation_buildable(chk,(1856,1840),131)
+    return dict(revision=1,mission=204,bounds_tiles=[56,57,60,59],changed_tiles=changed,
+        removed_decorations=removed,all_patch_tiles_walkable_low_ground=True,
+        units_and_resources_unchanged=True,isometric_brush_metadata_preserved=True,
+        hatchery_foundation_cleared=[1856,1840],actual_gameplay_verified=False)
 
 def verify(source_chk,output_chk,row,report):
     from .build_all_campaigns import CHK

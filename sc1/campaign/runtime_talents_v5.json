@@ -26254,7 +26254,7 @@
       "id": "bc5b8776-409f-582b-a36b-6b0271bf46b4",
       "name": "신속하고 여유 있는 보급",
       "target": "서플라이 디포 · 오버로드 · 파일런",
-      "description": "서플라이 디포·오버로드·파일런의 보급량 +8. 생산·건설 시간이 3초가 됩니다.",
+      "description": "서플라이 디포·오버로드·파일런의 보급량 +8. 생산·건설 시간이 3초가 됩니다. 건설 효율화·소환 공정 개선의 시간 감소도 함께 적용됩니다.",
       "trigger": "",
       "numbers": "",
       "notes": "생산 임무에 분산된 경제 선택에서만 등장합니다. 캠페인 전체 경제 보상은 5회입니다.",
@@ -26277,8 +26277,9 @@
         "type": "rework_v5",
         "ordinal": 4,
         "source_id": "bc5b8776-409f-582b-a36b-6b0271bf46b4",
-        "qa_revision": 2026101610,
-        "benefit_power_quarters": 4
+        "qa_revision": 2026110303,
+        "benefit_power_quarters": 4,
+        "fast_supply_inherits_building_time_discount": true
       },
       "target_units": [
         109,
@@ -27005,8 +27006,9 @@
         "type": "rework_v5",
         "ordinal": 10,
         "source_id": "4c0772ea-8024-592e-88dd-afc2871f8659",
-        "qa_revision": 2026101610,
-        "benefit_power_quarters": 7
+        "qa_revision": 2026110303,
+        "benefit_power_quarters": 7,
+        "added_air_range_preserves_shared_bonus": true
       },
       "target_units": [
         0,
@@ -27972,7 +27974,7 @@
       "id": "8c053349-58dc-58c6-b5d1-246640408969",
       "name": "전투 예열",
       "target": "아군 일반 공격 병력·영웅",
-      "description": "아군이 같은 적을 계속 공격하면 공격 간격이 최대 75% 짧아집니다. 표적 변경·3초 중단 시 초기화.",
+      "description": "아군이 같은 적을 계속 공격하면 공격 간격이 최대 75% 짧아집니다. 표적 변경·3초 중단 시 초기화. 단계식 전투 훈련과 함께 적용됩니다.",
       "trigger": "",
       "numbers": "",
       "notes": "추가 탄환은 별도 중첩 아님.",
@@ -27995,9 +27997,10 @@
         "type": "rework_v5",
         "ordinal": 16,
         "source_id": "8c053349-58dc-58c6-b5d1-246640408969",
-        "qa_revision": 2026102038,
+        "qa_revision": 2026110303,
         "benefit_power_quarters": 10,
-        "rarity_promoted": true
+        "rarity_promoted": true,
+        "attack_interval_bonuses_multiply": true
       },
       "target_units": [
         0,
@@ -28535,8 +28538,9 @@
         "type": "rework_v5",
         "ordinal": 19,
         "source_id": "372acb49-fc11-5127-b203-cd452953cd4c",
-        "qa_revision": 2026101610,
-        "benefit_power_quarters": 10
+        "qa_revision": 2026110303,
+        "benefit_power_quarters": 10,
+        "generated_attacks_share_target_damage_rules": true
       },
       "target_units": [
         0,
@@ -28722,8 +28726,9 @@
         "type": "rework_v5",
         "ordinal": 20,
         "source_id": "9f7709e0-52ab-5b4d-ba21-ca84e04c3c8d",
-        "qa_revision": 2026102038,
-        "benefit_power_quarters": 4
+        "qa_revision": 2026110303,
+        "benefit_power_quarters": 4,
+        "fast_supply_inherits_building_time_discount": true
       },
       "target_units": [
         7
@@ -28861,8 +28866,9 @@
         "type": "rework_v5",
         "ordinal": 22,
         "source_id": "93a63632-1508-577b-b7e6-cc3fc3e2ef54",
-        "qa_revision": 2026102038,
-        "benefit_power_quarters": 4
+        "qa_revision": 2026110303,
+        "benefit_power_quarters": 4,
+        "fast_supply_inherits_building_time_discount": true
       },
       "target_units": [
         64
@@ -30464,7 +30470,7 @@
       "id": "9836eb1c-7acf-58e1-9ebc-0a90983deceb",
       "name": "광역 EMP",
       "target": "과학선 EMP",
-      "description": "과학선의 EMP 반경이 100% 넓어집니다. 아군도 맞습니다.",
+      "description": "과학선의 EMP 반경이 100% 넓어집니다. 아군도 맞습니다. 다른 재능의 범위 증가분과 합산됩니다.",
       "trigger": "",
       "numbers": "",
       "notes": "일반 무기 스플래시 수치로 대체하지 않음.",
@@ -30487,8 +30493,9 @@
         "type": "rework_v5",
         "ordinal": 44,
         "source_id": "9836eb1c-7acf-58e1-9ebc-0a90983deceb",
-        "qa_revision": 2026102038,
-        "benefit_power_quarters": 8
+        "qa_revision": 2026110302,
+        "benefit_power_quarters": 8,
+        "radius_bonus_stacking": "additive"
       },
       "target_units": [
         9,
@@ -30556,8 +30563,9 @@
         "type": "rework_v5",
         "ordinal": 45,
         "source_id": "2d51c78a-b4ca-5532-9c49-b495a5816f75",
-        "qa_revision": 2026102038,
-        "benefit_power_quarters": 8
+        "qa_revision": 2026110303,
+        "benefit_power_quarters": 8,
+        "lockdown_duration_bonuses_preserve_full_duration": true
       },
       "target_units": [
         1,
@@ -30838,7 +30846,7 @@
       "id": "13e89b70-3b8d-50d4-92f5-2b64f90ba503",
       "name": "집행 저격",
       "target": "고스트 일반 공격",
-      "description": "고스트의 일반 공격 피해 +100%. 대상 체력이 35% 이하면 피해 +300% 추가.",
+      "description": "고스트의 일반 공격 피해 +100%. 대상 체력이 35% 이하면 피해 +300% 추가. 공격 유형이 일반형으로 바뀝니다.",
       "trigger": "",
       "numbers": "",
       "notes": "고스트 계열이라는게 무슨 뜻이야???",
@@ -30861,7 +30869,7 @@
         "type": "rework_v5",
         "ordinal": 49,
         "source_id": "13e89b70-3b8d-50d4-92f5-2b64f90ba503",
-        "qa_revision": 2026102039,
+        "qa_revision": 2026110302,
         "benefit_power_quarters": 10,
         "rarity_promoted": true,
         "focus_legend": true,
@@ -30874,7 +30882,8 @@
         "legacy_area_effect_disabled": true,
         "design_role": "single_target",
         "reflection_requires_attacking": false,
-        "reflection_only_releases_on_attack": false
+        "reflection_only_releases_on_attack": false,
+        "weapon_damage_type": 3
       },
       "target_units": [
         1,
@@ -31663,8 +31672,9 @@
         "type": "rework_v5",
         "ordinal": 59,
         "source_id": "6c589723-954e-5cb8-abd5-529cf9ad1b91",
-        "qa_revision": 2026102038,
-        "benefit_power_quarters": 10
+        "qa_revision": 2026110303,
+        "benefit_power_quarters": 10,
+        "added_air_range_preserves_shared_bonus": true
       },
       "target_units": [
         10,
@@ -31816,11 +31826,12 @@
         "type": "rework_v5",
         "ordinal": 61,
         "source_id": "a8b767de-c945-5116-8e5d-a8e8c8478b5b",
-        "qa_revision": 2026102490,
+        "qa_revision": 2026110303,
         "benefit_power_quarters": 16,
         "infection_radius_pixels": 192,
         "damage_multiplier": 2,
-        "mechanical_infection_requires_ordinal": 198
+        "mechanical_infection_requires_ordinal": 198,
+        "mechanical_irradiate_matches_legend_multiplier": true
       },
       "target_units": [
         9,
@@ -31865,7 +31876,7 @@
       "id": "d9088172-b4d8-5fdc-a845-667e36e1681e",
       "name": "EMP 과충전",
       "target": "과학선 EMP",
-      "description": "과학선: EMP가 보호막·에너지가 없는 적에게도 체력 피해 200을 줍니다. 제거한 보호막·에너지의 100%를 추가 피해로 주며 대상당 최대 600. EMP 반경은 기본의 2배가 됩니다.",
+      "description": "과학선: EMP가 보호막·에너지가 없는 적에게도 체력 피해 200을 줍니다. 제거한 보호막·에너지의 100%를 추가 피해로 주며 대상당 최대 600. EMP 반경은 기본의 2배가 됩니다. 다른 재능의 범위 증가분과 합산됩니다.",
       "trigger": "",
       "numbers": "",
       "notes": "1개 시전당 대상별 1회.",
@@ -31888,8 +31899,9 @@
         "type": "rework_v5",
         "ordinal": 62,
         "source_id": "d9088172-b4d8-5fdc-a845-667e36e1681e",
-        "qa_revision": 2026102038,
-        "benefit_power_quarters": 16
+        "qa_revision": 2026110302,
+        "benefit_power_quarters": 16,
+        "radius_bonus_stacking": "additive"
       },
       "target_units": [
         9,
@@ -31957,12 +31969,13 @@
         "type": "rework_v5",
         "ordinal": 63,
         "source_id": "dee1eebb-31d8-526f-b895-9785e0f2f5b0",
-        "qa_revision": 2026102260,
+        "qa_revision": 2026110303,
         "benefit_power_quarters": 16,
         "chain_radius_pixels": 192,
         "chain_total_targets": 7,
         "organic_duration_multiplier": 2,
-        "prefer_unlocked_unclaimed_targets": true
+        "prefer_unlocked_unclaimed_targets": true,
+        "lockdown_duration_bonuses_preserve_full_duration": true
       },
       "target_units": [
         1,
@@ -32010,7 +32023,7 @@
       "id": "b8a603b2-ca89-5cf0-bdab-f5b7549480e4",
       "name": "삼중 야마토",
       "target": "배틀크루저 야마토",
-      "description": "배틀크루저: 야마토 준비 동작 약 3배 가속. 3발 각각 200% 피해, 에너지 50. 추가탄은 4타일 안 다른 적 우선, 부족하면 주 대상 집중. 탄착지 3타일 안 다른 적 최대 6기에 기본 야마토의 50% 폭발 피해.",
+      "description": "배틀크루저: 야마토 준비 동작 약 3배 가속. 3발 각각 200% 피해, 에너지 50. 추가탄은 4타일 안 다른 적 우선, 부족하면 주 대상 집중. 탄착지 3타일 안 다른 적 최대 6기에 기본 야마토의 50% 폭발 피해. 전방위 전함의 무료 야마토에도 적용됩니다.",
       "trigger": "",
       "numbers": "",
       "notes": "세부 적용: 주 표적 원래 피해, 반경 3타일 내 다른 적 최대 2기에 각각 원래 피해의 50%. 비용·주 시전 1회, 동일 대상 중복 금지.",
@@ -32033,7 +32046,7 @@
         "type": "rework_v5",
         "ordinal": 64,
         "source_id": "b8a603b2-ca89-5cf0-bdab-f5b7549480e4",
-        "qa_revision": 2026102038,
+        "qa_revision": 2026110303,
         "benefit_power_quarters": 16,
         "blast_radius_pixels": 96,
         "blast_targets_per_cast": 6,
@@ -32041,7 +32054,8 @@
         "yamato_prelaunch_wait_frames": 0,
         "yamato_cast_speed_approx_multiplier": 3,
         "yamato_cast_speed_stacks": false,
-        "energy_cost": 50
+        "energy_cost": 50,
+        "free_yamato_combines_triple_cast": true
       },
       "target_units": [
         12,
@@ -32089,7 +32103,7 @@
       "id": "e2575cd1-1d24-5048-addd-b0eccccbccd9",
       "name": "전방위 전함",
       "target": "배틀크루저 일반 공격",
-      "description": "배틀크루저: 야마토 준비 동작 약 3배 가속. 일반 공격 4회마다 무료 야마토 1발. 지상·공중 포대는 따로 사격하며 추가 포대 피해 100%.",
+      "description": "배틀크루저: 야마토 준비 동작 약 3배 가속. 일반 공격 4회마다 무료 야마토 1발. 지상·공중 포대는 따로 사격하며 추가 포대 피해 100%. 삼중 야마토를 함께 선택하면 무료 야마토도 3발로 강화됩니다.",
       "trigger": "",
       "numbers": "",
       "notes": "세부 적용: 지상 무기와 공중 무기가 각각 적합한 주 표적을 독립 공격. 각 무기의 원래 주기 유지. 분산 포격이 있으면 각 층 최대 3기, 중복 대상·재귀 금지.",
@@ -32112,7 +32126,7 @@
         "type": "rework_v5",
         "ordinal": 65,
         "source_id": "e2575cd1-1d24-5048-addd-b0eccccbccd9",
-        "qa_revision": 2026102038,
+        "qa_revision": 2026110303,
         "benefit_power_quarters": 16,
         "auto_yamato_every_primary_attacks": 4,
         "auto_yamato_percent": 100,
@@ -32120,7 +32134,8 @@
         "secondary_layer_percent": 100,
         "yamato_prelaunch_wait_frames": 0,
         "yamato_cast_speed_approx_multiplier": 3,
-        "yamato_cast_speed_stacks": false
+        "yamato_cast_speed_stacks": false,
+        "free_yamato_combines_triple_cast": true
       },
       "target_units": [
         12,
@@ -32648,7 +32663,7 @@
       "id": "16cf5d07-b1b7-5697-a7c3-220a82bbad55",
       "name": "비행 군체 화력 교범",
       "target": "뮤탈·가디언·디바우러·스커지",
-      "description": "중첩당 뮤탈리스크(영웅 포함) 공격력 +5, 가디언(영웅 포함) +6, 다른 저그 공중 전투 유닛 +3. 공격 간격 -4.5%. 최대 4회.",
+      "description": "중첩당 뮤탈리스크(영웅 포함) 공격력 +5, 가디언(영웅 포함) +6, 스커지 +30, 다른 저그 공중 전투 유닛 +3. 공격 간격 -4.5%. 최대 4회.",
       "trigger": "",
       "numbers": "선택 횟수 제한 없음. 같은 창에서는 동일 재능 1개만 표시. 공격주기 = 원래 주기 × 0.97^중첩 수(해당 교범에만 적용). 엔진 최소 1틱, 매 단계 원본에서 다시 계산.",
       "notes": "일반 병력 교범은 보유 후에도 재등장합니다. 공격력·방어력은 중첩당 수치를 합산하고, 이동 속도는 원래 속도 × (1 + 0.03 × 중첩 수)로 계산합니다. 일꾼·건물·탄약은 제외하며, 인터셉터는 함대 교범의 공격력만 캐리어를 통해 1회 상속합니다. 지상/공중 분류는 겹치지 않습니다. 자폭·튀김의 타격 수와 마법 피해는 늘리지 않습니다. 기존 발급 선택과 과거 기록은 재해석하지 않습니다.",
@@ -32671,12 +32686,13 @@
         "type": "rework_v5",
         "ordinal": 72,
         "source_id": "16cf5d07-b1b7-5697-a7c3-220a82bbad55",
-        "qa_revision": 2026102699,
+        "qa_revision": 2026110301,
         "benefit_power_quarters": 6,
         "other_air_attack_per_rank": 3,
         "offer_retired": true,
         "mutalisk_attack_per_rank": 5,
-        "guardian_attack_per_rank": 6
+        "guardian_attack_per_rank": 6,
+        "scourge_attack_per_rank": 30
       },
       "target_units": [
         43,
@@ -33313,8 +33329,10 @@
         "type": "rework_v5",
         "ordinal": 80,
         "source_id": "10cc66bc-17ac-5728-8d91-d181509f5382",
-        "qa_revision": 2026102038,
-        "benefit_power_quarters": 8
+        "qa_revision": 2026110303,
+        "benefit_power_quarters": 8,
+        "radius_bonus_percent": 100,
+        "radius_pixels": 128
       },
       "target_units": [
         45,
@@ -33518,7 +33536,7 @@
       "id": "d5990802-46fc-50ce-88a4-9acd03cdff55",
       "name": "확장 다크 스웜",
       "target": "디파일러 다크 스웜",
-      "description": "디파일러의 다크 스웜 반경이 100% 넓어집니다.",
+      "description": "디파일러의 다크 스웜 반경이 100% 넓어집니다. 하늘을 덮는 군체와 함께 선택하면 반경이 7.5타일이 됩니다.",
       "trigger": "",
       "numbers": "",
       "notes": "",
@@ -33541,8 +33559,9 @@
         "type": "rework_v5",
         "ordinal": 83,
         "source_id": "d5990802-46fc-50ce-88a4-9acd03cdff55",
-        "qa_revision": 2026102038,
-        "benefit_power_quarters": 8
+        "qa_revision": 2026110303,
+        "benefit_power_quarters": 8,
+        "cloud_radius_bonuses_add": true
       },
       "target_units": [
         46,
@@ -34240,12 +34259,13 @@
         "type": "rework_v5",
         "ordinal": 92,
         "source_id": "26515758-366b-5bd0-98d2-30714ab37f58",
-        "qa_revision": 2026102039,
+        "qa_revision": 2026110303,
         "benefit_power_quarters": 10,
         "rarity_promoted": true,
         "cleave_extra_targets": 3,
         "cleave_damage_percent": 70,
-        "actual_hp_shield_lifesteal_percent": 100
+        "actual_hp_shield_lifesteal_percent": 100,
+        "generated_attacks_share_target_damage_rules": true
       },
       "target_units": [
         39,
@@ -34395,8 +34415,9 @@
         "type": "rework_v5",
         "ordinal": 94,
         "source_id": "567537fb-ab08-5c9f-a427-26d2f77becfb",
-        "qa_revision": 2026102038,
-        "benefit_power_quarters": 10
+        "qa_revision": 2026110303,
+        "benefit_power_quarters": 10,
+        "independent_slow_durations_and_multipliers": true
       },
       "target_units": [
         44,
@@ -34847,7 +34868,7 @@
       "id": "f83289ec-9c66-589f-96c3-1f9e57f775dd",
       "name": "전염성 산성",
       "target": "디바우러 산성 포자",
-      "description": "디바우러가 주변 공중 적 최대 5기에 산성 포자를 추가로 묻힙니다.",
+      "description": "디바우러가 주변 공중 적 최대 5기에 산성 포자를 추가로 묻힙니다. 산성 폭풍의 포자 강화도 적용됩니다.",
       "trigger": "",
       "numbers": "",
       "notes": "",
@@ -34870,8 +34891,9 @@
         "type": "rework_v5",
         "ordinal": 100,
         "source_id": "f83289ec-9c66-589f-96c3-1f9e57f775dd",
-        "qa_revision": 2026102038,
-        "benefit_power_quarters": 10
+        "qa_revision": 2026110303,
+        "benefit_power_quarters": 10,
+        "spread_spores_inherit_amplification": true
       },
       "target_units": [
         62
@@ -35075,7 +35097,7 @@
       "id": "c2629f66-3675-5912-a0c0-171c6dddddac",
       "name": "하늘을 덮는 군체",
       "target": "디파일러 다크 스웜",
-      "description": "다크 스웜이 반경 5타일의 지상 유닛과 아군 공중 유닛을 보호합니다. 안의 아군 전투 병력은 초당 최대 체력 3% 회복.",
+      "description": "다크 스웜이 반경 5타일의 지상 유닛과 아군 공중 유닛을 보호합니다. 안의 아군 전투 병력은 초당 최대 체력 3% 회복. 확장 다크 스웜과 함께 선택하면 반경이 7.5타일이 됩니다.",
       "trigger": "",
       "numbers": "",
       "notes": "",
@@ -35098,11 +35120,12 @@
         "type": "rework_v5",
         "ordinal": 103,
         "source_id": "c2629f66-3675-5912-a0c0-171c6dddddac",
-        "qa_revision": 2026102267,
+        "qa_revision": 2026110303,
         "benefit_power_quarters": 16,
         "swarm_max_hp_regen_percent_per_second": 3,
         "overlapping_regen_stacks": false,
-        "swarm_radius_tiles": 5
+        "swarm_radius_tiles": 5,
+        "cloud_radius_bonuses_add": true
       },
       "target_units": [
         46,
@@ -35362,10 +35385,11 @@
         "type": "rework_v5",
         "ordinal": 106,
         "source_id": "c4785029-f1e2-5f2c-b59a-6e2f3dcca705",
-        "qa_revision": 2026102046,
+        "qa_revision": 2026110303,
         "benefit_power_quarters": 16,
         "acid_spore_effect_multiplier": 2,
-        "ground_damage_percent": 200
+        "ground_damage_percent": 200,
+        "spread_spores_inherit_amplification": true
       },
       "target_units": [
         62
@@ -35922,9 +35946,10 @@
         "type": "rework_v5",
         "ordinal": 113,
         "source_id": "b1767caa-63a3-5a03-839a-683b1f78520a",
-        "qa_revision": 2026102378,
+        "qa_revision": 2026110303,
         "benefit_power_quarters": 7,
-        "shield_armor_bonus": 3
+        "shield_armor_bonus": 3,
+        "generated_attacks_share_target_damage_rules": true
       },
       "target_units": [
         60,
@@ -36931,7 +36956,7 @@
       "id": "8a4cb489-6634-59eb-a23d-e1ceaa267fe6",
       "name": "확장 스테이시스",
       "target": "아비터 스테이시스 필드",
-      "description": "아비터의 스테이시스 필드 반경 +100%, 지속 시간 +100%. 아군도 갇힙니다.",
+      "description": "아비터의 스테이시스 필드 반경 +100%, 지속 시간 +100%. 아군도 갇힙니다. 다른 재능의 범위 증가분과 합산됩니다.",
       "trigger": "",
       "numbers": "",
       "notes": "삭제된 선택적 정지장을 복원하지 않음.",
@@ -36954,8 +36979,9 @@
         "type": "rework_v5",
         "ordinal": 127,
         "source_id": "8a4cb489-6634-59eb-a23d-e1ceaa267fe6",
-        "qa_revision": 2026102038,
-        "benefit_power_quarters": 8
+        "qa_revision": 2026110302,
+        "benefit_power_quarters": 8,
+        "radius_bonus_stacking": "additive"
       },
       "target_units": [
         71,
@@ -37512,11 +37538,12 @@
         "type": "rework_v5",
         "ordinal": 135,
         "source_id": "c2bf0dea-c215-549e-ace2-a03b9ce8b83a",
-        "qa_revision": 2026102038,
+        "qa_revision": 2026110303,
         "benefit_power_quarters": 10,
         "attack_counter": "primary_corsair_launch",
         "spells_count_as_attacks": false,
-        "secondary_attacks_count": false
+        "secondary_attacks_count": false,
+        "independent_slow_durations_and_multipliers": true
       },
       "target_units": [
         60,
@@ -37743,8 +37770,9 @@
         "type": "rework_v5",
         "ordinal": 138,
         "source_id": "8c38fecf-9607-59d3-b750-78666a048004",
-        "qa_revision": 2026102039,
-        "benefit_power_quarters": 10
+        "qa_revision": 2026110303,
+        "benefit_power_quarters": 10,
+        "added_air_range_preserves_shared_bonus": true
       },
       "target_units": [
         61,
@@ -38146,8 +38174,9 @@
         "type": "rework_v5",
         "ordinal": 143,
         "source_id": "65382db3-0f00-582e-ac8b-63ceb20197b0",
-        "qa_revision": 2026102038,
-        "benefit_power_quarters": 10
+        "qa_revision": 2026110303,
+        "benefit_power_quarters": 10,
+        "independent_slow_durations_and_multipliers": true
       },
       "target_units": [
         71,
@@ -38564,7 +38593,7 @@
       "id": "64af92bd-7322-535c-96ff-543a767818ad",
       "name": "정지장 폭쇄",
       "target": "아비터 스테이시스 필드",
-      "description": "아비터: 스테이시스 필드 반경 1.5배. 해제된 아군은 체력·보호막을 완전히 회복합니다. 적에게는 보호막400·체력300+최대체력25% 피해와 주변 감속을 줍니다.",
+      "description": "아비터: 스테이시스 필드 반경 1.5배. 해제된 아군은 체력·보호막을 완전히 회복합니다. 적에게는 보호막400·체력300+최대체력25% 피해와 주변 감속을 줍니다. 다른 재능의 범위 증가분과 합산됩니다.",
       "trigger": "",
       "numbers": "",
       "notes": "중첩 시 마지막 만료에서 1회.",
@@ -38587,14 +38616,16 @@
         "type": "rework_v5",
         "ordinal": 149,
         "source_id": "64af92bd-7322-535c-96ff-543a767818ad",
-        "qa_revision": 2026102039,
+        "qa_revision": 2026110303,
         "benefit_power_quarters": 16,
         "release_slow_radius_pixels": 96,
         "release_slow_targets": 6,
         "release_slow_percent": 50,
         "release_slow_frames": 72,
         "stasis_radius_multiplier": 1.5,
-        "stasis_friendly_full_health_shields": true
+        "stasis_friendly_full_health_shields": true,
+        "radius_bonus_stacking": "additive",
+        "independent_slow_durations_and_multipliers": true
       },
       "target_units": [
         71,
@@ -38662,8 +38693,9 @@
         "type": "rework_v5",
         "ordinal": 150,
         "source_id": "5bdb025f-f544-54f4-b00a-b9f9754f29e1",
-        "qa_revision": 2026102375,
-        "benefit_power_quarters": 7
+        "qa_revision": 2026110303,
+        "benefit_power_quarters": 7,
+        "generated_attacks_share_target_damage_rules": true
       },
       "target_units": [
         10,
@@ -39535,7 +39567,7 @@
       "race": "shared",
       "rarity": "epic",
       "target": "아군 일반 공격 병력·영웅",
-      "description": "아군 일반 공격 병력·영웅이 같은 적을 계속 공격하면 공격 간격이 최대 30% 짧아집니다. 표적 변경·3초 중단 시 초기화.",
+      "description": "아군 일반 공격 병력·영웅이 같은 적을 계속 공격하면 공격 간격이 최대 30% 짧아집니다. 표적 변경·3초 중단 시 초기화. 전투 예열과 함께 적용됩니다.",
       "source_description": "같은 적을 계속 공격하면 공격 간격이 최대 30% 짧아집니다. 표적 변경·3초 중단 시 초기화.",
       "bit_index": 400,
       "category": "combat",
@@ -39555,9 +39587,10 @@
         "type": "rework_v5",
         "ordinal": 162,
         "source_id": "aa91831a-6ee9-5b54-a052-a5534c161b05",
-        "qa_revision": 2026102038,
+        "qa_revision": 2026110303,
         "benefit_power_quarters": 4,
-        "replaces_epic_id": "8c053349-58dc-58c6-b5d1-246640408969"
+        "replaces_epic_id": "8c053349-58dc-58c6-b5d1-246640408969",
+        "attack_interval_bonuses_multiply": true
       },
       "target_units": [
         0,
@@ -39814,7 +39847,7 @@
       "race": "terran",
       "rarity": "epic",
       "target": "고스트 일반 공격과 아군 유도 투사체",
-      "description": "고스트의 일반 공격 피해 +35%. 일반 공격이 명중하면 2타일 안 같은 공격층의 다른 적 1기에 원래 공격의 50% 피해를 줍니다.",
+      "description": "삭제된 재능입니다. 더 이상 선택하거나 효과를 받을 수 없습니다.",
       "source_description": "일반 공격 피해 +35%. 일반 공격이 명중하면 2타일 안 같은 공격층의 다른 적 1기에 원래 공격의 50% 피해를 줍니다. 추가 공격은 다시 발동시키지 않습니다.",
       "bit_index": 402,
       "category": "combat",
@@ -39834,9 +39867,12 @@
         "type": "rework_v5",
         "ordinal": 164,
         "source_id": "5c6f2178-50ee-59c2-960a-96ae06973c06",
-        "qa_revision": 2026102038,
+        "qa_revision": 2026110302,
         "benefit_power_quarters": 4,
-        "replaces_epic_id": "9653d275-b027-51c6-bb5d-920e2bab74c4"
+        "replaces_epic_id": "9653d275-b027-51c6-bb5d-920e2bab74c4",
+        "retired": true,
+        "runtime_disabled": true,
+        "offer_retired": true
       },
       "target_units": [
         1,
@@ -40549,7 +40585,7 @@
       "race": "zerg",
       "rarity": "epic",
       "target": "감염된 테란",
-      "description": "감염된 테란의 일반 공격 피해 +35%. 일반 공격이 명중하면 2타일 안 같은 공격층의 다른 적 1기에 원래 공격의 50% 피해를 줍니다.",
+      "description": "삭제된 재능입니다. 더 이상 선택하거나 효과를 받을 수 없습니다.",
       "source_description": "일반 공격 피해 +35%. 일반 공격이 명중하면 2타일 안 같은 공격층의 다른 적 1기에 원래 공격의 50% 피해를 줍니다. 추가 공격은 다시 발동시키지 않습니다.",
       "bit_index": 411,
       "category": "combat",
@@ -40569,9 +40605,12 @@
         "type": "rework_v5",
         "ordinal": 173,
         "source_id": "93b4d0ac-be41-5db0-8707-53d74ac9dbcf",
-        "qa_revision": 2026102038,
+        "qa_revision": 2026110302,
         "benefit_power_quarters": 4,
-        "replaces_epic_id": "e3c62acb-9064-59af-b392-7caa09ea918c"
+        "replaces_epic_id": "e3c62acb-9064-59af-b392-7caa09ea918c",
+        "retired": true,
+        "runtime_disabled": true,
+        "offer_retired": true
       },
       "target_units": [
         50
@@ -40623,9 +40662,7 @@
         "benefit_power_quarters": 4,
         "replaces_epic_id": "e3c62acb-9064-59af-b392-7caa09ea918c"
       },
-      "bundle_family": 50,
-      "effect_subject": "감염된 테란",
-      "description_revision": 2026102042
+      "bundle_family": 50
     },
     {
       "id": "221164ff-9378-599f-be63-3412378db20f",
@@ -41939,7 +41976,7 @@
         "type": "rework_v5",
         "ordinal": 190,
         "source_id": "2545a24c-42c8-5235-84e5-c185789687b2",
-        "qa_revision": 2026102263,
+        "qa_revision": 2026110303,
         "benefit_power_quarters": 4,
         "focus_legend": true,
         "focus_mode": 6,
@@ -41959,7 +41996,8 @@
           37,
           40,
           54
-        ]
+        ],
+        "generated_attacks_share_target_damage_rules": true
       },
       "target_units": [
         37,
@@ -42611,9 +42649,10 @@
         "type": "rework_v5",
         "ordinal": 198,
         "source_id": "f2a0f5e9-54ab-5cf6-9876-d3b0d0af45ce",
-        "qa_revision": 2026102490,
+        "qa_revision": 2026110303,
         "benefit_power_quarters": 4,
-        "mechanical_chain_synergy": true
+        "mechanical_chain_synergy": true,
+        "mechanical_irradiate_matches_legend_multiplier": true
       },
       "target_units": [
         9,
@@ -42677,7 +42716,7 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 199,
-        "qa_revision": 2026102038,
+        "qa_revision": 2026110302,
         "benefit_power_quarters": 4,
         "unit_growth": {
           "race": "terran",
@@ -42688,7 +42727,7 @@
           "kind": "health",
           "rarity": "common",
           "name": "SCV 생존 교범",
-          "description": "SCV의 최대 체력이 중첩당 28% 증가합니다. 최대 4회. 기존 병과 체력 교범과 합산해 최대 4중첩입니다.",
+          "description": "SCV의 최대 체력이 중첩당 28% 증가합니다. 최대 4회. 서로 다른 교범의 강화는 합산됩니다.",
           "ordinal": 199,
           "index": 437,
           "storage": {
@@ -42696,7 +42735,8 @@
             "shift": 0,
             "width": 3
           }
-        }
+        },
+        "independent_manuals_stack": true
       },
       "bit_index": 437,
       "wire_storage": {
@@ -42781,7 +42821,7 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 200,
-        "qa_revision": 2026102038,
+        "qa_revision": 2026110302,
         "benefit_power_quarters": 4,
         "unit_growth": {
           "race": "terran",
@@ -42793,7 +42833,7 @@
           "rarity": "common",
           "name": "SCV 화력 교범",
           "parent": 31,
-          "description": "SCV의 공격력이 중첩당 +3, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회. 소수점 공격력은 중첩 합계를 반올림합니다. 기존 병과 교범과 합산해 최대 4중첩.",
+          "description": "SCV의 공격력이 중첩당 +3, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회. 소수점 공격력은 중첩 합계를 반올림합니다. 서로 다른 교범의 강화는 합산됩니다.",
           "ordinal": 200,
           "index": 438,
           "storage": {
@@ -42803,7 +42843,8 @@
           }
         },
         "offer_retired": true,
-        "unit_manual_removed": true
+        "unit_manual_removed": true,
+        "independent_manuals_stack": true
       },
       "bit_index": 438,
       "wire_storage": {
@@ -42890,7 +42931,7 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 201,
-        "qa_revision": 2026102038,
+        "qa_revision": 2026110302,
         "benefit_power_quarters": 4,
         "unit_growth": {
           "race": "terran",
@@ -42902,7 +42943,7 @@
           "kind": "health",
           "rarity": "common",
           "name": "마린 생존 교범",
-          "description": "마린의 최대 체력이 중첩당 28% 증가합니다. 최대 4회. 기존 병과 체력 교범과 합산해 최대 4중첩입니다.",
+          "description": "마린의 최대 체력이 중첩당 28% 증가합니다. 최대 4회. 서로 다른 교범의 강화는 합산됩니다.",
           "ordinal": 201,
           "index": 439,
           "storage": {
@@ -42910,7 +42951,8 @@
             "shift": 6,
             "width": 3
           }
-        }
+        },
+        "independent_manuals_stack": true
       },
       "bit_index": 439,
       "wire_storage": {
@@ -42997,7 +43039,7 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 202,
-        "qa_revision": 2026102038,
+        "qa_revision": 2026110302,
         "benefit_power_quarters": 4,
         "unit_growth": {
           "race": "terran",
@@ -43010,7 +43052,7 @@
           "rarity": "common",
           "name": "마린 화력 교범",
           "parent": 29,
-          "description": "마린의 공격력이 중첩당 +15%, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회. 소수점 공격력은 중첩 합계를 반올림합니다. 기존 병과 교범과 합산해 최대 4중첩.",
+          "description": "마린의 공격력이 중첩당 +15%, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회. 소수점 공격력은 중첩 합계를 반올림합니다. 서로 다른 교범의 강화는 합산됩니다.",
           "ordinal": 202,
           "index": 440,
           "storage": {
@@ -43018,7 +43060,8 @@
             "shift": 9,
             "width": 3
           }
-        }
+        },
+        "independent_manuals_stack": true
       },
       "bit_index": 440,
       "wire_storage": {
@@ -43106,7 +43149,7 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 203,
-        "qa_revision": 2026102038,
+        "qa_revision": 2026110302,
         "benefit_power_quarters": 4,
         "unit_growth": {
           "race": "terran",
@@ -43118,7 +43161,7 @@
           "kind": "health",
           "rarity": "common",
           "name": "파이어뱃 생존 교범",
-          "description": "파이어뱃의 최대 체력이 중첩당 28% 증가합니다. 최대 4회. 기존 병과 체력 교범과 합산해 최대 4중첩입니다.",
+          "description": "파이어뱃의 최대 체력이 중첩당 28% 증가합니다. 최대 4회. 서로 다른 교범의 강화는 합산됩니다.",
           "ordinal": 203,
           "index": 441,
           "storage": {
@@ -43126,7 +43169,8 @@
             "shift": 12,
             "width": 3
           }
-        }
+        },
+        "independent_manuals_stack": true
       },
       "bit_index": 441,
       "wire_storage": {
@@ -43213,7 +43257,7 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 204,
-        "qa_revision": 2026102038,
+        "qa_revision": 2026110302,
         "benefit_power_quarters": 4,
         "unit_growth": {
           "race": "terran",
@@ -43226,7 +43270,7 @@
           "rarity": "common",
           "name": "파이어뱃 화력 교범",
           "parent": 29,
-          "description": "파이어뱃의 공격력이 중첩당 +15%, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회. 소수점 공격력은 중첩 합계를 반올림합니다. 기존 병과 교범과 합산해 최대 4중첩.",
+          "description": "파이어뱃의 공격력이 중첩당 +15%, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회. 소수점 공격력은 중첩 합계를 반올림합니다. 서로 다른 교범의 강화는 합산됩니다.",
           "ordinal": 204,
           "index": 442,
           "storage": {
@@ -43234,7 +43278,8 @@
             "shift": 15,
             "width": 3
           }
-        }
+        },
+        "independent_manuals_stack": true
       },
       "bit_index": 442,
       "wire_storage": {
@@ -43325,7 +43370,7 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 205,
-        "qa_revision": 2026102038,
+        "qa_revision": 2026110302,
         "benefit_power_quarters": 4,
         "unit_growth": {
           "race": "terran",
@@ -43340,7 +43385,7 @@
           "kind": "health",
           "rarity": "common",
           "name": "고스트 생존 교범",
-          "description": "고스트의 최대 체력이 중첩당 28% 증가합니다. 최대 4회. 기존 병과 체력 교범과 합산해 최대 4중첩입니다.",
+          "description": "고스트의 최대 체력이 중첩당 28% 증가합니다. 최대 4회. 서로 다른 교범의 강화는 합산됩니다.",
           "ordinal": 205,
           "index": 443,
           "storage": {
@@ -43348,7 +43393,8 @@
             "shift": 18,
             "width": 3
           }
-        }
+        },
+        "independent_manuals_stack": true
       },
       "bit_index": 443,
       "wire_storage": {
@@ -43441,7 +43487,7 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 206,
-        "qa_revision": 2026102038,
+        "qa_revision": 2026110302,
         "benefit_power_quarters": 4,
         "unit_growth": {
           "race": "terran",
@@ -43457,7 +43503,7 @@
           "rarity": "common",
           "name": "고스트 화력 교범",
           "parent": 29,
-          "description": "고스트의 공격력이 중첩당 +15%, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회. 소수점 공격력은 중첩 합계를 반올림합니다. 기존 병과 교범과 합산해 최대 4중첩.",
+          "description": "고스트의 공격력이 중첩당 +15%, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회. 소수점 공격력은 중첩 합계를 반올림합니다. 서로 다른 교범의 강화는 합산됩니다.",
           "ordinal": 206,
           "index": 444,
           "storage": {
@@ -43465,7 +43511,8 @@
             "shift": 21,
             "width": 3
           }
-        }
+        },
+        "independent_manuals_stack": true
       },
       "bit_index": 444,
       "wire_storage": {
@@ -43555,7 +43602,7 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 207,
-        "qa_revision": 2026102038,
+        "qa_revision": 2026110302,
         "benefit_power_quarters": 4,
         "unit_growth": {
           "race": "terran",
@@ -43566,7 +43613,7 @@
           "kind": "health",
           "rarity": "common",
           "name": "메딕 생존 교범",
-          "description": "메딕의 최대 체력이 중첩당 28% 증가합니다. 최대 4회. 기존 병과 체력 교범과 합산해 최대 4중첩입니다.",
+          "description": "메딕의 최대 체력이 중첩당 28% 증가합니다. 최대 4회. 서로 다른 교범의 강화는 합산됩니다.",
           "ordinal": 207,
           "index": 445,
           "storage": {
@@ -43574,7 +43621,8 @@
             "shift": 24,
             "width": 3
           }
-        }
+        },
+        "independent_manuals_stack": true
       },
       "bit_index": 445,
       "wire_storage": {
@@ -43660,7 +43708,7 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 208,
-        "qa_revision": 2026102038,
+        "qa_revision": 2026110302,
         "benefit_power_quarters": 4,
         "unit_growth": {
           "race": "terran",
@@ -43672,7 +43720,7 @@
           "kind": "health",
           "rarity": "common",
           "name": "벌처 생존 교범",
-          "description": "벌처의 최대 체력이 중첩당 28% 증가합니다. 최대 4회. 기존 병과 체력 교범과 합산해 최대 4중첩입니다.",
+          "description": "벌처의 최대 체력이 중첩당 28% 증가합니다. 최대 4회. 서로 다른 교범의 강화는 합산됩니다.",
           "ordinal": 208,
           "index": 446,
           "storage": {
@@ -43680,7 +43728,8 @@
             "shift": 27,
             "width": 3
           }
-        }
+        },
+        "independent_manuals_stack": true
       },
       "bit_index": 446,
       "wire_storage": {
@@ -43767,7 +43816,7 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 209,
-        "qa_revision": 2026102038,
+        "qa_revision": 2026110302,
         "benefit_power_quarters": 4,
         "unit_growth": {
           "race": "terran",
@@ -43780,7 +43829,7 @@
           "rarity": "common",
           "name": "벌처 화력 교범",
           "parent": 30,
-          "description": "벌처의 공격력이 중첩당 +4.5, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회. 소수점 공격력은 중첩 합계를 반올림합니다. 기존 병과 교범과 합산해 최대 4중첩.",
+          "description": "벌처의 공격력이 중첩당 +4.5, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회. 소수점 공격력은 중첩 합계를 반올림합니다. 서로 다른 교범의 강화는 합산됩니다.",
           "ordinal": 209,
           "index": 447,
           "storage": {
@@ -43788,7 +43837,8 @@
             "shift": 0,
             "width": 3
           }
-        }
+        },
+        "independent_manuals_stack": true
       },
       "bit_index": 447,
       "wire_storage": {
@@ -43870,12 +43920,12 @@
       "target_units": [
         13
       ],
-      "description": "스파이더 마인의 최대 체력이 중첩당 28% 증가합니다. 최대 4회.",
+      "description": "삭제된 재능입니다. 더 이상 선택하거나 효과를 받을 수 없습니다.",
       "source_description": "스파이더 마인의 최대 체력이 중첩당 28% 증가합니다. 최대 4회. 기존 병과 체력 교범과 합산해 최대 4중첩입니다.",
       "effect": {
         "type": "rework_v5",
         "ordinal": 210,
-        "qa_revision": 2026102038,
+        "qa_revision": 2026110302,
         "benefit_power_quarters": 4,
         "unit_growth": {
           "race": "terran",
@@ -43894,7 +43944,10 @@
             "shift": 3,
             "width": 3
           }
-        }
+        },
+        "retired": true,
+        "runtime_disabled": true,
+        "offer_retired": true
       },
       "bit_index": 448,
       "wire_storage": {
@@ -43974,12 +44027,12 @@
       "target_units": [
         13
       ],
-      "description": "스파이더 마인의 공격력이 중첩당 +3, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회.",
+      "description": "삭제된 재능입니다. 더 이상 선택하거나 효과를 받을 수 없습니다.",
       "source_description": "스파이더 마인의 공격력이 중첩당 +3, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회. 소수점 공격력은 중첩 합계를 반올림합니다. 기존 병과 교범과 합산해 최대 4중첩.",
       "effect": {
         "type": "rework_v5",
         "ordinal": 211,
-        "qa_revision": 2026102038,
+        "qa_revision": 2026110302,
         "benefit_power_quarters": 4,
         "unit_growth": {
           "race": "terran",
@@ -43999,7 +44052,10 @@
             "shift": 6,
             "width": 3
           }
-        }
+        },
+        "retired": true,
+        "runtime_disabled": true,
+        "offer_retired": true
       },
       "bit_index": 449,
       "wire_storage": {
@@ -44088,7 +44144,7 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 212,
-        "qa_revision": 2026102038,
+        "qa_revision": 2026110302,
         "benefit_power_quarters": 4,
         "unit_growth": {
           "race": "terran",
@@ -44102,7 +44158,7 @@
           "kind": "health",
           "rarity": "common",
           "name": "골리앗 생존 교범",
-          "description": "골리앗의 최대 체력이 중첩당 28% 증가합니다. 최대 4회. 기존 병과 체력 교범과 합산해 최대 4중첩입니다.",
+          "description": "골리앗의 최대 체력이 중첩당 28% 증가합니다. 최대 4회. 서로 다른 교범의 강화는 합산됩니다.",
           "ordinal": 212,
           "index": 450,
           "storage": {
@@ -44110,7 +44166,8 @@
             "shift": 9,
             "width": 3
           }
-        }
+        },
+        "independent_manuals_stack": true
       },
       "bit_index": 450,
       "wire_storage": {
@@ -44201,7 +44258,7 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 213,
-        "qa_revision": 2026102038,
+        "qa_revision": 2026110302,
         "benefit_power_quarters": 4,
         "unit_growth": {
           "race": "terran",
@@ -44216,7 +44273,7 @@
           "rarity": "common",
           "name": "골리앗 화력 교범",
           "parent": 30,
-          "description": "골리앗의 공격력이 중첩당 +3, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회. 소수점 공격력은 중첩 합계를 반올림합니다. 기존 병과 교범과 합산해 최대 4중첩.",
+          "description": "골리앗의 공격력이 중첩당 +3, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회. 소수점 공격력은 중첩 합계를 반올림합니다. 서로 다른 교범의 강화는 합산됩니다.",
           "ordinal": 213,
           "index": 451,
           "storage": {
@@ -44224,7 +44281,8 @@
             "shift": 12,
             "width": 3
           }
-        }
+        },
+        "independent_manuals_stack": true
       },
       "bit_index": 451,
       "wire_storage": {
@@ -44320,7 +44378,7 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 214,
-        "qa_revision": 2026102038,
+        "qa_revision": 2026110302,
         "benefit_power_quarters": 4,
         "unit_growth": {
           "race": "terran",
@@ -44338,7 +44396,7 @@
           "kind": "health",
           "rarity": "common",
           "name": "시즈 탱크 생존 교범",
-          "description": "시즈 탱크의 최대 체력이 중첩당 28% 증가합니다. 최대 4회. 기존 병과 체력 교범과 합산해 최대 4중첩입니다.",
+          "description": "시즈 탱크의 최대 체력이 중첩당 28% 증가합니다. 최대 4회. 서로 다른 교범의 강화는 합산됩니다.",
           "ordinal": 214,
           "index": 452,
           "storage": {
@@ -44346,7 +44404,8 @@
             "shift": 15,
             "width": 3
           }
-        }
+        },
+        "independent_manuals_stack": true
       },
       "bit_index": 452,
       "wire_storage": {
@@ -44445,7 +44504,7 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 215,
-        "qa_revision": 2026102038,
+        "qa_revision": 2026110302,
         "benefit_power_quarters": 4,
         "unit_growth": {
           "race": "terran",
@@ -44464,7 +44523,7 @@
           "rarity": "common",
           "name": "시즈 탱크 화력 교범",
           "parent": 30,
-          "description": "시즈 탱크의 공격력이 중첩당 전차 +6·공성 +12, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회. 소수점 공격력은 중첩 합계를 반올림합니다. 기존 병과 교범과 합산해 최대 4중첩.",
+          "description": "시즈 탱크의 공격력이 중첩당 전차 +6·공성 +12, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회. 소수점 공격력은 중첩 합계를 반올림합니다. 서로 다른 교범의 강화는 합산됩니다.",
           "ordinal": 215,
           "index": 453,
           "storage": {
@@ -44472,7 +44531,8 @@
             "shift": 18,
             "width": 3
           }
-        }
+        },
+        "independent_manuals_stack": true
       },
       "bit_index": 453,
       "wire_storage": {
@@ -44566,7 +44626,7 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 216,
-        "qa_revision": 2026102038,
+        "qa_revision": 2026110302,
         "benefit_power_quarters": 4,
         "unit_growth": {
           "race": "terran",
@@ -44578,7 +44638,7 @@
           "kind": "health",
           "rarity": "common",
           "name": "레이스 생존 교범",
-          "description": "레이스의 최대 체력이 중첩당 28% 증가합니다. 최대 4회. 기존 병과 체력 교범과 합산해 최대 4중첩입니다.",
+          "description": "레이스의 최대 체력이 중첩당 28% 증가합니다. 최대 4회. 서로 다른 교범의 강화는 합산됩니다.",
           "ordinal": 216,
           "index": 454,
           "storage": {
@@ -44586,7 +44646,8 @@
             "shift": 21,
             "width": 3
           }
-        }
+        },
+        "independent_manuals_stack": true
       },
       "bit_index": 454,
       "wire_storage": {
@@ -44673,7 +44734,7 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 217,
-        "qa_revision": 2026102038,
+        "qa_revision": 2026110302,
         "benefit_power_quarters": 4,
         "unit_growth": {
           "race": "terran",
@@ -44686,7 +44747,7 @@
           "rarity": "common",
           "name": "레이스 화력 교범",
           "parent": 31,
-          "description": "레이스의 공격력이 중첩당 지상 +6·공중 +12, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회. 소수점 공격력은 중첩 합계를 반올림합니다. 기존 병과 교범과 합산해 최대 4중첩.",
+          "description": "레이스의 공격력이 중첩당 지상 +6·공중 +12, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회. 소수점 공격력은 중첩 합계를 반올림합니다. 서로 다른 교범의 강화는 합산됩니다.",
           "ordinal": 217,
           "index": 455,
           "storage": {
@@ -44694,7 +44755,8 @@
             "shift": 24,
             "width": 3
           }
-        }
+        },
+        "independent_manuals_stack": true
       },
       "bit_index": 455,
       "wire_storage": {
@@ -44781,7 +44843,7 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 218,
-        "qa_revision": 2026102038,
+        "qa_revision": 2026110302,
         "benefit_power_quarters": 4,
         "unit_growth": {
           "race": "terran",
@@ -44792,7 +44854,7 @@
           "kind": "health",
           "rarity": "common",
           "name": "드롭십 생존 교범",
-          "description": "드롭십의 최대 체력이 중첩당 28% 증가합니다. 최대 4회. 기존 병과 체력 교범과 합산해 최대 4중첩입니다.",
+          "description": "드롭십의 최대 체력이 중첩당 28% 증가합니다. 최대 4회. 서로 다른 교범의 강화는 합산됩니다.",
           "ordinal": 218,
           "index": 456,
           "storage": {
@@ -44802,7 +44864,8 @@
           }
         },
         "offer_retired": true,
-        "unit_manual_removed": true
+        "unit_manual_removed": true,
+        "independent_manuals_stack": true
       },
       "bit_index": 456,
       "wire_storage": {
@@ -44888,7 +44951,7 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 219,
-        "qa_revision": 2026102038,
+        "qa_revision": 2026110302,
         "benefit_power_quarters": 4,
         "unit_growth": {
           "race": "terran",
@@ -44900,7 +44963,7 @@
           "kind": "health",
           "rarity": "common",
           "name": "과학선 생존 교범",
-          "description": "과학선의 최대 체력이 중첩당 28% 증가합니다. 최대 4회. 기존 병과 체력 교범과 합산해 최대 4중첩입니다.",
+          "description": "과학선의 최대 체력이 중첩당 28% 증가합니다. 최대 4회. 서로 다른 교범의 강화는 합산됩니다.",
           "ordinal": 219,
           "index": 457,
           "storage": {
@@ -44908,7 +44971,8 @@
             "shift": 0,
             "width": 3
           }
-        }
+        },
+        "independent_manuals_stack": true
       },
       "bit_index": 457,
       "wire_storage": {
@@ -44998,7 +45062,7 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 220,
-        "qa_revision": 2026102038,
+        "qa_revision": 2026110302,
         "benefit_power_quarters": 4,
         "unit_growth": {
           "race": "terran",
@@ -45013,7 +45077,7 @@
           "kind": "health",
           "rarity": "common",
           "name": "배틀크루저 생존 교범",
-          "description": "배틀크루저의 최대 체력이 중첩당 28% 증가합니다. 최대 4회. 기존 병과 체력 교범과 합산해 최대 4중첩입니다.",
+          "description": "배틀크루저의 최대 체력이 중첩당 28% 증가합니다. 최대 4회. 서로 다른 교범의 강화는 합산됩니다.",
           "ordinal": 220,
           "index": 458,
           "storage": {
@@ -45021,7 +45085,8 @@
             "shift": 3,
             "width": 3
           }
-        }
+        },
+        "independent_manuals_stack": true
       },
       "bit_index": 458,
       "wire_storage": {
@@ -45114,7 +45179,7 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 221,
-        "qa_revision": 2026102038,
+        "qa_revision": 2026110302,
         "benefit_power_quarters": 4,
         "unit_growth": {
           "race": "terran",
@@ -45130,7 +45195,7 @@
           "rarity": "common",
           "name": "배틀크루저 화력 교범",
           "parent": 31,
-          "description": "배틀크루저의 공격력이 중첩당 +6, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회. 소수점 공격력은 중첩 합계를 반올림합니다. 기존 병과 교범과 합산해 최대 4중첩.",
+          "description": "배틀크루저의 공격력이 중첩당 +6, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회. 소수점 공격력은 중첩 합계를 반올림합니다. 서로 다른 교범의 강화는 합산됩니다.",
           "ordinal": 221,
           "index": 459,
           "storage": {
@@ -45138,7 +45203,8 @@
             "shift": 6,
             "width": 3
           }
-        }
+        },
+        "independent_manuals_stack": true
       },
       "bit_index": 459,
       "wire_storage": {
@@ -45228,7 +45294,7 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 222,
-        "qa_revision": 2026102038,
+        "qa_revision": 2026110302,
         "benefit_power_quarters": 4,
         "unit_growth": {
           "race": "terran",
@@ -45239,7 +45305,7 @@
           "kind": "health",
           "rarity": "common",
           "name": "발키리 생존 교범",
-          "description": "발키리의 최대 체력이 중첩당 28% 증가합니다. 최대 4회. 기존 병과 체력 교범과 합산해 최대 4중첩입니다.",
+          "description": "발키리의 최대 체력이 중첩당 28% 증가합니다. 최대 4회. 서로 다른 교범의 강화는 합산됩니다.",
           "ordinal": 222,
           "index": 460,
           "storage": {
@@ -45247,7 +45313,8 @@
             "shift": 9,
             "width": 3
           }
-        }
+        },
+        "independent_manuals_stack": true
       },
       "bit_index": 460,
       "wire_storage": {
@@ -45332,7 +45399,7 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 223,
-        "qa_revision": 2026102489,
+        "qa_revision": 2026110302,
         "benefit_power_quarters": 4,
         "unit_growth": {
           "race": "terran",
@@ -45354,7 +45421,8 @@
           }
         },
         "damage_per_missile_per_rank": 1,
-        "attack_interval_reduction_percent_per_rank": 4.5
+        "attack_interval_reduction_percent_per_rank": 4.5,
+        "independent_manuals_stack": true
       },
       "bit_index": 461,
       "wire_storage": {
@@ -45440,7 +45508,7 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 224,
-        "qa_revision": 2026102038,
+        "qa_revision": 2026110302,
         "benefit_power_quarters": 4,
         "unit_growth": {
           "race": "zerg",
@@ -45451,7 +45519,7 @@
           "kind": "health",
           "rarity": "common",
           "name": "드론 생존 교범",
-          "description": "드론의 최대 체력이 중첩당 28% 증가합니다. 최대 4회. 기존 병과 체력 교범과 합산해 최대 4중첩입니다.",
+          "description": "드론의 최대 체력이 중첩당 28% 증가합니다. 최대 4회. 서로 다른 교범의 강화는 합산됩니다.",
           "ordinal": 224,
           "index": 462,
           "storage": {
@@ -45459,7 +45527,8 @@
             "shift": 15,
             "width": 3
           }
-        }
+        },
+        "independent_manuals_stack": true
       },
       "bit_index": 462,
       "wire_storage": {
@@ -45550,7 +45619,7 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 225,
-        "qa_revision": 2026102038,
+        "qa_revision": 2026110302,
         "benefit_power_quarters": 4,
         "unit_growth": {
           "race": "zerg",
@@ -45562,7 +45631,7 @@
           "rarity": "common",
           "name": "드론 화력 교범",
           "parent": 72,
-          "description": "드론의 공격력이 중첩당 +3, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회. 소수점 공격력은 중첩 합계를 반올림합니다. 기존 병과 교범과 합산해 최대 4중첩.",
+          "description": "드론의 공격력이 중첩당 +3, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회. 소수점 공격력은 중첩 합계를 반올림합니다. 서로 다른 교범의 강화는 합산됩니다.",
           "ordinal": 225,
           "index": 463,
           "storage": {
@@ -45572,7 +45641,8 @@
           }
         },
         "offer_retired": true,
-        "unit_manual_removed": true
+        "unit_manual_removed": true,
+        "independent_manuals_stack": true
       },
       "bit_index": 463,
       "wire_storage": {
@@ -45665,7 +45735,7 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 226,
-        "qa_revision": 2026102038,
+        "qa_revision": 2026110302,
         "benefit_power_quarters": 4,
         "unit_growth": {
           "race": "zerg",
@@ -45677,7 +45747,7 @@
           "kind": "health",
           "rarity": "common",
           "name": "오버로드 생존 교범",
-          "description": "오버로드의 최대 체력이 중첩당 28% 증가합니다. 최대 4회. 기존 병과 체력 교범과 합산해 최대 4중첩입니다.",
+          "description": "오버로드의 최대 체력이 중첩당 28% 증가합니다. 최대 4회. 서로 다른 교범의 강화는 합산됩니다.",
           "ordinal": 226,
           "index": 464,
           "storage": {
@@ -45687,7 +45757,8 @@
           }
         },
         "offer_retired": true,
-        "unit_manual_removed": true
+        "unit_manual_removed": true,
+        "independent_manuals_stack": true
       },
       "bit_index": 464,
       "wire_storage": {
@@ -45780,7 +45851,7 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 227,
-        "qa_revision": 2026102038,
+        "qa_revision": 2026110302,
         "benefit_power_quarters": 4,
         "unit_growth": {
           "race": "zerg",
@@ -45792,7 +45863,7 @@
           "kind": "health",
           "rarity": "common",
           "name": "저글링 생존 교범",
-          "description": "저글링의 최대 체력이 중첩당 28% 증가합니다. 최대 4회. 기존 병과 체력 교범과 합산해 최대 4중첩입니다.",
+          "description": "저글링의 최대 체력이 중첩당 28% 증가합니다. 최대 4회. 서로 다른 교범의 강화는 합산됩니다.",
           "ordinal": 227,
           "index": 465,
           "storage": {
@@ -45800,7 +45871,8 @@
             "shift": 24,
             "width": 3
           }
-        }
+        },
+        "independent_manuals_stack": true
       },
       "bit_index": 465,
       "wire_storage": {
@@ -45893,7 +45965,7 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 228,
-        "qa_revision": 2026102038,
+        "qa_revision": 2026110302,
         "benefit_power_quarters": 4,
         "unit_growth": {
           "race": "zerg",
@@ -45906,7 +45978,7 @@
           "rarity": "common",
           "name": "저글링 화력 교범",
           "parent": 70,
-          "description": "저글링의 공격력이 중첩당 +1.5, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회. 소수점 공격력은 중첩 합계를 반올림합니다. 기존 병과 교범과 합산해 최대 4중첩.",
+          "description": "저글링의 공격력이 중첩당 +1.5, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회. 소수점 공격력은 중첩 합계를 반올림합니다. 서로 다른 교범의 강화는 합산됩니다.",
           "ordinal": 228,
           "index": 466,
           "storage": {
@@ -45914,7 +45986,8 @@
             "shift": 27,
             "width": 3
           }
-        }
+        },
+        "independent_manuals_stack": true
       },
       "bit_index": 466,
       "wire_storage": {
@@ -46008,7 +46081,7 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 229,
-        "qa_revision": 2026102038,
+        "qa_revision": 2026110302,
         "benefit_power_quarters": 4,
         "unit_growth": {
           "race": "zerg",
@@ -46020,7 +46093,7 @@
           "kind": "health",
           "rarity": "common",
           "name": "히드라리스크 생존 교범",
-          "description": "히드라리스크의 최대 체력이 중첩당 28% 증가합니다. 최대 4회. 기존 병과 체력 교범과 합산해 최대 4중첩입니다.",
+          "description": "히드라리스크의 최대 체력이 중첩당 28% 증가합니다. 최대 4회. 서로 다른 교범의 강화는 합산됩니다.",
           "ordinal": 229,
           "index": 467,
           "storage": {
@@ -46028,7 +46101,8 @@
             "shift": 0,
             "width": 3
           }
-        }
+        },
+        "independent_manuals_stack": true
       },
       "bit_index": 467,
       "wire_storage": {
@@ -46121,7 +46195,7 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 230,
-        "qa_revision": 2026102038,
+        "qa_revision": 2026110302,
         "benefit_power_quarters": 4,
         "unit_growth": {
           "race": "zerg",
@@ -46134,7 +46208,7 @@
           "rarity": "common",
           "name": "히드라리스크 화력 교범",
           "parent": 71,
-          "description": "히드라리스크의 공격력이 중첩당 +3, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회. 소수점 공격력은 중첩 합계를 반올림합니다. 기존 병과 교범과 합산해 최대 4중첩.",
+          "description": "히드라리스크의 공격력이 중첩당 +3, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회. 소수점 공격력은 중첩 합계를 반올림합니다. 서로 다른 교범의 강화는 합산됩니다.",
           "ordinal": 230,
           "index": 468,
           "storage": {
@@ -46142,7 +46216,8 @@
             "shift": 3,
             "width": 3
           }
-        }
+        },
+        "independent_manuals_stack": true
       },
       "bit_index": 468,
       "wire_storage": {
@@ -46235,7 +46310,7 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 231,
-        "qa_revision": 2026102038,
+        "qa_revision": 2026110302,
         "benefit_power_quarters": 4,
         "unit_growth": {
           "race": "zerg",
@@ -46246,7 +46321,7 @@
           "kind": "health",
           "rarity": "common",
           "name": "러커 생존 교범",
-          "description": "러커의 최대 체력이 중첩당 28% 증가합니다. 최대 4회. 기존 병과 체력 교범과 합산해 최대 4중첩입니다.",
+          "description": "러커의 최대 체력이 중첩당 28% 증가합니다. 최대 4회. 서로 다른 교범의 강화는 합산됩니다.",
           "ordinal": 231,
           "index": 469,
           "storage": {
@@ -46254,7 +46329,8 @@
             "shift": 6,
             "width": 3
           }
-        }
+        },
+        "independent_manuals_stack": true
       },
       "bit_index": 469,
       "wire_storage": {
@@ -46345,7 +46421,7 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 232,
-        "qa_revision": 2026102038,
+        "qa_revision": 2026110302,
         "benefit_power_quarters": 4,
         "unit_growth": {
           "race": "zerg",
@@ -46357,7 +46433,7 @@
           "rarity": "common",
           "name": "러커 화력 교범",
           "parent": 71,
-          "description": "러커의 공격력이 중첩당 +3, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회. 소수점 공격력은 중첩 합계를 반올림합니다. 기존 병과 교범과 합산해 최대 4중첩.",
+          "description": "러커의 공격력이 중첩당 +3, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회. 소수점 공격력은 중첩 합계를 반올림합니다. 서로 다른 교범의 강화는 합산됩니다.",
           "ordinal": 232,
           "index": 470,
           "storage": {
@@ -46365,7 +46441,8 @@
             "shift": 9,
             "width": 3
           }
-        }
+        },
+        "independent_manuals_stack": true
       },
       "bit_index": 470,
       "wire_storage": {
@@ -46458,7 +46535,7 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 233,
-        "qa_revision": 2026102038,
+        "qa_revision": 2026110302,
         "benefit_power_quarters": 4,
         "unit_growth": {
           "race": "zerg",
@@ -46470,7 +46547,7 @@
           "kind": "health",
           "rarity": "common",
           "name": "울트라리스크 생존 교범",
-          "description": "울트라리스크의 최대 체력이 중첩당 28% 증가합니다. 최대 4회. 기존 병과 체력 교범과 합산해 최대 4중첩입니다.",
+          "description": "울트라리스크의 최대 체력이 중첩당 28% 증가합니다. 최대 4회. 서로 다른 교범의 강화는 합산됩니다.",
           "ordinal": 233,
           "index": 471,
           "storage": {
@@ -46478,7 +46555,8 @@
             "shift": 12,
             "width": 3
           }
-        }
+        },
+        "independent_manuals_stack": true
       },
       "bit_index": 471,
       "wire_storage": {
@@ -46571,7 +46649,7 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 234,
-        "qa_revision": 2026102038,
+        "qa_revision": 2026110302,
         "benefit_power_quarters": 4,
         "unit_growth": {
           "race": "zerg",
@@ -46584,7 +46662,7 @@
           "rarity": "common",
           "name": "울트라리스크 화력 교범",
           "parent": 70,
-          "description": "울트라리스크의 공격력이 중첩당 +6, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회. 소수점 공격력은 중첩 합계를 반올림합니다. 기존 병과 교범과 합산해 최대 4중첩.",
+          "description": "울트라리스크의 공격력이 중첩당 +6, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회. 소수점 공격력은 중첩 합계를 반올림합니다. 서로 다른 교범의 강화는 합산됩니다.",
           "ordinal": 234,
           "index": 472,
           "storage": {
@@ -46592,7 +46670,8 @@
             "shift": 15,
             "width": 3
           }
-        }
+        },
+        "independent_manuals_stack": true
       },
       "bit_index": 472,
       "wire_storage": {
@@ -46686,7 +46765,7 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 235,
-        "qa_revision": 2026102038,
+        "qa_revision": 2026110302,
         "benefit_power_quarters": 4,
         "unit_growth": {
           "race": "zerg",
@@ -46698,7 +46777,7 @@
           "kind": "health",
           "rarity": "common",
           "name": "디파일러 생존 교범",
-          "description": "디파일러의 최대 체력이 중첩당 28% 증가합니다. 최대 4회. 기존 병과 체력 교범과 합산해 최대 4중첩입니다.",
+          "description": "디파일러의 최대 체력이 중첩당 28% 증가합니다. 최대 4회. 서로 다른 교범의 강화는 합산됩니다.",
           "ordinal": 235,
           "index": 473,
           "storage": {
@@ -46706,7 +46785,8 @@
             "shift": 18,
             "width": 3
           }
-        }
+        },
+        "independent_manuals_stack": true
       },
       "bit_index": 473,
       "wire_storage": {
@@ -46799,7 +46879,7 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 236,
-        "qa_revision": 2026102038,
+        "qa_revision": 2026110302,
         "benefit_power_quarters": 4,
         "unit_growth": {
           "race": "zerg",
@@ -46811,7 +46891,7 @@
           "kind": "health",
           "rarity": "common",
           "name": "퀸 생존 교범",
-          "description": "퀸의 최대 체력이 중첩당 28% 증가합니다. 최대 4회. 기존 병과 체력 교범과 합산해 최대 4중첩입니다.",
+          "description": "퀸의 최대 체력이 중첩당 28% 증가합니다. 최대 4회. 서로 다른 교범의 강화는 합산됩니다.",
           "ordinal": 236,
           "index": 474,
           "storage": {
@@ -46819,7 +46899,8 @@
             "shift": 21,
             "width": 3
           }
-        }
+        },
+        "independent_manuals_stack": true
       },
       "bit_index": 474,
       "wire_storage": {
@@ -46912,7 +46993,7 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 237,
-        "qa_revision": 2026102038,
+        "qa_revision": 2026110302,
         "benefit_power_quarters": 4,
         "unit_growth": {
           "race": "zerg",
@@ -46924,7 +47005,7 @@
           "kind": "health",
           "rarity": "common",
           "name": "뮤탈리스크 생존 교범",
-          "description": "뮤탈리스크의 최대 체력이 중첩당 28% 증가합니다. 최대 4회. 기존 병과 체력 교범과 합산해 최대 4중첩입니다.",
+          "description": "뮤탈리스크의 최대 체력이 중첩당 28% 증가합니다. 최대 4회. 서로 다른 교범의 강화는 합산됩니다.",
           "ordinal": 237,
           "index": 475,
           "storage": {
@@ -46932,7 +47013,8 @@
             "shift": 24,
             "width": 3
           }
-        }
+        },
+        "independent_manuals_stack": true
       },
       "bit_index": 475,
       "wire_storage": {
@@ -47025,7 +47107,7 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 238,
-        "qa_revision": 2026102699,
+        "qa_revision": 2026110302,
         "benefit_power_quarters": 4,
         "unit_growth": {
           "race": "zerg",
@@ -47038,7 +47120,7 @@
           "rarity": "common",
           "name": "뮤탈리스크 화력 교범",
           "parent": 72,
-          "description": "뮤탈리스크의 공격력이 중첩당 +5, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회. 소수점 공격력은 중첩 합계를 반올림합니다. 기존 병과 교범과 합산해 최대 4중첩.",
+          "description": "뮤탈리스크의 공격력이 중첩당 +5, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회. 소수점 공격력은 중첩 합계를 반올림합니다. 서로 다른 교범의 강화는 합산됩니다.",
           "ordinal": 238,
           "index": 476,
           "storage": {
@@ -47047,7 +47129,8 @@
             "width": 3
           }
         },
-        "attack_per_rank": 5
+        "attack_per_rank": 5,
+        "independent_manuals_stack": true
       },
       "bit_index": 476,
       "wire_storage": {
@@ -47141,7 +47224,7 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 239,
-        "qa_revision": 2026102038,
+        "qa_revision": 2026110302,
         "benefit_power_quarters": 4,
         "unit_growth": {
           "race": "zerg",
@@ -47153,7 +47236,7 @@
           "kind": "health",
           "rarity": "common",
           "name": "가디언 생존 교범",
-          "description": "가디언의 최대 체력이 중첩당 28% 증가합니다. 최대 4회. 기존 병과 체력 교범과 합산해 최대 4중첩입니다.",
+          "description": "가디언의 최대 체력이 중첩당 28% 증가합니다. 최대 4회. 서로 다른 교범의 강화는 합산됩니다.",
           "ordinal": 239,
           "index": 477,
           "storage": {
@@ -47161,7 +47244,8 @@
             "shift": 0,
             "width": 3
           }
-        }
+        },
+        "independent_manuals_stack": true
       },
       "bit_index": 477,
       "wire_storage": {
@@ -47254,7 +47338,7 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 240,
-        "qa_revision": 2026102038,
+        "qa_revision": 2026110302,
         "benefit_power_quarters": 4,
         "unit_growth": {
           "race": "zerg",
@@ -47267,7 +47351,7 @@
           "rarity": "common",
           "name": "가디언 화력 교범",
           "parent": 72,
-          "description": "가디언의 공격력이 중첩당 +6, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회. 소수점 공격력은 중첩 합계를 반올림합니다. 기존 병과 교범과 합산해 최대 4중첩.",
+          "description": "가디언의 공격력이 중첩당 +6, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회. 소수점 공격력은 중첩 합계를 반올림합니다. 서로 다른 교범의 강화는 합산됩니다.",
           "ordinal": 240,
           "index": 478,
           "storage": {
@@ -47275,7 +47359,8 @@
             "shift": 3,
             "width": 3
           }
-        }
+        },
+        "independent_manuals_stack": true
       },
       "bit_index": 478,
       "wire_storage": {
@@ -47368,7 +47453,7 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 241,
-        "qa_revision": 2026102038,
+        "qa_revision": 2026110302,
         "benefit_power_quarters": 4,
         "unit_growth": {
           "race": "zerg",
@@ -47379,7 +47464,7 @@
           "kind": "health",
           "rarity": "common",
           "name": "디바우러 생존 교범",
-          "description": "디바우러의 최대 체력이 중첩당 28% 증가합니다. 최대 4회. 기존 병과 체력 교범과 합산해 최대 4중첩입니다.",
+          "description": "디바우러의 최대 체력이 중첩당 28% 증가합니다. 최대 4회. 서로 다른 교범의 강화는 합산됩니다.",
           "ordinal": 241,
           "index": 479,
           "storage": {
@@ -47387,7 +47472,8 @@
             "shift": 6,
             "width": 3
           }
-        }
+        },
+        "independent_manuals_stack": true
       },
       "bit_index": 479,
       "wire_storage": {
@@ -47478,7 +47564,7 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 242,
-        "qa_revision": 2026102038,
+        "qa_revision": 2026110302,
         "benefit_power_quarters": 4,
         "unit_growth": {
           "race": "zerg",
@@ -47490,7 +47576,7 @@
           "rarity": "common",
           "name": "디바우러 화력 교범",
           "parent": 72,
-          "description": "디바우러의 공격력이 중첩당 +3, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회. 소수점 공격력은 중첩 합계를 반올림합니다. 기존 병과 교범과 합산해 최대 4중첩.",
+          "description": "디바우러의 공격력이 중첩당 +3, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회. 소수점 공격력은 중첩 합계를 반올림합니다. 서로 다른 교범의 강화는 합산됩니다.",
           "ordinal": 242,
           "index": 480,
           "storage": {
@@ -47498,7 +47584,8 @@
             "shift": 9,
             "width": 3
           }
-        }
+        },
+        "independent_manuals_stack": true
       },
       "bit_index": 480,
       "wire_storage": {
@@ -47590,7 +47677,7 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 243,
-        "qa_revision": 2026102038,
+        "qa_revision": 2026110302,
         "benefit_power_quarters": 4,
         "unit_growth": {
           "race": "zerg",
@@ -47601,7 +47688,7 @@
           "kind": "health",
           "rarity": "common",
           "name": "스커지 생존 교범",
-          "description": "스커지의 최대 체력이 중첩당 28% 증가합니다. 최대 4회. 기존 병과 체력 교범과 합산해 최대 4중첩입니다.",
+          "description": "스커지의 최대 체력이 중첩당 28% 증가합니다. 최대 4회. 서로 다른 교범의 강화는 합산됩니다.",
           "ordinal": 243,
           "index": 481,
           "storage": {
@@ -47609,7 +47696,8 @@
             "shift": 12,
             "width": 3
           }
-        }
+        },
+        "independent_manuals_stack": true
       },
       "bit_index": 481,
       "wire_storage": {
@@ -47695,12 +47783,12 @@
       "target_units": [
         47
       ],
-      "description": "스커지의 공격력이 중첩당 +3, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회.",
+      "description": "스커지의 자폭 공격력이 중첩당 +30 증가합니다. 최대 4회로 총 +120.",
       "source_description": "스커지의 공격력이 중첩당 +3, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회. 소수점 공격력은 중첩 합계를 반올림합니다. 기존 병과 교범과 합산해 최대 4중첩.",
       "effect": {
         "type": "rework_v5",
         "ordinal": 244,
-        "qa_revision": 2026102038,
+        "qa_revision": 2026110302,
         "benefit_power_quarters": 4,
         "unit_growth": {
           "race": "zerg",
@@ -47712,7 +47800,7 @@
           "rarity": "common",
           "name": "스커지 화력 교범",
           "parent": 72,
-          "description": "스커지의 공격력이 중첩당 +3, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회. 소수점 공격력은 중첩 합계를 반올림합니다. 기존 병과 교범과 합산해 최대 4중첩.",
+          "description": "스커지의 자폭 공격력이 중첩당 +30 증가합니다. 최대 4회로 총 +120.",
           "ordinal": 244,
           "index": 482,
           "storage": {
@@ -47720,7 +47808,9 @@
             "shift": 15,
             "width": 3
           }
-        }
+        },
+        "attack_per_rank": 30,
+        "independent_manuals_stack": true
       },
       "bit_index": 482,
       "wire_storage": {
@@ -47807,12 +47897,12 @@
       "target_units": [
         50
       ],
-      "description": "감염된 테란의 최대 체력이 중첩당 28% 증가합니다. 최대 4회.",
+      "description": "삭제된 재능입니다. 더 이상 선택하거나 효과를 받을 수 없습니다.",
       "source_description": "감염된 테란의 최대 체력이 중첩당 28% 증가합니다. 최대 4회. 기존 병과 체력 교범과 합산해 최대 4중첩입니다.",
       "effect": {
         "type": "rework_v5",
         "ordinal": 245,
-        "qa_revision": 2026102038,
+        "qa_revision": 2026110302,
         "benefit_power_quarters": 4,
         "unit_growth": {
           "race": "zerg",
@@ -47831,7 +47921,10 @@
             "shift": 18,
             "width": 3
           }
-        }
+        },
+        "retired": true,
+        "runtime_disabled": true,
+        "offer_retired": true
       },
       "bit_index": 483,
       "wire_storage": {
@@ -47904,9 +47997,7 @@
           }
         }
       },
-      "max_rank": 4,
-      "effect_subject": "감염된 테란",
-      "description_revision": 2026102042
+      "max_rank": 4
     },
     {
       "id": "29159da3-496c-5d74-996b-1ced305f5224",
@@ -47917,12 +48008,12 @@
       "target_units": [
         50
       ],
-      "description": "감염된 테란의 공격력이 중첩당 +60, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회.",
+      "description": "삭제된 재능입니다. 더 이상 선택하거나 효과를 받을 수 없습니다.",
       "source_description": "감염된 테란의 공격력이 중첩당 +60, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회. 소수점 공격력은 중첩 합계를 반올림합니다. 기존 병과 교범과 합산해 최대 4중첩.",
       "effect": {
         "type": "rework_v5",
         "ordinal": 246,
-        "qa_revision": 2026102038,
+        "qa_revision": 2026110302,
         "benefit_power_quarters": 4,
         "unit_growth": {
           "race": "zerg",
@@ -47942,7 +48033,10 @@
             "shift": 21,
             "width": 3
           }
-        }
+        },
+        "retired": true,
+        "runtime_disabled": true,
+        "offer_retired": true
       },
       "bit_index": 484,
       "wire_storage": {
@@ -48016,9 +48110,7 @@
           }
         }
       },
-      "max_rank": 4,
-      "effect_subject": "감염된 테란",
-      "description_revision": 2026102042
+      "max_rank": 4
     },
     {
       "id": "180302df-1755-5337-82e2-c9652ac98ba5",
@@ -48034,7 +48126,7 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 247,
-        "qa_revision": 2026102038,
+        "qa_revision": 2026110302,
         "benefit_power_quarters": 4,
         "unit_growth": {
           "race": "zerg",
@@ -48045,7 +48137,7 @@
           "kind": "health",
           "rarity": "common",
           "name": "브루드링 생존 교범",
-          "description": "브루드링의 최대 체력이 중첩당 28% 증가합니다. 최대 4회. 기존 병과 체력 교범과 합산해 최대 4중첩입니다.",
+          "description": "브루드링의 최대 체력이 중첩당 28% 증가합니다. 최대 4회. 서로 다른 교범의 강화는 합산됩니다.",
           "ordinal": 247,
           "index": 485,
           "storage": {
@@ -48053,7 +48145,8 @@
             "shift": 24,
             "width": 3
           }
-        }
+        },
+        "independent_manuals_stack": true
       },
       "bit_index": 485,
       "wire_storage": {
@@ -48144,7 +48237,7 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 248,
-        "qa_revision": 2026102038,
+        "qa_revision": 2026110302,
         "benefit_power_quarters": 4,
         "unit_growth": {
           "race": "zerg",
@@ -48156,7 +48249,7 @@
           "rarity": "common",
           "name": "브루드링 화력 교범",
           "parent": 70,
-          "description": "브루드링의 공격력이 중첩당 +1.5, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회. 소수점 공격력은 중첩 합계를 반올림합니다. 기존 병과 교범과 합산해 최대 4중첩.",
+          "description": "브루드링의 공격력이 중첩당 +1.5, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회. 소수점 공격력은 중첩 합계를 반올림합니다. 서로 다른 교범의 강화는 합산됩니다.",
           "ordinal": 248,
           "index": 486,
           "storage": {
@@ -48164,7 +48257,8 @@
             "shift": 27,
             "width": 3
           }
-        }
+        },
+        "independent_manuals_stack": true
       },
       "bit_index": 486,
       "wire_storage": {
@@ -48256,7 +48350,7 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 249,
-        "qa_revision": 2026102038,
+        "qa_revision": 2026110302,
         "benefit_power_quarters": 4,
         "unit_growth": {
           "race": "protoss",
@@ -48267,7 +48361,7 @@
           "kind": "health",
           "rarity": "common",
           "name": "프로브 생존 교범",
-          "description": "프로브의 최대 체력·최대 보호막이 중첩당 28% 증가합니다. 최대 4회. 기존 병과 체력 교범과 합산해 최대 4중첩입니다.",
+          "description": "프로브의 최대 체력·최대 보호막이 중첩당 28% 증가합니다. 최대 4회. 서로 다른 교범의 강화는 합산됩니다.",
           "ordinal": 249,
           "index": 487,
           "storage": {
@@ -48275,7 +48369,8 @@
             "shift": 0,
             "width": 3
           }
-        }
+        },
+        "independent_manuals_stack": true
       },
       "bit_index": 487,
       "wire_storage": {
@@ -48360,7 +48455,7 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 250,
-        "qa_revision": 2026102038,
+        "qa_revision": 2026110302,
         "benefit_power_quarters": 4,
         "unit_growth": {
           "race": "protoss",
@@ -48372,7 +48467,7 @@
           "rarity": "common",
           "name": "프로브 화력 교범",
           "parent": 112,
-          "description": "프로브의 공격력이 중첩당 +3, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회. 소수점 공격력은 중첩 합계를 반올림합니다. 기존 병과 교범과 합산해 최대 4중첩.",
+          "description": "프로브의 공격력이 중첩당 +3, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회. 소수점 공격력은 중첩 합계를 반올림합니다. 서로 다른 교범의 강화는 합산됩니다.",
           "ordinal": 250,
           "index": 488,
           "storage": {
@@ -48382,7 +48477,8 @@
           }
         },
         "offer_retired": true,
-        "unit_manual_removed": true
+        "unit_manual_removed": true,
+        "independent_manuals_stack": true
       },
       "bit_index": 488,
       "wire_storage": {
@@ -48469,7 +48565,7 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 251,
-        "qa_revision": 2026102038,
+        "qa_revision": 2026110302,
         "benefit_power_quarters": 4,
         "unit_growth": {
           "race": "protoss",
@@ -48481,7 +48577,7 @@
           "kind": "health",
           "rarity": "common",
           "name": "질럿 생존 교범",
-          "description": "질럿의 최대 체력·최대 보호막이 중첩당 28% 증가합니다. 최대 4회. 기존 병과 체력 교범과 합산해 최대 4중첩입니다.",
+          "description": "질럿의 최대 체력·최대 보호막이 중첩당 28% 증가합니다. 최대 4회. 서로 다른 교범의 강화는 합산됩니다.",
           "ordinal": 251,
           "index": 489,
           "storage": {
@@ -48489,7 +48585,8 @@
             "shift": 6,
             "width": 3
           }
-        }
+        },
+        "independent_manuals_stack": true
       },
       "bit_index": 489,
       "wire_storage": {
@@ -48576,7 +48673,7 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 252,
-        "qa_revision": 2026102038,
+        "qa_revision": 2026110302,
         "benefit_power_quarters": 4,
         "unit_growth": {
           "race": "protoss",
@@ -48589,7 +48686,7 @@
           "rarity": "common",
           "name": "질럿 화력 교범",
           "parent": 111,
-          "description": "질럿의 공격력이 중첩당 +1.5, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회. 소수점 공격력은 중첩 합계를 반올림합니다. 기존 병과 교범과 합산해 최대 4중첩.",
+          "description": "질럿의 공격력이 중첩당 +1.5, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회. 소수점 공격력은 중첩 합계를 반올림합니다. 서로 다른 교범의 강화는 합산됩니다.",
           "ordinal": 252,
           "index": 490,
           "storage": {
@@ -48597,7 +48694,8 @@
             "shift": 9,
             "width": 3
           }
-        }
+        },
+        "independent_manuals_stack": true
       },
       "bit_index": 490,
       "wire_storage": {
@@ -48685,7 +48783,7 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 253,
-        "qa_revision": 2026102038,
+        "qa_revision": 2026110302,
         "benefit_power_quarters": 4,
         "unit_growth": {
           "race": "protoss",
@@ -48697,7 +48795,7 @@
           "kind": "health",
           "rarity": "common",
           "name": "드라군 생존 교범",
-          "description": "드라군의 최대 체력·최대 보호막이 중첩당 28% 증가합니다. 최대 4회. 기존 병과 체력 교범과 합산해 최대 4중첩입니다.",
+          "description": "드라군의 최대 체력·최대 보호막이 중첩당 28% 증가합니다. 최대 4회. 서로 다른 교범의 강화는 합산됩니다.",
           "ordinal": 253,
           "index": 491,
           "storage": {
@@ -48705,7 +48803,8 @@
             "shift": 12,
             "width": 3
           }
-        }
+        },
+        "independent_manuals_stack": true
       },
       "bit_index": 491,
       "wire_storage": {
@@ -48792,7 +48891,7 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 254,
-        "qa_revision": 2026102038,
+        "qa_revision": 2026110302,
         "benefit_power_quarters": 4,
         "unit_growth": {
           "race": "protoss",
@@ -48805,7 +48904,7 @@
           "rarity": "common",
           "name": "드라군 화력 교범",
           "parent": 111,
-          "description": "드라군의 공격력이 중첩당 +3, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회. 소수점 공격력은 중첩 합계를 반올림합니다. 기존 병과 교범과 합산해 최대 4중첩.",
+          "description": "드라군의 공격력이 중첩당 +3, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회. 소수점 공격력은 중첩 합계를 반올림합니다. 서로 다른 교범의 강화는 합산됩니다.",
           "ordinal": 254,
           "index": 492,
           "storage": {
@@ -48813,7 +48912,8 @@
             "shift": 15,
             "width": 3
           }
-        }
+        },
+        "independent_manuals_stack": true
       },
       "bit_index": 492,
       "wire_storage": {
@@ -48901,7 +49001,7 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 255,
-        "qa_revision": 2026102038,
+        "qa_revision": 2026110302,
         "benefit_power_quarters": 4,
         "unit_growth": {
           "race": "protoss",
@@ -48913,7 +49013,7 @@
           "kind": "health",
           "rarity": "common",
           "name": "하이 템플러 생존 교범",
-          "description": "하이 템플러의 최대 체력·최대 보호막이 중첩당 28% 증가합니다. 최대 4회. 기존 병과 체력 교범과 합산해 최대 4중첩입니다.",
+          "description": "하이 템플러의 최대 체력·최대 보호막이 중첩당 28% 증가합니다. 최대 4회. 서로 다른 교범의 강화는 합산됩니다.",
           "ordinal": 255,
           "index": 493,
           "storage": {
@@ -48921,7 +49021,8 @@
             "shift": 18,
             "width": 3
           }
-        }
+        },
+        "independent_manuals_stack": true
       },
       "bit_index": 493,
       "wire_storage": {
@@ -49009,7 +49110,7 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 256,
-        "qa_revision": 2026102038,
+        "qa_revision": 2026110302,
         "benefit_power_quarters": 4,
         "unit_growth": {
           "race": "protoss",
@@ -49022,7 +49123,7 @@
           "kind": "health",
           "rarity": "common",
           "name": "다크 템플러 생존 교범",
-          "description": "다크 템플러의 최대 체력·최대 보호막이 중첩당 28% 증가합니다. 최대 4회. 기존 병과 체력 교범과 합산해 최대 4중첩입니다.",
+          "description": "다크 템플러의 최대 체력·최대 보호막이 중첩당 28% 증가합니다. 최대 4회. 서로 다른 교범의 강화는 합산됩니다.",
           "ordinal": 256,
           "index": 494,
           "storage": {
@@ -49030,7 +49131,8 @@
             "shift": 21,
             "width": 3
           }
-        }
+        },
+        "independent_manuals_stack": true
       },
       "bit_index": 494,
       "wire_storage": {
@@ -49119,7 +49221,7 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 257,
-        "qa_revision": 2026102038,
+        "qa_revision": 2026110302,
         "benefit_power_quarters": 4,
         "unit_growth": {
           "race": "protoss",
@@ -49133,7 +49235,7 @@
           "rarity": "common",
           "name": "다크 템플러 화력 교범",
           "parent": 111,
-          "description": "다크 템플러의 공격력이 중첩당 +6, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회. 소수점 공격력은 중첩 합계를 반올림합니다. 기존 병과 교범과 합산해 최대 4중첩.",
+          "description": "다크 템플러의 공격력이 중첩당 +6, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회. 소수점 공격력은 중첩 합계를 반올림합니다. 서로 다른 교범의 강화는 합산됩니다.",
           "ordinal": 257,
           "index": 495,
           "storage": {
@@ -49141,7 +49243,8 @@
             "shift": 24,
             "width": 3
           }
-        }
+        },
+        "independent_manuals_stack": true
       },
       "bit_index": 495,
       "wire_storage": {
@@ -49230,7 +49333,7 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 258,
-        "qa_revision": 2026102038,
+        "qa_revision": 2026110302,
         "benefit_power_quarters": 4,
         "unit_growth": {
           "race": "protoss",
@@ -49242,7 +49345,7 @@
           "kind": "health",
           "rarity": "common",
           "name": "아콘 생존 교범",
-          "description": "아콘의 최대 체력·최대 보호막이 중첩당 28% 증가합니다. 최대 4회. 기존 병과 체력 교범과 합산해 최대 4중첩입니다.",
+          "description": "아콘의 최대 체력·최대 보호막이 중첩당 28% 증가합니다. 최대 4회. 서로 다른 교범의 강화는 합산됩니다.",
           "ordinal": 258,
           "index": 496,
           "storage": {
@@ -49250,7 +49353,8 @@
             "shift": 27,
             "width": 3
           }
-        }
+        },
+        "independent_manuals_stack": true
       },
       "bit_index": 496,
       "wire_storage": {
@@ -49337,7 +49441,7 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 259,
-        "qa_revision": 2026102038,
+        "qa_revision": 2026110302,
         "benefit_power_quarters": 4,
         "unit_growth": {
           "race": "protoss",
@@ -49350,7 +49454,7 @@
           "rarity": "common",
           "name": "아콘 화력 교범",
           "parent": 111,
-          "description": "아콘의 공격력이 중첩당 +6, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회. 소수점 공격력은 중첩 합계를 반올림합니다. 기존 병과 교범과 합산해 최대 4중첩.",
+          "description": "아콘의 공격력이 중첩당 +6, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회. 소수점 공격력은 중첩 합계를 반올림합니다. 서로 다른 교범의 강화는 합산됩니다.",
           "ordinal": 259,
           "index": 497,
           "storage": {
@@ -49358,7 +49462,8 @@
             "shift": 0,
             "width": 3
           }
-        }
+        },
+        "independent_manuals_stack": true
       },
       "bit_index": 497,
       "wire_storage": {
@@ -49445,7 +49550,7 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 260,
-        "qa_revision": 2026102038,
+        "qa_revision": 2026110302,
         "benefit_power_quarters": 4,
         "unit_growth": {
           "race": "protoss",
@@ -49456,7 +49561,7 @@
           "kind": "health",
           "rarity": "common",
           "name": "다크 아콘 생존 교범",
-          "description": "다크 아콘의 최대 체력·최대 보호막이 중첩당 28% 증가합니다. 최대 4회. 기존 병과 체력 교범과 합산해 최대 4중첩입니다.",
+          "description": "다크 아콘의 최대 체력·최대 보호막이 중첩당 28% 증가합니다. 최대 4회. 서로 다른 교범의 강화는 합산됩니다.",
           "ordinal": 260,
           "index": 498,
           "storage": {
@@ -49464,7 +49569,8 @@
             "shift": 3,
             "width": 3
           }
-        }
+        },
+        "independent_manuals_stack": true
       },
       "bit_index": 498,
       "wire_storage": {
@@ -49549,7 +49655,7 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 261,
-        "qa_revision": 2026102038,
+        "qa_revision": 2026110302,
         "benefit_power_quarters": 4,
         "unit_growth": {
           "race": "protoss",
@@ -49560,7 +49666,7 @@
           "kind": "health",
           "rarity": "common",
           "name": "셔틀 생존 교범",
-          "description": "셔틀의 최대 체력·최대 보호막이 중첩당 28% 증가합니다. 최대 4회. 기존 병과 체력 교범과 합산해 최대 4중첩입니다.",
+          "description": "셔틀의 최대 체력·최대 보호막이 중첩당 28% 증가합니다. 최대 4회. 서로 다른 교범의 강화는 합산됩니다.",
           "ordinal": 261,
           "index": 499,
           "storage": {
@@ -49570,7 +49676,8 @@
           }
         },
         "offer_retired": true,
-        "unit_manual_removed": true
+        "unit_manual_removed": true,
+        "independent_manuals_stack": true
       },
       "bit_index": 499,
       "wire_storage": {
@@ -49656,7 +49763,7 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 262,
-        "qa_revision": 2026102038,
+        "qa_revision": 2026110302,
         "benefit_power_quarters": 4,
         "unit_growth": {
           "race": "protoss",
@@ -49668,7 +49775,7 @@
           "kind": "health",
           "rarity": "common",
           "name": "리버 생존 교범",
-          "description": "리버의 최대 체력·최대 보호막이 중첩당 28% 증가합니다. 최대 4회. 기존 병과 체력 교범과 합산해 최대 4중첩입니다.",
+          "description": "리버의 최대 체력·최대 보호막이 중첩당 28% 증가합니다. 최대 4회. 서로 다른 교범의 강화는 합산됩니다.",
           "ordinal": 262,
           "index": 500,
           "storage": {
@@ -49676,7 +49783,8 @@
             "shift": 9,
             "width": 3
           }
-        }
+        },
+        "independent_manuals_stack": true
       },
       "bit_index": 500,
       "wire_storage": {
@@ -49763,7 +49871,7 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 263,
-        "qa_revision": 2026102038,
+        "qa_revision": 2026110302,
         "benefit_power_quarters": 4,
         "unit_growth": {
           "race": "protoss",
@@ -49776,7 +49884,7 @@
           "rarity": "common",
           "name": "리버 화력 교범",
           "parent": 111,
-          "description": "리버의 공격력이 중첩당 +15, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회. 소수점 공격력은 중첩 합계를 반올림합니다. 기존 병과 교범과 합산해 최대 4중첩. 모체·탄약 유닛 교범은 높은 쪽만 적용합니다.",
+          "description": "리버의 공격력이 중첩당 +15, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회. 소수점 공격력은 중첩 합계를 반올림합니다. 서로 다른 교범의 강화는 합산됩니다. 모체와 탄약 유닛의 공격 교범은 함께 적용됩니다.",
           "ordinal": 263,
           "index": 501,
           "storage": {
@@ -49784,7 +49892,8 @@
             "shift": 12,
             "width": 3
           }
-        }
+        },
+        "independent_manuals_stack": true
       },
       "bit_index": 501,
       "wire_storage": {
@@ -49866,12 +49975,12 @@
       "target_units": [
         85
       ],
-      "description": "스캐럽의 최대 체력·최대 보호막이 중첩당 28% 증가합니다. 최대 4회.",
+      "description": "삭제된 재능입니다. 더 이상 선택하거나 효과를 받을 수 없습니다.",
       "source_description": "스캐럽의 최대 체력·최대 보호막이 중첩당 28% 증가합니다. 최대 4회. 기존 병과 체력 교범과 합산해 최대 4중첩입니다.",
       "effect": {
         "type": "rework_v5",
         "ordinal": 264,
-        "qa_revision": 2026102038,
+        "qa_revision": 2026110302,
         "benefit_power_quarters": 4,
         "unit_growth": {
           "race": "protoss",
@@ -49890,7 +49999,10 @@
             "shift": 15,
             "width": 3
           }
-        }
+        },
+        "retired": true,
+        "runtime_disabled": true,
+        "offer_retired": true
       },
       "bit_index": 502,
       "wire_storage": {
@@ -49957,9 +50069,7 @@
           }
         }
       },
-      "max_rank": 4,
-      "effect_subject": "스캐럽",
-      "description_revision": 2026102042
+      "max_rank": 4
     },
     {
       "id": "0e071310-300d-5b18-8a82-38b4af565cbc",
@@ -49970,12 +50080,12 @@
       "target_units": [
         85
       ],
-      "description": "스캐럽의 공격력이 중첩당 +15, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회.",
+      "description": "삭제된 재능입니다. 더 이상 선택하거나 효과를 받을 수 없습니다.",
       "source_description": "스캐럽의 공격력이 중첩당 +15, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회. 소수점 공격력은 중첩 합계를 반올림합니다. 기존 병과 교범과 합산해 최대 4중첩. 모체·탄약 유닛 교범은 높은 쪽만 적용합니다.",
       "effect": {
         "type": "rework_v5",
         "ordinal": 265,
-        "qa_revision": 2026102038,
+        "qa_revision": 2026110302,
         "benefit_power_quarters": 4,
         "unit_growth": {
           "race": "protoss",
@@ -49995,7 +50105,10 @@
             "shift": 18,
             "width": 3
           }
-        }
+        },
+        "retired": true,
+        "runtime_disabled": true,
+        "offer_retired": true
       },
       "bit_index": 503,
       "wire_storage": {
@@ -50063,9 +50176,7 @@
           }
         }
       },
-      "max_rank": 4,
-      "effect_subject": "스캐럽",
-      "description_revision": 2026102042
+      "max_rank": 4
     },
     {
       "id": "45bfcb28-034b-510e-b2ff-f6aae9861607",
@@ -50083,7 +50194,7 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 266,
-        "qa_revision": 2026102038,
+        "qa_revision": 2026110302,
         "benefit_power_quarters": 4,
         "unit_growth": {
           "race": "protoss",
@@ -50096,7 +50207,7 @@
           "kind": "health",
           "rarity": "common",
           "name": "스카우트 생존 교범",
-          "description": "스카우트의 최대 체력·최대 보호막이 중첩당 28% 증가합니다. 최대 4회. 기존 병과 체력 교범과 합산해 최대 4중첩입니다.",
+          "description": "스카우트의 최대 체력·최대 보호막이 중첩당 28% 증가합니다. 최대 4회. 서로 다른 교범의 강화는 합산됩니다.",
           "ordinal": 266,
           "index": 504,
           "storage": {
@@ -50104,7 +50215,8 @@
             "shift": 21,
             "width": 3
           }
-        }
+        },
+        "independent_manuals_stack": true
       },
       "bit_index": 504,
       "wire_storage": {
@@ -50193,7 +50305,7 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 267,
-        "qa_revision": 2026102038,
+        "qa_revision": 2026110302,
         "benefit_power_quarters": 4,
         "unit_growth": {
           "race": "protoss",
@@ -50207,7 +50319,7 @@
           "rarity": "common",
           "name": "스카우트 화력 교범",
           "parent": 112,
-          "description": "스카우트의 공격력이 중첩당 지상 +6·공중 미사일 각각 +6(2발 합계 +12), 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회. 소수점 공격력은 중첩 합계를 반올림합니다. 기존 병과 교범과 합산해 최대 4중첩.",
+          "description": "스카우트의 공격력이 중첩당 지상 +6·공중 미사일 각각 +6(2발 합계 +12), 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회. 소수점 공격력은 중첩 합계를 반올림합니다. 서로 다른 교범의 강화는 합산됩니다.",
           "ordinal": 267,
           "index": 505,
           "storage": {
@@ -50215,7 +50327,8 @@
             "shift": 24,
             "width": 3
           }
-        }
+        },
+        "independent_manuals_stack": true
       },
       "bit_index": 505,
       "wire_storage": {
@@ -50304,7 +50417,7 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 268,
-        "qa_revision": 2026102038,
+        "qa_revision": 2026110302,
         "benefit_power_quarters": 4,
         "unit_growth": {
           "race": "protoss",
@@ -50316,7 +50429,7 @@
           "kind": "health",
           "rarity": "common",
           "name": "캐리어 생존 교범",
-          "description": "캐리어의 최대 체력·최대 보호막이 중첩당 28% 증가합니다. 최대 4회. 기존 병과 체력 교범과 합산해 최대 4중첩입니다.",
+          "description": "캐리어의 최대 체력·최대 보호막이 중첩당 28% 증가합니다. 최대 4회. 서로 다른 교범의 강화는 합산됩니다.",
           "ordinal": 268,
           "index": 506,
           "storage": {
@@ -50324,7 +50437,8 @@
             "shift": 27,
             "width": 3
           }
-        }
+        },
+        "independent_manuals_stack": true
       },
       "bit_index": 506,
       "wire_storage": {
@@ -50411,7 +50525,7 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 269,
-        "qa_revision": 2026102038,
+        "qa_revision": 2026110302,
         "benefit_power_quarters": 4,
         "unit_growth": {
           "race": "protoss",
@@ -50424,7 +50538,7 @@
           "rarity": "common",
           "name": "캐리어 화력 교범",
           "parent": 112,
-          "description": "캐리어의 공격력이 중첩당 인터셉터 +1, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회. 소수점 공격력은 중첩 합계를 반올림합니다. 기존 병과 교범과 합산해 최대 4중첩. 모체·탄약 유닛 교범은 높은 쪽만 적용합니다.",
+          "description": "캐리어의 공격력이 중첩당 인터셉터 +1, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회. 소수점 공격력은 중첩 합계를 반올림합니다. 서로 다른 교범의 강화는 합산됩니다. 모체와 탄약 유닛의 공격 교범은 함께 적용됩니다.",
           "ordinal": 269,
           "index": 507,
           "storage": {
@@ -50432,7 +50546,8 @@
             "shift": 21,
             "width": 3
           }
-        }
+        },
+        "independent_manuals_stack": true
       },
       "bit_index": 507,
       "wire_storage": {
@@ -50519,7 +50634,7 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 270,
-        "qa_revision": 2026102038,
+        "qa_revision": 2026110302,
         "benefit_power_quarters": 4,
         "unit_growth": {
           "race": "protoss",
@@ -50530,7 +50645,7 @@
           "kind": "health",
           "rarity": "common",
           "name": "인터셉터 생존 교범",
-          "description": "인터셉터의 최대 체력·최대 보호막이 중첩당 28% 증가합니다. 최대 4회. 기존 병과 체력 교범과 합산해 최대 4중첩입니다.",
+          "description": "인터셉터의 최대 체력·최대 보호막이 중첩당 28% 증가합니다. 최대 4회. 서로 다른 교범의 강화는 합산됩니다.",
           "ordinal": 270,
           "index": 508,
           "storage": {
@@ -50538,7 +50653,8 @@
             "shift": 24,
             "width": 3
           }
-        }
+        },
+        "independent_manuals_stack": true
       },
       "bit_index": 508,
       "wire_storage": {
@@ -50623,7 +50739,7 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 271,
-        "qa_revision": 2026102038,
+        "qa_revision": 2026110302,
         "benefit_power_quarters": 4,
         "unit_growth": {
           "race": "protoss",
@@ -50635,7 +50751,7 @@
           "rarity": "common",
           "name": "인터셉터 화력 교범",
           "parent": 112,
-          "description": "인터셉터의 공격력이 중첩당 +1, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회. 소수점 공격력은 중첩 합계를 반올림합니다. 기존 병과 교범과 합산해 최대 4중첩. 모체·탄약 유닛 교범은 높은 쪽만 적용합니다.",
+          "description": "인터셉터의 공격력이 중첩당 +1, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회. 소수점 공격력은 중첩 합계를 반올림합니다. 서로 다른 교범의 강화는 합산됩니다. 모체와 탄약 유닛의 공격 교범은 함께 적용됩니다.",
           "ordinal": 271,
           "index": 509,
           "storage": {
@@ -50643,7 +50759,8 @@
             "shift": 27,
             "width": 3
           }
-        }
+        },
+        "independent_manuals_stack": true
       },
       "bit_index": 509,
       "wire_storage": {
@@ -50730,7 +50847,7 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 272,
-        "qa_revision": 2026102038,
+        "qa_revision": 2026110302,
         "benefit_power_quarters": 4,
         "unit_growth": {
           "race": "protoss",
@@ -50742,7 +50859,7 @@
           "kind": "health",
           "rarity": "common",
           "name": "커세어 생존 교범",
-          "description": "커세어의 최대 체력·최대 보호막이 중첩당 28% 증가합니다. 최대 4회. 기존 병과 체력 교범과 합산해 최대 4중첩입니다.",
+          "description": "커세어의 최대 체력·최대 보호막이 중첩당 28% 증가합니다. 최대 4회. 서로 다른 교범의 강화는 합산됩니다.",
           "ordinal": 272,
           "index": 510,
           "storage": {
@@ -50750,7 +50867,8 @@
             "shift": 0,
             "width": 3
           }
-        }
+        },
+        "independent_manuals_stack": true
       },
       "bit_index": 510,
       "wire_storage": {
@@ -50837,7 +50955,7 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 273,
-        "qa_revision": 2026102038,
+        "qa_revision": 2026110302,
         "benefit_power_quarters": 4,
         "unit_growth": {
           "race": "protoss",
@@ -50850,7 +50968,7 @@
           "rarity": "common",
           "name": "커세어 화력 교범",
           "parent": 112,
-          "description": "커세어의 공격력이 중첩당 +3, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회. 소수점 공격력은 중첩 합계를 반올림합니다. 기존 병과 교범과 합산해 최대 4중첩.",
+          "description": "커세어의 공격력이 중첩당 +3, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회. 소수점 공격력은 중첩 합계를 반올림합니다. 서로 다른 교범의 강화는 합산됩니다.",
           "ordinal": 273,
           "index": 511,
           "storage": {
@@ -50858,7 +50976,8 @@
             "shift": 3,
             "width": 3
           }
-        }
+        },
+        "independent_manuals_stack": true
       },
       "bit_index": 511,
       "wire_storage": {
@@ -50946,7 +51065,7 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 274,
-        "qa_revision": 2026102038,
+        "qa_revision": 2026110302,
         "benefit_power_quarters": 4,
         "unit_growth": {
           "race": "protoss",
@@ -50958,7 +51077,7 @@
           "kind": "health",
           "rarity": "common",
           "name": "아비터 생존 교범",
-          "description": "아비터의 최대 체력·최대 보호막이 중첩당 28% 증가합니다. 최대 4회. 기존 병과 체력 교범과 합산해 최대 4중첩입니다.",
+          "description": "아비터의 최대 체력·최대 보호막이 중첩당 28% 증가합니다. 최대 4회. 서로 다른 교범의 강화는 합산됩니다.",
           "ordinal": 274,
           "index": 512,
           "storage": {
@@ -50966,7 +51085,8 @@
             "shift": 6,
             "width": 3
           }
-        }
+        },
+        "independent_manuals_stack": true
       },
       "bit_index": 512,
       "wire_storage": {
@@ -51053,7 +51173,7 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 275,
-        "qa_revision": 2026102038,
+        "qa_revision": 2026110302,
         "benefit_power_quarters": 4,
         "unit_growth": {
           "race": "protoss",
@@ -51066,7 +51186,7 @@
           "rarity": "common",
           "name": "아비터 화력 교범",
           "parent": 112,
-          "description": "아비터의 공격력이 중첩당 +3, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회. 소수점 공격력은 중첩 합계를 반올림합니다. 기존 병과 교범과 합산해 최대 4중첩.",
+          "description": "아비터의 공격력이 중첩당 +3, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회. 소수점 공격력은 중첩 합계를 반올림합니다. 서로 다른 교범의 강화는 합산됩니다.",
           "ordinal": 275,
           "index": 513,
           "storage": {
@@ -51074,7 +51194,8 @@
             "shift": 9,
             "width": 3
           }
-        }
+        },
+        "independent_manuals_stack": true
       },
       "bit_index": 513,
       "wire_storage": {
@@ -51161,7 +51282,7 @@
       "effect": {
         "type": "rework_v5",
         "ordinal": 276,
-        "qa_revision": 2026102038,
+        "qa_revision": 2026110302,
         "benefit_power_quarters": 4,
         "unit_growth": {
           "race": "protoss",
@@ -51172,7 +51293,7 @@
           "kind": "health",
           "rarity": "common",
           "name": "옵저버 생존 교범",
-          "description": "옵저버의 최대 체력·최대 보호막이 중첩당 28% 증가합니다. 최대 4회. 기존 병과 체력 교범과 합산해 최대 4중첩입니다.",
+          "description": "옵저버의 최대 체력·최대 보호막이 중첩당 28% 증가합니다. 최대 4회. 서로 다른 교범의 강화는 합산됩니다.",
           "ordinal": 276,
           "index": 514,
           "storage": {
@@ -51180,7 +51301,8 @@
             "shift": 12,
             "width": 3
           }
-        }
+        },
+        "independent_manuals_stack": true
       },
       "bit_index": 514,
       "wire_storage": {
@@ -51959,12 +52081,12 @@
       "target_units": [
         13
       ],
-      "description": "스파이더 마인 전용: 체력 방어력 +1, 이동 속도 +10%.",
+      "description": "삭제된 재능입니다. 더 이상 선택하거나 효과를 받을 수 없습니다.",
       "source_description": "스파이더 마인 전용: 체력 방어력 +1, 이동 속도 +10%. 1회 획득.",
       "effect": {
         "type": "rework_v5",
         "ordinal": 283,
-        "qa_revision": 2026102038,
+        "qa_revision": 2026110302,
         "benefit_power_quarters": 4,
         "unit_growth": {
           "race": "terran",
@@ -51988,7 +52110,10 @@
             "shift": 21,
             "width": 1
           }
-        }
+        },
+        "retired": true,
+        "runtime_disabled": true,
+        "offer_retired": true
       },
       "bit_index": 521,
       "wire_storage": {
@@ -54365,12 +54490,12 @@
       "target_units": [
         50
       ],
-      "description": "감염된 테란 전용: 체력 방어력 +2, 일반 공격 피해 +35%.",
+      "description": "삭제된 재능입니다. 더 이상 선택하거나 효과를 받을 수 없습니다.",
       "source_description": "감염된 테란 전용: 체력 방어력 +2, 일반 공격 피해 +35%. 1회 획득.",
       "effect": {
         "type": "rework_v5",
         "ordinal": 303,
-        "qa_revision": 2026102038,
+        "qa_revision": 2026110302,
         "benefit_power_quarters": 4,
         "unit_growth": {
           "race": "zerg",
@@ -54394,7 +54519,10 @@
             "shift": 9,
             "width": 1
           }
-        }
+        },
+        "retired": true,
+        "runtime_disabled": true,
+        "offer_retired": true
       },
       "bit_index": 541,
       "wire_storage": {
@@ -54471,9 +54599,7 @@
             "width": 1
           }
         }
-      },
-      "effect_subject": "감염된 테란",
-      "description_revision": 2026102042
+      }
     },
     {
       "id": "25f4e0de-ef21-572f-adbd-39d10235379e",
@@ -55643,12 +55769,12 @@
       "target_units": [
         85
       ],
-      "description": "스캐럽 전용: 최대 체력·보호막 +20%, 일반 공격 피해 +20%.",
+      "description": "삭제된 재능입니다. 더 이상 선택하거나 효과를 받을 수 없습니다.",
       "source_description": "스캐럽 전용: 최대 체력·보호막 +20%, 일반 공격 피해 +20%. 1회 획득.",
       "effect": {
         "type": "rework_v5",
         "ordinal": 314,
-        "qa_revision": 2026102038,
+        "qa_revision": 2026110302,
         "benefit_power_quarters": 4,
         "unit_growth": {
           "race": "protoss",
@@ -55672,7 +55798,10 @@
             "shift": 20,
             "width": 1
           }
-        }
+        },
+        "retired": true,
+        "runtime_disabled": true,
+        "offer_retired": true
       },
       "bit_index": 552,
       "wire_storage": {
@@ -55743,9 +55872,7 @@
             "width": 1
           }
         }
-      },
-      "effect_subject": "스캐럽",
-      "description_revision": 2026102042
+      }
     },
     {
       "id": "21c254fe-b7ae-5fae-b1fd-b658f129a782",
@@ -70152,12 +70279,12 @@
   "unit_growth_revision": 2026102038,
   "unit_growth_summary": {
     "unit_families": 44,
-    "health_manuals": 41,
-    "attack_manuals": 31,
-    "new_unit_traits": 42,
+    "health_manuals": 38,
+    "attack_manuals": 28,
+    "new_unit_traits": 39,
     "paired_unit_rewards": true
   },
-  "talent_retirement_revision": 2026102493,
+  "talent_retirement_revision": 2026110302,
   "legend_focus_revision": 2026102269,
   "single_target_legend_ordinals": [
     49,
@@ -70874,5 +71001,6 @@
     },
     "damage_per_level": 2,
     "requires_talent": false
-  }
+  },
+  "talent_synergy_revision": 2026110303
 }

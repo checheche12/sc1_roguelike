@@ -16,7 +16,7 @@ from . import resource_layout as rules,mining_layout_audit as mining
 from . import courtyard_resource_layout as court,corner_resource_layout as corner
 from . import main_base_gas as gas,ladder_resource_layout as ladder,addon_placement as addons
 
-VERSION='ladder_curved_bank_separate_gas_v2'
+VERSION='single_layer_balanced_depot_groups_v4'
 REFERENCE_MAPS={
  'Fighting Spirit 1.3':'f39df27cea359b06f0775cdc34d427150d40e9eb33cc688bfb10b6b5a29ca34d',
  'Polypoid 1.65':'0071bea653a4c8572b228576c380af9f7e71f4928135b061d0db9f0db738b5a7',
@@ -27,6 +27,52 @@ REFERENCE_MAPS={
 REFERENCE_EAST=((192,96),(192,128),(160,160),(224,64),(224,0),(192,-32),(192,-96),(192,32),(224,-64))
 MAX_DISPLACEMENT=1280
 GAS_MINERAL_GAP=48
+MINERAL_BANK_GAP=64
+
+
+def balanced_group_sizes(count):
+    """Keep every mineral; 19 becomes 9+10 and 33 becomes 11+11+11."""
+    groups=max(1,math.ceil(count/12))
+    return [count//groups+(i>=groups-count%groups) for i in range(groups)]
+
+
+def single_layer(points,center):
+    """One ordered front per side, never a second row behind another patch.
+
+    Cardinal fronts have nonoverlapping tangent footprints and at most one
+    outward bend. Corner arcs may turn onto the adjacent side of the depot.
+    A jagged sequence alternating between two rows fails the bend check.
+    """
+    sides=defaultdict(list)
+    for x,y in points:
+        dx,dy=x-center[0],y-center[1]
+        vertical=abs(dx)*160>=abs(dy)*192
+        side=(1 if dx>0 else -1,0) if vertical else (0,1 if dy>0 else -1)
+        sides[side].append((dy,abs(dx)) if vertical else (dx,abs(dy)))
+    for side,front in sides.items():
+        front.sort();pitch=32 if side[0] else 64
+        if any(z[0]-a[0]<pitch for a,z in zip(front,front[1:])):return False
+        descending=False
+        for a,z in zip(front,front[1:]):
+            if z[1]<a[1]:descending=True
+            if descending and z[1]>a[1]:return False
+    return True
+
+
+def minimum_arcs(count,center):
+    ax,ay=center;seen=set()
+    for phase in (0,32):
+        ring=([(x,-160) for x in range(-160+phase,161,64)]+
+              [(192,y) for y in range(-128,129,32)]+
+              [(x,160) for x in range(160-phase,-161,-64)]+
+              [(-192,y) for y in range(128,-129,-32)])
+        for start in range(len(ring)):
+            points=tuple((ax+ring[(start+i)%len(ring)][0],ay+ring[(start+i)%len(ring)][1]) for i in range(count))
+            signature=tuple(sorted(points))
+            if signature not in seen and curved_bank(points)['passed'] and single_layer(points,center):
+                seen.add(signature)
+                direction=rules._direction(center,(math.fsum(p[0] for p in points)/count,math.fsum(p[1] for p in points)/count))
+                yield points,direction,{'formation':'minimum_landing_arc','rows':1}
 
 def terrain_heights(chk):
     width,height=struct.unpack('<HH',chk.getsection('DIM '))
@@ -129,6 +175,20 @@ def curved_bank(points):
 
 def formations(count,center):
     ax,ay=center
+    if count<=2:
+        # Small scripted pockets cannot form an arc. Include BOTH horizontal
+        # grid phases, including a patch directly above/below the depot; the
+        # corner ring alone omits the closest legal positions near map edges.
+        for sign in (-1,1):
+            for tangent in range(-160,161,32):
+                for vertical in (False,True):
+                    points=tuple(rules._snap(ax+sign*192,ay+tangent+i*32) if vertical else
+                                 rules._snap(ax+tangent+i*64,ay+sign*160) for i in range(count))
+                    yield points,((sign,0) if vertical else (0,sign)),{'formation':'minimum_landing_arc','rows':1}
+    # Start at the resource exclusion boundary of a 4x3 depot. A large
+    # campaign bank wraps around the corner instead of pushing the whole
+    # front outwards to make room for a decorative bow or a second row.
+    yield from minimum_arcs(count,center)
     # Preserve the actual ladder arc first, including its 32px vertical pitch.
     if count<=9:
         ordered=sorted(REFERENCE_EAST,key=lambda p:p[1])
@@ -137,11 +197,11 @@ def formations(count,center):
             for flip in (1,-1):
                 for shift in (0,-32,32,-64,64):
                     points=tuple(rules._snap(ax+sign*x,ay+flip*y+shift) for x,y in chosen)
-                    if curved_bank(points)['passed']:
+                    if curved_bank(points)['passed'] and single_layer(points,center):
                         yield points,(sign,0),{'formation':'fighting_spirit_side_arc','rows':1}
     # Extend the ladder's bowed front to campaign-sized banks. Every row
     # bends toward the depot at both ends; there is no straight-row fallback.
-    rows_options=sorted({1,max(1,math.ceil(count/10)),max(1,math.ceil(count/7))})
+    rows_options=(1,)
     for rows in rows_options:
         lengths=[count//rows+(r<count%rows) for r in range(rows)]
         for dx,dy in ((0,-1),(0,1),(-1,0),(1,0)):
@@ -161,14 +221,14 @@ def formations(count,center):
                             normal=distance+bow+row*(128 if vertical else 96)
                             points.append(rules._snap(ax+dx*normal if vertical else ax+tangent+shift,
                                                       ay+tangent+shift if vertical else ay+dy*normal))
-                    if max(math.dist(center,p) for p in points)<=640 and curved_bank(points)['passed']:
+                    if max(math.dist(center,p) for p in points)<=640 and curved_bank(points)['passed'] and single_layer(points,center):
                         yield tuple(points),(dx,dy),{'formation':'curved_ladder_bank','rows':rows}
 
 def _plateau_worker(heights,level):
     flat=[bytearray(v==level for v in line) for line in heights]
     return rules._worker_terrain(flat)
 
-def fitted_formations(info,indices,moving,anchor,walk,worker,boxes,reserved,occupied,heights,level,locked,threats=()):
+def fitted_formations(info,indices,moving,anchor,walk,worker,boxes,reserved,occupied,heights,level,locked,threats=(),*,nearest_only=False):
     """Fit a short bent ladder bank around fixed campaign buildings/cliffs."""
     center=anchor['center'];ax,ay=center;pool=[]
     for y in range(ay-512,ay+513,32):
@@ -186,15 +246,17 @@ def fitted_formations(info,indices,moving,anchor,walk,worker,boxes,reserved,occu
         dx,dy=direction
         for bias in (-160,-96,0,96,160):
             focus=(ax+dx*240+(bias if dy else 0),ay+dy*208+(bias if dx else 0))
-            for spread in (0.3,0.7,1.2):
+            for spread in ((0,) if nearest_only else (0.3,0.7,1.2)):
                 # Prefer a curved depot-facing contour around obstructions.
                 rx,ry=240+spread*80,208+spread*64
                 contour=lambda p:abs(math.hypot((p[0]-ax)/rx,(p[1]-ay)/ry)-1)*320
-                ordered=sorted(pool,key=lambda p:(contour(p)+0.4*math.dist(p,focus),p))
+                ordered=sorted(pool,key=lambda p:((math.dist(p,center)+0.25*math.dist(p,focus)
+                               if spread==0 else contour(p)+0.4*math.dist(p,focus)),p))
                 chosen=list(locked.values());ordered_indices=list(locked)+[i for i in indices if i not in locked]
                 for p in ordered:
+                    if not single_layer(chosen+[p],center):continue
                     rect=rules.geometry._rect(*p,176,boxes)
-                    if chosen and min(rect_gap(rect,rules.geometry._rect(*q,176,boxes)) for q in chosen)>64:continue
+                    if chosen and min(rect_gap(rect,rules.geometry._rect(*q,176,boxes)) for q in chosen)>MINERAL_BANK_GAP:continue
                     if any(rules.geometry._overlap(rect,rules.geometry._rect(*q,176,boxes)) for q in chosen):continue
                     # A mineral behind another patch must have an open flank;
                     # do not silently replace front access with a remote detour.
@@ -206,7 +268,7 @@ def fitted_formations(info,indices,moving,anchor,walk,worker,boxes,reserved,occu
                     if len(chosen)==len(indices):break
                 signature=tuple(sorted(chosen))
                 if len(chosen)==len(indices) and signature not in seen and curved_bank(chosen)['passed']:
-                    seen.add(signature);yield tuple(chosen),direction,{'formation':'terrain_fitted_curved_bank','rows':0}
+                    seen.add(signature);yield tuple(chosen),direction,{'formation':'terrain_fitted_single_layer','rows':1}
 
 def _gas_access(info,index,anchor,worker,boxes):
     """Check the 32px lateral exit used by find_gas_exit_position as well as faces."""
@@ -237,12 +299,56 @@ def compact_bank(info,indices,boxes):
     seen={indices[0]};pending=set(indices[1:])
     while pending:
         joined={i for i in pending if any(rect_gap(rules.geometry._rect(*info[i][:2],info[i][2],boxes),
-                            rules.geometry._rect(*info[j][:2],info[j][2],boxes))<=64 for j in seen)}
+                            rules.geometry._rect(*info[j][:2],info[j][2],boxes))<=MINERAL_BANK_GAP for j in seen)}
         if not joined:return False
         seen|=joined;pending-=joined
     return True
 
+
+def closer_steps(info,indices,center,locked=()):
+    """Strictly improving 32px moves, including rigid moves of the full bank."""
+    groups=([tuple(indices)] if not set(indices)&set(locked) else [])
+    groups += [(i,) for i in indices if i not in locked]
+    moves=[]
+    for group in groups:
+        before=math.fsum(math.dist(center,info[i][:2]) for i in group)
+        for dx,dy in product((-32,0,32),repeat=2):
+            if not (dx or dy):continue
+            points={i:(info[i][0]+dx,info[i][1]+dy) for i in group}
+            after=math.fsum(math.dist(center,p) for p in points.values())
+            if after<before-1e-8:moves.append((after-before,group,dx,dy,points))
+    return sorted(moves,key=lambda m:m[:4])
+
+
+def tighten_bank(info,indices,center,accept,locked=()):
+    """Stop only after every nearer grid step fails a real layout constraint.
+
+    This is a constrained local minimum, not a claim of global optimization
+    or a native can-land test. The witness records why every final step fails.
+    """
+    start=math.fsum(math.dist(center,info[i][:2]) for i in indices);steps=0
+    while True:
+        blocked=defaultdict(int)
+        for _,group,dx,dy,points in closer_steps(info,indices,center,locked):
+            candidate=list(info)
+            for i,p in points.items():candidate[i]=(*p,*info[i][2:])
+            reason=accept(candidate,group)
+            if reason:blocked[reason]+=1;continue
+            info=candidate;steps+=1;break
+        else:
+            return info,dict(grid_pixels=32,accepted_steps=steps,
+                before_mean_center_distance_pixels=round(start/len(indices),3),
+                after_mean_center_distance_pixels=round(math.fsum(math.dist(center,info[i][:2]) for i in indices)/len(indices),3),
+                no_legal_closer_grid_step=True,blocked_steps=dict(blocked),
+                locked_indices=sorted(set(indices)&set(locked)),
+                scope='single_patch_or_whole_bank_8_neighbor_local_minimum',native_landing_verified=False)
+
 def audit_base(chk,info,bank,heights=None,boxes=None):
+    info=list(info)
+    present={tuple(p[:2]) for p in info if p[2] in rules.HEADQUARTERS}
+    for a in bank.get('planned_depot_sites',[]):
+        if tuple(a['center']) not in present:
+            info.append((*a['center'],a['depot_type'],12));present.add(tuple(a['center']))
     heights=terrain_heights(chk) if heights is None else heights
     boxes=rules.geometry.load_unit_geometry()[0] if boxes is None else boxes
     anchor=bank['anchor'];cx,cy=anchor['center'];level=heights[cy//8][cx//8]
@@ -259,11 +365,16 @@ def audit_base(chk,info,bank,heights=None,boxes=None):
     separate=gas_separate(info,indices,gases,boxes)
     compact=compact_bank(info,indices,boxes)
     curve=curved_bank([info[i][:2] for i in indices])
+    layer=single_layer([info[i][:2] for i in indices],anchor['center'])
+    landing_clear=rules._resource_clear(anchor['center'],info)
+    foundations,foundation_proof=corner.depot_sites(chk,info,anchor,mining.load_buildable_grid(chk),boxes)
     result={'same_plateau_footprints':flat,'same_plateau_worker_routes':reachable,
+            'depot_landing_resource_clear':landing_clear,
             'gas_outside_minerals':separate,'gas_direct_lane':direct,
             'gas_exits':{k:v[1] for k,v in exits.items()},'gas_exits_clear':all(v[0] for v in exits.values()),
-            'compact_bank':compact,'curved_bank':curve,
-            'passed':flat and reachable and direct and separate and compact and curve['passed'] and all(v[0] for v in exits.values()),
+            'compact_bank':compact,'curved_bank':curve,'single_layer':layer,
+            'balanced_group_size':len(indices)<=bank.get('maximum_minerals',12),'depot_foundation_clear':foundations,'depot_foundations':foundation_proof,
+            'passed':landing_clear and flat and reachable and direct and separate and compact and curve['passed'] and layer and foundations and len(indices)<=bank.get('maximum_minerals',12) and all(v[0] for v in exits.values()),
             'terrain_level':level,'worker_access':proof}
     if protection:
         clearance=all(sunken_clear(rules.geometry._rect(*info[i][:2],info[i][2],boxes),threats) for i in indices+gases)
@@ -273,7 +384,100 @@ def audit_base(chk,info,bank,heights=None,boxes=None):
         result['passed'] &= clearance and corridors
     return result
 
-def apply(chk,mission,courtyard,*,reserved_points=()):
+def split_depot_groups(chk,banks,info,walk,heights,buildable,boxes,reserved,explicit,*,attempt=0,group_overrides=None):
+    """Reserve additional foundations before assigning any grouped minerals."""
+    all_centers=[tuple(bank['anchor']['center']) for bank in banks]
+    result=[];planned=[]
+    for parent,bank in enumerate(banks):
+        sizes=balanced_group_sizes(len(bank['mineral_indices']))
+        if group_overrides and parent in group_overrides:
+            count=len(bank['mineral_indices']);groups=group_overrides[parent]
+            sizes=[count//groups+(i>=groups-count%groups) for i in range(groups)]
+        anchor=bank['anchor'];center=tuple(anchor['center']);selected=[copy.deepcopy(anchor)]
+        if len(sizes)>1:
+            moving=bank['mineral_indices']+bank['gas_indices'];blank=court._ground_model(info)
+            for i in moving:blank[i]=(*blank[i][:2],214,11)
+            for a in planned:blank.append((*a['center'],a['depot_type'],12))
+            occupied=rules._collision_index(blank,moving,boxes)
+            level=heights[center[1]//8][center[0]//8];cache={}
+            def arcs(c,count):
+                key=(tuple(c),count)
+                if key in cache:return cache[key]
+                choices=[]
+                for points,direction,shape in minimum_arcs(count,c):
+                    if not all(flat_rect(heights,rules.geometry._rect(*p,176,boxes),level) for p in points):continue
+                    if not rules._geometry_ok(blank,moving,points,walk,boxes,reserved,occupied):continue
+                    choices.append(points)
+                cache[key]=choices;return choices
+            candidates=[]
+            for dy in range(-1024,1025,64):
+                for dx in range(-1024,1025,64):
+                    p=(center[0]+dx,center[1]+dy)
+                    if not 320<=math.hypot(dx,dy)<=1024:continue
+                    if any(math.dist(p,c)<256 for c in all_centers):continue
+                    rect=rules.geometry._rect(*p,anchor['depot_type'],boxes)
+                    if not flat_rect(heights,rect,level):continue
+                    if any(rect[0]-32<x<rect[2]+32 and rect[1]-32<y<rect[3]+32 for x,y in reserved):continue
+                    proposed=dict(kind='expansion',center=list(p),depot_type=anchor['depot_type'],owner=anchor.get('owner',12),
+                                  top_left_tile=[(p[0]-64)//32,(p[1]-48)//32],additional_group_depot=True)
+                    if not corner.depot_sites(chk,blank,proposed,buildable,boxes)[0]:continue
+                    candidates.append(proposed)
+            candidates.sort(key=lambda a:(math.dist(center,a['center']),a['center']))
+            for size in sizes[1:]:
+                legal=[]
+                for proposed in candidates:
+                    p=tuple(proposed['center'])
+                    if any(math.dist(p,a['center'])<320 for a in selected):continue
+                    centers=all_centers+[tuple(a['center']) for a in selected[1:]]+[p]
+                    valid=True
+                    for a,n in zip(selected+[proposed],sizes):
+                        options=arcs(a['center'],n)
+                        if not options and a is selected[0]:continue
+                        if not any(all(rules._resource_clear(c,[(*q,176,11) for q in points]) for c in centers) for points in options):
+                            valid=False;break
+                    if valid:legal.append(proposed)
+                    if len(legal)>attempt:break
+                if not legal:raise AssertionError(('No separate depot foundation for balanced mineral group',parent,center,sizes))
+                selected.append(legal[min(attempt,len(legal)-1)])
+            planned.extend(selected[1:]);all_centers.extend(tuple(a['center']) for a in selected[1:])
+        remaining=list(bank['mineral_indices']);locked=[i for i in remaining if i in explicit]
+        if len(locked)>sizes[0]:raise AssertionError(('Too many scripted minerals in a split group',parent,locked,sizes))
+        for group,(a,size) in enumerate(zip(selected,sizes)):
+            chosen=list(locked) if group==0 else []
+            available=sorted((i for i in remaining if i not in chosen),key=lambda i:(math.dist(info[i][:2],a['center']),i))
+            chosen+=available[:size-len(chosen)];remaining=[i for i in remaining if i not in chosen]
+            item=copy.deepcopy(bank)
+            item.update(anchor=a,mineral_indices=chosen,gas_indices=bank['gas_indices'] if group==0 else [],
+                        parent_site_index=parent,group_index=group,group_sizes=sizes,source_anchor=list(center))
+            result.append(item)
+        assert not remaining
+    virtual=[copy.deepcopy(bank['anchor']) for bank in result if bank['anchor']['kind']=='expansion']
+    for bank in result:bank['planned_depot_sites']=virtual
+    return result
+
+
+def aisled_minimum_arcs(count,center):
+    """Keep a single nearest-distance front while leaving an army opening."""
+    ax,ay=center;seen=set();choices=[]
+    for phase in (0,32):
+        ring=([(x,-160) for x in range(-160+phase,161,64)]+
+              [(192,y) for y in range(-128,129,32)]+
+              [(x,160) for x in range(160-phase,-161,-64)]+
+              [(-192,y) for y in range(128,-129,-32)])
+        for skipped in (1,2):
+            for gap in range(1,count):
+                for start in range(len(ring)):
+                    points=tuple((ax+ring[(start+i+(skipped if i>=gap else 0))%len(ring)][0],
+                                  ay+ring[(start+i+(skipped if i>=gap else 0))%len(ring)][1]) for i in range(count))
+                    signature=tuple(sorted(points))
+                    if signature in seen or not single_layer(points,center) or not curved_bank(points)['passed']:continue
+                    seen.add(signature)
+                    direction=rules._direction(center,(math.fsum(p[0] for p in points)/count,math.fsum(p[1] for p in points)/count))
+                    choices.append((points,direction,dict(formation='minimum_landing_arc_with_army_gap',rows=1,skipped_arc_slots=skipped)))
+    yield from sorted(choices,key=lambda c:(math.fsum(math.dist(center,p) for p in c[0]),max(math.dist(center,p) for p in c[0]),c[0]))
+
+
+def _apply_once(chk,mission,courtyard,*,reserved_points=(),attempt=0,aisles=False,group_overrides=None,preserve_pending=False):
     from .build_plain_chk import CHK
     before=chk.getsection('UNIT');info=list(map(rules.geometry._info,rules.geometry._records(chk)));start=list(info)
     heights=terrain_heights(chk);walk,_=rules.geometry.load_terrain(chk)
@@ -301,14 +505,29 @@ def apply(chk,mission,courtyard,*,reserved_points=()):
     for b in banks:
         if mission['mission_id']==515 and b['anchor']['center']==[5952,3632]:
             assert b['anchor']['kind']=='expansion';b['anchor']['center']=[5952,3696];b['anchor']['top_left_tile']=[184,114]
+        # This narrow cliff pocket needs a one-tile westward foundation shift
+        # to keep the refinery's lateral return exit clear of the mineral front.
+        if mission['mission_id']==610 and b['anchor']['center']==[3104,1328]:
+            assert b['anchor']['kind']=='expansion';b['anchor']['center']=[3072,1328];b['anchor']['top_left_tile']=[94,40]
         if mission['mission_id']==508 and b['anchor']['kind']=='expansion' and b['anchor']['center']==[3168,5456]:
             b['sunken_avoidance']={'hostile_owners':[0,4,5],**sunken_weapon()}
+    banks=split_depot_groups(chk,banks,info,walk,heights,buildable,boxes,reserved,explicit,attempt=attempt,group_overrides=group_overrides)
     anchors=[b['anchor'] for b in banks]
-    protected_centers=[tuple(a['center']) for a in anchors if rules._resource_clear(a['center'],info)]
-    army=rules._worker_terrain(rules._worker_terrain(rules._worker_terrain(walk)));army_cache={'baseline':start}
+    virtual=[(*a['center'],a['depot_type'],12) for a in anchors if a['kind']=='expansion']
+    info.extend(virtual)
+    protected_centers=list(dict.fromkeys(tuple(a['center']) for a in anchors))
+    pending={i for b in banks for i in b['mineral_indices']+b['gas_indices']}
+    def army_model(candidate):
+        # In cramped connected sites, clearing future resources can hide a
+        # blocked alternative route. Retain them during the fallback search.
+        return [start[i] if i in pending else p for i,p in enumerate(candidate)] if preserve_pending else candidate
+    army=rules._worker_terrain(rules._worker_terrain(rules._worker_terrain(walk)));army_cache={'baseline':start+virtual}
     plateau_cache={}
     for bank in banks:
         anchor=bank['anchor'];center=tuple(anchor['center']);indices=bank['mineral_indices'];gases=bank['gas_indices'];moving=indices+gases
+        for i in pending:info[i]=(*info[i][:2],*start[i][2:])
+        pending.difference_update(moving)
+        for i in pending:info[i]=(*info[i][:2],214,11)
         if not indices:continue
         level=heights[center[1]//8][center[0]//8]
         worker=plateau_cache.setdefault(level,None)
@@ -319,6 +538,7 @@ def apply(chk,mission,courtyard,*,reserved_points=()):
             worker=sunken_safe_worker(worker,threats)
         failures=defaultdict(int);collision=court._ground_model(info);occupied=rules._collision_index(collision,moving,boxes)
         report={'anchor':copy.deepcopy(anchor),'mineral_indices':indices,'gas_indices':gases,'status':'pending','reasons':{}}
+        report.update({key:copy.deepcopy(bank[key]) for key in ('parent_site_index','group_index','group_sizes','source_anchor','planned_depot_sites')})
         if bank.get('sunken_avoidance'):report['sunken_avoidance']=copy.deepcopy(bank['sunken_avoidance'])
         reports.append(report)
         locked={i:info[i][:2] for i in indices if i in explicit}
@@ -330,10 +550,22 @@ def apply(chk,mission,courtyard,*,reserved_points=()):
         choices=list(formations(len(indices),center))
         # Built-in float sum changed in Python 3.12; use the same accurate sum
         # in source builds and the portable Python 3.11 packaging verifier.
-        choices.sort(key=lambda c:(c[2]['formation']!='fighting_spirit_side_arc',c[2]['rows'],max(math.dist(center,p) for p in c[0]),math.fsum(math.dist(center,p) for p in c[0])))
+        choices.sort(key=lambda c:(c[2]['formation']!='minimum_landing_arc',
+                                   max(math.dist(center,p) for p in c[0]),
+                                   math.fsum(math.dist(center,p) for p in c[0]),c[2]['rows']))
         from itertools import chain
         fitted=fitted_formations(collision,indices,moving,anchor,walk,worker,boxes,reserved,occupied,heights,level,locked,threats)
-        for points,direction,shape in chain(choices,fitted):
+        nearest=[c for c in choices if c[2]['formation']=='minimum_landing_arc']
+        if aisles:nearest.extend(aisled_minimum_arcs(len(indices),center))
+        fallback=[c for c in choices if c[2]['formation']!='minimum_landing_arc']
+        def ranked_fallback():
+            nearby=list(fitted_formations(collision,indices,moving,anchor,walk,worker,boxes,reserved,occupied,
+                                         heights,level,locked,threats,nearest_only=True))
+            yield from sorted(nearby+list(fitted)+fallback,
+                              key=lambda c:(math.fsum(math.dist(center,p) for p in c[0]),
+                                            max(math.dist(center,p) for p in c[0])))
+        for points,direction,shape in chain(nearest,ranked_fallback()):
+            if not single_layer(points,center):failures['multiple_mineral_layers']+=1;continue
             if any(p not in points for p in locked.values()):continue
             if any(not sunken_clear(rules.geometry._rect(*p,176,boxes),threats) for p in points):failures['sunken_range']+=1;continue
             if threats and any(not sunken_route_clear(center,p,threats) for p in points):failures['sunken_mining_route']+=1;continue
@@ -370,15 +602,45 @@ def apply(chk,mission,courtyard,*,reserved_points=()):
                 if not court.worker_access(court._ground_model(candidate),indices,anchor,worker,boxes)[0]:failures['joint_mineral_routes']+=1;continue
                 if not compact_bank(candidate,indices,boxes):failures['mineral_bank_split']+=1;continue
                 changed=[i for i in moving if candidate[i][:2]!=info[i][:2]]
-                if not rules._army_route_ok(info,candidate,changed,army,boxes,army_cache):failures['army_route']+=1;continue
+                if not rules._army_route_ok(info,army_model(candidate),changed,army,boxes,army_cache):failures['army_route']+=1;continue
+                if any(not audit_base(chk,candidate,prior,heights,boxes)['passed'] for prior in reports[:-1]):
+                    failures['previous_group_access']+=1;continue
                 info=candidate;report.update(status='ladder_separate_gas',direction=list(direction),**shape);break
             if report['status']!='pending':break
         if report['status']=='pending':
             report['status']='existing_compact_ladder_bank' if audit_base(chk,info,bank,heights,boxes)['passed'] else 'unresolved'
+        if report['status']=='unresolved':
+            raise AssertionError(('Unresolved mineral group',center,len(indices),dict(failures),bank['parent_site_index']))
+        if report['status']!='unresolved':
+            def accept_nearer(candidate,changed):
+                changed=[i for i in indices if candidate[i][:2]!=info[i][:2]]
+                points=[candidate[i][:2] for i in indices]
+                if not rules._resource_clear(center,candidate):return 'landing_resource_exclusion'
+                if any(not rules._resource_clear(c,candidate) for c in protected_centers):return 'other_depot_clearance'
+                if any(i in explicit and candidate[i][:2]!=info[i][:2] for i in changed):return 'scripted_resource'
+                if any(i<len(original) and math.dist(original[i][:2],candidate[i][:2])>MAX_DISPLACEMENT for i in changed):return 'original_displacement'
+                if not all(flat_rect(heights,rules.geometry._rect(*candidate[i][:2],candidate[i][2],boxes),level) for i in changed):return 'plateau'
+                if not rules._geometry_ok(court._ground_model(candidate),indices,points,walk,boxes,reserved,
+                        rules._collision_index(court._ground_model(candidate),indices,boxes)):return 'collision_or_reserved_route'
+                if any(not addons.resource_clear(candidate[i][:2],candidate[i][2],landing) for i in changed):return 'addon_landing'
+                if any(not sunken_clear(rules.geometry._rect(*candidate[i][:2],candidate[i][2],boxes),threats) or
+                       not sunken_route_clear(center,candidate[i][:2],threats) for i in changed):return 'sunken_range'
+                if not curved_bank(points)['passed']:return 'curved_front'
+                if not single_layer(points,center):return 'single_layer'
+                if not compact_bank(candidate,indices,boxes):return 'bank_continuity'
+                if not gas_separate(candidate,indices,gases,boxes):return 'separate_gas'
+                if not rules._critical_membership(chk,info,candidate,changed,locations):return 'trigger_region'
+                if not all(gas.direct_lane(anchor,candidate[i][:2],candidate,i,worker,boxes) and
+                           _gas_access(candidate,i,anchor,worker,boxes)[0] for i in gases):return 'gas_lane'
+                if not court.worker_access(court._ground_model(candidate),indices,anchor,worker,boxes)[0]:return 'mining_access'
+                if not rules._army_route_ok(info,army_model(candidate),changed,army,boxes,army_cache):return 'army_route'
+                if any(not audit_base(chk,candidate,prior,heights,boxes)['passed'] for prior in reports[:-1]):return 'previous_group_access'
+                return None
+            info,report['minimum_spacing']=tighten_bank(info,indices,center,accept_nearer,locked)
         report.update(reasons=dict(failures),mineral_positions=[list(info[i][:2]) for i in indices],gas_positions=[list(info[i][:2]) for i in gases])
         print('RESOURCE_BANK',mission['mission_id'],center,len(indices),report['status'],dict(failures),flush=True)
     raw=bytearray(before)
-    for i,p in enumerate(info):struct.pack_into('<HH',raw,i*36+4,*p[:2])
+    for i,p in enumerate(info[:len(start)]):struct.pack_into('<HH',raw,i*36+4,*p[:2])
     for i,(a,b) in enumerate(zip(start,info)):
         if a[:2]!=b[:2]:
             assert a[2] in rules.MINERALS|gas.GAS_TYPES
@@ -388,9 +650,73 @@ def apply(chk,mission,courtyard,*,reserved_points=()):
     assert not unresolved,('Unsafe final mineral/gas layout',mission['mission_id'],unresolved)
     chk.setsection('UNIT',bytes(raw))
     return {'version':VERSION,'mission':mission['mission_id'],'bases':reports,
+            'parent_resource_sites':len(courtyard['bases']),'maximum_minerals_per_depot':12,
+            'additional_depot_sites':[a for a in anchors if a.get('additional_group_depot')],
             'moves':[{'index':i,'before':list(a[:2]),'after':list(b[:2])} for i,(a,b) in enumerate(zip(start,info)) if a[:2]!=b[:2]],
             'input_unit_sha256':rules._hash(before),'output_unit_sha256':rules._hash(raw),
             'all_resource_amounts_and_counts_preserved':True,'native_mining_verified':False,'reference_map_sha256':REFERENCE_MAPS}
 
+def rebalance_distant(chk,mission,courtyard,report,before,*,reserved_points=()):
+    """Try more balanced depot groups before accepting a distant legal front."""
+    from .build_plain_chk import CHK
+    distant={g['parent_site_index'] for g in report['bases']
+             if g['minimum_spacing']['after_mean_center_distance_pixels']>320}
+    if not distant:return report
+    initial={int(k):v for k,v in report.get('adaptive_group_overrides',{}).items()}
+    def distance(value):
+        return math.fsum(math.dist(g['anchor']['center'],p) for g in value['bases'] for p in g['mineral_positions'])
+    best=report;best_raw=None;score=distance(report)
+    for extra in (1,2):
+        overrides=dict(initial)
+        for parent in distant:
+            count=len(courtyard['bases'][parent]['mineral_indices'])
+            overrides[parent]=min(count,initial.get(parent,len(balanced_group_sizes(count)))+extra)
+        for attempt in range(4):
+            trial=CHK(before)
+            try:candidate=_apply_once(trial,mission,courtyard,reserved_points=reserved_points,attempt=attempt,
+                                      aisles=True,group_overrides=overrides,preserve_pending=True)
+            except AssertionError as error:
+                print('DISTANCE_REBALANCE_REJECTED',mission['mission_id'],extra,attempt,str(error)[:1000],flush=True);continue
+            new_score=distance(candidate)
+            if new_score>=score-1e-8:continue
+            candidate.update(depot_plan_attempt=report['depot_plan_attempt'],
+                             adaptive_group_overrides={str(k):v for k,v in overrides.items()},
+                             distance_rebalance=dict(parents=sorted(distant),extra_groups=extra,attempt=attempt,
+                                                     before_total_distance=round(distance(report),3),after_total_distance=round(new_score,3)))
+            best=candidate;best_raw=trial.getsection('UNIT');score=new_score
+            if all(g['minimum_spacing']['after_mean_center_distance_pixels']<=320 for g in candidate['bases'] if g['parent_site_index'] in distant):
+                chk.setsection('UNIT',best_raw);return best
+    if best_raw is not None:chk.setsection('UNIT',best_raw)
+    return best
+
+
+def apply(chk,mission,courtyard,*,reserved_points=()):
+    from .build_plain_chk import CHK
+    before=chk.save();failures=[];culprits=set()
+    for attempt in range(16):
+        overrides={i:len(balanced_group_sizes(len(courtyard['bases'][i]['mineral_indices'])))+1 for i in culprits} if attempt>=8 else None
+        if attempt>=8 and not overrides:break
+        trial=CHK(before)
+        try:report=_apply_once(trial,mission,courtyard,reserved_points=reserved_points,attempt=attempt%4,aisles=attempt>=4,group_overrides=overrides,preserve_pending=attempt>=8)
+        except AssertionError as error:
+            problem=error.args[0] if error.args else None
+            if isinstance(problem,tuple) and problem[0]=='Unresolved mineral group' and len(problem)>4:culprits.add(problem[4])
+            failures.append(str(error));print('GROUP_PLAN_RETRY',mission['mission_id'],attempt,str(error)[:1000],flush=True);continue
+        chk.setsection('UNIT',trial.getsection('UNIT'));report['depot_plan_attempt']=attempt
+        if overrides:report['adaptive_group_overrides']={str(k):v for k,v in overrides.items()}
+        report=rebalance_distant(chk,mission,courtyard,report,before,reserved_points=reserved_points)
+        from . import mission_placement_fixes
+        return mission_placement_fixes.apply(chk,mission,report)
+    raise AssertionError(('No fully verified grouped single-layer plan',mission['mission_id'],failures))
+
+
 def undo(chk,report):
     court.undo(chk,report)
+    changes=report.get('playtest_placement',{}).get('location_changes',[])
+    if changes:
+        regions=bytearray(chk.getsection('MRGN'))
+        for change in changes:
+            offset=(change['location']-1)*20
+            assert list(struct.unpack_from('<4I',regions,offset))==change['after']
+            struct.pack_into('<4I',regions,offset,*change['before'])
+        chk.setsection('MRGN',regions)

@@ -85,8 +85,8 @@ inline void qa31_mutal_manual_five_and_other_air_profiles(){
   for(U32 id:{43u,44u,55u,56u,47u,62u}){
    auto own=add(id,player_owner(),100,100);
    const bool mutal=id==43||id==55;
-   const U32 stacks=mutal?std::min(4u,old_rank+new_rank):old_rank;
-   const U32 increase=mutal?5u:(id==44||id==56)?6u:3u;
+   const U32 stacks=mutal?old_rank+new_rank:old_rank;
+   const U32 increase=mutal?5u:(id==44||id==56)?6u:id==47?30u:3u;
    U32 weapons=0;for(U32 field:{17u,19u}){const auto weapon=original_stat({0,field,id});if(weapon>=130)continue;++weapons;
    CHECK(owner_stat(player_owner(),{1,14,weapon})==original_stat({1,14,weapon})+stacks*increase);
    CHECK(owner_stat(6,{1,14,weapon})==original_stat({1,14,weapon}));

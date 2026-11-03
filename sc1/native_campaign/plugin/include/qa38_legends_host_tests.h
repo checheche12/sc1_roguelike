@@ -18,8 +18,9 @@ inline void qa38_every_new_primary_bonus_uses_real_damage_and_ui(){
    qa9_fixture::begin({r.ordinal});auto source=unit(id,1,100,100),enemy=unit(37,6,120,100);auto w=qa38_fixture::weapon(id);if(w>=130)w=79;
    g.normal_hit=true;g.bullet_hit_context=true;g.hit_source=source;g.hit_identity={source,source->unit_id,source->player,source->minor_unique_index};g.hit_bonus=0;const auto hp=enemy->flingy.hitpoints;
    combat_effects::weapon_damage(enemy,1000,U8(w),1,0,source,1,qa9_fixture::damage);
-   CHECK(enemy->flingy.hitpoints==hp-int(1000*(100+r.bonus)/100));
-   CHECK(rework_combat_v5::infantry_ui_value(source,w,100)==100+r.bonus);
+   const U32 bonus=rework_combat_v5::unit_cleanup_retired(r.ordinal)?0u:r.bonus;
+   CHECK(enemy->flingy.hitpoints==hp-int(1000*(100+bonus)/100));
+   CHECK(rework_combat_v5::infantry_ui_value(source,w,100)==100+bonus);
    source->player=6;CHECK(rework_combat_v5::expansion_static_bonus(source,w)==0);source->player=1;source->flags|=0x40000000u;
    CHECK(rework_combat_v5::expansion_static_bonus(source,w)==0);qa9_fixture::end();
   }
@@ -36,7 +37,7 @@ inline void qa38_every_secondary_rule_has_cadence_limit_and_no_recursion(){
   const auto target_hp=target->flingy.hitpoints,out_hp=outside->flingy.hitpoints,ally_hp=ally->flingy.hitpoints,air_hp=airborne->flingy.hitpoints;
   for(U32 n=1;n<=r.cadence;n++){game.frame_count=100+n*8;rework_combat_v5::ordinary_hit(source,target,10*256,w,false);}
   U32 hit=0;for(auto u:victims){if(u->flingy.hitpoints!=256000){++hit;CHECK(u->flingy.hitpoints==256000-int(10*256*r.percent*(r.ordinal==191?250:100)/10000));}}
-  CHECK(hit==r.count&&outside->flingy.hitpoints==out_hp&&ally->flingy.hitpoints==ally_hp&&airborne->flingy.hitpoints==air_hp);
+  CHECK(hit==(rework_combat_v5::unit_cleanup_retired(r.ordinal)?0u:r.count)&&outside->flingy.hitpoints==out_hp&&ally->flingy.hitpoints==ally_hp&&airborne->flingy.hitpoints==air_hp);
   CHECK(target->flingy.hitpoints==target_hp-(r.cadence==3?20*256:0));
   const auto hp=victims[0]->flingy.hitpoints;rework_combat_v5::ordinary_hit(source,target,10*256,w,true);CHECK(victims[0]->flingy.hitpoints==hp);
   combat_effects::original_weapon_damage=saved;qa9_fixture::end();
@@ -125,7 +126,7 @@ inline void qa38_irradiation_mechanical_damage_and_six_tile_infection(){
  const auto hp=machine->flingy.hitpoints,organic_hp=organic->flingy.hitpoints,far_hp=distant_machine->flingy.hitpoints;
  const auto saved=combat_effects::original_weapon_damage;combat_effects::original_weapon_damage=qa9_fixture::damage;
  rework_combat_v5::expansion_radiation();--host->irradiate_timer;game.frame_count=108;rework_combat_v5::expansion_radiation();
- const U32 damage=original_stat({1,14,34})*256/std::max(1u,original_stat({1,16,34}))*3;
+ const U32 damage=original_stat({1,14,34})*256/std::max(1u,original_stat({1,16,34}))*2;
  CHECK(machine->flingy.hitpoints==hp-int(damage)&&friend_machine->flingy.hitpoints==hp-int(damage));
  CHECK(organic->flingy.hitpoints==organic_hp&&distant_machine->flingy.hitpoints==far_hp);rework_combat_v5::expansion_radiation();CHECK(machine->flingy.hitpoints==hp-int(damage));
  auto ring=unit(37,6,1180,1000),outside=unit(37,6,1300,1000);rework_combat_v5::irradiation::attach(host,vessel,1);rework_combat_v5::death(host);CHECK(ring->irradiate_timer&& !outside->irradiate_timer);

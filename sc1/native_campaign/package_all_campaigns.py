@@ -227,10 +227,10 @@ def validate_maps(receipt_path):
     from . import mission_balance
     balance_path, _ = legacy.checked_file(receipt['mission_balance_source'], receipt['mission_balance_source_sha256'])
     if balance_path != Path(mission_balance.__file__).resolve():raise ValueError('Unexpected mission balance implementation')
-    from . import corner_resource_layout,scripted_openings,courtyard_resource_layout,campaign_resource_grants,settlement_terrain,base_defenses,ladder_resource_banks
+    from . import corner_resource_layout,scripted_openings,courtyard_resource_layout,campaign_resource_grants,settlement_terrain,base_defenses,ladder_resource_banks,mission_placement_fixes,mission_placement_plan
     header,_=legacy.checked_file(receipt['base_defense_header'],receipt['base_defense_header_sha256'])
     if header!=ROOT/'plugin/include/base_defenses.generated.h':raise ValueError('Unexpected base defense header')
-    for module in (corner_resource_layout,scripted_openings,courtyard_resource_layout,campaign_resource_grants,settlement_terrain,base_defenses,ladder_resource_banks):
+    for module in (corner_resource_layout,scripted_openings,courtyard_resource_layout,campaign_resource_grants,settlement_terrain,base_defenses,ladder_resource_banks,mission_placement_fixes,mission_placement_plan):
         name=module.__name__.rsplit('.',1)[-1]
         pinned,_=legacy.checked_file(receipt[name+'_source'],receipt[name+'_source_sha256'])
         if pinned!=Path(module.__file__).resolve():raise ValueError('Unexpected '+name+' implementation')
@@ -266,7 +266,9 @@ def validate_maps(receipt_path):
             raise ValueError("Original section order/tags changed")
         from . import settlement_terrain
         settlement_terrain.verify(source_chk,output_chk,mission,row.get('settlement_terrain'))
-        for tag in ("DIM ", "ERA ", "MASK", "MRGN", "MBRF", "WAV "):
+        mission_placement_fixes.verify_locations(source_chk,output_chk,mission)
+        mission_placement_fixes.verify_wave_cells(output_chk,mission,row['difficulty'])
+        for tag in ("DIM ", "ERA ", "MASK", "MBRF", "WAV "):
             if tag.encode() in source_chk.sections and source_chk.getsection(tag) != output_chk.getsection(tag):
                 raise ValueError("Original terrain/locations/briefing/audio changed: " + asset + ":" + tag)
         before_strings, after_strings = strings(source_chk.getsection("STR ")), strings(output_chk.getsection("STR "))

@@ -19,7 +19,7 @@ inline void qa39_focus_damage_ui_owner_and_primary_boundary(){
   CHECK(rework_combat_v5::infantry_ui_value(u,w,100)==(r.ordinal==105?86u:100+r.base));
   CHECK(rework_combat_v5::focus_damage(u,target,w,1000,true)==int(1000*(100+r.base)/100));
   auto hp=other->flingy.hitpoints;g.normal_hit=true;rework_combat_v5::DamageScope::current_primary=target;
-  const auto splash_amount=r.ordinal==141?2500:r.ordinal==197?1000:0;
+  const auto splash_amount=r.ordinal==141?2500:1000;
   {std::int32_t amount=1000;rework_combat_v5::DamageScope scope(other,u,w,1,amount);CHECK(amount==splash_amount);other->flingy.hitpoints-=amount;}
   CHECK(other->flingy.hitpoints==hp-splash_amount);rework_combat_v5::DamageScope::current_primary=nullptr;
   u->player=6;CHECK(rework_combat_v5::focus_damage(u,target,w,1000,true)==1000);qa9_fixture::end();

@@ -34,10 +34,10 @@ inline UnitState* focus_state(bw::Unit* u) {
  }
  return state(u);
 }
-inline std::int32_t focus_damage(bw::Unit* u,bw::Unit* target,U32 weapon,std::int32_t amount,bool primary) {
+inline std::int32_t focus_damage(bw::Unit* u,bw::Unit* target,U32 weapon,std::int32_t amount,bool primary,U32 excluded=~0u) {
  if(!focus_source(u)||!ordinary_weapon(weapon)||amount<=0||(!primary&&!focus_scarab_splash(u,weapon)))return amount;
  auto s=focus_state(u);U32 bonus=0;
- for(auto r:legend_focus::rules)if(raw_rank(r.ordinal)&&focus_match(r,u)){
+ for(auto r:legend_focus::rules)if(r.ordinal!=excluded&&raw_rank(r.ordinal)&&focus_match(r,u)){
   if(!(r.ordinal==105&&mutal_bounce_numerator))bonus+=r.base;
   if(r.mode==1&&live(target)&&std::uint64_t(std::max(0,target->flingy.hitpoints))*100<=std::uint64_t(effective_max_hp(target))*r.limit)bonus+=r.proc;
   if(r.mode==3&&s&&generation(s->focus_target)==target&&now()-s->focus_last<=72)bonus+=std::min(r.limit,s->focus_hits*r.step);
@@ -51,8 +51,8 @@ inline void focus_hit(bw::Unit* u,bw::Unit* target,U32 amount,U32 weapon) {
  const bool same=generation(s->focus_target)==target&&now()-s->focus_last<=72;
  s->focus_hits=same?std::min(0xfffffffeu,s->focus_hits)+1:1;s->focus_last=now();s->focus_target=identity(target);
  for(auto r:legend_focus::rules)if(raw_rank(r.ordinal)&&focus_match(r,u)){
-  if(r.mode==2&&s->focus_hits%r.cadence==0)weapon_hurt(target,U32(std::min<std::uint64_t>(0x7fffffffu,std::uint64_t(amount)*r.proc/100)),weapon,u,u->player);
-  if(r.mode==10&&s->dragoon_hits==0)weapon_hurt(target,U32(std::min<std::uint64_t>(0x7fffffffu,std::uint64_t(amount)*r.proc/100)),weapon,u,u->player);
+  if(r.mode==2&&s->focus_hits%r.cadence==0)attack_hurt(target,U32(std::min<std::uint64_t>(0x7fffffffu,std::uint64_t(amount)*r.proc/100)),weapon,u,u->player,r.ordinal);
+  if(r.mode==10&&s->dragoon_hits==0)attack_hurt(target,U32(std::min<std::uint64_t>(0x7fffffffu,std::uint64_t(amount)*r.proc/100)),weapon,u,u->player,r.ordinal);
   if(r.mode==5&&s->retaliation){const U32 stored=s->retaliation;s->retaliation=0;weapon_hurt(target,stored,weapon,u,u->player);}
   if(r.mode==6){if(t->erosion_owner!=u->player){t->erosion=0;t->erosion_owner=u->player;}t->erosion=U32(std::min<std::uint64_t>(0xfffffffeu,std::uint64_t(t->erosion)+r.step));}
  }
@@ -241,7 +241,7 @@ inline void focus_tick(bw::Unit* u,UnitState& s) {
    const U32 w=original_stat({0,17,u->unit_id}),base=owner_stat(u->player,{1,14,w})+owner_stat(u->player,{1,15,w})*upgrade_level(u->player,original_stat({1,6,w}));
    if(g.lone_sprite)g.lone_sprite(361,u->flingy.position.x,u->flingy.position.y,u->player);
    shadow_feedback::strike(u);
-   weapon_hurt(target,U32(std::min<std::uint64_t>(0x7fffffffu,std::uint64_t(base)*256*legend_focus::shadow_damage_percent/100)),w,u,u->player);
+   attack_hurt(target,U32(std::min<std::uint64_t>(0x7fffffffu,std::uint64_t(base)*256*legend_focus::shadow_damage_percent/100)),w,u,u->player,321);
   }
   u->order=old_order;u->order_state=old_stage;u->order_signal=old_signal;u->order_timer=old_timer;u->order_wait=old_wait;u->order_target=old_target;s.shadow_due=now()+4;
   if(++s.shadow_step>=5)shadow_restore(u,s);return;

@@ -36,6 +36,7 @@ inline bool plan_stats(const GrowthSnapshot& s,std::vector<Edit>& edits) {
         U32 time=original_stat({0,42,id});const U32 base_time=time;
         if(rank(s,3) && worker(id))time=std::max(1u,ceiling(time,1,2));
         if(rank(s,7) && in(id,{106,131,154}))time=std::max(1u,ceiling(time,7,10));
+        if(rank(s,4) && in(id,{109,42,156}))time=72;
         const U32 flags=original_stat({0,44,id});
         if((flags&16u) && ((rank(s,20) && (flags&2u)) || (rank(s,22) && (flags&4u))))time=std::max(1u,ceiling(time,1,2));
         if(rank(s,117) && in(id,{73,85}))time=std::max(1u,ceiling(time,1,2));
@@ -45,7 +46,6 @@ inline bool plan_stats(const GrowthSnapshot& s,std::vector<Edit>& edits) {
         if((rank(s,153)&&in(id,{8,9,11,12,58})) ||
            (rank(s,157)&&in(id,{43,44,47,62})) ||
            (rank(s,160)&&in(id,{60,69,70,71,72,84})))time=std::max(1u,ceiling(time,4,5));
-        if(rank(s,4) && in(id,{109,42,156}))time=72;
         if(time!=base_time && !set(42,id,time))return false;
         if(rank(s,4) && in(id,{109,42,156}) && !plan_edit(edits,{0,45,id},1,16,1))return false;
     }
@@ -349,6 +349,9 @@ inline void starting_bonus(const std::vector<bw::Unit*>& depots) {
     bw::Unit* base=nullptr;
     const bool bwz6=g.mission->mission_id==606;
     for(auto candidate:depots){
+        // Eye of the Storm owns both races. Its extra campaign support belongs
+        // at the Protoss base regardless of native unit-list enumeration order.
+        if(g.mission->mission_id==310 && candidate->unit_id!=154)continue;
         if(bwz6&&bwz6_support_distance(candidate)>std::uint64_t(bwz6_support_radius)*bwz6_support_radius)continue;
         auto mineral=nearest_mineral(candidate);
         if(!(candidate->flags&4u)&&mineral&&distance(candidate,mineral)<=768u*768u){

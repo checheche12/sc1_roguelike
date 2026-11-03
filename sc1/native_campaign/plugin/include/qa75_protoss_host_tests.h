@@ -45,11 +45,11 @@ inline void qa75_retaliation_real_melee_and_projectile_callback_chain(){
   combat_audit::melee(ling,archon,1000*256);CHECK(state->retaliation==200*256);
   const auto target_hp=target->flingy.hitpoints,neighbor_hp=neighbor->flingy.hitpoints;
   splash=neighbor;projectile(archon,target,70,20*256);splash=nullptr;
-  CHECK(state->retaliation==0&&target->flingy.hitpoints==target_hp-240*256&&neighbor->flingy.hitpoints==neighbor_hp);
+  CHECK(state->retaliation==0&&target->flingy.hitpoints==target_hp-240*256&&neighbor->flingy.hitpoints==neighbor_hp-20*256);
   projectile(archon,target,70,20*256);CHECK(target->flingy.hitpoints==target_hp-280*256);
   combat_audit::melee(ling,archon,10*256);CHECK(state->retaliation==3*256);
   archon->player=6;CHECK(rework_combat_v5::state(archon)->retaliation==0);
-  std::printf("QA75_RETALIATION unit=%u melee=30 projectile=30 spell=0 cap=200 first_attack=240 next_attack=40 splash=0\n",id);
+  std::printf("QA75_RETALIATION unit=%u melee=30 projectile=30 spell=0 cap=200 first_attack=240 next_attack=40 native_splash=20\n",id);
   combat_effects::original_weapon_damage=saved;qa9_fixture::end();
  }
 }

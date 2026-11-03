@@ -81,8 +81,8 @@ inline void publish(bool force=false) {
  const auto ratio=[&](U32 weapon){const auto base=original_stat({1,13,weapon});return base?std::max(1.0,double(owner_stat(frame->owner,{1,13,weapon}))/base):1.0;};
  const auto set=[&](std::initializer_list<U32> ids,double scale){for(auto id:ids)frame->images[id]={scale,scale};};
  set({525,550,551,552,553},ratio(84));set({555,556},ratio(33));set({548,549},ratio(70));
- if(rework_combat_v5::rank(80))set({383},double(64+talent_power::v5(80,16))/64);
- if(rework_combat_v5::rank(127)||rework_combat_v5::rank(149))set({364},std::max(rework_combat_v5::rank(127)?double(48+talent_power::v5(127,12))/48:1.0,(talent_power::enabled&&rework_combat_v5::rank(149))?1.5:1.0));
+ if(rework_combat_v5::rank(80))set({383},double(rework_combat_v5::ensnare_radius())/64);
+ if(rework_combat_v5::rank(127)||rework_combat_v5::rank(149))set({364},double(rework_combat_v5::stasis_radius())/48);
  if(rework_combat_v5::rank(124))set({998},double(48+talent_power::v5(124,12))/48);
  interested={};interested[33]=frame->images[555].enlarged();interested[58]=frame->images[383].enlarged();interested[70]=interested[71]=frame->images[548].enlarged();
  interested[83]=frame->images[364].enlarged();interested[84]=frame->images[525].enlarged();interested[108]=frame->images[998].enlarged();

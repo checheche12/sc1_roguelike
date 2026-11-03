@@ -47,7 +47,7 @@ inline void qa92_suicide_fragments_exact_generation_once(){
   DamageScope::current_primary=scenario>=5?source:target;DamageScope::current_token=1;
   if(scenario==6){auto ally=unit(37,1,120,150,id==47);std::int32_t friendly=100*256;{DamageScope scope(ally,source,w,1,friendly);}CHECK(observed_calls==0);}
   std::int32_t raw=100*256;{DamageScope scope(target,source,w,1,raw);if(scenario==4){target->order=0;target->flingy.hitpoints=0;}}
-  const bool expected=scenario==0||scenario>=4;CHECK(observed_calls==(expected?1u:0u));if(expected)CHECK(observed_amount==50*256);
+  const bool expected=id!=50&&(scenario==0||scenario>=4);CHECK(observed_calls==(expected?1u:0u));if(expected)CHECK(observed_amount==50*256);
   raw=100*256;{DamageScope scope(other,source,w,1,raw);}CHECK(observed_calls==(expected?1u:0u));
   combat_effects::original_weapon_damage=saved;g.bullet_hit_context=false;g.hit_identity={};g.normal_hit=false;DamageScope::current_primary=nullptr;qa9_fixture::end();
  }

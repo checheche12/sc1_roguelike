@@ -3,13 +3,13 @@
 inline bool expansion_matches(const unit_legend_expansion::Rule& r,U32 id) noexcept {
  return id<256&&(r.units[id/32]&(1u<<(id%32)));
 }
-inline U32 expansion_static_bonus(const bw::Unit* unit,U32 weapon) noexcept {
+inline U32 expansion_static_bonus(const bw::Unit* unit,U32 weapon,U32 excluded) noexcept {
  if(!talent_power::enabled||!valid_unit(unit)||unit->player!=player_owner()||hallucination(unit)||!ordinary_weapon(weapon))return 0;
- U32 value=unit_trait_value(g.growth,unit->unit_id,2,true);for(const auto& r:unit_legend_expansion::rules)if((r.mode==1||r.mode==11)&&rank(r.ordinal)&&expansion_matches(r,unit->unit_id))value+=r.bonus;
+ U32 value=unit_trait_value(g.growth,unit->unit_id,2,true);for(const auto& r:unit_legend_expansion::rules)if(r.ordinal!=excluded&&(r.mode==1||r.mode==11)&&rank(r.ordinal)&&expansion_matches(r,unit->unit_id))value+=r.bonus;
  return value;
 }
-inline U32 expansion_outgoing_bonus(bw::Unit* unit,U32 weapon) {
- U32 value=expansion_static_bonus(unit,weapon);
+inline U32 expansion_outgoing_bonus(bw::Unit* unit,U32 weapon,U32 excluded=~0u) {
+ U32 value=expansion_static_bonus(unit,weapon,excluded);
  if(!own(unit)||!ordinary_weapon(weapon))return value;
  if(auto s=state(unit)){if(s->portal_buff_until>now())value+=20;if(s->fleet_buff_until>now())value+=30;}
  return value;
@@ -22,10 +22,10 @@ inline void expansion_hit(bw::Unit* source,bw::Unit* target,U32 amount,U32 weapo
  auto s=state(source);if(!s)return;
  for(const auto& r:unit_legend_expansion::rules){
   if(r.ordinal==185||legend_focus::converted(r.ordinal)||r.mode!=1||!r.count||!rank(r.ordinal)||!expansion_matches(r,source->unit_id)||s->shot_count%std::max(1u,r.cadence))continue;
-  if(r.cadence==3)weapon_hurt(target,U32(std::min<std::uint64_t>(0x7fffffffu,std::uint64_t(amount)*2)),weapon,source,source->player);
+  if(r.cadence==3)attack_hurt(target,U32(std::min<std::uint64_t>(0x7fffffffu,std::uint64_t(amount)*2)),weapon,source,source->player,r.ordinal);
   const auto secondary_amount=r.ordinal==191?std::uint64_t(amount)*(100+r.bonus)/100:std::uint64_t(amount);
   std::vector<Identity> victims;for(auto other:around(target->flingy.position.x,target->flingy.position.y,r.radius,target,r.count,true,air(target)))victims.push_back(identity(other));
-  for(const auto& id:victims)if(auto other=resolve(id))weapon_hurt(other,U32(std::min<std::uint64_t>(0x7fffffffu,secondary_amount*r.percent/100)),weapon,source,source->player);
+  for(const auto& id:victims)if(auto other=resolve(id))attack_hurt(other,U32(std::min<std::uint64_t>(0x7fffffffu,secondary_amount*r.percent/100)),weapon,source,source->player,r.ordinal);
  }
 }
 inline void expansion_death(bw::Unit* dead) {
@@ -81,7 +81,7 @@ inline void expansion_radiation() {
   const U32 radius=rank(61)?128u:32u;auto source=valid_unit(host->irradiated_by)?host->irradiated_by:nullptr;
   for(const auto& id:irradiation::nearby(host->flingy.position.x,host->flingy.position.y,radius))if(auto target=resolve(id)){
    if(organic(target)||building(target)||!(original_stat({0,22,target->unit_id})&0x40000000u)||(target->flags&(0x10u|0x40u))||irradiation::box_distance(host,target)>std::uint64_t(radius)*radius)continue;
-   weapon_hurt(target,tick*(rank(61)?3u:1u),34,source,player_owner());
+   weapon_hurt(target,tick*(rank(61)?legend_base_balance::irradiate_damage_multiplier:1u),34,source,player_owner());
   }
  });
 }

@@ -57,7 +57,7 @@ inline void economy_times_supply_and_owner_isolation(){
     auto s=economy_snapshot({3,4,6,7,20,22,117});CHECK(apply_snapshot(nullptr,s));
     CHECK(game.supplies[1].provided[1]==32 && game.supplies[1].provided[6]==0);
     for(U32 id:{7u,41u,64u})CHECK(owner_stat(1,{0,42,id})==(original_stat({0,42,id})+1)/2);
-    for(U32 id:{109u,42u,156u}){CHECK(owner_stat(1,{0,42,id})==72);CHECK(owner_stat(1,{0,45,id})==original_stat({0,45,id})+16);}
+    for(U32 id:{109u,42u,156u}){CHECK(owner_stat(1,{0,42,id})==(id==42?72u:36u));CHECK(owner_stat(1,{0,45,id})==original_stat({0,45,id})+16);}
     CHECK(owner_stat(1,{0,42,111})==(original_stat({0,42,111})+1)/2);
     CHECK(owner_stat(1,{0,42,160})==(original_stat({0,42,160})+1)/2);
     CHECK(owner_stat(1,{0,42,106})==rework_economy_v5::ceiling(rework_economy_v5::ceiling(original_stat({0,42,106}),7,10),1,2));

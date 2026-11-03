@@ -639,7 +639,10 @@ def make_map(raw,row):
   from sc1.native_campaign import terran4_repair
   terran4_repair.verify_silo_destinations(chk)
   difficulty['wave_origins']=terran4_repair.reachable_origins(chk,row,difficulty)
+ from sc1.native_campaign import mission_placement_fixes
+ difficulty=mission_placement_fixes.adjust_difficulty(chk,row,difficulty)
  permitted={b'UNIT',b'PUNI',b'UPGR',b'PUPx',b'PTEC',b'PTEx',b'TRIG',b'STR '}
+ if row['mission_id']==310:permitted.add(b'MRGN')
  if terrain:permitted|={tag.encode() for tag in settlement_terrain.TAGS}
  if row['mission_id']==101:permitted|={b'OWNR',b'SIDE',b'FORC'}
  assert chk.order==original_order
@@ -658,6 +661,9 @@ def make_map(raw,row):
  report['resource_grants']=resource_grants
  report['base_defenses']=defenses
  report['ladder_resource_banks']=resource_banks
+ if row['mission_id']==310:
+  report['original_briefing_wav_locations_terrain_heroes_preserved']=False
+  report['reviewed_starting_command_center_location']=4
  if terrain:
   report['settlement_terrain']=terrain
   report['original_briefing_wav_locations_terrain_heroes_preserved']=False
@@ -756,11 +762,11 @@ def build(output=OUT,receipt=RECEIPT):
  report['mission_balance_source_sha256']=digest(Path(mission_balance.__file__).read_bytes())
  from sc1.native_campaign import corner_resource_layout,scripted_openings,courtyard_resource_layout
  from sc1.native_campaign import campaign_resource_grants
- from sc1.native_campaign import settlement_terrain,base_defenses,ladder_resource_banks
+ from sc1.native_campaign import settlement_terrain,base_defenses,ladder_resource_banks,mission_placement_fixes,mission_placement_plan
  defense_header=base_defenses.generate_header(report['maps'],SC1.parent)
  report['base_defense_header']=str(defense_header)
  report['base_defense_header_sha256']=digest(defense_header.read_bytes())
- for module in (corner_resource_layout,scripted_openings,courtyard_resource_layout,campaign_resource_grants,settlement_terrain,base_defenses,ladder_resource_banks):
+ for module in (corner_resource_layout,scripted_openings,courtyard_resource_layout,campaign_resource_grants,settlement_terrain,base_defenses,ladder_resource_banks,mission_placement_fixes,mission_placement_plan):
   name=module.__name__.rsplit('.',1)[-1]
   report[name+'_source']=str(Path(module.__file__).resolve())
   report[name+'_source_sha256']=digest(Path(module.__file__).read_bytes())

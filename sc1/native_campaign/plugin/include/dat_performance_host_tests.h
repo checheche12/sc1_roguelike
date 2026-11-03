@@ -73,8 +73,8 @@ inline void unit_growth_index_matches_linear_reference(){
     std::vector<std::uint16_t> expected;
     for(std::size_t i=0;i<std::size(unit_growth::rules);++i)if(unit_growth_matches(unit_growth::rules[i],id,ammo))expected.push_back(static_cast<std::uint16_t>(i));
     if(id<256)CHECK(unit_growth_index[ammo][id]==expected);
-    for(U32 kind=0;kind<4;++kind){U32 value=0;if(enabled)for(auto i:expected){const auto& r=unit_growth::rules[i];if(r.kind==kind)value=std::max(value,rank(snapshot,r.ordinal));}CHECK(unit_growth_rank(snapshot,id,kind,ammo)==value);}
-    for(U32 field=0;field<6;++field){U32 value=0;if(enabled)for(auto i:expected){const auto& r=unit_growth::rules[i];if(r.kind==2&&rank(snapshot,r.ordinal))value=std::max(value,field==0?r.armor:field==1?r.hp:field==2?r.damage:field==3?r.speed:r.energy);}CHECK(unit_trait_value(snapshot,id,field,ammo)==value);}
+    for(U32 kind=0;kind<4;++kind){U32 value=0;if(enabled)for(auto i:expected){const auto& r=unit_growth::rules[i];if(r.kind==kind)value+=rank(snapshot,r.ordinal);}CHECK(unit_growth_rank(snapshot,id,kind,ammo)==value);}
+    for(U32 field=0;field<6;++field){U32 value=0;if(enabled)for(auto i:expected){const auto& r=unit_growth::rules[i];if(r.kind==2&&rank(snapshot,r.ordinal))value+=field==0?r.armor:field==1?r.hp:field==2?r.damage:field==3?r.speed:r.energy;}CHECK(unit_trait_value(snapshot,id,field,ammo)==value);}
     U32 parent=0;for(const auto& r:unit_growth::rules)if(r.kind==1&&unit_growth_matches(r,id,true)){parent=r.parent;break;}CHECK(unit_attack_parent(id)==parent);
    }
   }

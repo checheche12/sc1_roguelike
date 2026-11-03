@@ -13,11 +13,13 @@ inline void qa38_unit_health_native_caps_and_separation(){
  for(const auto& rule:unit_growth::rules)if(rule.kind==0)for(U32 rank:{1u,4u}){
   qa13_fixture::begin();GrowthSnapshot s{};s.wire_version=2;qa38_units::set(s,rule.ordinal,rank);
   const U32 id=qa38_units::first(rule);auto u=add(id,1,100,100,int(original_stat({0,8,id})));u->flags=1;
-  CHECK(apply_snapshot(nullptr,s));const U32 expected=U32((std::uint64_t(original_stat({0,8,id}))*(100+28*rank)+50)/100);
+  const U32 active_rank=rework_combat_v5::unit_cleanup_retired(rule.ordinal)?0u:rank;
+  CHECK(apply_snapshot(nullptr,s));CHECK(rework_catalog::rank(g.growth,rule.ordinal)==rank);
+  const U32 expected=U32((std::uint64_t(original_stat({0,8,id}))*(100+28*active_rank)+50)/100);
   CHECK(owner_stat(1,{0,8,id})==expected&&effective_max_hp(u)==expected);
   CHECK(owner_stat(6,{0,8,id})==original_stat({0,8,id}));
   for(U32 other:{0u,37u,65u})if(!rework_combat_v5::unit_growth_matches(rule,other))CHECK(owner_stat(1,{0,8,other})==original_stat({0,8,other}));
-  if(rework_combat_v5::race_type(id,2))CHECK(owner_stat(1,{0,7,id})==U32((std::uint64_t(original_stat({0,7,id}))*(100+28*rank)+50)/100));
+  if(rework_combat_v5::race_type(id,2))CHECK(owner_stat(1,{0,7,id})==U32((std::uint64_t(original_stat({0,7,id}))*(100+28*active_rank)+50)/100));
   qa13_fixture::end();
  }
 }
@@ -25,30 +27,48 @@ inline void qa38_unit_attack_profiles_cooldown_and_parent_aliases(){
  for(const auto& rule:unit_growth::rules)if(rule.kind==1){
   qa13_fixture::begin();GrowthSnapshot s{};s.wire_version=2;qa38_units::set(s,rule.ordinal,4);CHECK(apply_snapshot(nullptr,s));
   const U32 id=qa38_units::first(rule);auto source=add(id,1,100,100);source->flags=1;
-  CHECK(rework_combat_v5::unit_attack_rank(g.growth,id)==4);
-  CHECK(std::abs(rework_combat_v5::cooldown_ratio(source,0)-std::pow(0.955,4))<0.000001);
+  const U32 active_rank=rework_combat_v5::unit_cleanup_retired(rule.ordinal)?0u:4u;
+  CHECK(rework_catalog::rank(g.growth,rule.ordinal)==4);
+  CHECK(rework_combat_v5::unit_attack_rank(g.growth,id)==active_rank);
+  CHECK(std::abs(rework_combat_v5::cooldown_ratio(source,0)-std::pow(0.955,active_rank))<0.000001);
   for(U32 field:{17u,19u}){auto w=original_stat({0,field,id});if(id==72||id==82)w=79;if(id==81||id==83||id==85)w=82;if(w>=130)continue;
    if(rule.parent==29){CHECK(rework_combat_v5::infantry_damage_rank(source,w)==4);CHECK(rework_combat_v5::infantry_ui_value(source,w,100)==160);}
-   else {const U32 bonus=id==58?4u:rework_combat_v5::in(id,{7,41,64})?12u:rework_combat_v5::manual_damage_bonus(rule.parent,(id==72||id==82)?73u:id,field,4);
+   else {const U32 bonus=id==58?4u:rework_combat_v5::in(id,{7,41,64})?12u:rework_combat_v5::manual_damage_bonus(rule.parent,(id==72||id==82)?73u:id,field,active_rank);
     CHECK(owner_stat(1,{1,14,w})==original_stat({1,14,w})+bonus);CHECK(owner_stat(6,{1,14,w})==original_stat({1,14,w}));}
   }
   qa13_fixture::end();
  }
- // Independent parent/ammo rewards grant the strongest rank, not both bonuses.
+ // Each independently acquired parent/ammo rank contributes once.
  qa13_fixture::begin();GrowthSnapshot s{};s.wire_version=2;
  for(const auto& r:unit_growth::rules)if(r.kind==1&&rework_combat_v5::in(qa38_units::first(r),{72,73}))qa38_units::set(s,r.ordinal,2);
- CHECK(apply_snapshot(nullptr,s));CHECK(rework_combat_v5::unit_attack_rank(g.growth,73)==2);CHECK(owner_stat(1,{1,14,79})==original_stat({1,14,79})+2);
+ CHECK(apply_snapshot(nullptr,s));CHECK(rework_combat_v5::unit_attack_rank(g.growth,73)==4);CHECK(owner_stat(1,{1,14,79})==original_stat({1,14,79})+4);
  qa13_fixture::end();
+ // Scourge damage is exact at every combination of historical/new ranks.
+ for(U32 old=0;old<=4;++old)for(U32 added=0;added<=4;++added){
+  qa13_fixture::begin();auto snapshot=qa13_fixture::snapshot(72,old);
+  if(!old)snapshot.talent_bits[(238+72)/32]&=~(1u<<((238+72)%32));
+  qa38_units::set(snapshot,244,added);CHECK(apply_snapshot(nullptr,snapshot));
+  const U32 stacks=old+added,weapon=55;
+  CHECK(rework_combat_v5::unit_attack_rank(g.growth,47)==stacks);
+  CHECK(owner_stat(1,{1,14,weapon})==original_stat({1,14,weapon})+30u*stacks);
+  CHECK(owner_stat(6,{1,14,weapon})==original_stat({1,14,weapon}));
+  CHECK(rework_combat_v5::manual_damage_bonus(72,43,17,1)==5);
+  CHECK(rework_combat_v5::manual_damage_bonus(72,44,17,1)==6);
+  CHECK(rework_combat_v5::manual_damage_bonus(72,62,17,1)==3);
+  qa13_fixture::end();
+ }
 }
 inline void qa38_every_unit_trait_native_stats_motion_and_damage(){
  for(const auto& r:unit_growth::rules)if(r.kind==2){
   qa13_fixture::begin();GrowthSnapshot s{};s.wire_version=2;qa38_units::set(s,r.ordinal,1);CHECK(apply_snapshot(nullptr,s));
   const U32 id=qa38_units::first(r);auto u=add(id,1,100,100);u->flags=1;
-  CHECK(owner_stat(1,{0,27,id})==original_stat({0,27,id})+r.armor);
-  CHECK(owner_stat(1,{0,8,id})==U32((std::uint64_t(original_stat({0,8,id}))*(100+r.hp)+50)/100));
-  CHECK(std::abs(rework_combat_v5::speed_ratio(u)-(1.0+r.speed/100.0))<0.000001);
+  const bool removed=rework_combat_v5::unit_cleanup_retired(r.ordinal);
+  CHECK(rework_catalog::rank(g.growth,r.ordinal)==1);
+  CHECK(owner_stat(1,{0,27,id})==original_stat({0,27,id})+(removed?0u:r.armor));
+  CHECK(owner_stat(1,{0,8,id})==U32((std::uint64_t(original_stat({0,8,id}))*(100+(removed?0u:r.hp))+50)/100));
+  CHECK(std::abs(rework_combat_v5::speed_ratio(u)-(1.0+(removed?0u:r.speed)/100.0))<0.000001);
   auto weapon=qa38_fixture::weapon(id);if(id==72||id==82)weapon=79;if(id==81||id==83||id==85)weapon=82;
-  if(weapon<130)CHECK(rework_combat_v5::infantry_ui_value(u,weapon,100)==100+r.damage);
+  if(weapon<130)CHECK(rework_combat_v5::infantry_ui_value(u,weapon,100)==100+(removed?0u:r.damage));
   if(r.energy){const auto e=u->energy;CHECK(rework_combat_v5::energy_total_cap(u,*rework_combat_v5::state(u))==200*256+r.energy*256);CHECK(u->energy==e);}
   u->player=6;CHECK(rework_combat_v5::expansion_static_bonus(u,weapon)==0);qa13_fixture::end();
  }

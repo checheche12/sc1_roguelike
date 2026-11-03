@@ -5,6 +5,7 @@ import json
 from . import progression, talent_campaign_policy as policy, rank_policy
 from .runtime_catalog import GrowthError, load_catalog, validate_catalog, encode_growth
 from .curse_balance import REAR_ID, RESERVE_ID
+from .talent_retirement import unit_cleanup_retired
 
 SKIPPED_CURSE='__no_future_added_waves__'
 SKIPPED_FINAL='__campaign_clear_no_final_reward__'
@@ -12,7 +13,7 @@ RETIRED_TALENTS=frozenset(('bbf067dc-0ced-5875-a519-2c0443580c8d','9653d275-b027
 
 
 def retired(item):
-    return item['id'] in RETIRED_TALENTS or item['id'] in (REAR_ID,RESERVE_ID) or bool(item.get('effect',{}).get('retired'))
+    return item['id'] in RETIRED_TALENTS or item['id'] in (REAR_ID,RESERVE_ID) or unit_cleanup_retired(item) or bool(item.get('effect',{}).get('retired'))
 
 
 def unit_offer_removed(item):
@@ -67,7 +68,7 @@ def enable(conn, catalog_path=None):
                 if new[index] in positions:raise GrowthError('catalog_incompatible','새 재능의 전송 위치가 기존 기록과 충돌합니다.')
                 pinned[kind].append(copy.deepcopy(new));known.add(new['id']);positions.add(new[index]);changed=True
     if changed:
-        for field in ('balance_revision','talent_power_quarters','economy_talents_scaled','legendary_expansion_revision','legendary_common_offer_probability','wave_balance_revision','wave_count_multiplier_percent','wave_roster_review','unit_growth_revision','unit_growth_summary','talent_retirement_revision','legend_focus_revision','legend_base_balance_revision','single_target_legend_ordinals','effect_description_revision'):
+        for field in ('balance_revision','talent_power_quarters','economy_talents_scaled','legendary_expansion_revision','legendary_common_offer_probability','wave_balance_revision','wave_count_multiplier_percent','wave_roster_review','unit_growth_revision','unit_growth_summary','talent_retirement_revision','talent_synergy_revision','legend_focus_revision','legend_base_balance_revision','single_target_legend_ordinals','effect_description_revision'):
             if field in catalog:pinned[field]=copy.deepcopy(catalog[field])
         if 'talent_power_quarters' in catalog:pinned.pop('talent_power_halves',None)
         validate_catalog(pinned,2)

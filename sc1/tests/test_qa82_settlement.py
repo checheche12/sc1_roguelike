@@ -49,7 +49,7 @@ class SettlementTests(unittest.TestCase):
 
     def test_no_other_mission_terrain_changes(self):
         for mission in load_missions():
-            if mission['mission_id']==309:continue
+            if mission['mission_id'] in (204,309,608):continue
             chk=maps.CHK(Path(mission['source']).read_bytes());raw=chk.save()
             self.assertIsNone(terrain.apply(chk,mission));self.assertEqual(chk.save(),raw)
 

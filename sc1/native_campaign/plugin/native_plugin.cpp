@@ -1384,12 +1384,14 @@ void wave_attack(void*,U8 owner,const sc1_native::WaveRect* area,std::int32_t,st
 }
 void wave_warning(void*,U32,const sc1_native::WavePoint*) noexcept {g.wave_spawn_number=0;g.current_wave_id=g.t01_wave_id=++g.next_wave_id;announce_wave(4);}
 
+#include "include/completion_diagnostics.h"
 void restore_baseline() noexcept {
     for (auto& e:g.baseline) if (auto t=table_for(e.key,false)) write_entry(t,e.key.id,e.before);
     if (!g.baseline.empty()) log_event("Previous mission DAT restored: entries=%zu",g.baseline.size());
     g.baseline.clear();
 }
 void abandon_session() noexcept {
+    completion_diagnostics::reset();
     owner_dat_query::reset();
     stat_lookup::reset();
     frame_profile::reset();
@@ -1497,6 +1499,7 @@ void protocol_pump(void*) noexcept {
             log_event("Frame hook: frame=%u protocol_state=%u ready225=%u goal226=%u ack227=%u",game->frame_count,g.logged_state,counter(kReadyCounter) ? 1u : 0u,counter(kGoalCounter) ? 1u : 0u,counter(kAckCounter) ? 1u : 0u);
         }
         original_objectives_status(game,playable);
+        completion_diagnostics::step(game,GetTickCount64());
     } catch (...) {set_counter(kReadyCounter,0);set_counter(kAckCounter,0);abandon_session();message("본편 플러그인 기록 오류. 캠페인 기록 연결을 중단했습니다.");}
 }
 #include "include/campaign_visibility.h"

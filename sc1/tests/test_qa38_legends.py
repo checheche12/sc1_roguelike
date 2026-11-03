@@ -14,12 +14,13 @@ class QA38Legends(unittest.TestCase):
 
  def test_every_playable_family_has_a_nonshared_legend(self):
   legends=[x for x in self.catalog['talents'] if unit_legendary(x)]
-  self.assertEqual(len(legends),38)
+  self.assertEqual(len(legends),37)
   self.assertEqual(sum(len(x) for x in UNIT_FAMILIES.values()),44)
   for race,rows in UNIT_FAMILIES.items():
    for name,ids in rows:
     from sc1.campaign.talent_retirement import NONCOMBAT_FAMILIES
-    if ids[0] in NONCOMBAT_FAMILIES:continue
+    # QA88 retired the Spider Mine legend while retaining its fragment epic.
+    if ids[0] in NONCOMBAT_FAMILIES or ids[0]==13:continue
     self.assertTrue(any(x['race']==race and set(ids)&set(x['target_units']) for x in legends),name)
 
  def test_promotions_have_weaker_replacements_without_implicit_power_jump(self):
@@ -62,7 +63,7 @@ class QA38Legends(unittest.TestCase):
   conn.execute('CREATE TABLE frozen (bytes BLOB)');conn.execute('INSERT INTO frozen VALUES (?)',(b'unchanged accepted input and checkpoint',))
   rework_growth.enable(conn)
   pinned=json.loads(conn.execute('SELECT catalog_json FROM growth_rework_catalog').fetchone()[0])
-  self.assertEqual(len(pinned['talents']),560)
+  self.assertEqual([x['id'] for x in pinned['talents']],[x['id'] for x in self.catalog['talents']])
   self.assertEqual(conn.execute('SELECT text FROM issued').fetchone()[0],issued)
   self.assertEqual(conn.execute('SELECT bytes FROM frozen').fetchone()[0],b'unchanged accepted input and checkpoint')
   self.assertEqual([x['id'] for x in pinned['talents'][:400]],[x['id'] for x in old['talents']])

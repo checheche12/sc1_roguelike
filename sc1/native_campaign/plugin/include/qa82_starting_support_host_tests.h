@@ -1,6 +1,6 @@
 #pragma once
 namespace host_test {
-inline constexpr std::size_t qa82_group_count=3;
+inline constexpr std::size_t qa82_group_count=4;
 namespace qa82_fixture {
 inline U32 remaining=0;
 inline bw::Unit* __cdecl limited_create(U32 id,int x,int y,U32 owner,const U8* skins){
@@ -58,5 +58,27 @@ inline void qa82_nonproduction_and_unfinished_bases_never_credit(){
     living_units([&](bw::Unit* u){if(u->unit_id==154)u->flags=1;});
     rework_economy_v5::step();CHECK(!rework_economy_v5::starting_bonus_credited&&rework_economy_v5::starting_workers==0);
 }
-inline void run_qa82_groups(){qa82_late_support_scope_and_one_time_delivery();qa82_support_waits_for_settlement_and_retries_partial_spawn();qa82_nonproduction_and_unfinished_bases_never_credit();}
+inline void qa82_protoss_final_support_uses_nexus_in_both_unit_orders(){
+    using namespace qa82_fixture;
+    for(bool terran_first:{true,false}){
+        begin(310);
+        auto add_base=[](U32 id,int x){
+            auto u=economy_add(id,player_owner(),x,1024);u->flags=1;
+            auto mineral=economy_add(176,11,x+200,1024);rework_economy_v5::amount(mineral,1500);
+        };
+        if(terran_first){add_base(106,1024);add_base(154,3072);}
+        else {add_base(154,3072);add_base(106,1024);}
+        rework_economy_v5::step();check_support(310,750,6);
+        living_units([&](bw::Unit* u){if(u->player==player_owner()){
+            CHECK(u->unit_id!=7);
+            if(u->unit_id==64)CHECK(u->flingy.position.x>=2752);
+        }});
+        CHECK(game.supplies[1].provided[player_owner()]==0);
+        game.frame_count=240;rework_economy_v5::step();check_support(310,750,6);
+    }
+    begin(310);auto cc=economy_add(106,player_owner(),1024,1024);cc->flags=1;
+    auto mineral=economy_add(176,11,1224,1024);rework_economy_v5::amount(mineral,1500);
+    rework_economy_v5::step();CHECK(!rework_economy_v5::starting_bonus_credited);
+}
+inline void run_qa82_groups(){qa82_late_support_scope_and_one_time_delivery();qa82_support_waits_for_settlement_and_retries_partial_spawn();qa82_nonproduction_and_unfinished_bases_never_credit();qa82_protoss_final_support_uses_nexus_in_both_unit_orders();}
 }
