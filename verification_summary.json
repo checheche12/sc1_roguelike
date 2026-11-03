@@ -1,0 +1,45 @@
+{
+  "version": "v1.0.17",
+  "host_tests": {
+    "passed": true,
+    "groups": 559,
+    "checks": 2404624
+  },
+  "native_ui": {
+    "passed": true,
+    "groups": 22,
+    "assertions": 177282
+  },
+  "python_tests": 100,
+  "maps": 63,
+  "exact_qa9_map_payloads": true,
+  "actual_engine_combat_checks": 73,
+  "actual_engine_checks_passed": 73,
+  "crashes_in_final_two_combat_runs": 0,
+  "native_sources_identical_to_live_test_snapshot": true,
+  "marine_interval_medians_before": [
+    15,
+    9,
+    11,
+    9
+  ],
+  "marine_interval_medians_after": [
+    16,
+    5,
+    11,
+    4
+  ],
+  "controls": [
+    "none",
+    "warmup",
+    "training",
+    "both"
+  ],
+  "native_dll_sha256": "3684b12541fd20c88fa2c3f2dd61c745e95b3440e5a962ec34b14f0ec3e97ff1",
+  "personal_database_included": false,
+  "limits": [
+    "Dedicated combat map with a private observer DLL built from identical production C++ sources.",
+    "Not all campaigns, talent combinations, visuals or normal shutdown are verified.",
+    "Intermittent victory completion report remains unreproduced; this release adds diagnostics."
+  ]
+}
