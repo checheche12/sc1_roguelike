@@ -82,3 +82,11 @@ Windows 64비트·스타크래프트 리마스터용입니다. ZIP 전체를 압
 현재 버전의 네이티브 플러그인과 자료 처리에 쓰인 [SAMASE](https://github.com/neivv/samase_plugin), [Tatti3](https://github.com/neivv/tatti3), [CascLib](https://github.com/ladislav-zezula/CascLib), 그리고 Python·Tcl/Tk·OpenSSL·Pillow·PyMS를 비롯한 오픈소스 프로젝트의 개발자와 기여자분들께 감사드려요. 공개해 주신 도구와 자료 덕분에 이 모드를 만들 수 있었어요.
 
 StarCraft와 게임 자산의 권리는 Blizzard Entertainment에 있어요. 외부 도구와 참조 코드의 출처는 [THIRD_PARTY.md](THIRD_PARTY.md)에서 확인할 수 있어요.
+
+## 자유로운 수정
+
+이 프로젝트는 자유롭게 수정해도 괜찮아요. 원하는 방식으로 고치거나 새로운 기능을 더하며 즐겨 주세요.
+
+코드의 대부분은 Codex를 활용해 만들었고, 캠페인 로그라이크라는 아이디어는 스타2 로그라이크 원작에서 영감을 받았어요. 이 프로젝트는 StarCraft와 위 Special Thanks에 소개한 여러 프로젝트의 도움을 바탕으로 만들어졌어요.
+
+StarCraft와 게임 자산, 외부 도구와 참조 코드의 권리는 각각의 원저작자에게 있어요. 자유롭게 수정하되, 사용된 자료의 출처와 각 라이선스 조건은 지켜 주세요.
