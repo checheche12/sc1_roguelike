@@ -138,8 +138,10 @@ def undo(chk,report):
 def generate_header(rows,root):
     lines=['#pragma once','namespace base_defense_data {','struct Post {unsigned mission,type,owner,x,y;};','inline constexpr Post posts[]={']
     for row in rows:
-        for item in row['base_defenses']['added']:
-            if item['role']=='defender':lines.append('{'+','.join(map(str,(row['mission_id'],item['unit'],item['owner'],*item['position'])))+'},')
+        corrected={m['index']:m['after'] for m in row.get('ladder_resource_banks',{}).get('spawn_placement',{}).get('moves',[])}
+        for offset,item in enumerate(row['base_defenses']['added']):
+            position=corrected.get(row['base_defenses']['base_unit_count']+offset,item['position'])
+            if item['role']=='defender':lines.append('{'+','.join(map(str,(row['mission_id'],item['unit'],item['owner'],*position)))+'},')
     lines+=['};','}']
     path=Path(root)/'sc1/native_campaign/plugin/include/base_defenses.generated.h'
     path.write_text('\n'.join(lines)+'\n',encoding='utf8');return path

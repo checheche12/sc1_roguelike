@@ -42,6 +42,31 @@ inline void placement_creation_updates_supply_and_blocked_retry_is_linear(){
  CHECK(count==1500&&rework_waves::deferred.size()==queued);CHECK(host_unit_scans<=2&&host_unit_visits<=3000);
  CHECK(rework_waves::placement::depth==0&&!rework_waves::placement::ready);
 }
-inline constexpr std::size_t placement_performance_group_count=2;
-inline void run_placement_performance_groups(){placement_spatial_equivalence_and_batch_lifetime();placement_creation_updates_supply_and_blocked_retry_is_linear();}
+inline void placement_uses_full_ground_footprints(){
+ rework_wave_tests::begin(310);
+ std::array<multi_target::Dimensions,228> boxes{};
+ for(U32 id:{3u,5u,30u,66u})boxes[id]={16,16,15,15};
+ boxes[83]={16,16,31,15};boxes[106]={48,32,63,47};boxes[8]={16,16,15,15};
+ const auto old=dat[0][38];dat[0][38]={boxes.data(),8,228};
+ auto blocker=add(30,6,1000,1000);blocker->flags=1;
+ // All pass the old40px radius, but their real rectangles still intersect.
+ for(U32 id:{3u,5u,30u,66u}){
+  CHECK(rework_waves::clear_cell(1029,1029,true));
+  CHECK(!rework_waves::clear_cell(1029,1029,true,id));
+  CHECK(rework_waves::clear_cell(1040,1000,true,id));
+ }
+ CHECK(!rework_waves::clear_cell(960,1020,true,83));
+ auto building=add(106,6,2000,2000);building->flags=1;
+ CHECK(!rework_waves::clear_cell(2070,2040,true,5));
+ CHECK(rework_waves::clear_cell(2070,2040,true,8));
+ CHECK(!rework_waves::clear_cell(8,3000,true,5));
+ CHECK(!rework_waves::clear_cell(int(g.mission->width*32)-8,3000,true,8));
+ blocker->flags|=0x40u;CHECK(rework_waves::clear_cell(1029,1029,true,5));
+ blocker->flags=1;blocker->unit_id=8;CHECK(rework_waves::clear_cell(1029,1029,true,5));
+ // A large obstacle's centre is in another bucket; its edge still blocks.
+ boxes[106]={260,32,260,47};CHECK(!rework_waves::clear_cell(2240,2000,true,5));
+ dat[0][38]=old;
+}
+inline constexpr std::size_t placement_performance_group_count=3;
+inline void run_placement_performance_groups(){placement_spatial_equivalence_and_batch_lifetime();placement_creation_updates_supply_and_blocked_retry_is_linear();placement_uses_full_ground_footprints();}
 }

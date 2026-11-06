@@ -190,17 +190,27 @@ class LadderResourceBanksTests(unittest.TestCase):
                     for gas in proof['gas_exits'].values():self.assertTrue(gas['preferred_32px_offset_exit_clear'])
         self.assertEqual(parents,345);self.assertGreaterEqual(sites,345);self.assertLess(sites,413);self.assertGreater(expansions,100)
 
-    def test_only_resources_and_reviewed_building_coordinates_change_and_undo_is_exact(self):
+    def test_only_resources_reviewed_buildings_and_repaired_mobile_units_move(self):
         from sc1.native_campaign import mission_placement_fixes as fixes
         for row in self.rows:
             final=maps.CHK(Path(row['output']).read_bytes());old=maps.CHK(final.save())
             banks.undo(old,row['ladder_resource_banks'])
+            repair=row['ladder_resource_banks'].get('spawn_placement',{})
+            corrected={m['index']:m for m in repair.get('moves',[])}
             a=old.getsection('UNIT');b=final.getsection('UNIT');self.assertEqual(len(a),len(b))
             for at in range(0,len(a),36):
                 self.assertEqual(a[at:at+4],b[at:at+4]);self.assertEqual(a[at+8:at+36],b[at+8:at+36])
                 if a[at:at+36]!=b[at:at+36]:
                     unit=struct.unpack_from('<H',a,at+8)[0]
                     if unit not in banks.rules.MINERALS|banks.gas.GAS_TYPES:
+                        if at//36 in corrected:
+                            move=corrected[at//36]
+                            self.assertEqual(move['original_actor'],at//36<repair['original_unit_count'])
+                            if move['original_actor']:self.assertTrue(move['introduced_obstacles'])
+                            self.assertLess(unit,106)
+                            self.assertEqual(list(struct.unpack_from('<2H',a,at+4)),move['before'])
+                            self.assertEqual(list(struct.unpack_from('<2H',b,at+4)),move['after'])
+                            continue
                         expected=fixes.BUILDINGS.get(row['mission_id'],{}).get(at//36)
                         self.assertIsNotNone(expected)
                         kind,owner,old_position,dest=expected

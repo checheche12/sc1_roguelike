@@ -62,7 +62,7 @@ inline bw::Unit* island_create(U32 id,U32 slot,U32 hp,U32 attack,U32 required_ow
  if(live_supply()+budget>supply_cap()||(!convoy&&island_convoys.size()>=64))return nullptr;
  bw::Unit* ship=convoy?island_unit(convoy->ship):nullptr;
  if(!ship){
-  for(U32 i=0;i<route->loading_count&&!ship;i++){const auto p=route->loading[i];if(!clear_cell(p.x,p.y))continue;OwnerDatScope scope(route->owner,route->owner);ship=spawn(carrier_id,p.x,p.y,route->owner);if(ship)finish_created(ship,0,100,100,p.x,p.y);}
+  for(U32 i=0;i<route->loading_count&&!ship;i++){const auto p=route->loading[i];if(!clear_cell(p.x,p.y,false,carrier_id))continue;OwnerDatScope scope(route->owner,route->owner);ship=spawn(carrier_id,p.x,p.y,route->owner);if(ship)finish_created(ship,0,100,100,p.x,p.y);}
   if(!ship)return nullptr;
   island_hold(ship,true);
   // Ventral Sacs is needed by the native Overlord boarding path. This changes
@@ -70,7 +70,7 @@ inline bw::Unit* island_create(U32 id,U32 slot,U32 hp,U32 attack,U32 required_ow
   if(carrier_id==42)enemy_progression::upgrade(route->owner,24,1);
  }
  bw::Unit* passenger=nullptr;
- for(U32 i=0;i<route->loading_count&&!passenger;i++){const auto p=route->loading[i];if(!clear_cell(p.x,p.y))continue;OwnerDatScope scope(route->owner,route->owner);passenger=spawn(id,p.x,p.y,route->owner);if(passenger)finish_created(passenger,slot,hp,attack,p.x,p.y);}
+ for(U32 i=0;i<route->loading_count&&!passenger;i++){const auto p=route->loading[i];if(!clear_cell(p.x,p.y,false,id))continue;OwnerDatScope scope(route->owner,route->owner);passenger=spawn(id,p.x,p.y,route->owner);if(passenger)finish_created(passenger,slot,hp,attack,p.x,p.y);}
  if(!passenger){if(!convoy)island_discard(ship);return nullptr;}
  island_hold(passenger,true);
  if(!convoy){const bool announced=std::any_of(island_convoys.begin(),island_convoys.end(),[](const auto& c){return c.wave==g.current_wave_id;});IslandConvoy c{};c.ship=rework_combat_v5::identity(ship);c.route=route;c.wave=g.current_wave_id;c.started=g.game()->frame_count;c.land_x=island_land_x;c.land_y=island_land_y;island_convoys.push_back(std::move(c));convoy=&island_convoys.back();

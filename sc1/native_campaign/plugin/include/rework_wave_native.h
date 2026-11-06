@@ -128,10 +128,8 @@ inline void select_specials() {
   selected[n++]=r.slot;timeline.cursor=static_cast<U32>((idx+1)%std::size(policy::kRosters));}
  log_event("V5 special curse selection: slots=%u,%u normal_ordinal=%u",selected[0],selected[1],timeline.ordinal+1);
 }
-inline bool clear_cell(int x,int y,bool worker_raid=false) {
- if(placement::depth)return placement::clear(x,y,worker_raid);
- bool clear=true;U32 alive=0;living_units([&](bw::Unit* u){++alive;const auto p=u->flingy.position;const auto dx=std::int64_t(x)-p.x,dy=std::int64_t(y)-p.y;
-  if(dx*dx+dy*dy<40ll*40)clear=false;if(!worker_raid && wave_protected_unit(u) && dx*dx+dy*dy<512ll*512)clear=false;});return clear && alive<1550;
+inline bool clear_cell(int x,int y,bool worker_raid=false,U32 type=228) {
+ placement::Batch batch;return placement::clear(x,y,worker_raid,type);
 }
 inline U32 live_supply() {if(placement::depth){placement::refresh();return placement::supply;}U32 supply=0;living_units([&](bw::Unit* u){auto t=existing_track(u);if(t && t->spawned && is_enemy(u->player))supply+=std::max(1u,original_stat({0,46,u->unit_id}));});return supply;}
 inline U32 supply_cap() noexcept {
@@ -181,7 +179,7 @@ inline bw::Unit* create(U32 id,U32 slot,U32 hp=100,U32 attack=100,bool alternate
   const auto owner=raid_owner();auto worker=mining_worker_target();if(!owner||!worker||(required_owner<12&&owner->owner!=required_owner))return nullptr;const auto center=worker->flingy.position;
   for(int radius=64;radius<=384;radius+=32)for(int dy=-radius;dy<=radius;dy+=32)for(int dx=-radius;dx<=radius;dx+=32){
    if(std::max(std::abs(dx),std::abs(dy))!=radius)continue;const int x=int(center.x)+dx,y=int(center.y)+dy;
-   if(x<16||y<16||x>=int(g.mission->width*32)-16||y>=int(g.mission->height*32)-16||!clear_cell(x,y,true))continue;
+   if(x<16||y<16||x>=int(g.mission->width*32)-16||y>=int(g.mission->height*32)-16||!clear_cell(x,y,true,id))continue;
    OwnerDatScope scope(owner->owner,owner->owner);++frame_profile::spawn_attempts;auto u=spawn(id,x,y,owner->owner);if(u)return finish_created(u,slot,hp,attack,x,y);
   }return nullptr;
  }
@@ -192,7 +190,7 @@ inline bw::Unit* create(U32 id,U32 slot,U32 hp=100,U32 attack=100,bool alternate
  if(required_owner<12&&origin->owner!=required_owner)continue;
  const bool only_air=sc1_native::wave_progression::air_only_unit(static_cast<std::uint16_t>(origin->unit1)) && sc1_native::wave_progression::air_only_unit(static_cast<std::uint16_t>(origin->unit2));if(ground && only_air)continue;
  for(U32 i=0;i<origin->cell_count;i++){
-  const auto p=origin->cells[(i+unit_ordinal)%origin->cell_count];if(!clear_cell(p.x,p.y))continue;
+  const auto p=origin->cells[(i+unit_ordinal)%origin->cell_count];if(!clear_cell(p.x,p.y,false,id))continue;
   OwnerDatScope scope(origin->owner,origin->owner);++frame_profile::spawn_attempts;auto u=spawn(id,p.x,p.y,origin->owner);if(!u)continue;
   return finish_created(u,slot,hp,attack,p.x,p.y);
  }}

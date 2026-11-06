@@ -762,11 +762,11 @@ def build(output=OUT,receipt=RECEIPT):
  report['mission_balance_source_sha256']=digest(Path(mission_balance.__file__).read_bytes())
  from sc1.native_campaign import corner_resource_layout,scripted_openings,courtyard_resource_layout
  from sc1.native_campaign import campaign_resource_grants
- from sc1.native_campaign import settlement_terrain,base_defenses,ladder_resource_banks,mission_placement_fixes,mission_placement_plan
+ from sc1.native_campaign import settlement_terrain,base_defenses,ladder_resource_banks,mission_placement_fixes,mission_placement_plan,unit_spawn_placement
  defense_header=base_defenses.generate_header(report['maps'],SC1.parent)
  report['base_defense_header']=str(defense_header)
  report['base_defense_header_sha256']=digest(defense_header.read_bytes())
- for module in (corner_resource_layout,scripted_openings,courtyard_resource_layout,campaign_resource_grants,settlement_terrain,base_defenses,ladder_resource_banks,mission_placement_fixes,mission_placement_plan):
+ for module in (corner_resource_layout,scripted_openings,courtyard_resource_layout,campaign_resource_grants,settlement_terrain,base_defenses,ladder_resource_banks,mission_placement_fixes,mission_placement_plan,unit_spawn_placement):
   name=module.__name__.rsplit('.',1)[-1]
   report[name+'_source']=str(Path(module.__file__).resolve())
   report[name+'_source_sha256']=digest(Path(module.__file__).read_bytes())

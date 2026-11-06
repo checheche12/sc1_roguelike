@@ -706,7 +706,9 @@ def apply(chk,mission,courtyard,*,reserved_points=()):
         if overrides:report['adaptive_group_overrides']={str(k):v for k,v in overrides.items()}
         report=rebalance_distant(chk,mission,courtyard,report,before,reserved_points=reserved_points)
         from . import mission_placement_fixes
-        return mission_placement_fixes.apply(chk,mission,report)
+        report=mission_placement_fixes.apply(chk,mission,report)
+        from . import unit_spawn_placement
+        return unit_spawn_placement.apply(chk,mission,report,reserved_points=reserved_points)
     raise AssertionError(('No fully verified grouped single-layer plan',mission['mission_id'],failures))
 
 

@@ -4,10 +4,11 @@
 // its turret/children). No cached positions survive the outermost batch call.
 namespace placement {
 inline constexpr int width=64,pixels=128;
-struct Entry {int x,y,next;U8 owner;bool protected_unit,building;};
+struct Entry {int x,y,next;U8 owner;bool protected_unit,building,ground;multi_target::Dimensions bounds;};
 inline std::array<int,width*width> heads{};
 inline std::vector<Entry> entries;
 inline U32 depth=0,alive=0,supply=0;inline bool ready=false;
+inline int extent_x=0,extent_y=0;
 inline void invalidate() noexcept {ready=false;}
 struct Batch {
  Batch() noexcept {if(!depth++)invalidate();}
@@ -17,12 +18,15 @@ struct Batch {
 inline int cell(int p) noexcept {return std::clamp(p/pixels,0,width-1);}
 inline void refresh(){
  if(ready)return;
- heads.fill(-1);entries.clear();alive=supply=0;
+ heads.fill(-1);entries.clear();alive=supply=0;extent_x=extent_y=0;
  living_units([](bw::Unit* u){
   ++alive;const auto t=existing_track(u);
   if(t&&t->spawned&&is_enemy(u->player))supply+=std::max(1u,original_stat({0,46,u->unit_id}));
   const auto p=u->flingy.position;const int bucket=cell(p.y)*width+cell(p.x),index=int(entries.size());
-  entries.push_back({p.x,p.y,heads[bucket],u->player,wave_protected_unit(u),(original_stat({0,22,u->unit_id})&1u)!=0});heads[bucket]=index;
+  const auto flags=original_stat({0,22,u->unit_id});const auto box=multi_target::dimensions(u->unit_id);
+  const bool ground=!(flags&(4u|16u))&&!(u->flags&(4u|0x40u));
+  if(ground){extent_x=std::max(extent_x,int(std::max(box.left,box.right)));extent_y=std::max(extent_y,int(std::max(box.top,box.bottom)));}
+  entries.push_back({p.x,p.y,heads[bucket],u->player,wave_protected_unit(u),(flags&1u)!=0,ground,box});heads[bucket]=index;
  });ready=true;++frame_profile::placement_snapshots;
 }
 template<class F>inline bool any(int x,int y,int radius,F matches){
@@ -35,10 +39,25 @@ template<class F>inline bool any(int x,int y,int radius,F matches){
   }
  return false;
 }
-inline bool clear(int x,int y,bool raid){
+inline bool fits(U32 type,int x,int y){
+ if(type>=228)return true;
+ const auto a=multi_target::dimensions(type);
+ if(!g.mission||x-int(a.left)<0||y-int(a.top)<0||x+int(a.right)>=int(g.mission->width*32)||y+int(a.bottom)>=int(g.mission->height*32))return false;
+ if(original_stat({0,22,type})&4u)return true;
+ refresh();
+ for(int cy=cell(y-int(a.top)-extent_y);cy<=cell(y+int(a.bottom)+extent_y);++cy)
+  for(int cx=cell(x-int(a.left)-extent_x);cx<=cell(x+int(a.right)+extent_x);++cx)
+   for(int i=heads[cy*width+cx];i>=0;i=entries[std::size_t(i)].next){
+    ++frame_profile::placement_visits;const auto& e=entries[std::size_t(i)];if(!e.ground)continue;const auto& b=e.bounds;
+    if(x-int(a.left)<=e.x+int(b.right)&&x+int(a.right)>=e.x-int(b.left)&&
+       y-int(a.top)<=e.y+int(b.bottom)&&y+int(a.bottom)>=e.y-int(b.top))return false;
+   }
+ return true;
+}
+inline bool clear(int x,int y,bool raid,U32 type=228){
  ++frame_profile::placement_checks;refresh();
  if(alive>=1550||any(x,y,40,[](const Entry&){return true;}))return false;
- return raid||!any(x,y,512,[](const Entry& e){return e.protected_unit;});
+ return (raid||!any(x,y,512,[](const Entry& e){return e.protected_unit;}))&&fits(type,x,y);
 }
 inline bool safe(const sc1_native::campaign_wave_config::Origin& origin){
  if(!depth)return origin_safe(origin);

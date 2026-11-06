@@ -227,10 +227,10 @@ def validate_maps(receipt_path):
     from . import mission_balance
     balance_path, _ = legacy.checked_file(receipt['mission_balance_source'], receipt['mission_balance_source_sha256'])
     if balance_path != Path(mission_balance.__file__).resolve():raise ValueError('Unexpected mission balance implementation')
-    from . import corner_resource_layout,scripted_openings,courtyard_resource_layout,campaign_resource_grants,settlement_terrain,base_defenses,ladder_resource_banks,mission_placement_fixes,mission_placement_plan
+    from . import corner_resource_layout,scripted_openings,courtyard_resource_layout,campaign_resource_grants,settlement_terrain,base_defenses,ladder_resource_banks,mission_placement_fixes,mission_placement_plan,unit_spawn_placement
     header,_=legacy.checked_file(receipt['base_defense_header'],receipt['base_defense_header_sha256'])
     if header!=ROOT/'plugin/include/base_defenses.generated.h':raise ValueError('Unexpected base defense header')
-    for module in (corner_resource_layout,scripted_openings,courtyard_resource_layout,campaign_resource_grants,settlement_terrain,base_defenses,ladder_resource_banks,mission_placement_fixes,mission_placement_plan):
+    for module in (corner_resource_layout,scripted_openings,courtyard_resource_layout,campaign_resource_grants,settlement_terrain,base_defenses,ladder_resource_banks,mission_placement_fixes,mission_placement_plan,unit_spawn_placement):
         name=module.__name__.rsplit('.',1)[-1]
         pinned,_=legacy.checked_file(receipt[name+'_source'],receipt[name+'_source_sha256'])
         if pinned!=Path(module.__file__).resolve():raise ValueError('Unexpected '+name+' implementation')
@@ -260,6 +260,7 @@ def validate_maps(receipt_path):
         _, original = legacy.checked_file(row["source"], row["source_sha256"])
         _, output = legacy.checked_file(row["output"], row["sha256"])
         source_chk, output_chk = CHK(original), CHK(output)
+        unit_spawn_placement.verify(output_chk,mission,row['ladder_resource_banks'])
         if source_chk.getsection("VER ") != output_chk.getsection("VER "):
             raise ValueError("Scenario format version changed")
         if source_chk.order != output_chk.order:
