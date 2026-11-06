@@ -1,0 +1,73 @@
+{
+  "version": "v1.0.18",
+  "scope": "Unit placement only",
+  "maps": {
+    "passed": true,
+    "maps": 63,
+    "checked_ground_additions": 6478,
+    "changed_maps": 49,
+    "moved_units": 223,
+    "checked_original_ground_units": 7918,
+    "moved_original_units": 42,
+    "new_original_obstacle_collisions": 0,
+    "unit_type_counts": {
+      "2": 16,
+      "3": 37,
+      "5": 7,
+      "30": 27,
+      "66": 26,
+      "65": 5,
+      "32": 6,
+      "0": 15,
+      "39": 21,
+      "64": 1,
+      "83": 3,
+      "67": 3,
+      "68": 3,
+      "38": 25,
+      "37": 16,
+      "103": 5,
+      "7": 3,
+      "63": 2,
+      "34": 2
+    },
+    "maximum_displacement_pixels": 77.07788269017254,
+    "baseline_archive_sha256": "bb9404aca029661f836ae9721edf20a978a7c43a818499f594fd8a88a0c87aa1",
+    "baseline_version": "1.0.17",
+    "current_receipt_sha256": "004d5f62f147cafdb06861d5c22ad3952f18f520e14d2fad200d43f3b5c393d9",
+    "baseline_map_bytes_verified": true,
+    "unit_repair_replayed_on_all_maps": true,
+    "final_footprints_verified": true,
+    "original_actors_counts_properties_preserved": true,
+    "all_non_unit_sections_byte_identical": true,
+    "wave_origins_and_timing_unchanged": true,
+    "resource_coordinates_unchanged": true,
+    "full_resource_planner_reexecuted": false,
+    "live_gameplay_verified": false
+  },
+  "native_host": {
+    "passed": true,
+    "groups": 560,
+    "checks": 2404652
+  },
+  "native_ui": {
+    "passed": true,
+    "groups": 22,
+    "assertions": 177282
+  },
+  "python_tests": 99,
+  "existing_legacy_suite": {
+    "baseline_and_candidate_identical": true,
+    "tests": 15,
+    "existing_failures": 226,
+    "existing_errors": 0,
+    "unchanged_trigger_bytes": true
+  },
+  "existing_legacy_suite_note": "The old fixed-map/checkpoint suite has the same226 failing cases on1.0.17 and1.0.18; no new failing cases. Current placement, preservation and manager regressions pass99 tests.",
+  "native_dll_sha256": "cd673fe4d2c6a6559bff9e310de213d4086ccc75959e6f0970853949e269b028",
+  "personal_database_included": false,
+  "limits": [
+    "Offline map geometry and synthetic native/manager tests; no live campaign playtest.",
+    "The separate reported connection failure is not reproduced or claimed fixed."
+  ]
+}
