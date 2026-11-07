@@ -117,6 +117,26 @@ def _verify_base_resource_layout(source_chk, output_chk, mission, row):
         raise ValueError("Main-base gas differs from the exact constrained transformation")
 
 
+def same_bank_receipt(replayed, saved):
+    """Accept the old label only when the entire placement proof still matches.
+
+    The v3 plan updated five missions but retained byte-identical v2 placements
+    on other maps. Existing sealed receipts keep their historical v2 label.
+    Coordinates, hashes, geometry proofs and every other field remain strict;
+    verify_mineral_layout also compares the complete reconstructed CHK bytes.
+    """
+    if replayed == saved:
+        return True
+    old = saved.get('playtest_placement', {})
+    current = replayed.get('playtest_placement', {})
+    if (old.get('version') != 'campaign_playtest_20261030_v2'
+            or current.get('version') != 'campaign_playtest_20261103_v3'):
+        return False
+    compatible = dict(saved)
+    compatible['playtest_placement'] = {**old, 'version': current['version']}
+    return compatible == replayed
+
+
 def verify_mineral_layout(source_chk, output_chk, mission, row):
     from . import mission_balance,corner_resource_layout,scripted_openings,courtyard_resource_layout
     from . import settlement_terrain,base_defenses,ladder_resource_banks
@@ -157,7 +177,7 @@ def verify_mineral_layout(source_chk, output_chk, mission, row):
             if defenses!=row['base_defenses']:raise ValueError('Base fortifications differ from deterministic replay')
         banks=ladder_resource_banks.apply(baseline,mission,courtyard,
             reserved_points=map_builder.mineral_reserved_points(row['difficulty']))
-        if banks!=row['ladder_resource_banks']:raise ValueError('Ladder resource banks differ from deterministic replay')
+        if not same_bank_receipt(banks,row['ladder_resource_banks']):raise ValueError('Ladder resource banks differ from deterministic replay')
         baseline.setsection('TRIG',output_chk.getsection('TRIG'))
         if expected != report or baseline.save() != output_chk.save():
             raise ValueError('Mission balance differs from deterministic replay')

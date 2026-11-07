@@ -262,7 +262,17 @@ bool MailboxProtocol::accept_offer(const std::uint32_t (&words)[96]) noexcept {
                 }
                 if(!next.partners[i])continue;
                 if(i>=next.count||!legendary_bundles::compatible(next.candidates[i],next.partners[i]))return false;
-                for(std::size_t j=0;j<i;j++)if(next.candidates[i]==next.partners[j]&&next.partners[i]==next.candidates[j])return false;
+                // The manager deduplicates complete unordered bundles. Two
+                // triples may share their first two members in reverse order
+                // while granting different third talents (A+B+C vs B+A+D).
+                // Compare all three slots, including zero for historical pairs.
+                std::uint32_t members[3]={next.candidates[i],next.partners[i],next.thirds[i]};
+                std::sort(members,members+3);
+                for(std::size_t j=0;j<i;j++){
+                    std::uint32_t previous[3]={next.candidates[j],next.partners[j],next.thirds[j]};
+                    std::sort(previous,previous+3);
+                    if(std::equal(members,members+3,previous))return false;
+                }
                 any=true;
             }
             if(!any||(triple&&!any_third))return false;
@@ -783,6 +793,31 @@ void qa55_three_manual_offer_validation() {
         if(!invalid)CHECK(f.host.offer.thirds[0]==members[2]&&f.protocol.submit_choice(1));
     }
 }
+void complete_bundle_identity_validation() {
+    // Actual Terran5 failure: SCV+Vulture+Valkyrie and
+    // Vulture+SCV+Battlecruiser are distinct, durable three-manual options.
+    for(unsigned scenario=0;scenario<8;++scenario){
+        Fixture f(true,2,2,105);auto r=f.offer();
+        r[23]=1;r[24]=1;r[26]=0x50484331;r[27]=2;r[28]=1;r[29]=0;r[30]=4;
+        r[14]=2;r[15]=438;r[16]=448;r[17]=r[18]=0;
+        r[32]=448;r[33]=438;r[36]=0x424e4432;r[37]=461;r[38]=459;
+        if(scenario==1)r[38]=461; // Exact triple, first pair reversed.
+        if(scenario==2){r[16]=461;r[33]=438;r[38]=448;} // Rotation.
+        if(scenario==3){r[36]=0x424e4431;r[37]=r[38]=0;} // Reversed pair.
+        if(scenario==4)r[38]=0; // Pair plus triple are distinct.
+        if(scenario==5)r[37]=0; // Triple plus pair are distinct.
+        if(scenario==6){r[16]=461;r[33]=448;r[38]=438;} // Other permutation.
+        if(scenario==7){r[16]=459;r[33]=448;r[38]=461;} // Shared third.
+        const bool duplicate=scenario==1||scenario==2||scenario==3||scenario==6;
+        f.send(r);
+        CHECK(duplicate ? f.protocol.failed() : f.protocol.offer_active());
+        if(duplicate)CHECK(f.protocol.error_code()==7&&f.host.offers==0);
+        else {
+            CHECK(f.host.offer.thirds[0]==r[37]&&f.host.offer.thirds[1]==r[38]);
+            CHECK(f.protocol.submit_choice(2));
+        }
+    }
+}
 void rework_v2_extended_snapshot_and_single_offer() {
     // QA26 counters cross byte255 without spilling into adjacent curse bytes.
     for(std::uint32_t count:{4u,255u,256u,1000u,0xffffffffu}){
@@ -1081,7 +1116,7 @@ int main(int argc, char** argv) {
             reset_quarantines_old_mailbox_and_rejects_old_ack,
             destruction_never_calls_host_but_explicit_shutdown_does, slots_and_request_ownership,
             unsupported_mission_and_corrupt_request_fail_closed, maximum_supported_snapshot_is_valid,
-            qa55_three_manual_offer_validation,qa16_bundle_numeric_offer_validation,rework_v2_extended_snapshot_and_single_offer,qa10_health_bit_fallback_and_capped_phase_transition,rework_v2_rejects_rank_bit_mismatch_and_reserved_payload
+            complete_bundle_identity_validation,qa55_three_manual_offer_validation,qa16_bundle_numeric_offer_validation,rework_v2_extended_snapshot_and_single_offer,qa10_health_bit_fallback_and_capped_phase_transition,rework_v2_rejects_rank_bit_mismatch_and_reserved_payload
         };
         for (const auto& test : tests) test();
         std::cout << "{\"cpp_tests\":" << tests.size() << ",\"passed\":true,\"game_accessed\":false,\"database_accessed\":false}\n";

@@ -13,6 +13,16 @@ python -B -X utf8 sc1/build_release.py --output sc1/dist/SC1_Roguelike_local --r
 
 두 번째 명령은 기본 T01 입력, 전체 63개 지도, 네이티브 DLL, 패키지, 실행기와 ZIP을 차례로 만듭니다. 네이티브 프로덕션 호스트 검사, 선택 UI 검사, Python/네이티브 프로토콜 검사를 통과해야 패키징하며, 마지막에 실행기 자체 검사와 ZIP 전체 SHA-256 대조를 수행합니다. 출력 폴더와 ZIP 이름은 아직 존재하지 않는 경로를 지정하세요. 게임 실행·설치와 사용자 기록 변경은 수행하지 않습니다.
 
+성장 연결 안정성 검사는 실제 카탈로그 추첨·임시 SQLite·네이티브 프로토콜 검사기를 연결하여 전체 63개 지도와 저주 0~4회 설정을 순회합니다. 보상 대기 중 재접속, 조기 목표 달성, 중복 응답, 완료 저장과 재출전을 확인하며 게임은 실행하지 않습니다. 검사기는 같은 소스로 빌드한 `mailbox_tests.exe`를 지정합니다.
+
+```powershell
+python -B -X utf8 sc1/native_campaign/audit_campaign_stability.py --executable sc1/native_campaign/build/all_campaign_runtime/mailbox_tests.exe --output analysis/campaign_stability.json
+```
+
+특정 오류 기록은 `--snapshot <복사본.sqlite3> --mission 105`로 선택지 수신까지 재현하고, `--finish-snapshot`을 추가하면 임시 사본에서 임무 완료·재출전까지 검사합니다. 입력 기록은 수정하지 않습니다. 1.0.18의 오류 7 사례는 서로 다른 세 장 묶음을 앞의 두 장만으로 중복 판정하던 문제였으며, 네이티브 기본 검사에도 재발 방지 사례를 포함합니다. 전수 검사는 실제 임무 전투·외관·완주 검증을 대신하지 않습니다.
+
+기존 지도 검증 기록에는 배치 계획 v2 표기가 남아 있을 수 있습니다. 패키징은 v3 재계산 결과와 버전 표기 외의 모든 필드 및 최종 지도 바이트가 같을 때만 이를 인정합니다. 자원 배치의 재현 검사는 위의 지정 Python 3.11.8을 사용해야 하며, 다른 버전에서 나온 탐색 진단 수치 차이를 지도 손상으로 해석하지 마세요.
+
 전체 지도 공세의 원래 배치 유닛까지 포함한 추가 모의 검사는 지도 빌드 후 실행합니다.
 
 ```powershell
