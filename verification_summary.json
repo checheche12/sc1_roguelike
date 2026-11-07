@@ -1,0 +1,34 @@
+{
+  "version": "v1.0.19",
+  "scope": "Growth offer parser and strict legacy map receipt compatibility",
+  "unchanged_maps": 63,
+  "full_resource_replay_maps": 63,
+  "growth_scenarios": 315,
+  "python_regression_tests": 222,
+  "native_host": {
+    "passed": true,
+    "groups": 560,
+    "checks": 2404652
+  },
+  "native_ui": {
+    "passed": true,
+    "groups": 22,
+    "assertions": 177282
+  },
+  "native_dll_sha256": "b9f2aa4c0b14c036e3606fb6f33a2e96f70ac144c58bc9c98145b55123375237",
+  "personal_database_included": false,
+  "additional_release_regressions": {
+    "passed": true,
+    "release_tests": 40,
+    "unavailable_historical_fixture_tests": 1,
+    "historical_fixture_replacement": "Passed full new sealed202-file package, portable self-test and installed204-file verification; obsolete Oct15 map fixtures are absent.",
+    "receipt_tests": 4,
+    "final_native_player_snapshot_replay": true
+  },
+  "existing_records_compatible": true,
+  "actual_terran5_offer_reproduced_before_and_passed_after": true,
+  "limits": [
+    "Offline map, native/manager and SQLite tests; no live campaign playtest.",
+    "All63 maps and all5 curse settings tested; not exhaustive random offers or combat loadouts."
+  ]
+}

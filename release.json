@@ -1,0 +1,12 @@
+{
+  "version": "v1.0.19",
+  "release_channel": "stable",
+  "prerelease": false,
+  "file": "SC1_Roguelike_1.0.19.zip",
+  "sha256": "a7da824021f0ad3c7e8a469fa630cc8025e2df885d7dfafc0815b7bcdb49965b",
+  "bytes": 25067281,
+  "runtime_source_commit": "a244c28f144fa395e4b81e330b905a3fa0cad9ac",
+  "native_dll_sha256": "b9f2aa4c0b14c036e3606fb6f33a2e96f70ac144c58bc9c98145b55123375237",
+  "maps": 63,
+  "personal_database_included": false
+}
