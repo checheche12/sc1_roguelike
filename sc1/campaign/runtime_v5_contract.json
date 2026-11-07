@@ -6284,7 +6284,7 @@
       "id": "e2575cd1-1d24-5048-addd-b0eccccbccd9",
       "name": "전방위 전함",
       "target": "배틀크루저 일반 공격",
-      "description": "배틀크루저: 야마토 준비 동작 약 3배 가속. 일반 공격 4회마다 무료 야마토 1발. 지상·공중 포대는 따로 사격하며 추가 포대 피해 100%. 삼중 야마토를 함께 선택하면 무료 야마토도 3발로 강화됩니다.",
+      "description": "배틀크루저: 지상·공중 독립 사격, 피해 100%. 일반 사격 합산 매 4번째에 무료 야마토도 동시 발사(추가탄 제외). 야마토 준비 동작 약 3배 가속. 삼중 야마토와 조합하면 무료탄도 3발.",
       "trigger": "",
       "numbers": "",
       "notes": "세부 적용: 지상 무기와 공중 무기가 각각 적합한 주 표적을 독립 공격. 각 무기의 원래 주기 유지. 분산 포격이 있으면 각 층 최대 3기, 중복 대상·재귀 금지.",
@@ -6307,7 +6307,7 @@
         "type": "rework_v5",
         "ordinal": 65,
         "source_id": "e2575cd1-1d24-5048-addd-b0eccccbccd9",
-        "qa_revision": 2026110303,
+        "qa_revision": 2026110702,
         "benefit_power_quarters": 16,
         "auto_yamato_every_primary_attacks": 4,
         "auto_yamato_percent": 100,
@@ -6316,7 +6316,12 @@
         "yamato_prelaunch_wait_frames": 0,
         "yamato_cast_speed_approx_multiplier": 3,
         "yamato_cast_speed_stacks": false,
-        "free_yamato_combines_triple_cast": true
+        "free_yamato_combines_triple_cast": true,
+        "auto_yamato_counts_independent_batteries": true,
+        "auto_yamato_retries_until_valid_launch": true,
+        "auto_yamato_simultaneous_with_fourth_attack": true,
+        "auto_yamato_replaces_normal_attack": false,
+        "auto_yamato_launch_delay_frames": 0
       },
       "target_units": [
         12,

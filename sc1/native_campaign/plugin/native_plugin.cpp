@@ -1009,6 +1009,8 @@ bw::Bullet* __cdecl owner_bullet_create_hook(U32 id,int x,int y,U32 player,U32 d
     BulletCreation creation(parent,id,player);auto bullet=original(id,x,y,player,direction,parent);
     if(bullet&&creation.observed!=bullet)try{observe_bullet_launch(id,parent,bullet);}
     catch(...){log_event("Projectile observation failed; original attack retained.");}
+    if(bullet)try{rework_combat_v5::flush_free_yamato(parent,bullet);}
+    catch(...){log_event("Free Yamato launch failed; original attack retained.");}
     return bullet;
 }
 using UnitIdFn=void (__cdecl*)(bw::Unit*,U32);

@@ -27,6 +27,30 @@ class TalentSynergy(unittest.TestCase):
         self.assertEqual(cards[80]['effect']['radius_pixels'],128)
         self.assertEqual(self.catalog['talent_synergy_revision'],talent_synergy.FOLLOWUP_REVISION)
 
+    def test_omni_battleship_migration_preserves_owned_talents(self):
+        old=copy.deepcopy(self.catalog)
+        ship=old['talents'][238+65]
+        ship['description']='Previous battleship description'
+        ship['effect']['qa_revision']=talent_synergy.FOLLOWUP_REVISION
+        for key in ('auto_yamato_counts_independent_batteries','auto_yamato_retries_until_valid_launch'):
+            ship['effect'].pop(key)
+        ids=[old['talents'][238+n]['id'] for n in (47,57,64,65)]
+        before=encode_growth(old,ids,{}, {})
+        with sqlite3.connect(':memory:') as conn:
+            conn.execute('CREATE TABLE growth_rework_catalog (id INTEGER PRIMARY KEY,catalog_json TEXT NOT NULL)')
+            conn.execute('INSERT INTO growth_rework_catalog VALUES (1,?)',(json.dumps(old),))
+            rework_growth.enable(conn)
+            upgraded=json.loads(conn.execute('SELECT catalog_json FROM growth_rework_catalog').fetchone()[0])
+            self.assertEqual(upgraded['talents'],self.catalog['talents'])
+            self.assertEqual(before,encode_growth(upgraded,ids,{}, {}))
+        effect=self.catalog['talents'][238+65]['effect']
+        self.assertEqual(effect['auto_yamato_every_primary_attacks'],4)
+        self.assertTrue(effect['auto_yamato_counts_independent_batteries'])
+        self.assertTrue(effect['auto_yamato_retries_until_valid_launch'])
+        self.assertTrue(effect['auto_yamato_simultaneous_with_fourth_attack'])
+        self.assertFalse(effect['auto_yamato_replaces_normal_attack'])
+        self.assertEqual(effect['auto_yamato_launch_delay_frames'],0)
+
     def test_qa7_pin_updates_only_changed_followup_cards(self):
         old=copy.deepcopy(self.catalog)
         for card in old['talents'][238:]:

@@ -26,7 +26,8 @@ inline void synergy2_free_yamato_is_a_triple_cast_once(){
   qa9_fixture::begin({65});if(triple)ranks[64]=1;
   auto source=unit(12,1,100,100),target=unit(37,6,150,100);target->flingy.hitpoints=10000*256;source->energy=200*256;
   for(U32 i=0;i<4;++i){game.frame_count=100+i*2;bullet(source,target,19);}
-  CHECK(rework_combat_v5::pending_shots.size()==1&&rework_combat_v5::pending_shots[0].spell_root);
+  CHECK(rework_combat_v5::pending_shots.empty()&&multi_fixture::shot_count(19)==4&&multi_fixture::shot_count(30)==1);
+  CHECK(multi_fixture::shots.back().frame==106&&multi_fixture::shots.back().weapon==30);
   const auto attacks=rework_combat_v5::state(source)->shot_count;const auto energy=source->energy;
   rework_combat_v5::state(source)->next_ground=rework_combat_v5::state(source)->next_air=1000;
   pulse(108);bw::Bullet* root=nullptr;

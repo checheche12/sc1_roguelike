@@ -350,6 +350,7 @@ struct UnitState {
     U32 lockdown_reserve=0;
     Identity who{},target{};U32 last_launch=0,launch_frame=~0u,weapon=130,streak=0,protection=0,mark=0,armor_mark=0,slow_until=0,slow_percent=100;
     U32 shot_count=0,bc_primary_attacks=0,corsair_primary_attacks=0,next_ground=0,next_air=0,last_damage=0,jump_due=0,last_order=0,stasis_owner=12,stasis_before=0;
+    U32 bc_launch_frame[2]={~0u,~0u};
     U32 storm_frame=~0u,storm_count=0;int storm_x=0,storm_y=0;
     U32 fractional[2]{},last_energy=0;bool energy_seen=false;U32 fade_until=0,saved_collision=0;
     bool mobility=false;U32 mobility_flags=0,mobility_speed=0;U8 mobility_type=2,mobility_turn=0,mobility_state=0;std::uint16_t mobility_acceleration=0;
@@ -803,8 +804,6 @@ inline bool admit_storm(bw::Unit* target,bw::Bullet* bullet,const Projectile& sh
 struct PendingShot {Identity source{},target{};U32 weapon=130,percent=100,due=0;bool spell_root=false;};
 inline std::vector<PendingShot> pending_shots,pending_work;
 inline U32 emission_percent=100;inline bool emission_secondary=false,emission_primary=false,emission_spell_root=false;
-inline bool bc_battery_emission=false;
-struct BatteryEmissionScope {bool prior;explicit BatteryEmissionScope(bool value):prior(bc_battery_emission){bc_battery_emission=value;}~BatteryEmissionScope(){bc_battery_emission=prior;}};
 inline bw::Unit* attack_unit(bw::Unit* u) noexcept {
     if(valid_unit(u)&&valid_unit(u->subunit)&&effect_body(u->subunit)==u&&original_stat({0,17,u->unit_id})>=130&&original_stat({0,19,u->unit_id})>=130)return u->subunit;
     return u;
@@ -864,6 +863,32 @@ inline bool air_flame_position(bw::Unit* source,U32 w,int& x,int& y) noexcept {
     x=target->flingy.position.x;y=target->flingy.position.y;return true;
 }
 inline void queue(bw::Unit* source,bw::Unit* target,U32 w,U32 percent,U32 delay=0,bool spell_root=false) {pending_shots.push_back({identity(source),identity(target),w,percent,now()+delay,spell_root});}
+inline void fire_free_yamato(PendingShot shot) {
+    auto source=resolve(shot.source),target=resolve(shot.target);
+    // Preserve an earned shot through target loss, disable and pool pressure.
+    if(!own(source)||!rank(65))return;
+    if(!target_ok(source,target,30)){
+        target=nullptr;
+        if(can_fire(source))for(auto candidate:around(source->flingy.position.x,source->flingy.position.y,1024,nullptr,65536,true)){
+            if(target_ok(source,candidate,30)){target=candidate;break;}
+        }
+    }
+    if(target&&emit(source,target,30,shot.percent,-1,-1,false,true))return;
+    shot.target=identity(target);shot.due=now()+8;pending_shots.push_back(shot);
+}
+inline void flush_free_yamato(bw::Unit* source,bw::Bullet* ordinary) {
+    const auto found=projectiles.find(ordinary);
+    if(found==projectiles.end()||found->second.secondary||!ordinary_weapon(found->second.weapon)||!own(source)||!in(source->unit_id,{12,27,28,29,102}))return;
+    // Called after native CreateBullet and its instant impact have returned.
+    // Remove the reservation before the nested Yamato create; no iterators
+    // survive callbacks, and the secondary Yamato cannot trigger itself.
+    for(std::size_t i=0;i<pending_shots.size();){
+        const auto shot=pending_shots[i];
+        if(shot.spell_root&&shot.weapon==30&&resolve(shot.source)==source&&std::int32_t(now()-shot.due)>=0){
+            pending_shots.erase(pending_shots.begin()+i);fire_free_yamato(shot);
+        }else ++i;
+    }
+}
 #include "valkyrie_volley_runtime.h"
 inline bool lockdown_committed(bw::Unit* target) {
     // Prefer fresh targets across consecutive casts, including the interval
@@ -898,6 +923,16 @@ inline void launched(U32 w,bw::Unit* source,bw::Bullet* b) {
     }
     if(target&&swarm_protects(target,w))b->flags|=1u;
     if(!own(effect_body(source))){projectiles[b]=p;return;}
+    // Each independent ground/air battery is an ordinary attack, including
+    // automatic and moving fire. Fan-out/echo shots remain secondary. Use
+    // separate layer clocks so alternating callbacks cannot hide or recount
+    // a same-frame launch through the shared last-weapon state below.
+    if(!p.secondary&&rank(65)&&in(source->unit_id,{12,27,28,29,102})&&ordinary_weapon(w)){
+        if(auto s=state(source))if(s->bc_launch_frame[p.layer]!=now()){
+            s->bc_launch_frame[p.layer]=now();
+            if(++s->bc_primary_attacks%4==0)queue(source,target,30,100,0,true);
+        }
+    }
     if(!p.secondary){
         auto s=state(effect_body(source));if(s && (s->launch_frame!=now() || s->weapon!=w)){
             s->streak=(s->target.p==target && resolve(s->target) && now()-s->last_launch<=72) ? std::min(3u,s->streak+1) : 0;
@@ -905,7 +940,6 @@ inline void launched(U32 w,bw::Unit* source,bw::Bullet* b) {
             if(in(source->unit_id,{60,98})&&w==100)++s->corsair_primary_attacks;
             if(rank(18)&&ordinary_weapon(w)&&!(talent_power::enabled&&source->unit_id==103))queue(source,target,w,talent_power::v5(18,50));
             if(rank(53)&&in(source->unit_id,{0,20})&&ordinary_weapon(w)){p.percent=100;queue(source,target,w,35,2);queue(source,target,w,35,4);}
-            if(!bc_battery_emission&&rank(65)&&in(source->unit_id,{12,27,28,29,102})&&ordinary_weapon(w)&&++s->bc_primary_attacks%4==0)queue(source,target,30,100,2,true);
             if(rank(105)&&in(source->unit_id,{43,55})&&ordinary_weapon(w)){p.percent=100;queue(source,target,w,p.percent);}
             // Tower fan-out is scheduled once per native attack. Secondary
             // native projectiles cannot generate more shots or hit the ground.
@@ -1867,7 +1901,13 @@ inline void step() {
         ++it;
     }
     valkyrie_volley::step();pending_work.clear();pending_work.swap(pending_shots);
-    for(auto& shot:pending_work){if(std::int32_t(frame-shot.due)<0){pending_shots.push_back(shot);continue;}auto source=resolve(shot.source),target=resolve(shot.target);if(source&&target)emit(source,target,shot.weapon,shot.percent,-1,-1,false,shot.spell_root);}
+    for(auto& shot:pending_work){
+        if(std::int32_t(frame-shot.due)<0){pending_shots.push_back(shot);continue;}
+        auto source=resolve(shot.source),target=resolve(shot.target);
+        if(shot.spell_root&&shot.weapon==30){
+            fire_free_yamato(shot);
+        }else if(source&&target)emit(source,target,shot.weapon,shot.percent,-1,-1,false,shot.spell_root);
+    }
     pending_work.clear();
     living_units([&](bw::Unit* u){auto s=state(u);if(!s)return;
         // Preserve duration beyond the native byte without changing its tick rate.
@@ -2011,7 +2051,7 @@ inline void step() {
             for(auto target:around(u->flingy.position.x,u->flingy.position.y,1024,nullptr,64,true,int(layer)))if(target_ok(u,target,w)){
                 const U32 period=fractional_period(u,layer,multi_target::period(u,w),cooldown_ratio(u,w));due=frame+period;
                 if(siege_fire)u->ground_cooldown=spawner->ground_cooldown=U8(std::min(255u,period));
-                BatteryEmissionScope battery(dual&&rank(65)&&in(u->unit_id,{12,27,28,29,102}));for(U32 hit=0;hit<multi_target::factor(w);hit++){const auto emitted=emit(u,target,w,talent_power::enabled?(movefire&&in(u->unit_id,{2,19})?(talent_power::enabled?100u:talent_power::v5(54,100)):dual&&!(rank(65)&&in(u->unit_id,{12,27,28,29,102}))?talent_power::v5(142,100):100u):100u,-1,-1,true);if(emitted&&moving&&rank(140)&&in(u->unit_id,{68,76})&&!archon_cued){ScriptSourceScope audio_source(u);shadow_feedback::archon_strike(u);archon_cued=true;}}
+                for(U32 hit=0;hit<multi_target::factor(w);hit++){const auto emitted=emit(u,target,w,talent_power::enabled?(movefire&&in(u->unit_id,{2,19})?(talent_power::enabled?100u:talent_power::v5(54,100)):dual&&!(rank(65)&&in(u->unit_id,{12,27,28,29,102}))?talent_power::v5(142,100):100u):100u,-1,-1,true);if(emitted&&moving&&rank(140)&&in(u->unit_id,{68,76})&&!archon_cued){ScriptSourceScope audio_source(u);shadow_feedback::archon_strike(u);archon_cued=true;}}
                 break;
             }
         }

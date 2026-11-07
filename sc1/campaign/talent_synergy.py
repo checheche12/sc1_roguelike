@@ -30,6 +30,12 @@ def followup(catalog):
     }
     for ordinal,note in notes.items():
         if note not in by[ordinal]['description']:by[ordinal]['description']+=note
+    ship=by[65]
+    ship['description']='배틀크루저: 지상·공중 독립 사격, 피해 100%. 일반 사격 합산 매 4번째에 무료 야마토도 동시 발사(추가탄 제외). 야마토 준비 동작 약 3배 가속. 삼중 야마토와 조합하면 무료탄도 3발.'
+    ship['effect'].update(qa_revision=2026110702,auto_yamato_counts_independent_batteries=True,
+                          auto_yamato_retries_until_valid_launch=True,
+                          auto_yamato_simultaneous_with_fourth_attack=True,
+                          auto_yamato_replaces_normal_attack=False,auto_yamato_launch_delay_frames=0)
     catalog['talent_synergy_revision']=FOLLOWUP_REVISION
     return catalog
 

@@ -29,7 +29,8 @@ inline void qa29_marine_burst_keeps_primary_and_two_small_extras(){
 inline void qa29_bc_auto_yamato_counts_primary_attacks_only(){
  using namespace rework_fixture;qa9_fixture::begin({65});auto bc=unit(12,1,100,100),victim=unit(37,6,130,100);bc->order=10;const U32 w=original_stat({0,17,12});
  for(U32 i=0;i<4;i++){game.frame_count=100+i;bullet(bc,victim,w);if(i<3)CHECK(rework_combat_v5::pending_shots.empty());}
- CHECK(rework_combat_v5::pending_shots.size()==1&&rework_combat_v5::pending_shots[0].weapon==30&&rework_combat_v5::pending_shots[0].percent==100);
+ CHECK(rework_combat_v5::pending_shots.empty()&&multi_fixture::shot_count(w)==4&&multi_fixture::shot_count(30)==1);
+ CHECK(multi_fixture::shots.back().frame==103&&multi_fixture::shots.back().weapon==30);
  pulse(105);CHECK(rework_combat_v5::pending_shots.empty()&&rework_combat_v5::state(bc)->bc_primary_attacks==4);
  U32 yamatos=0;for(const auto& p:rework_combat_v5::projectiles)if(p.second.weapon==30){++yamatos;CHECK(p.second.secondary&&p.second.percent==100);}CHECK(yamatos==1);
  qa9_fixture::end();
