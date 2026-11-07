@@ -1,0 +1,26 @@
+{
+  "version": "v1.0.20",
+  "scope": "Every fourth Battlecruiser normal attack also launches free Yamato in the same frame; count and retarget fixes",
+  "unchanged_maps": 63,
+  "full_resource_replay_maps": 63,
+  "growth_scenarios": 315,
+  "python_regression_tests": 148,
+  "native_host": {
+    "passed": true,
+    "groups": 570,
+    "checks": 2406952
+  },
+  "native_ui": {
+    "passed": true,
+    "groups": 22,
+    "assertions": 177282
+  },
+  "native_dll_sha256": "690bfc99fdaaae32f21811bbd5e5adc06a3c2ba690ad3f7ea34e9aa1eae85245",
+  "personal_database_included": false,
+  "existing_records_compatible": true,
+  "normal_shots_replaced": false,
+  "free_yamato_energy": 0,
+  "limits": [
+    "Synthetic native host, dialog, map, temporary SQLite and protocol checks; no live game combat or visual verification."
+  ]
+}
