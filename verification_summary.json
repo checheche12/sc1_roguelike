@@ -1,0 +1,37 @@
+{
+  "version": "v1.0.21",
+  "scope": "Firebat directional visuals, persistent cone and air synergy; economy talent rework; mission601 final hostile invincibility release",
+  "unchanged_maps": 62,
+  "changed_maps": [
+    601
+  ],
+  "full_resource_replay_maps": 63,
+  "growth_scenarios": 315,
+  "python_regression_tests": 111,
+  "native_host": {
+    "passed": true,
+    "groups": 578,
+    "checks": 2410953
+  },
+  "native_ui": {
+    "passed": true,
+    "groups": 22,
+    "assertions": 177282
+  },
+  "native_dll_sha256": "76eca47c45022ea966866232ee1f168324615b8250d404bacef8dfd66f6d0a7d",
+  "personal_database_included": false,
+  "existing_records_compatible": true,
+  "actual_engine_checks": {
+    "economy": 33,
+    "ground_synergy": 85,
+    "directions_and_missions": 35,
+    "air_synergy": 42,
+    "final_fixture_crashes": 0
+  },
+  "limits": [
+    "Actual engine checks use isolated scripted fixtures, not full campaign playthrough or pixel review.",
+    "Earlier private diagnostic fixture crashed once due to null skins passed to CreateUnit; fixture corrected and final runs passed.",
+    "Wasteland reporter-session blockage was not reproduced.",
+    "SAMASE Defender submission is separate from this software release."
+  ]
+}
