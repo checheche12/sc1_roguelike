@@ -26040,7 +26040,7 @@
       "id": "fc2c0ddf-e8ff-59c3-bacf-e0698d11c07e",
       "name": "많은 자원",
       "target": "광물 / 가스",
-      "description": "광물·가스: 광물과 간헐천에 남은 자원량이 3배가 됩니다.",
+      "description": "광물·가스의 남은 매장량이 3배가 됩니다. 같은 광물에서 아군 일꾼 2기가 동시에 채취할 수 있습니다. 한 번의 운반량은 바뀌지 않습니다.",
       "trigger": "",
       "numbers": "",
       "notes": "생산 임무에 분산된 경제 선택에서만 등장합니다. 캠페인 전체 경제 보상은 5회입니다.",
@@ -26063,8 +26063,10 @@
         "type": "rework_v5",
         "ordinal": 2,
         "source_id": "fc2c0ddf-e8ff-59c3-bacf-e0698d11c07e",
-        "qa_revision": 2026101610,
-        "benefit_power_quarters": 4
+        "qa_revision": 2026111501,
+        "benefit_power_quarters": 4,
+        "resource_amount_multiplier": 3,
+        "simultaneous_mineral_workers": 2
       },
       "target_units": [
         176,
@@ -26568,7 +26570,7 @@
       "id": "e66e3da3-d595-51a1-9a1f-ae9cace5aa1b",
       "name": "신속한 확장",
       "target": "커맨드 센터·해처리·넥서스",
-      "description": "커맨드 센터·해처리·넥서스: 새 커맨드 센터·해처리·넥서스의 비용과 건설 시간이 30% 줄어듭니다.",
+      "description": "건설 시간 -50%. 완공 시 일꾼 4기 지원(임무당 3회). 시작 기지·레어·하이브 제외. 다른 건설 가속과 중첩.",
       "trigger": "",
       "numbers": "",
       "notes": "레어·하이브 변태, 이미 시작한 건설·구출·트리거 생성 제외. 취소 환급은 실제 지불액 기준.\n생산 임무에 분산된 경제 선택에서만 등장합니다. 캠페인 전체 경제 보상은 5회입니다.",
@@ -26591,8 +26593,11 @@
         "type": "rework_v5",
         "ordinal": 7,
         "source_id": "e66e3da3-d595-51a1-9a1f-ae9cace5aa1b",
-        "qa_revision": 2026101610,
-        "benefit_power_quarters": 4
+        "qa_revision": 2026111501,
+        "benefit_power_quarters": 4,
+        "base_build_time_reduction_percent": 50,
+        "expansion_workers": 4,
+        "expansion_grant_limit": 3
       },
       "target_units": [
         106,
@@ -28908,7 +28913,7 @@
       "id": "00aaef8d-4f01-527f-8f16-2fbdcda13482",
       "name": "지게 채광 지원",
       "target": "현재 아군 채광 기지",
-      "description": "현재 아군 채광 기지: 2분부터 2분마다 기지 옆에 임시 채광기 1기가 옵니다. 45초간 채광하며 반납마다 미네랄 +8.",
+      "description": "삭제된 재능입니다. 더 이상 선택하거나 효과를 받을 수 없습니다.",
       "trigger": "",
       "numbers": "",
       "notes": "보너스는 광물 매장량을 더 소모하지 않음. 건설·수리·가스·수송·공격 명령 및 인구 소모 없음. 만료 시 운반 중 자원은 반납하지 않고 사라짐. 광물·빈 배치점·기지가 없으면 그 회차 생략, 밀린 회차 적립 금지. 원래 SCV는 변경하지 않음.\n생산 임무에 분산된 경제 선택에서만 등장합니다. 캠페인 전체 경제 보상은 5회입니다.",
@@ -28931,8 +28936,11 @@
         "type": "rework_v5",
         "ordinal": 23,
         "source_id": "00aaef8d-4f01-527f-8f16-2fbdcda13482",
-        "qa_revision": 2026101610,
-        "benefit_power_quarters": 4
+        "qa_revision": 2026111501,
+        "benefit_power_quarters": 4,
+        "retired": true,
+        "runtime_disabled": true,
+        "offer_retired": true
       },
       "target_units": [
         106,
@@ -29047,7 +29055,7 @@
       "id": "5e964160-8e5f-55f1-b235-87c82069fd91",
       "name": "시간 증폭",
       "target": "작동 중인 아군 생산·연구 건물",
-      "description": "작동 중인 아군 생산·연구 건물: 1분부터 90초마다 아군 건물의 생산·연구 속도가 20초간 50% 빨라집니다.",
+      "description": "아군 건물의 유닛 생산·연구 속도가 항상 25% 빨라집니다. 실제 작업이 진행 중일 때 적용됩니다.",
       "trigger": "",
       "numbers": "",
       "notes": "같은 건물에 중첩 불가.\n생산 임무에 분산된 경제 선택에서만 등장합니다. 캠페인 전체 경제 보상은 5회입니다.",
@@ -29070,8 +29078,9 @@
         "type": "rework_v5",
         "ordinal": 25,
         "source_id": "5e964160-8e5f-55f1-b235-87c82069fd91",
-        "qa_revision": 2026101610,
-        "benefit_power_quarters": 4
+        "qa_revision": 2026111501,
+        "benefit_power_quarters": 4,
+        "continuous_production_research_speed_percent": 25
       },
       "target_units": [
         154
@@ -31079,7 +31088,7 @@
       "id": "32417e61-ac3d-5dac-b993-67a924c82829",
       "name": "잔류 화염",
       "target": "파이어뱃 일반 공격",
-      "description": "파이어뱃의 공격이 명중한 자리에 5초간 화염 지대를 남깁니다.",
+      "description": "명중 지점에 5초간 잔류 화염. 지옥불 분사와 조합하면 전방 3타일·120도 지상에 남습니다. 지속 피해 중복 불가.",
       "trigger": "",
       "numbers": "",
       "notes": "개편 효과 제안: 적중점 반경 0.75타일에 2초 화염. 0.5초마다 지상 적에게 2피해. 병력당 활성 지대 1개, 같은 플레이어 화염 피해 중첩 금지.",
@@ -31102,8 +31111,13 @@
         "type": "rework_v5",
         "ordinal": 52,
         "source_id": "32417e61-ac3d-5dac-b993-67a924c82829",
-        "qa_revision": 2026102038,
-        "benefit_power_quarters": 10
+        "qa_revision": 2026111502,
+        "benefit_power_quarters": 10,
+        "persistent_ground_visual": true,
+        "cone_synergy_ordinal": 185,
+        "cone_radius_pixels": 96,
+        "cone_angle_degrees": 120,
+        "cone_anchored_at_attack": true
       },
       "target_units": [
         10,
@@ -41564,7 +41578,7 @@
       "race": "terran",
       "rarity": "legendary",
       "target": "파이어뱃·구이 몬태그",
-      "description": "파이어뱃의 일반 공격 피해+100%. 전방3타일·120도 부채꼴 안 다른 지상 적들에게 원래 공격의100% 화염을 보냅니다.",
+      "description": "일반 공격 피해 +100%. 전방 3타일·120도 추가 화염(원래 피해 100%). 대공·잔류 화염과 조합됩니다.",
       "source_description": "파이어뱃의 일반 공격 피해가 100% 증가하고, 명중 지점 2타일 안 다른 지상 적 최대 3기에 원래 공격의 100% 피해를 줍니다.",
       "bit_index": 423,
       "category": "combat",
@@ -41584,10 +41598,12 @@
         "type": "rework_v5",
         "ordinal": 185,
         "source_id": "00e6d482-fc09-5998-962d-6dd78902ece4",
-        "qa_revision": 2026102039,
+        "qa_revision": 2026111502,
         "benefit_power_quarters": 4,
         "cone_radius_pixels": 96,
-        "cone_angle_degrees": 120
+        "cone_angle_degrees": 120,
+        "cone_flame_visual": true,
+        "residual_cone_synergy_ordinal": 52
       },
       "target_units": [
         10,
@@ -71007,5 +71023,6 @@
     "damage_per_level": 2,
     "requires_talent": false
   },
-  "talent_synergy_revision": 2026110303
+  "talent_synergy_revision": 2026110303,
+  "economy_refresh_revision": 2026111501
 }

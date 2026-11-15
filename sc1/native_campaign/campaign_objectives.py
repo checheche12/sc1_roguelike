@@ -11,6 +11,7 @@ FULL_VISION_MISSIONS=frozenset((103,105,108,109,201,203,206,207,301,303,
 
 
 def apply(chk,row):
+    if row['mission_id']==601:return _vile_disruption(chk,row)
     if row['mission_id']==504:
         from .terran4_repair import correct_objective
         return correct_objective(chk,row)
@@ -46,6 +47,32 @@ def apply(chk,row):
                 kerrigan_required=True,original_success_actions_preserved=False,
                 final_cinematic_removed=True,removed_cinematic_triggers=list(removed),
                 victory_actions_only=True)
+
+
+def _vile_disruption(chk,row):
+    """Finish releasing hostile actors after the final encounter has opened.
+
+    Original trigger51 disables invincibility once, only inside location85.
+    An actor outside that rectangle at that instant can return invincible.
+    Keep all buildings, rescued factions and earlier encounters untouched.
+    """
+    from sc1.native_campaign import build_all_campaigns as b
+    ts=b.triggers(chk)
+    assert row['owner']==3
+    assert [c for _,c in b.conditions(ts[51])]==[b.switch_condition(16)]
+    first=[a for _,a in b.actions(ts[51]) if a[26]==43][0]
+    assert struct.unpack_from('<I',first)[0]==85 and first[27]==5
+    assert b.players_for(chk,19,row['owner'])=={4,5}
+    release=[struct.pack('<IIIIIIHBBBBH',64,0,0,0,p,0,230,43,5,20,0,0)
+             for p in (4,5)]
+    preserve=struct.pack('<IIIIIIHBBBBH',0,0,0,0,0,0,0,3,0,4,0,0)
+    ts.append(b.new_trigger([b.switch_condition(16)],release+[preserve],b.owner_bytes(row['owner'])))
+    chk.setsection('TRIG',b''.join(ts))
+    return dict(mission=601,kind='final_hostile_mobile_invincibility_release',
+                original_trigger=51,final_stage_switch=16,repair_trigger=len(ts)-1,
+                owners=[4,5],unit_group=230,location=64,repeated=True,
+                original_triggers_preserved=True,buildings_unchanged=True,
+                reported_session_cause_confirmed=False,live_game_verified=False)
 
 
 def _insurgent(chk,row):

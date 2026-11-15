@@ -29,7 +29,7 @@ inline void power_economy_actual_native_ledgers(){
     CHECK(talent_power::quarters(264)==7&&talent_power::quarters(238)==4&&talent_power::quarters(15)==4);
     reset();CHECK(apply_snapshot(nullptr,economy_snapshot({26})));CHECK(owner_stat(1,{0,8,0})==(40*256*128+50)/100);
     reset();auto s=economy_snapshot({0,1,3,7,24,151,117});CHECK(apply_snapshot(nullptr,s));
-    CHECK(owner_stat(1,{0,40,0})==40);CHECK(owner_stat(1,{0,40,106})==280);
+    CHECK(owner_stat(1,{0,40,0})==40);CHECK(owner_stat(1,{0,40,106})==400);
     CHECK(owner_stat(1,{0,40,41})==100);CHECK(owner_stat(1,{0,42,41})==150);
     CHECK(owner_stat(1,{0,40,73})==13);CHECK(owner_stat(1,{0,41,0})==0);
     auto worker_=economy_add(7);worker_->order=90;worker_->unit_specific.bytes[27]=8;worker_->carried_powerup_flags=2;

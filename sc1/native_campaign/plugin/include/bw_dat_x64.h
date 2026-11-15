@@ -137,6 +137,8 @@ struct SpriteScr {
 };
 static_assert(sizeof(SpriteScr)==0x48,"SpriteScr64");
 static_assert(offsetof(SpriteScr,main_image)==0x30,"SpriteScr main image64");
+struct LoneSprite {LoneSprite* prev;LoneSprite* next;std::int32_t hp;SpriteScr* sprite;};
+static_assert(sizeof(LoneSprite)==32&&offsetof(LoneSprite,sprite)==24,"Public lone sprite x64 ABI");
 struct Flingy {
     Flingy* prev;
     Flingy* next;

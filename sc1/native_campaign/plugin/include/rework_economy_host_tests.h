@@ -41,7 +41,7 @@ inline void economy_discount_components_and_rounding(){
         CHECK(rework_economy_v5::price(s,row.id,1)==1 && rework_economy_v5::price(s,row.id,0)==0);
     }
     reset();CHECK(apply_snapshot(nullptr,economy_snapshot({7,117})));
-    CHECK(owner_stat(1,{0,40,106})==280 && owner_stat(1,{0,40,131})==210 && owner_stat(1,{0,40,154})==280);
+    CHECK(owner_stat(1,{0,40,106})==400 && owner_stat(1,{0,40,131})==300 && owner_stat(1,{0,40,154})==400);
     CHECK(owner_stat(1,{0,40,132})==150 && owner_stat(1,{0,41,132})==100); // Lair is additional morph payment.
     CHECK(owner_stat(1,{0,40,73})==13 && owner_stat(1,{0,40,85})==8);
 }
@@ -60,7 +60,7 @@ inline void economy_times_supply_and_owner_isolation(){
     for(U32 id:{109u,42u,156u}){CHECK(owner_stat(1,{0,42,id})==(id==42?72u:36u));CHECK(owner_stat(1,{0,45,id})==original_stat({0,45,id})+16);}
     CHECK(owner_stat(1,{0,42,111})==(original_stat({0,42,111})+1)/2);
     CHECK(owner_stat(1,{0,42,160})==(original_stat({0,42,160})+1)/2);
-    CHECK(owner_stat(1,{0,42,106})==rework_economy_v5::ceiling(rework_economy_v5::ceiling(original_stat({0,42,106}),7,10),1,2));
+    CHECK(owner_stat(1,{0,42,106})==rework_economy_v5::ceiling(rework_economy_v5::ceiling(original_stat({0,42,106}),1,2),1,2));
     auto worker=economy_add(7),enemy=economy_add(7,6),marine=economy_add(0);
     CHECK(rework_economy_v5::motion_ratio(worker)==1.5 && rework_economy_v5::motion_ratio(enemy)==1.0 && rework_economy_v5::motion_ratio(marine)==1.0);
     s.completed_phase=2;CHECK(apply_snapshot(nullptr,s));CHECK(game.supplies[1].provided[1]==32);
@@ -150,24 +150,12 @@ inline void economy_actual_paid_cancellation_and_duplicate_queue(){
     economy_packet_ids.clear();plugin_init_open=true;const bool registered=rework_economy_v5::bind_commands(&packet_api);plugin_init_open=false;
     CHECK(registered && economy_packet_ids==std::vector<U32>({0x18,0x19,0x20,0x23,0x34}));
 }
-inline void economy_mule_lifetime_orders_supply_and_return(){
-    reset();game.elapsed_seconds=0;auto base=economy_add(106);base->flags|=1;auto mineral=economy_add(176,11,550,550);rework_economy_v5::amount(mineral,1500);
-    game.supplies[1].used[1]=20;g.create=economy_create_supply;CHECK(apply_snapshot(nullptr,economy_snapshot({23,0})));
-    game.elapsed_seconds=119;rework_economy_v5::step();CHECK(count==2);
-    game.elapsed_seconds=120;rework_economy_v5::step();CHECK(count==3 && game.supplies[1].used[1]==20);
-    auto mule=&units[2];CHECK(rework_economy_v5::mule(mule));
-    for(U32 forbidden:{3u,10u,30u,33u,34u,81u,84u,149u,152u}){mule->order=static_cast<U8>(forbidden);rework_economy_v5::UnitScope order(mule);CHECK(mule->order==85);}
-    game.minerals[1]=100;mule->order=90;mule->unit_specific.bytes[27]=8;mule->carried_powerup_flags=2;
-    {rework_economy_v5::UnitScope returning(mule);mule->unit_specific.bytes[27]=0;mule->carried_powerup_flags=0;game.minerals[1]+=8;}
-    CHECK(game.minerals[1]==118);
-    game.elapsed_seconds=164;rework_economy_v5::step();CHECK(mule->flingy.hitpoints>0);
-    const U32 deadline=rework_economy_v5::expiry(mule);mule->player=6;game.supplies[1].used[6]=2;
-    rework_economy_v5::transferred(mule,deadline);CHECK(rework_economy_v5::expiry(mule)==165 && game.supplies[1].used[6]==2);
-    mule->order=10;{rework_economy_v5::UnitScope enemy_order(mule);CHECK(mule->order==85);}
-    mule->player=1;game.supplies[1].used[1]=22;rework_economy_v5::transferred(mule,deadline);CHECK(game.supplies[1].used[1]==20);
-    game.elapsed_seconds=165;rework_economy_v5::step();CHECK(mule->flingy.hitpoints==0);
-    rework_economy_v5::before_kill(mule);rework_economy_v5::before_kill(mule);CHECK(game.supplies[1].used[1]==22);
-    game.supplies[1].used[1]-=2;CHECK(game.supplies[1].used[1]==20);
+inline void economy_retired_mule_keeps_wire_bit_without_spawning(){
+    reset();auto s=economy_snapshot({23,0});CHECK(apply_snapshot(nullptr,s));
+    CHECK(rework_catalog::rank(g.growth,23)==1 && rework_economy_v5::rank(23)==0);
+    auto base=economy_add(106);base->flags=1;auto mineral=economy_add(176,11,550,550);rework_economy_v5::amount(mineral,1500);
+    for(U32 second:{30u,60u,120u,240u,600u}){game.elapsed_seconds=second;rework_economy_v5::step();}
+    CHECK(count==2 && rework_economy_v5::next_mule==0);
 }
 inline void economy_twin_drone_supply_cancel_and_failed_second(){
     for(U32 scenario=0;scenario<3;++scenario){
@@ -200,11 +188,11 @@ inline void economy_larva_cap_and_chrono_actual_progress(){
     auto factory=economy_add(154);factory->flags|=1;factory->secondary_order=38;auto child=economy_add(64);child->remaining_build_time=100;factory->secondary_order_target.unit=child;
     for(U32 frame=1;frame<=4;frame++){game.frame_count=frame;{rework_economy_v5::UnitScope idle(factory);} // Primary callback cannot suppress secondary progress.
         {rework_economy_v5::UnitScope progress(factory);--child->remaining_build_time;}}
-    CHECK(child->remaining_build_time==94);
-    game.elapsed_seconds=80;++game.frame_count;{rework_economy_v5::UnitScope outside(factory);--child->remaining_build_time;}CHECK(child->remaining_build_time==93);
+    CHECK(child->remaining_build_time==95);
+    game.elapsed_seconds=80;++game.frame_count;{rework_economy_v5::UnitScope outside(factory);--child->remaining_build_time;}CHECK(child->remaining_build_time==94);
     game.elapsed_seconds=150;factory->order=75;std::uint16_t research=100;std::memcpy(factory->unit_specific.bytes+10,&research,2);
     for(U32 frame=10;frame<14;frame++){game.frame_count=frame;rework_economy_v5::UnitScope progress(factory);std::memcpy(&research,factory->unit_specific.bytes+10,2);--research;std::memcpy(factory->unit_specific.bytes+10,&research,2);}
-    std::memcpy(&research,factory->unit_specific.bytes+10,2);CHECK(research==94);
+    std::memcpy(&research,factory->unit_specific.bytes+10,2);CHECK(research==95);
 }
 inline void economy_starting_grant_once_and_retry(){
     for(U32 race:{0u,1u,2u}){
@@ -230,7 +218,7 @@ inline void economy_starting_grant_once_and_retry(){
 inline void run_rework_economy_groups(){
     economy_starting_grant_once_and_retry();
     economy_discount_components_and_rounding();economy_times_supply_and_owner_isolation();economy_resources_and_start_only_box();
-    economy_successful_resource_returns_only();economy_actual_paid_cancellation_and_duplicate_queue();economy_mule_lifetime_orders_supply_and_return();
+    economy_successful_resource_returns_only();economy_actual_paid_cancellation_and_duplicate_queue();economy_retired_mule_keeps_wire_bit_without_spawning();
     economy_twin_drone_supply_cancel_and_failed_second();economy_larva_cap_and_chrono_actual_progress();
 }
 }

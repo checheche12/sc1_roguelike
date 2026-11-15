@@ -361,7 +361,7 @@ struct UnitState {
     U32 retreat_due=0,blink_due=0,reposition_due=0,leap_due=0,charge_due=0,charge_until=0;
     int move_x=0,move_y=0,retreat_x=0,retreat_y=0;U32 saved_attack_flag=0;bool nuke_adjusted=false;
     U32 aid_due=0,care_due=0,last_heal_frame=0,phase_echo_due=0;Identity healed_target{};
-    U32 last_fire_damage=0;bool fire_seen=false;
+    U32 last_fire_damage=0,fan_visual_due=0;bool fire_seen=false;
     U32 portal_buff_until=0,fleet_buff_until=0,shuttle_guard_until=0,observer_mark_until=0;
     U32 support_frame=~0u,support_hp=0,support_shields=0,mechanical_irradiate_timer=0;
     Identity focus_target{};U32 focus_hits=0,focus_last=0,dragoon_hits=0,erosion=0,erosion_owner=12,retaliation=0;
@@ -1014,7 +1014,60 @@ inline void lurker_air_attack(bw::Unit* u,UnitState& s,U32 frame) {
     s.next_ground=s.next_air=frame+period;
     u->ground_cooldown=u->air_cooldown=U8(std::min(255u,period));
 }
-struct Persist {Identity target{},source{};U32 kind=0,until=0,due=0,remaining=0,ticks=0;int x=0,y=0;U32 owner=12;int destination_x=0,destination_y=0;};
+struct Persist {Identity target{},source{};U32 kind=0,until=0,due=0,remaining=0,ticks=0;int x=0,y=0;U32 owner=12;int destination_x=0,destination_y=0;U32 visual_due=0;U8 visual_direction=0;bool fire_cone=false;int fire_aim_x=0,fire_aim_y=0;};
+inline bool residual_fire_contains(const Persist& fire,const bw::Unit* unit) noexcept {
+    if(!unit)return false;
+    const auto ox=std::int64_t(unit->flingy.position.x)-fire.x,oy=std::int64_t(unit->flingy.position.y)-fire.y;
+    if(!fire.fire_cone)return ox*ox+oy*oy<=24*24;
+    if(ox*ox+oy*oy>96*96)return false;
+    const auto dx=std::int64_t(fire.fire_aim_x)-fire.x,dy=std::int64_t(fire.fire_aim_y)-fire.y;
+    const auto dot=dx*ox+dy*oy,cross=dx*oy-dy*ox;
+    return dot>0&&cross*cross<=3*dot*dot;
+}
+inline void orient_flame_visual(void* created,U8 facing) noexcept {
+    const auto lone=static_cast<bw::LoneSprite*>(created);
+    if(!lone||!lone->sprite||lone->sprite->sprite_id!=378)return;
+    const auto image=static_cast<movement_effects::Image*>(lone->sprite->main_image);
+    if(!image||image->parent!=lone->sprite||image->image_id!=421||!(image->flags&8u))return;
+    // Native SCR Image::SetDirection256 (13515 RVA1927f0): round to 32
+    // directions, mirror the western half, then refresh the current frame.
+    // Stock image421 has neither parent-LO nor warp-flash state to update.
+    const U32 direction=(U32(facing)+4u)>>3;
+    image->direction=U8(direction>16u?32u-direction:direction);
+    image->flags=std::uint16_t((image->flags&~2u)|1u|(direction>16u?2u:0u));
+    image->frame=std::uint16_t(image->frameset+image->direction);
+}
+inline U32 flame_visual_frame=~0u,flame_visual_budget=64;
+inline U32& flame_budget(U32 frame) noexcept {
+    if(flame_visual_frame!=frame){flame_visual_frame=frame;flame_visual_budget=64;}
+    return flame_visual_budget;
+}
+inline void fan_flame_visual(bw::Unit* source,UnitState& state,U32 frame) noexcept {
+    if(frame<state.fan_visual_due||!g.lone_sprite||!valid_unit(source))return;
+    auto& budget=flame_budget(frame);if(budget<4)return;
+    // Native iscript already draws the central flame. Four finite visual-only
+    // rays fill the same +/-60 degree cone as the secondary ground hits.
+    // Multiple hits in a native burst cannot multiply these rays each frame.
+    const auto position=source->flingy.position;
+    for(int offset:{-43,-21,21,43}){
+        orient_flame_visual(g.lone_sprite(378,position.x,position.y,source->player),U8(int(source->flingy.facing_direction)+offset));
+        --budget;
+    }
+    state.fan_visual_due=frame+12;
+}
+inline void residual_fire_visual(Persist& fire,U32 frame,U32& budget) noexcept {
+    // Stock Flamethrower: sprite378/image421/iscript312. Its finite Init
+    // animation is also used as a lone sprite by native bunker Firebats.
+    // It contains no damage/unit-creation opcode. Never retain sprite pointers.
+    const U32 count=fire.fire_cone?5u:1u;
+    if(budget<count || frame<fire.visual_due || frame>=fire.until || !g.lone_sprite || !g.game || fire.owner>=12)return;
+    const auto game=g.game();
+    if(fire.x<0 || fire.y<0 || fire.x>=int(game->map_width_tiles)*32 || fire.y>=int(game->map_height_tiles)*32)return;
+    if(fire.fire_cone)for(int offset:{-43,-21,0,21,43})
+        orient_flame_visual(g.lone_sprite(378,fire.x,fire.y,fire.owner),U8(int(fire.visual_direction)+offset));
+    else orient_flame_visual(g.lone_sprite(378,fire.x,fire.y,fire.owner),fire.visual_direction);
+    budget-=count;fire.visual_due=frame+12;
+}
 inline void recall_portal_visual(const Persist& portal) noexcept {
     // Original Recall Field: sprites379 -> images391 -> finite iscript305.
     // Each copied endpoint owns only a short-lived native visual, no unit or
@@ -1169,14 +1222,25 @@ inline void ordinary_hit(bw::Unit* source,bw::Unit* target,U32 damage,U32 w,bool
     expansion_hit(source,target,damage,w);
     if(rank(99)&&in(source->unit_id,{38,53}))attach(99,target,source,72,talent_power::v5(99,attack_damage(source,target,w,damage,99)/5),3);
     focus_hit(source,target,damage,w);shadow_begin(source,target);
-    if(talent_power::enabled&&raw_rank(185)&&in(source->unit_id,{10,32}))for(auto other:around(source->flingy.position.x,source->flingy.position.y,96,target,65536,true,air(target)))if(flame_cone(source,target,other))emit(source,other,w,100);
+    if(talent_power::enabled&&raw_rank(185)&&in(source->unit_id,{10,32})){
+        fan_flame_visual(source,*s,now());
+        for(auto other:around(source->flingy.position.x,source->flingy.position.y,96,target,65536,true,air(target)))if(flame_cone(source,target,other))emit(source,other,w,100);
+    }
     if(rank(51)&&in(source->unit_id,{1,16,99,100,104}))t->armor_mark=now()+talent_power::v5(51,120);
     if(rank(94)&&in(source->unit_id,{44,56}))mark_slow(target,U32(talent_power::rate(in(source->unit_id,{44,56})?94u:135u,0.8)*100),talent_power::v5(in(source->unit_id,{44,56})?94u:135u,48),94);
     const U32 corsair_attack=g.bullet_hit_context?token:s->corsair_primary_attacks;
     if(rank(135)&&in(source->unit_id,{60,98})&&w==100&&corsair_attack&&corsair_attack%4==0&&air(target))mark_slow(target,U32(talent_power::rate(135,0.8)*100),talent_power::v5(135,48),135);
     if(rank(52)&&in(source->unit_id,{10,32})){
         auto old=std::find_if(persistent.begin(),persistent.end(),[&](const Persist& p){return p.kind==52&&p.source.p==source&&p.source.unique==source->minor_unique_index;});
-        Persist p{};p.kind=52;p.x=target->flingy.position.x;p.y=target->flingy.position.y;p.until=now()+talent_power::v5(52,48);p.due=now()+12;p.owner=source->player;p.source=identity(source);if(old==persistent.end())persistent.push_back(p);else *old=p;
+        Persist p{};p.kind=52;p.x=target->flingy.position.x;p.y=target->flingy.position.y;p.until=now()+talent_power::v5(52,48);p.due=now()+12;p.owner=source->player;p.source=identity(source);p.visual_direction=source->flingy.facing_direction;
+        if(talent_power::enabled&&raw_rank(185)){
+            // Combo leaves the whole fired cone burning, anchored in world
+            // space. Turning, moving or losing the Firebat cannot rotate it.
+            p.fire_cone=true;p.fire_aim_x=p.x;p.fire_aim_y=p.y;
+            p.x=source->flingy.position.x;p.y=source->flingy.position.y;
+        }
+        // Refreshing a zone must not restart the visual cadence on every hit.
+        if(old==persistent.end())persistent.push_back(p);else {p.visual_due=old->visual_due;*old=p;}
     }
     U32 radius=0,count=0,percent=0;
     if(rank(48)&&race_type(source->unit_id,0)&&!organic(source)&&original_stat({1,13,w})==0){radius=24;count=2;percent=talent_power::v5(48,25);}
@@ -1877,7 +1941,7 @@ inline void reset() noexcept {
     expansion_support_frame=~0u;
     impact_weapon=130;impact_owner=12;impact_layer=2;
     if(state_base==g.units&&states.size()==g.units_count)for(auto& s:states)if(auto u=generation(s.who)){restore_motion(u,s);if(s.shadow_active)shadow_restore(u,s);if(s.fade_until)u->flags=(u->flags&~(0x200000u|0x8000u))|s.saved_collision|s.saved_attack_flag;}
-    valkyrie_volley::reset();irradiation::reset();states.clear();state_base=nullptr;storm_cells.clear();storm_cells_frame=~0u;storm_admissions.clear();acid_states.clear();acid_base=nullptr;matrices.clear();matrix_base=nullptr;projectiles.clear();pending_shots.clear();pending_work.clear();persistent.clear();morph_completions.clear();morph_rewarded.clear();generated_depth=spell_depth=0;DamageScope::current_percent=100;DamageScope::current_secondary=false;DamageScope::current_mobility_bonus=0;emission_percent=100;emission_secondary=emission_primary=emission_spell_root=false;
+    valkyrie_volley::reset();irradiation::reset();states.clear();state_base=nullptr;flame_visual_frame=~0u;flame_visual_budget=64;storm_cells.clear();storm_cells_frame=~0u;storm_admissions.clear();acid_states.clear();acid_base=nullptr;matrices.clear();matrix_base=nullptr;projectiles.clear();pending_shots.clear();pending_work.clear();persistent.clear();morph_completions.clear();morph_rewarded.clear();generated_depth=spell_depth=0;DamageScope::current_percent=100;DamageScope::current_secondary=false;DamageScope::current_mobility_bonus=0;emission_percent=100;emission_secondary=emission_primary=emission_spell_root=false;
 }
 inline void step() {
     if(!g.active||!g.applied||!g.game||GetCurrentThreadId()!=g.game_thread.load())return;
@@ -2056,15 +2120,17 @@ inline void step() {
             }
         }
     });
+    auto& fire_visual_budget=flame_budget(frame);
     for(auto it=persistent.begin();it!=persistent.end();){
         auto& p=*it;auto target=resolve(p.target),source=resolve(p.source);
         if(p.kind==107&&target&&frame>=p.until){if(native_give)owner_give_hook(target,p.remaining,native_give);it=persistent.erase(it);continue;}
         if((p.kind!=52&&p.kind!=143&&p.kind!=145&&!target)||frame>p.until||(p.kind==161&&target&&!is_enemy(target->player))||(p.kind==41&&target&&target->player!=p.owner)){it=persistent.erase(it);continue;}
+        if(p.kind==52)residual_fire_visual(p,frame,fire_visual_budget);
         if(frame>=p.due){
             if(p.kind==161){hurt(target,talent_power::v5(161,8*256),source,p.owner);for(auto other:around(target->flingy.position.x,target->flingy.position.y,64,target,2))hurt(other,talent_power::v5(161,8*256),source,p.owner);p.due+=24;}
             else if(p.kind==41){heal(target,talent_power::v5(41,8*256));for(auto other:around(target->flingy.position.x,target->flingy.position.y,64,nullptr,3))hurt(other,talent_power::v5(41,6*256),source,p.owner);p.due+=24;}
             else if(p.kind==99){if(p.ticks){const U32 amount=(p.remaining+p.ticks-1)/p.ticks;hurt(target,amount,source,p.owner);p.remaining-=amount;--p.ticks;}p.due+=24;}
-            else if(p.kind==52){for(auto other:around(p.x,p.y,24,nullptr,65536,true,0))if(auto fs=state(other))if(!fs->fire_seen||frame-fs->last_fire_damage>=12){hurt(other,talent_power::v5(52,2*256),source,p.owner);fs->fire_seen=true;fs->last_fire_damage=frame;}p.due+=12;}
+            else if(p.kind==52){for(auto other:around(p.x,p.y,p.fire_cone?96u:24u,nullptr,65536,true,0))if(residual_fire_contains(p,other))if(auto fs=state(other))if(!fs->fire_seen||frame-fs->last_fire_damage>=12){hurt(other,talent_power::v5(52,2*256),source,p.owner);fs->fire_seen=true;fs->last_fire_damage=frame;}p.due+=12;}
             else if(p.kind==143){for(auto other:around(p.x,p.y,80,nullptr,65536,true,0))mark_slow(other,U32(talent_power::rate(143,0.7)*100),p.until-frame,143);p.due=frame+1;}
             else if(p.kind==145){
                 recall_portal_visual(p);

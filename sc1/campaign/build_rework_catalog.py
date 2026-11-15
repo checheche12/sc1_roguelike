@@ -173,6 +173,8 @@ def build(coverage=None):
     air_legend_balance(catalog);generate_expansion(catalog,ROOT)
     from .talent_synergy import decorate as compose_talents
     compose_talents(catalog)
+    from .economy_refresh import decorate as refresh_economy
+    refresh_economy(catalog)
     contract['new_curses']=copy.deepcopy(catalog['curses'][15:])
     contract['balance_revision']=9
     contract['new_talents']=copy.deepcopy(catalog['talents'][238:])

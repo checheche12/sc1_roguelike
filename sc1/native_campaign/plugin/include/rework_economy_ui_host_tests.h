@@ -90,7 +90,7 @@ inline void rework_economy_ui_prices_and_snapshot_epochs(){
     for(U32 ordinal:{7u,24u,117u,151u,152u,153u,154u,155u,156u,157u,158u,159u,160u}){const U32 bit=238+ordinal;s.talent_bits[bit/32]|=1u<<(bit%32);}
     CHECK(apply_snapshot(nullptr,s));CHECK(ui::publish(true));
     struct Price{U32 id,mineral,gas;};const Price cases[]={{0,40,0},{5,120,80},{12,320,240},{37,40,0},{103,40,80},{45,80,80},{44,40,80},{65,80,0},{66,100,40},{72,280,200},
-        {106,280,0},{131,210,0},{154,280,0},{73,13,0},{85,8,0},{41,100,0},{132,150,100}};
+        {106,400,0},{131,300,0},{154,400,0},{73,13,0},{85,8,0},{41,100,0},{132,150,100}};
     for(const auto& row:cases){const auto value=ui::costs(own,row.id,999,888);CHECK(U32(value&65535u)==row.mineral && U32(value>>16)==row.gas);
         CHECK(ui::costs(enemy,row.id,999,888)==ui::pack(original_stat({0,40,row.id}),original_stat({0,41,row.id}),0));}
     std::uint64_t value=0;CHECK(ui::read(own,41,value) && (value>>32)==4);

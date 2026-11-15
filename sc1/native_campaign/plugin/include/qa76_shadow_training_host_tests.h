@@ -67,7 +67,7 @@ inline void qa76_training_acceleration_advances_health_and_preserves_damage(){
  std::printf("QA76_TRAINING unit_types=%zu boosted_and_unboosted=1 full_hp=1 completed_damage_preserved=1\n",std::size(trainees));
  // Extra progress is the native per-frame gain, never an unconditional heal.
  reset();game.elapsed_seconds=60;CHECK(apply_snapshot(nullptr,economy_snapshot({25})));auto factory=economy_add(160),child=economy_add(66);factory->flags|=1;factory->secondary_order=38;factory->secondary_order_target.unit=child;child->flags&=~1u;child->remaining_build_time=50;child->build_hp_gain=10;child->flingy.hitpoints=100;
- for(U32 frame=1;frame<=2;frame++){game.frame_count=frame;owner_secondary_hook(factory,train);}CHECK(child->remaining_build_time==47&&child->flingy.hitpoints==130);
+ for(U32 frame=1;frame<=4;frame++){game.frame_count=frame;owner_secondary_hook(factory,train);}CHECK(child->remaining_build_time==45&&child->flingy.hitpoints==150);
  factory->lockdown_timer=10;const auto hp=child->flingy.hitpoints;const auto time=child->remaining_build_time;++game.frame_count;owner_secondary_hook(factory,train);CHECK(child->flingy.hitpoints==hp&&child->remaining_build_time==time);
 }
 inline constexpr std::size_t qa76_group_count=2;

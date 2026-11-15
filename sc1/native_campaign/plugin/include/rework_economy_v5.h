@@ -4,7 +4,8 @@
 // UnitSpecific2::resource(amount0). See analysis/runtime_rework_20261016/primary_sources.
 #include "rework_catalog.generated.h"
 namespace rework_economy_v5 {
-inline U32 rank(const GrowthSnapshot& s,U32 id) noexcept {return rework_catalog::rank(s,id);}
+// Retain the old wire bit for saved ownership; retired MULE grants have no effect.
+inline U32 rank(const GrowthSnapshot& s,U32 id) noexcept {return id==23?0u:rework_catalog::rank(s,id);}
 inline U32 rank(U32 id) noexcept {return rank(g.growth,id);}
 inline bool live(const bw::Unit* u) noexcept {return valid_unit(u) && u->order && u->flingy.hitpoints>0;}
 inline bool own(const bw::Unit* u) noexcept {return live(u) && u->player==player_owner() && !hallucination(u);}
@@ -15,7 +16,6 @@ inline bool resource(U32 id) noexcept {return in(id,{176,177,178,188,110,149,157
 inline U32 ceiling(U32 value,U32 n,U32 d) noexcept {return static_cast<U32>((std::uint64_t(value)*n+d-1)/d);}
 inline U32 price(const GrowthSnapshot& s,U32 id,U32 base) noexcept {
     U32 value=base;
-    if(rank(s,7) && in(id,{106,131,154}))value=ceiling(value,7,10);
     if(rank(s,117) && in(id,{73,85}))value=ceiling(value,1,2);
     constexpr U32 ordinals[]={151,152,153,154,155,156,157,158,159,160};
     const auto group=[&](U32 ordinal){switch(ordinal){
@@ -35,7 +35,7 @@ inline bool plan_stats(const GrowthSnapshot& s,std::vector<Edit>& edits) {
         for(U32 field:{40u,41u}){const auto before=original_stat({0,field,id}),after=price(s,id,before);if(after!=before && !set(field,id,after))return false;}
         U32 time=original_stat({0,42,id});const U32 base_time=time;
         if(rank(s,3) && worker(id))time=std::max(1u,ceiling(time,1,2));
-        if(rank(s,7) && in(id,{106,131,154}))time=std::max(1u,ceiling(time,7,10));
+        if(rank(s,7) && in(id,{106,131,154}))time=std::max(1u,ceiling(time,1,2));
         if(rank(s,4) && in(id,{109,42,156}))time=72;
         const U32 flags=original_stat({0,44,id});
         if((flags&16u) && ((rank(s,20) && (flags&2u)) || (rank(s,22) && (flags&4u))))time=std::max(1u,ceiling(time,1,2));
@@ -66,6 +66,8 @@ struct UnitState {
     Identity chrono_child{};U32 research_key=0;
     std::array<QueueCost,5> queue{};
     U32 queue_slot=0;bool queue_seen=false,larva_seen=false;QueueCost paid_building{};
+    bool expansion_pending=false,expansion_claimed=false;
+    U32 expansion_workers=0,expansion_retry=0;
 };
 inline std::vector<UnitState> states;
 inline bw::Unit* state_base=nullptr;
@@ -73,6 +75,7 @@ inline bool start_box=false,scaled_resources=false,provided_applied=false,creati
 inline U32 next_mule=0;
 inline bool starting_bonus_credited=false;
 inline U32 starting_workers=0,starting_retry=0;
+inline U32 expansion_grants=0;
 inline std::vector<U32> larva_counts;
 inline UnitState* state(bw::Unit* u) {
     if(!valid_unit(u))return nullptr;
@@ -97,6 +100,7 @@ inline U32 carried(const bw::Unit* u) noexcept {return u->unit_specific.bytes[27
 inline U32 amount(const bw::Unit* u) noexcept {std::uint16_t n=0;std::memcpy(&n,u->unit_specific2.bytes,2);return n;}
 inline void amount(bw::Unit* u,U32 n) noexcept {const auto v=static_cast<std::uint16_t>(std::min(65535u,n));std::memcpy(u->unit_specific2.bytes,&v,2);}
 inline bool enabled() noexcept {return g.active && g.applied && g.game && GetCurrentThreadId()==g.game_thread.load();}
+#include "mineral_gather_slots.h"
 inline double motion_ratio(bw::Unit* u) noexcept {return own(u) && worker(u->unit_id) && rank(6) ? 1.5 : 1.0;}
 inline QueueCost current_cost(U32 id) noexcept {return {id,owner_stat(player_owner(),{0,40,id}),owner_stat(player_owner(),{0,41,id})};}
 inline void refresh_building(bw::Unit* u,UnitState& s) noexcept {
@@ -129,11 +133,12 @@ inline void supply_adjust(U32 race,int amount_) noexcept {
 // Native callback is the authority for a successful return: both cargo and
 // resource flag must clear, and the matching native resource ledger must grow.
 struct UnitScope {
+    MineralGatherScope mining;
     bw::Unit* unit;Identity who;U32 cargo=0,flags=0,minerals=0,gas=0;
     Identity child{};
     std::uint16_t time=0,research=0;bool watch=false;U32 frame=0;
     bw::DatTable* twin_supply_table=nullptr;U32 twin_supply_before=0;
-    explicit UnitScope(bw::Unit* u):unit(u),who(identity(u)) {
+    explicit UnitScope(bw::Unit* u):mining(u),unit(u),who(identity(u)) {
         if(!enabled() || !live(u) || hallucination(u))return;
         auto game=g.game();frame=game->frame_count;
         if(mule(u) && !in(u->order,{85,86,87,88,89,90,150,151})){
@@ -166,13 +171,13 @@ struct UnitScope {
         auto s=state(u);if(!s || s->last_frame==frame)return;
         // The native step must have advanced the existing job. This prevents
         // free progress on idle/paused/disabled structures or failed orders.
-        if(rank(25) && game->elapsed_seconds>=60 && (game->elapsed_seconds-60)%90<20 && (original_stat({0,22,u->unit_id})&1u) && (u->flags&1u) && !u->lockdown_timer && !u->stasis_timer){
+        if(rank(25) && (original_stat({0,22,u->unit_id})&1u) && (u->flags&1u) && !u->lockdown_timer && !u->stasis_timer){
             auto job=resolve(child);
             if(s->chrono_child.p!=child.p || s->chrono_child.unique!=child.unique){s->chrono_child=child;s->chrono_build_fraction=0;}
             bool progressed=false;
             if(job && time>job->remaining_build_time && job->remaining_build_time>0){
                 s->chrono_build_fraction+=time-job->remaining_build_time;
-                const auto extra=std::min<U32>(job->remaining_build_time,s->chrono_build_fraction/2);
+                const auto extra=std::min<U32>(job->remaining_build_time,s->chrono_build_fraction/4);
                 job->remaining_build_time=static_cast<std::uint16_t>(job->remaining_build_time-extra);
                 // Native training builds HP on every progressed frame. The
                 // extra frames must advance that same gain, not just the timer.
@@ -182,12 +187,12 @@ struct UnitScope {
                     const auto hp=std::min<std::uint64_t>(effective_max_hp(job),std::uint64_t(job->flingy.hitpoints)+std::uint64_t(extra)*job->build_hp_gain);
                     g.set_hp(job,std::int32_t(hp));
                 }
-                s->chrono_build_fraction%=2;progressed=true;
+                s->chrono_build_fraction%=4;progressed=true;
             }
             std::uint16_t after=0;std::memcpy(&after,u->unit_specific.bytes+10,2);
             const U32 job_key=U32(u->order)<<16|U32(u->unit_specific.bytes[12])<<8|u->unit_specific.bytes[13];
             if(s->research_key!=job_key){s->research_key=job_key;s->chrono_research_fraction=0;}
-            if(in(u->order,{75,76}) && research>after && after>0){s->chrono_research_fraction+=research-after;const auto extra=std::min<U32>(after,s->chrono_research_fraction/2);after=static_cast<std::uint16_t>(after-extra);s->chrono_research_fraction%=2;std::memcpy(u->unit_specific.bytes+10,&after,2);progressed=true;}
+            if(in(u->order,{75,76}) && research>after && after>0){s->chrono_research_fraction+=research-after;const auto extra=std::min<U32>(after,s->chrono_research_fraction/4);after=static_cast<std::uint16_t>(after-extra);s->chrono_research_fraction%=4;std::memcpy(u->unit_specific.bytes+10,&after,2);progressed=true;}
             if(progressed)s->last_frame=frame;
         }
     }
@@ -280,6 +285,7 @@ inline void created(bw::Unit* u) {
     if(!enabled() || !valid_unit(u) || u->player!=player_owner() || hallucination(u))return;
     auto s=state(u);if(!s)return;
     refresh_building(u,*s);
+    if(rank(7)&&in(u->unit_id,{106,131,154})&&!(u->flags&1u))s->expansion_pending=true;
     if(creating_mule){s->mule_expiry=g.game()->elapsed_seconds+45;s->mule_free_supply=true;}
 }
 inline void before_kill(bw::Unit* u) {
@@ -299,6 +305,8 @@ inline void transferred(bw::Unit* u,U32 expires) {
 }
 inline void transformed(bw::Unit* u,U32 old_id,U32 supply_before=0xffffffffu) {
     if(!enabled() || !own(u) || creating_twin)return;auto s=state(u);if(!s)return;
+    if(rank(7)&&old_id==41&&u->unit_id==131&&!(u->flags&1u))s->expansion_pending=true;
+    if(!depot(u->unit_id))s->expansion_pending=false; // Cancelled Drone construction.
     auto game=g.game();auto& supply=game->supplies[0].used[player_owner()];
     if(old_id==35 && u->unit_id==36 && rank(24) && u->build_queue[u->current_build_slot%5]==41 && !s->twin_pending){
         s->twin_pending=true;
@@ -380,6 +388,34 @@ inline void starting_bonus(const std::vector<bw::Unit*>& depots) {
         if(auto mineral=nearest_mineral(u);mineral && g.order)g.order(u,85,mineral->flingy.position.x,mineral->flingy.position.y,mineral,0);
     }
 }
+inline void expansion_bonus(const std::vector<bw::Unit*>& depots) {
+    if(!rank(7))return;const auto frame=g.game()->frame_count;
+    for(auto base:depots){
+        auto s=state(base);if(!s||!own(base)||!(base->flags&1u)||!s->expansion_pending||(base->flags&4u)||frame<s->expansion_retry)continue;
+        if(!s->expansion_claimed){
+            if(expansion_grants>=3){s->expansion_pending=false;continue;}
+            s->expansion_claimed=true;++expansion_grants;
+        }
+        s->expansion_retry=frame+24;
+        const U32 id=base->unit_id==106?7u:base->unit_id==154?64u:41u;
+        for(int radius=128;radius<=320&&s->expansion_workers<4;radius+=32)
+        for(int dy=-radius;dy<=radius&&s->expansion_workers<4;dy+=32)
+        for(int dx=-radius;dx<=radius&&s->expansion_workers<4;dx+=32){
+            if(std::max(std::abs(dx),std::abs(dy))!=radius)continue;
+            const int x=int(base->flingy.position.x)+dx,y=int(base->flingy.position.y)+dy;
+            bool occupied=false;unit_area_search::nearby(x,y,128,[&](bw::Unit* other){
+                if(original_stat({0,22,other->unit_id})&4u)return;
+                const auto p=other->flingy.position;const auto ox=std::int64_t(x)-p.x,oy=std::int64_t(y)-p.y;
+                const int clearance=(original_stat({0,22,other->unit_id})&1u)?112:40;
+                if(ox*ox+oy*oy<std::int64_t(clearance)*clearance)occupied=true;
+            });
+            if(occupied)continue;auto u=spawn(id,x,y,player_owner());if(!u)continue;
+            ++s->expansion_workers;
+            if(auto mineral=nearest_mineral(u);mineral&&g.order)g.order(u,85,mineral->flingy.position.x,mineral->flingy.position.y,mineral,0);
+        }
+        if(s->expansion_workers==4){s->expansion_pending=false;message("신속한 확장: 새 기지에 일꾼 4기를 지원했습니다.");}
+    }
+}
 inline void step() {
     if(!enabled())return;auto game=g.game();const auto second=game->elapsed_seconds,frame=game->frame_count;
     if(rank(21))larva_counts.assign(g.units_count,0);
@@ -394,6 +430,7 @@ inline void step() {
         if(in(u->unit_id,{131,132,133}) && (u->flags&1u))hatcheries.push_back(u);
     });
     starting_bonus(depots);
+    expansion_bonus(depots);
     for(auto u:expired){auto s=state(u);if(s)s->mule_expiry=0;if(g.set_hp)g.set_hp(u,0);}
     if(rank(21))for(auto hatch:hatcheries){
         auto s=state(hatch);if(!s)continue;const U32 count=larva_counts[std::size_t(hatch-g.units)];
@@ -429,5 +466,5 @@ inline void step() {
         }}
     }
 }
-inline void reset() noexcept {larva_counts.clear();states.clear();state_base=nullptr;start_box=scaled_resources=provided_applied=creating_mule=creating_twin=snapshot_seen=false;next_mule=0;starting_bonus_credited=false;starting_workers=starting_retry=0;active_command_scope=nullptr;}
+inline void reset() noexcept {larva_counts.clear();states.clear();state_base=nullptr;start_box=scaled_resources=provided_applied=creating_mule=creating_twin=snapshot_seen=false;next_mule=0;starting_bonus_credited=false;starting_workers=starting_retry=expansion_grants=0;active_command_scope=nullptr;}
 }
