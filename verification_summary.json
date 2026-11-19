@@ -1,0 +1,29 @@
+{
+  "version": "v1.0.22",
+  "scope": "다음 회차, 재능 시너지, 공세와 효과 처리",
+  "unchanged_maps": 63,
+  "changed_maps": [],
+  "python_regression_tests": 62,
+  "native_host": {
+    "passed": true,
+    "groups": 593,
+    "checks": 2417932
+  },
+  "native_ui": {
+    "passed": true,
+    "groups": 23,
+    "assertions": 177600
+  },
+  "native_dll_sha256": "d1b19358a1c9580f6d7f0174057155081a4a5bb0969e4284486140a0b1c74eb1",
+  "archive_entries_verified": 1272,
+  "relocated_launcher": true,
+  "relocated_tests": {
+    "passed": true,
+    "tests": 3,
+    "uses_extracted_manager": true,
+    "option_combinations": 4
+  },
+  "actual_engine_synergies": 7,
+  "personal_database_included": false,
+  "limits": "실제 게임 시너지 검증은 이전 격리 시험 지도에 한정. 이번 준비에서 전체 캠페인 완주와 제보자 환경 프레임 측정은 수행하지 않음."
+}
