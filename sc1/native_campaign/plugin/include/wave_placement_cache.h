@@ -6,6 +6,10 @@ namespace placement {
 inline constexpr int width=64,pixels=128;
 struct Entry {int x,y,next;U8 owner;bool protected_unit,building,ground;multi_target::Dimensions bounds;};
 inline std::array<int,width*width> heads{};
+// A blocked centre excludes every roster type until native occupancy changes.
+// Footprint failures and native creation failures remain specific to each attempt.
+inline std::array<U32,std::size(sc1_native::campaign_wave_config::kOrigins)> blocked_cells{};
+static_assert(std::size(sc1_native::campaign_wave_config::kOrigins[0].cells)<=32);
 inline std::vector<Entry> entries;
 inline U32 depth=0,alive=0,supply=0;inline bool ready=false;
 inline int extent_x=0,extent_y=0;
@@ -18,12 +22,13 @@ struct Batch {
 inline int cell(int p) noexcept {return std::clamp(p/pixels,0,width-1);}
 inline void refresh(){
  if(ready)return;
- heads.fill(-1);entries.clear();alive=supply=0;extent_x=extent_y=0;
- living_units([](bw::Unit* u){
+ heads.fill(-1);blocked_cells.fill(0);entries.clear();alive=supply=0;extent_x=extent_y=0;
+ multi_target::GeometryCache geometry;
+ living_units([&](bw::Unit* u){
   ++alive;const auto t=existing_track(u);
   if(t&&t->spawned&&is_enemy(u->player))supply+=std::max(1u,original_stat({0,46,u->unit_id}));
   const auto p=u->flingy.position;const int bucket=cell(p.y)*width+cell(p.x),index=int(entries.size());
-  const auto flags=original_stat({0,22,u->unit_id});const auto box=multi_target::dimensions(u->unit_id);
+  const auto shape=geometry.get(u->unit_id);const auto flags=shape.flags;const auto box=shape.bounds;
   const bool ground=!(flags&(4u|16u))&&!(u->flags&(4u|0x40u));
   if(ground){extent_x=std::max(extent_x,int(std::max(box.left,box.right)));extent_y=std::max(extent_y,int(std::max(box.top,box.bottom)));}
   entries.push_back({p.x,p.y,heads[bucket],u->player,wave_protected_unit(u),(flags&1u)!=0,ground,box});heads[bucket]=index;
@@ -54,10 +59,20 @@ inline bool fits(U32 type,int x,int y){
    }
  return true;
 }
+inline bool spaced(int x,int y,bool raid){
+ return !any(x,y,40,[](const Entry&){return true;})&&(raid||!any(x,y,512,[](const Entry& e){return e.protected_unit;}));
+}
 inline bool clear(int x,int y,bool raid,U32 type=228){
  ++frame_profile::placement_checks;refresh();
- if(alive>=1550||any(x,y,40,[](const Entry&){return true;}))return false;
- return (raid||!any(x,y,512,[](const Entry& e){return e.protected_unit;}))&&fits(type,x,y);
+ return alive<1550&&spaced(x,y,raid)&&fits(type,x,y);
+}
+inline bool clear_origin_cell(const sc1_native::campaign_wave_config::Origin& origin,U32 index,U32 type){
+ ++frame_profile::placement_checks;refresh();
+ auto& blocked=blocked_cells[std::size_t(&origin-sc1_native::campaign_wave_config::kOrigins)];
+ const U32 bit=1u<<index;if(alive>=1550||(blocked&bit))return false;
+ const auto p=origin.cells[index];
+ if(!spaced(p.x,p.y,false)){blocked|=bit;return false;}
+ return fits(type,p.x,p.y);
 }
 inline bool safe(const sc1_native::campaign_wave_config::Origin& origin){
  if(!depth)return origin_safe(origin);

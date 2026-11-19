@@ -1,6 +1,7 @@
 #pragma once
 #include <cstdint>
 #include <array>
+#include "playthrough_ranks.generated.h"
 namespace rework_catalog {
 inline constexpr std::uint32_t kTalentBase=238, kTalentCount=324, kCurseBase=15, kCurseCount=35;
 inline constexpr std::uint32_t kRankCount=28;
@@ -138,7 +139,7 @@ template<class S> inline unsigned word(const S& s,unsigned w) noexcept {return w
 // Immutable wire locations, not cached ranks: snapshot changes remain immediate.
 inline constexpr auto kPackedIndex=[](){std::array<Field,kTalentCount> result{};for(auto f:kPackedFields)result[f.ordinal]=f;return result;}();
 template<class S> inline unsigned packed_rank(const S& s,unsigned ordinal) noexcept {if(ordinal>=kTalentCount)return 0;const auto& f=kPackedIndex[ordinal];return f.width?(word(s,f.word)>>f.shift)&((1u<<f.width)-1u):0;}
-template<class S> inline bool valid_packed(const S& s) noexcept {for(auto f:kPackedFields)if(f.width==3&&packed_rank(s,f.ordinal)>4)return false;
+template<class S> inline bool valid_packed(const S& s) noexcept {if(playthrough_ranks::enabled(s))return playthrough_ranks::valid(s);for(auto f:kPackedFields)if(f.width==3&&packed_rank(s,f.ordinal)>4)return false;
  if(packed_rank(s,322u)>2u)return false;
  if(s.talent_ranks[21]&~1073741823u)return false;
  if(s.talent_ranks[22]&~1073741823u)return false;
@@ -149,6 +150,7 @@ template<class S> inline bool valid_packed(const S& s) noexcept {for(auto f:kPac
  if(s.talent_ranks[27]&~1073741823u)return false;
  return true;}
 template<class Snapshot> inline std::uint32_t rank(const Snapshot& s,std::uint32_t ordinal) noexcept {
+ if(playthrough_ranks::enabled(s))return playthrough_ranks::rank(s,ordinal);
  if(ordinal>=kTalentCount)return 0; const auto slot=kRankSlots[ordinal];
  if(ordinal>=199u)return packed_rank(s,ordinal);
  const auto bit=kTalentBase+ordinal; const auto owned=(s.talent_bits[bit/32]>>(bit%32))&1u;

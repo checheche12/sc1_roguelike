@@ -255,9 +255,12 @@ def choice_payload(request: Request, state: dict) -> bytes:
     counts = [0] * (64 if request.growth_version==2 else 16)
     for item in state.get("curses", []):
         index, count = item["byte_index"], item["stacks"]
-        if type(index) is not int or not 0 <= index < len(counts) or type(count) is not int or not 0 <= count <= 255:
+        maximum = 0xffffffff if request.growth_version == 2 and index in (16,17,18,19) else 255
+        if type(index) is not int or not 0 <= index < len(counts) or type(count) is not int or not 0 <= count <= maximum:
             raise BridgeError("Manager returned an invalid owned curse count")
-        counts[index] = count
+        # Offers have byte-sized counters; the committed snapshot carries the
+        # full uint32 stacks for the four wide curses, including inherited ones.
+        counts[index] = min(count, 255)
     pending = state.get("phase_pending") if request.phase_version else state["pending"]
     if not isinstance(pending, dict):
         raise BridgeError("Manager returned no pending checkpoint choices")
@@ -285,6 +288,8 @@ def choice_payload(request: Request, state: dict) -> bytes:
             if len(members)==3:thirds[i]=by_id[members[2]]['bit_index']+1
         if any(partners):payload[31:36]=[*partners,0x424E4432 if any(thirds) else 0x424E4431]
         if any(thirds):payload[36:40]=thirds
+    if request.growth_version==2 and state.get('playthrough_number',1)>1 and state.get('rank_scaling',True):
+        payload[40:42]=[min(253,state['playthrough_number']-1),0x4e475031]
     return struct.pack(f"<{len(payload)}I",*payload)
 
 

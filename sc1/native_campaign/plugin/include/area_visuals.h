@@ -109,7 +109,8 @@ inline void publish(bool force=false) {
  }
  if(rework_combat_v5::rank(61)){
   namespace irr=rework_combat_v5::irradiation;
-  for(const auto& node:irr::nodes)if(node.active){
+  for(auto slot:irr::active_slots){
+   const auto& node=irr::nodes[slot];
    auto root=irr::roots.find(node.root);auto unit=rework_combat_v5::resolve(node.who);
    if(unit&&unit->irradiate_timer&&unit->flingy.sprite&&root!=irr::roots.end()&&root->second.owner==frame->owner)
     frame->irradiates[unit->flingy.sprite]={4,4};

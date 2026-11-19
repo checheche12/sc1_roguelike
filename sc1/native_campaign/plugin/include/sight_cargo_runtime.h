@@ -170,16 +170,27 @@ private:
     bool linked(const bw::Unit* passenger, const bw::Unit* carrier) const noexcept {
         return alive(passenger) && passenger->related == carrier && (passenger->flags & 0x40u) != 0;
     }
+    bool page_capable(const bw::Unit& carrier) const noexcept {
+        const auto id=carrier.unit_id;
+        return (id==11 || id==69 || (capacity_ && (id==42 || id==57))) &&
+            alive(&carrier) && !(carrier.flags & 0x40000000u) && (enabled_ || capacity_) && space_;
+    }
+    bool expanded(const bw::Unit* carrier) const noexcept {
+        return capacity_ ? capacity_(carrier)>8 : enabled_(carrier);
+    }
     bool eligible(const bw::Unit* carrier) const noexcept {
-        if (!alive(carrier) || (!enabled_ && !capacity_) || !space_ ||
-            (carrier->unit_id != 11 && carrier->unit_id != 69 && !(capacity_ && (carrier->unit_id==42 || carrier->unit_id==57))) || (carrier->flags & 0x40000000u)) return false;
-        if (capacity_ ? capacity_(carrier)>8 : enabled_(carrier)) return true;
+        if (!valid(carrier) || !page_capable(*carrier)) return false;
+        if (expanded(carrier)) return true;
         unsigned used = 0, passengers = 0;
         for (std::size_t i = 0; i < length_; ++i) if (linked(units_+i,carrier)) {
             used += space_(units_+i); ++passengers;
             if (used > 8 || passengers > 8) return true;
         }
         return false;
+    }
+    bool append_passenger(CargoLedger& ledger, const bw::Unit* passenger) const noexcept {
+        const auto size = space_(passenger);
+        return size>0 && size<=8 && ledger.commit_board({identity(passenger),static_cast<std::uint8_t>(size)});
     }
     bool collect(bw::Unit* carrier, CargoLedger& ledger) const noexcept {
         ledger.clear();
@@ -190,9 +201,7 @@ private:
         for (std::size_t i = 0; i < length_; ++i) {
             auto p = units_ + i;
             if (!linked(p, carrier)) continue;
-            const auto size = space_(p);
-            if (size == 0 || size > 8 || !ledger.commit_board({identity(p), static_cast<std::uint8_t>(size)}))
-                return false;
+            if (!append_passenger(ledger,p)) return false;
         }
         return true;
     }
@@ -295,28 +304,43 @@ public:
     // refill at the next simulation boundary; no game field is changed except
     // the eight handles and their documented high bits.
     void before_commands() noexcept {
-        if (command_depth_++ || !units_) return;
-        for (std::size_t i = 0; i < length_; ++i) {
-            auto carrier = units_ + i;
-            if (!eligible(carrier)) continue;
-            CargoLedger ledger{kMaximumLogicalSpace};
-            if (!collect(carrier, ledger)) continue;
-            // Preserve the selected native window for single-unit unload and
-            // lifecycle commands. Boarding gets its reserved window at the
-            // authoritative native order callback, never by emptying all HUDs.
-            write(carrier, visible_window(ledger,selected_page(carrier,ledger)));
-        }
+        if (command_depth_++ == 0) refresh();
     }
     void after_commands() noexcept {
         if (command_depth_ && --command_depth_ == 0) refresh();
     }
     void refresh() noexcept {
         if (!units_) return;
-        for (std::size_t i = 0; i < length_; ++i) {
-            auto carrier = units_ + i;
-            if (!eligible(carrier)) continue;
+        const auto end = units_ + length_;
+        auto carrier = std::find_if(units_,end,[&](const bw::Unit& u){return page_capable(u);});
+        if (carrier==end) return;
+
+        // Rebuild from live links on each frame or command boundary. Reverse
+        // insertion preserves the ascending slot order of collect(), including
+        // hidden passengers whose handles are outside the current HUD page.
+        std::array<std::uint16_t,8191> head, next;
+        std::fill_n(head.begin(),length_,std::uint16_t(0));
+        for (std::size_t i=length_;i-->0;) {
+            const auto passenger=units_+i;
+            if (!(passenger->flags&0x40u) || !alive(passenger) || !valid(passenger->related)) continue;
+            auto& first=head[static_cast<std::size_t>(passenger->related-units_)];
+            next[i]=first;
+            first=static_cast<std::uint16_t>(i+1);
+        }
+        for (;carrier!=end;++carrier) {
+            if (!page_capable(*carrier)) continue;
+            auto link=head[static_cast<std::size_t>(carrier-units_)];
+            const bool extra_space=expanded(carrier);
+            if (!link && !extra_space) continue;
             CargoLedger ledger{kMaximumLogicalSpace};
-            if (collect(carrier, ledger)) write(carrier, visible_window(ledger,selected_page(carrier,ledger)));
+            while (link) {
+                const auto index=std::size_t(link-1);
+                if (!append_passenger(ledger,units_+index)) break;
+                link=next[index];
+            }
+            // Malformed manifests and ordinary eight-space native cargo keep
+            // their engine window. Legacy overflow stays pageable after a downgrade.
+            if (!link && (extra_space || ledger.used()>8)) write(carrier,visible_window(ledger,selected_page(carrier,ledger)));
         }
     }
     template<class Callback> void for_each_passenger(bw::Unit* carrier, Callback callback) {

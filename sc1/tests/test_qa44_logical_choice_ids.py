@@ -3,7 +3,7 @@ import copy,random,struct,unittest,uuid
 from sc1.bridge.protocol import Request,BridgeError,choice_payload
 from sc1.campaign.runtime_catalog import load_catalog
 from sc1.campaign.rework_growth import candidates
-from sc1.campaign.legendary_bundles import compatible,pair_options
+from sc1.campaign.legendary_bundles import bundle_size,compatible,pair_options
 
 class LogicalChoiceIds(unittest.TestCase):
  @classmethod
@@ -17,7 +17,8 @@ class LogicalChoiceIds(unittest.TestCase):
   self.assertTrue(any(x['bit_index']>=512 for x in rows))
   words=struct.unpack('<95I',choice_payload(self.request(),self.state(rows)))
   self.assertEqual(list(words[14:18]),[x['bit_index']+1 for x in rows])
-  self.assertEqual(words[35],0x424e4431)
+  self.assertEqual(words[35],0x424e4432)
+  self.assertTrue(any(words[36:40]))
  def test_every_new_logical_id_is_valid_and_overflow_is_rejected(self):
   for index in range(511,len(self.catalog['talents'])):
    row=self.catalog['talents'][index]
@@ -27,7 +28,7 @@ class LogicalChoiceIds(unittest.TestCase):
   with self.assertRaisesRegex(BridgeError,'not supported'):choice_payload(self.request(),self.state([row]))
  def test_bundle_partner_above512_keeps_numeric_identity(self):
   pool=[x for x in self.catalog['talents'] if x.get('rework_revision')==5 and x.get('bundle_family') is not None]
-  high=next(x for x in pool if x['bit_index']>=512 and not x['effect'].get('offer_retired'))
+  high=next(x for x in pool if x['bit_index']>=512 and bundle_size(x)==2 and not x['effect'].get('offer_retired'))
   low=next(x for x in pool if x['bit_index']<512 and compatible(x,high))
   row=pair_options([low],[high],random.Random(0))[0]
   words=struct.unpack('<95I',choice_payload(self.request(),self.state([row])))

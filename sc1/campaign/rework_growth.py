@@ -200,9 +200,12 @@ def recent_manuals(conn,mission,offer_id):
             and item.get('category') in ('combat','military')}
 
 
-def candidates(catalog,mission,phase,owned,rng,*,recent_manuals=(),rank_counts=None):
+def candidates(catalog,mission,phase,owned,rng,*,recent_manuals=(),rank_counts=None,_ordinary=False):
     from .legendary_bundles import paired_unit,can_bundle,pair_options
     reward=policy.reward_policy(mission,phase)
+    if _ordinary:
+        from dataclasses import replace
+        reward=replace(reward,category='military',guaranteed_legendary=False)
     available=[]
     by_id={}
     entry=progression.metadata(mission)
@@ -246,5 +249,7 @@ def candidates(catalog,mission,phase,owned,rng,*,recent_manuals=(),rank_counts=N
             if len(draw)>1:rng.shuffle(draw)
         else:draw=policy.draw_candidates(reward,available,owned,rng,recent_manuals=recent_manuals,exhausted_fallback=True)
     except ValueError as exc:raise GrowthError('choice_pool_unavailable',str(exc)) from exc
+    if not draw and catalog.get('playthrough_number',1)>1 and not _ordinary:
+        return candidates(catalog,mission,phase,owned,rng,recent_manuals=recent_manuals,rank_counts=rank_counts,_ordinary=True)
     if not draw:raise GrowthError('choice_pool_unavailable','현재 단계에 사용 가능한 개편 재능이 없습니다.')
     return pair_options([by_id[x.id] for x in draw],usable_legends,rng)

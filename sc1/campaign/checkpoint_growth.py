@@ -55,7 +55,7 @@ def _current(conn, mission, phase):
         ORDER BY CASE o.kind WHEN 'talent' THEN 0 ELSE 1 END LIMIT 1""", (mission, phase)).fetchone()
 
 
-def _run_catalog(conn, mission, catalog_version=1):
+def _base_run_catalog(conn, mission, catalog_version=1):
     tables={r[0] for r in conn.execute("SELECT name FROM sqlite_master WHERE type='table'")}
     if "growth_checkpoint_catalogs" in tables:
         saved=conn.execute("SELECT catalog_json FROM growth_checkpoint_catalogs WHERE mission=?",(mission,)).fetchone()
@@ -63,6 +63,11 @@ def _run_catalog(conn, mission, catalog_version=1):
             return rework_growth.overlay(conn,talent_pool.apply_updates(conn, growth.apply_curse_pool_updates(conn, growth.validate_catalog(growth._json(saved[0])))))
     # Pre-expansion PHC1 runs always used the original singleton pin.
     return rework_growth.overlay(conn,talent_pool.apply_updates(conn, growth.apply_curse_pool_updates(conn, growth.validate_catalog(growth._json(growth._state(conn)["catalog_json"])))))
+
+
+def _run_catalog(conn, mission, catalog_version=1):
+    from .playthrough_ranks import for_mission
+    return for_mission(conn, mission, _base_run_catalog(conn, mission, catalog_version))
 
 
 def curse_stages(count):
@@ -233,9 +238,15 @@ def _issue(conn, mission, phase, catalog):
                          (rework_growth.SKIPPED_CURSE,state['revision'],offer['offer_id']))
             return _issue(conn,mission,phase,catalog)
         if kind=='talent':
-            candidates=rework_growth.candidates(catalog,mission,{1:1,3:2,4:3}[phase],owned,secrets.SystemRandom(),
-                recent_manuals=rework_growth.recent_manuals(conn,mission,offer['offer_id']),
-                rank_counts=rework_growth.ranks(conn,mission))
+            try:
+                candidates=rework_growth.candidates(catalog,mission,{1:1,3:2,4:3}[phase],owned,secrets.SystemRandom(),
+                    recent_manuals=rework_growth.recent_manuals(conn,mission,offer['offer_id']),
+                    rank_counts=rework_growth.ranks(conn,mission))
+            except GrowthError as exc:
+                if exc.code != 'choice_pool_unavailable' or catalog.get('playthrough_number',1)<=1:raise
+                conn.execute('UPDATE growth_offers SET selected_id=?,selected_revision=?,selected_at=CURRENT_TIMESTAMP WHERE offer_id=?',
+                    ('__talents_exhausted__',state['revision'],offer['offer_id']))
+                return _issue(conn,mission,phase,catalog)
             conn.execute('UPDATE growth_offers SET candidates_json=?,offered_revision=? WHERE offer_id=?',
                          (json.dumps(candidates,ensure_ascii=False,sort_keys=True),state['revision'],offer['offer_id']))
             return
@@ -286,15 +297,14 @@ def _freeze(conn, row, phase, response):
         raise GrowthError("phase_incomplete", "현재 단계의 선택이 끝나지 않았습니다.")
     catalog = _run_catalog(conn, row["mission"], row["catalog_version"])
     owned, stacks = growth._json(row["baseline_talents_json"]), growth._json(row["baseline_curses_json"])
-    saved=conn.execute('SELECT ranks_json FROM growth_checkpoint_rank_baselines WHERE mission=?',(row['mission'],)).fetchone() if conn.execute("SELECT 1 FROM sqlite_master WHERE name='growth_checkpoint_rank_baselines'").fetchone() else None
-    ranks=json.loads(saved[0]) if saved else {}
+    ranks = _baseline_ranks(conn, row['mission'])
     selected = conn.execute("""SELECT o.kind,o.selected_id,o.candidates_json FROM growth_checkpoint_offers p
         JOIN growth_offers o USING(offer_id) WHERE p.mission=? AND p.phase<=?
         ORDER BY p.phase, p.kind""", (row["mission"], phase)).fetchall()
     if len(selected) != sum(len(planned(row,p)) for p in range(1,phase+1)) or any(item["selected_id"] is None for item in selected):
         raise GrowthError("phase_incomplete", "이전 단계의 선택 기록이 불완전합니다.")
     for item in selected:
-        if item['selected_id'] in (rework_growth.SKIPPED_CURSE,rework_growth.SKIPPED_FINAL):continue
+        if item['selected_id'] in (rework_growth.SKIPPED_CURSE,rework_growth.SKIPPED_FINAL,'__talents_exhausted__'):continue
         if item["kind"] == "talent":
             from .legendary_bundles import selected_members
             for identity in selected_members(item,catalog):
@@ -324,6 +334,13 @@ def _freeze_ready_pairs(conn, row, make_response):
         conn.execute("UPDATE growth_checkpoint_runs SET active_phase=? WHERE mission=?", (phase, row["mission"]))
 
 
+def _baseline_ranks(conn, mission):
+    if not conn.execute("SELECT 1 FROM sqlite_master WHERE name='growth_checkpoint_rank_baselines'").fetchone():
+        return {}
+    saved = conn.execute('SELECT ranks_json FROM growth_checkpoint_rank_baselines WHERE mission=?', (mission,)).fetchone()
+    return json.loads(saved[0]) if saved else {}
+
+
 def status(conn, mission=101, requested_phase=None):
     row = run(conn, mission)
     if row is None:
@@ -351,7 +368,8 @@ def status(conn, mission=101, requested_phase=None):
     if latest:
         result["growth_words"] = validate_growth_words(growth._json(latest["words_json"]))
     elif not row["legacy"]:
-        result["growth_words"] = encode_growth(_run_catalog(conn, mission), growth._json(row["baseline_talents_json"]), growth._json(row["baseline_curses_json"]))
+        result["growth_words"] = encode_growth(_run_catalog(conn, mission), growth._json(row["baseline_talents_json"]),
+                                              growth._json(row["baseline_curses_json"]), _baseline_ranks(conn, mission))
     return result
 
 

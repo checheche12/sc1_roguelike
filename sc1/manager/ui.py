@@ -162,6 +162,8 @@ class ManagerWindow:
         ttk.Label(state, textvariable=self.growth_hint, wraplength=790).pack(anchor="w", pady=(10, 6))
         self.growth_button = ttk.Button(state, text="보유 재능·저주 보기", command=self.show_growth)
         self.growth_button.pack(anchor="w")
+        self.playthrough_button = ttk.Button(state, text="회차 관리 · 다음 회차…", command=self.show_playthrough)
+        self.playthrough_button.pack(anchor="w", pady=(5,0))
         install = ttk.LabelFrame(outer, text="캠페인 패치 · 게임 실행", padding=10)
         install.pack(fill="x", pady=(10, 0))
         path_row = ttk.Frame(install)
@@ -179,7 +181,7 @@ class ManagerWindow:
         self.curse_choice.current(self.curses_per_mission.get())
         self.curse_choice.pack(side="left",padx=8)
         self.curse_choice.bind("<<ComboboxSelected>>",self.change_difficulty)
-        ttk.Label(difficulty_row,text="재능 3회 고정 · 진행 중인 임무의 설정은 유지").pack(side="left")
+        ttk.Label(difficulty_row,text="1회차 기본값 · 다음 회차 저주는 회차 관리에서 설정").pack(side="left")
         actions = ttk.Frame(install)
         actions.pack(fill="x", pady=(8, 5))
         self.installation_buttons = []
@@ -227,6 +229,70 @@ class ManagerWindow:
             remember_curses_per_mission(value,preferences_path=self.preferences_path or PREFERENCES_PATH)
         except OSError as exc:
             messagebox.showerror("난이도 저장 실패",str(exc),parent=self.root)
+
+    def show_playthrough(self):
+        if self.installation_busy or self.process is not None or self.discovering:
+            messagebox.showinfo("회차 관리", "현재 임무를 끝내고 연결을 중지한 뒤 회차를 변경해 주세요.", parent=self.root)
+            return
+        from sc1.campaign.mission_progress import CAMPAIGNS
+        labels={**CAMPAIGNS,7:"어둠의 기원 · 비밀 임무"}
+        store=self.store
+        dialog=tk.Toplevel(self.root)
+        dialog.title("회차 관리")
+        dialog.transient(self.root)
+        frame=ttk.Frame(dialog,padding=18)
+        frame.pack(fill="both",expand=True)
+        selected=tk.StringVar(value=labels[1])
+        selector=ttk.Combobox(frame,textvariable=selected,values=list(labels.values()),state="readonly",width=32)
+        selector.pack(fill="x")
+        info=tk.StringVar()
+        ttk.Label(frame,textvariable=info,wraplength=520,justify="left").pack(anchor="w",pady=12)
+        ttk.Label(frame,text="다음 회차 · 임무당 저주 선택 횟수").pack(anchor="w")
+        curse=ttk.Combobox(frame,values=[f"{n}회" for n in range(5)],state="readonly",width=15)
+        curse.current(self.curses_per_mission.get())
+        curse.pack(anchor="w",pady=6)
+        carry=tk.BooleanVar(value=False)
+        scaling=tk.BooleanVar(value=True)
+        curse_policy=ttk.LabelFrame(frame,text="기존 저주",padding=8)
+        curse_policy.pack(fill="x",pady=6)
+        ttk.Radiobutton(curse_policy,text="초기화",variable=carry,value=False).pack(side="left")
+        ttk.Radiobutton(curse_policy,text="그대로 가져오기",variable=carry,value=True).pack(side="left",padx=12)
+        ttk.Label(frame,text="새 저주를 0회로 설정해도 가져온 저주는 유지됩니다.",wraplength=520).pack(anchor="w")
+        ttk.Checkbutton(frame,text="N회차 보정 적용 · 반복 재능 상한 증가",variable=scaling).pack(anchor="w",pady=(12,4))
+        ttk.Label(frame,text="켬: 회차당 상한 +1회. 끔: 기본 상한 적용.\n기본 상한을 넘은 획득 횟수도 기록에 보관해, 이후 회차에 보정을 켜면 다시 적용합니다.\n고유 재능은 중복 획득하지 않으며 이전 회차의 선택·완료 기록은 보관됩니다.",wraplength=520).pack(anchor="w",pady=8)
+        shown={}
+        def refresh():
+            cid=next(k for k,v in labels.items() if v==selected.get())
+            value=store.playthrough_status(cid)
+            shown.update(cid=cid,value=value)
+            count=value['curses_per_mission']
+            carry.set(value['carry_curses']);scaling.set(value['rank_scaling'])
+            curse.current(self.curses_per_mission.get() if count is None else count)
+            setting="로더 기본값" if count is None else f"임무당 저주 {count}회"
+            options=f"기존 저주 {'가져오기' if value['carry_curses'] else '초기화'} · N회차 보정 {'켬' if value['rank_scaling'] else '끔'}"
+            info.set(f"현재 {value['number']}회차 · {setting}\n{options}\n"+
+                     ("완료했습니다. 다음 회차를 시작할 수 있습니다." if value['can_advance'] else "마지막 임무 완료 후 다음 회차를 시작할 수 있습니다."))
+            advance.configure(state="normal" if value['can_advance'] else "disabled")
+        def advance_run():
+            value=shown['value'];count=curse.current()
+            carry_curses=carry.get();rank_scaling=scaling.get()
+            options=f"기존 저주 {'가져오기' if carry_curses else '초기화'} · N회차 보정 {'켬' if rank_scaling else '끔'}"
+            if self.installation_busy or self.process is not None or self.discovering:return
+            if not messagebox.askyesno("다음 회차 시작", f"{selected.get()} {value['number']+1}회차를 시작할까요?\n"
+                f"재능 유지 · {options}\n임무당 새 저주 {count}회 · 첫 임무부터 다시 진행합니다.",parent=dialog):return
+            try:
+                self.stop_bridge()
+                result=store.start_next_playthrough(shown['cid'],expected_number=value['number'],curses_per_mission=count,
+                    carry_curses=carry_curses,rank_scaling=rank_scaling)
+                self.append(f"{selected.get()} {result['number']}회차 시작 · 임무당 새 저주 {count}회 · {options}")
+                refresh();self.refresh()
+            except Exception as exc:
+                messagebox.showerror("회차 변경 실패",str(exc),parent=dialog)
+        advance=ttk.Button(frame,text="다음 회차 시작",command=advance_run)
+        advance.pack(anchor="w",pady=8)
+        ttk.Button(frame,text="닫기",command=dialog.destroy).pack(anchor="e")
+        selector.bind("<<ComboboxSelected>>",lambda event:refresh())
+        refresh();dialog.grab_set();self.root.wait_window(dialog)
 
     def browse_game_path(self):
         selected = filedialog.askdirectory(parent=self.root, title="스타크래프트 설치 폴더 선택",
@@ -357,6 +423,7 @@ class ManagerWindow:
                                   "시험 프로필 · 기존 A/B 저장 검증 기록입니다. 본편 지도에는 새 본편 기록을 사용하세요.")
             self.growth_hint.set(growth_summary(state["growth_selection"]))
             self.growth_button.configure(state="normal" if state["profile"] == ORIGINAL_PROFILE else "disabled")
+            self.playthrough_button.configure(state="normal" if state["profile"] == ORIGINAL_PROFILE else "disabled")
         except Exception as exc:
             self.append(f"기록 읽기 실패: {exc}")
 
@@ -408,7 +475,7 @@ class ManagerWindow:
             nonlocal shown_key
             shown_key = (value["mission"], value["state"], value["revision"], value.get("phased_growth"),
                          value.get("requested_phase"), value.get("completed_phase"))
-            hint.set(growth_summary(value))
+            hint.set(f"{value.get('playthrough_number',1)}회차 · "+growth_summary(value))
             for child in content.winfo_children():
                 child.destroy()
             ttk.Label(content, text="현재 보유 성장", font=("Malgun Gothic", 12, "bold")).pack(anchor="w", pady=(0, 8))

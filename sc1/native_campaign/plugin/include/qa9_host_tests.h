@@ -1,6 +1,6 @@
 #pragma once
 namespace host_test {
-inline constexpr std::size_t qa9_group_count=11;
+inline constexpr std::size_t qa9_group_count=12;
 namespace qa9_fixture {
 inline void begin(std::initializer_list<U32> talents){talent_power::enabled=true;rework_fixture::begin(talents);}
 inline void end(){rework_fixture::finish();talent_power::enabled=false;}
@@ -124,5 +124,19 @@ inline void qa9_mutalisk_manual_compensates_slower_attack(){
     CHECK(owner_stat(1,{1,14,ultra})==original_stat({1,14,ultra})+12);CHECK(owner_stat(1,{1,14,muta})==original_stat({1,14,muta})+10);
     qa9_fixture::end();
 }
-inline void run_qa9_groups(){qa9_mutalisk_manual_compensates_slower_attack();qa9_lockdown_extra_projectiles_follow_real_launch();qa9_yamato_returns_to_attack_after_witnessed_launch();qa9_irradiate_five_branches_five_generations();qa9_irradiate_native_damage_outer_ring_and_cure();qa9_goliath_three_targets_infinite_fire_bundle();qa9_emp_hits_energyless_enemies_only();qa9_all_unit_legendaries_and_native_damage();qa9_air_wave_requires_real_counter();qa9_enemy_detector_reacts_to_burrowed_fire();qa9_upgrade_announcements_are_separate();}
+inline void qa9_slow_refresh_expiry_and_slot_reuse(){
+    using namespace rework_fixture;using namespace rework_combat_v5;
+    qa9_fixture::begin({});auto u=unit(37,6,500,500);game.frame_count=100;
+    const auto check=[&](double factor,U32 percent,U32 end){
+        CHECK(std::abs(speed_ratio(u)-factor)<1e-12);
+        CHECK(state(u)->slow_percent==percent&&state(u)->slow_until==end);
+    };
+    mark_slow(u,73,20,94);mark_slow(u,61,10,135);check(0.73*0.61,45,120);
+    game.frame_count=105;mark_slow(u,80,25,94);mark_slow(u,80,25,94);check(0.80*0.61,49,130);
+    game.frame_count=110;check(0.80,80,130);
+    game.frame_count=130;check(1,100,0);
+    game.frame_count=109;check(0.80*0.61,49,130);
+    ++u->minor_unique_index;check(1,100,0);qa9_fixture::end();
+}
+inline void run_qa9_groups(){qa9_slow_refresh_expiry_and_slot_reuse();qa9_mutalisk_manual_compensates_slower_attack();qa9_lockdown_extra_projectiles_follow_real_launch();qa9_yamato_returns_to_attack_after_witnessed_launch();qa9_irradiate_five_branches_five_generations();qa9_irradiate_native_damage_outer_ring_and_cure();qa9_goliath_three_targets_infinite_fire_bundle();qa9_emp_hits_energyless_enemies_only();qa9_all_unit_legendaries_and_native_damage();qa9_air_wave_requires_real_counter();qa9_enemy_detector_reacts_to_burrowed_fire();qa9_upgrade_announcements_are_separate();}
 }

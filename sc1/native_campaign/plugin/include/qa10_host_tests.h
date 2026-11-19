@@ -76,7 +76,7 @@ inline void qa10_ground_roles_and_four_health_ranks(){
         auto target=unit(id,1,200,100);std::int32_t amount=100*256;
         {rework_combat_v5::DamageScope hit(target,source,0,6,amount);}CHECK(amount==90*256);
         ranks[29]=ranks[70]=ranks[111]=4;amount=100*256;
-        {rework_combat_v5::DamageScope hit(target,source,0,6,amount);}CHECK(amount==60*256);
+        {rework_combat_v5::DamageScope hit(target,source,0,6,amount);}CHECK(amount==16796); // 100 HP * 0.9^4 in Q8
         amount=100*256;{rework_combat_v5::DamageScope hit(target,source,30,6,amount);}CHECK(amount==100*256);
         ranks[29]=ranks[70]=ranks[111]=1;
     }

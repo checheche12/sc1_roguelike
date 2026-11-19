@@ -149,7 +149,9 @@ def current_owned_descriptions(status: dict, catalog_path=None) -> dict:
         return status
     import copy
     from .runtime_catalog import load_catalog
-    current=load_catalog(catalog_path,expected_version=status['catalog_version'] if catalog_path else 2)
+    from .playthrough_ranks import project
+    current=project(load_catalog(catalog_path,expected_version=status['catalog_version'] if catalog_path else 2),
+                    status.get('playthrough_number',1),status.get('rank_scaling',True))
     result=dict(status)
     for kind,index in (('talents','bit_index'),('curses','byte_index')):
         latest={item['id']:item for item in current[kind]}

@@ -280,14 +280,19 @@ def prepare(conn, mission, catalog_path=None, catalog_version=1):
 
 
 def status(conn, mission=INITIAL_MISSION):
+    from .playthrough import current as current_playthrough
+    from .playthrough_ranks import for_mission
+    cycle = current_playthrough(conn,mission)
     attempt = conn.execute("SELECT * FROM attempts WHERE mission=?", (mission,)).fetchone()
     completed = bool(attempt and attempt["state"] == "complete")
     if not exists(conn):
         return {"state": "legacy_complete" if completed else "not_started", "mission": mission,
+                "playthrough_number": cycle['number'], "rank_scaling": cycle['rank_scaling'],
+                "carry_curses": cycle['carry_curses'],
                 "revision": 0, "offer": None, "talents": [], "curses": [], "history": [],
                 "pending": {"talent": 0, "curse": 0}, "upcoming": {"talent": 0, "curse": 0}}
     row = _state(conn, mission)
-    catalog = _saved_catalog(conn)
+    catalog = for_mission(conn, mission, _saved_catalog(conn))
     owned = _json(row["talents_json"])
     stacks = _json(row["curses_json"])
     current_words = rework_growth.encode(conn,mission,catalog, owned, stacks)
@@ -308,6 +313,8 @@ def status(conn, mission=INITIAL_MISSION):
                for entry in conn.execute("SELECT * FROM growth_offers WHERE selected_id IS NOT NULL ORDER BY sequence")
                if entry["mission"] in progression.campaign_missions(mission)]
     return {"state": mode, "mission": mission, "revision": row["revision"],
+            "playthrough_number": cycle['number'], "rank_scaling": cycle['rank_scaling'],
+            "carry_curses": cycle['carry_curses'],
             "catalog_version": catalog["catalog_version"],
             "offer": _offer(current) if current and current["candidates_json"] and mode == "choosing" else None,
             "pending": pending, "upcoming": upcoming, "history": history,

@@ -16,7 +16,7 @@ import uuid
 
 from sc1.campaign.catalog import (MISSIONS, ORIGINAL_PROFILE, PROFILE_NAMES,
                                   PROBE_PROFILE, Mission, missions_for_profile)
-from sc1.campaign import growth, phased_growth, rework_growth, checkpoint_growth
+from sc1.campaign import growth, phased_growth, rework_growth, checkpoint_growth, playthrough
 from sc1.campaign.progression import metadata
 from sc1.campaign.missions import load_missions
 from sc1.campaign.growth import GrowthChoicesPending
@@ -166,6 +166,23 @@ class CampaignStore:
             self._validate_request(mission,PROTOCOL_VERSION)
             return self._growth_engine(conn,mission).status(conn,mission)
 
+    def playthrough_status(self, campaign_id: int) -> dict:
+        if self.profile != ORIGINAL_PROFILE:
+            raise GrowthError('profile_mismatch', '본편 캠페인 기록에서 사용할 수 있습니다.')
+        with self._connect() as conn:
+            return playthrough.campaign_status(conn, campaign_id)
+
+    def start_next_playthrough(self, campaign_id: int, *, expected_number: int, curses_per_mission: int,
+                               carry_curses: bool = False, rank_scaling: bool = True) -> dict:
+        if self.profile != ORIGINAL_PROFILE:
+            raise GrowthError('profile_mismatch', '본편 캠페인 기록에서 사용할 수 있습니다.')
+        with self._connect() as conn:
+            conn.execute('BEGIN IMMEDIATE')
+            result = playthrough.start_next(conn, campaign_id, expected_number, curses_per_mission,
+                                           carry_curses=carry_curses, rank_scaling=rank_scaling)
+            conn.commit()
+            return result
+
     def growth_status(self, mission: int | None = None) -> dict:
         """Read selection state without creating or migrating any tables."""
         with self._connect() as conn:
@@ -175,7 +192,7 @@ class CampaignStore:
 
     @staticmethod
     def _require_unphased(conn, mission):
-        if phased_growth.run(conn, mission) or checkpoint_growth.run(conn,mission):
+        if playthrough.current(conn, mission)['number'] > 1 or phased_growth.run(conn, mission) or checkpoint_growth.run(conn,mission):
             raise GrowthError("phased_protocol_required", "이 기록은 단계별 성장 선택을 지원하는 지도로 불러와 주세요.")
 
     def restore_growth_phase(self, mission: int, catalog_version: int, phase: int, *,
@@ -193,7 +210,11 @@ class CampaignStore:
             if phase_version==1 and checkpoint_growth.run(conn,mission):
                 raise GrowthError('phase_version','이 임무는 업데이트된 지도와 로더로 시작해 주세요.')
             engine=checkpoint_growth if phase_version==2 else phased_growth
-            extra={'curses_per_mission':self.curses_per_mission} if phase_version==2 else {}
+            cycle = playthrough.current(conn, mission)
+            if cycle['number'] > 1 and (phase_version != 2 or catalog_version != 2):
+                raise GrowthError('phase_version', '다회차는 업데이트된 지도와 로더로 시작해 주세요.')
+            count = cycle['curses_per_mission'] if cycle['curses_per_mission'] is not None else self.curses_per_mission
+            extra={'curses_per_mission':count} if phase_version==2 else {}
             response = engine.restore(conn, mission, catalog_version, phase, nonce,
                 lambda: self._restore_response(conn, entry, PROTOCOL_VERSION), self.runtime_catalog_path, **extra)
             conn.commit()
@@ -335,6 +356,8 @@ class CampaignStore:
         entry = self._validate_request(mission, protocol_version)
         with self._connect() as conn:
             conn.execute("BEGIN IMMEDIATE")
+            if self.profile == ORIGINAL_PROFILE and playthrough.current(conn, entry.mission_id)['number'] > 1:
+                raise GrowthError('phased_protocol_required', '다회차는 업데이트된 지도와 로더로 시작해 주세요.')
             response = self._restore_response(conn, entry, protocol_version)
             conn.commit()
         return response

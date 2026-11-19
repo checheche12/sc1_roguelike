@@ -32,19 +32,26 @@ class UnitGrowth(unittest.TestCase):
   c=copy.deepcopy(self.catalog);c['talents'][437]['wire_storage']['word']=61
   with self.assertRaises(GrowthError):validate_catalog(c,2)
 
- def test_legacy_caps_and_ammo_aliases_prevent_empty_rewards(self):
+ def test_independent_manuals_use_only_their_own_acquisitions(self):
   from sc1.campaign import rank_policy
   c=self.catalog;old=c['talents'][238+29]
   marine=next(x for x in c['talents'][437:] if x['target_units']==[0,20] and x['effect']['unit_growth']['kind']=='attack')
-  self.assertTrue(rank_policy.exhausted(marine,[old['id']],{old['id']:4},c))
+  self.assertFalse(rank_policy.exhausted(marine,[old['id']],{old['id']:4},c))
   conn=sqlite3.connect(':memory:');owned=[old['id']]
   rework_growth.save_ranks(conn,101,{old['id']:3});rework_growth.acquire(conn,101,c,owned,marine['id'])
+  self.assertFalse(rank_policy.exhausted(marine,owned,rework_growth.ranks(conn,101),c))
+  for _ in range(3):rework_growth.acquire(conn,101,c,owned,marine['id'])
   self.assertTrue(rank_policy.exhausted(marine,owned,rework_growth.ranks(conn,101),c))
+  self.assertEqual(rework_growth.ranks(conn,101)[old['id']],3)
   carrier=next(x for x in c['talents'][437:] if x['target_units']==[72,82] and x['effect']['unit_growth']['kind']=='attack')
   ammo=next(x for x in c['talents'][437:] if x['target_units']==[73] and x['effect']['unit_growth']['kind']=='attack')
   owned=[carrier['id']];rework_growth.save_ranks(conn,101,{carrier['id']:2})
   rework_growth.acquire(conn,101,c,owned,ammo['id'])
-  self.assertEqual(rework_growth.ranks(conn,101)[ammo['id']],3)
+  self.assertEqual(rework_growth.ranks(conn,101)[ammo['id']],1)
+  self.assertEqual(rework_growth.ranks(conn,101)[carrier['id']],2)
+  legacy=copy.deepcopy(marine)
+  legacy['effect'].pop('independent_manuals_stack')
+  self.assertTrue(rank_policy.exhausted(legacy,[old['id']],{old['id']:4},c))
   conn.close()
 
  def test_both_members_are_awarded_and_ranked_for_each_tier(self):
@@ -84,7 +91,8 @@ class UnitGrowth(unittest.TestCase):
   pool=[x for x in c['talents'] if x.get('rework_revision')==5 and not retired(x)
         and not unit_offer_removed(x) and not x['effect'].get('offer_retired')]
   economic=[x for x in pool if x['category']=='economy']
-  self.assertEqual(len(economic),24)
+  self.assertEqual({item['effect_ordinal'] for item in economic},
+                   {*range(8),20,21,22,24,25,*range(151,161)})
   for item in economic:
    self.assertFalse(paired_unit(item),item['name'])
    option=pair_options([item],pool,random.Random(73))[0]

@@ -602,4 +602,13 @@ void checkpoint_v2_small_curse_lists_test() {
         open(h);check(!h.ui.open() && h.resumes==1,"small curse list resumes after confirmation");
     }
 }
-int main(int argc,char** argv) {try {if(argc==2 && std::strcmp(argv[1],"native_metadata")==0)native_sized_metadata_test();else if(argc==2 && std::strcmp(argv[1],"spawn_no_delete")==0)spawn_no_delete_test();else {api_test();bundled_legendary_pages_test();checkpoint_v2_small_curse_lists_test();catalog_test();spawn_reinit_test();stale_test();text_failure_test();phases_auto_test();standalone_legendary_v2_test();stock_depth_test();hud_test();thread_delete_test();legacy_test();backed_panel_test();render_lifetime_test();hotkey_render_test();constructor_file_test();native_sized_metadata_test();spawn_no_delete_test();independent_wave_timer_test();cargo_page_button_test();}std::cout<<"{\"passed\":true,\"groups\":"<<groups<<",\"assertions\":"<<assertions<<"}\n";return 0;}catch(const std::exception& e) {std::cerr<<"FAILED: "<<e.what()<<'\n';return 1;}}
+void playthrough_cap_display_test(){
+    ++groups;
+    for(unsigned bonus:{1u,4u,253u}){
+        Host h;bind_api(h);check(h.ui.initialize(&h.api,h.callbacks()),"NG+ UI initialized");h.show();
+        h.offer.wire_version=2;h.offer.count=1;h.offer.candidates[0]=438;
+        h.offer.candidates[1]=h.offer.candidates[2]=h.offer.candidates[3]=0;h.offer.rank_bonus=bonus;h.ui.show(h.offer);
+        h.actions=[&]{h.preview(1);check(no_spaces(h.paint(-1)).find("최대"+std::to_string((std::min)(255u,4u+bonus))+"회")!=std::string::npos,"NG+ actual cap rendered");h.confirm();check(h.submits==1,"NG+ description fits and confirms");h.finish();};open(h);
+    }
+}
+int main(int argc,char** argv) {try {if(argc==2 && std::strcmp(argv[1],"native_metadata")==0)native_sized_metadata_test();else if(argc==2 && std::strcmp(argv[1],"spawn_no_delete")==0)spawn_no_delete_test();else {api_test();bundled_legendary_pages_test();checkpoint_v2_small_curse_lists_test();catalog_test();spawn_reinit_test();stale_test();text_failure_test();phases_auto_test();standalone_legendary_v2_test();stock_depth_test();hud_test();thread_delete_test();legacy_test();backed_panel_test();render_lifetime_test();hotkey_render_test();constructor_file_test();native_sized_metadata_test();spawn_no_delete_test();independent_wave_timer_test();cargo_page_button_test();playthrough_cap_display_test();}std::cout<<"{\"passed\":true,\"groups\":"<<groups<<",\"assertions\":"<<assertions<<"}\n";return 0;}catch(const std::exception& e) {std::cerr<<"FAILED: "<<e.what()<<'\n';return 1;}}

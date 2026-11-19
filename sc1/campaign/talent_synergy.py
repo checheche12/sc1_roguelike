@@ -56,4 +56,53 @@ def decorate(catalog):
             target['description']=target['description'].replace('기존 병과 체력 교범과 합산해 최대 4중첩입니다.','서로 다른 교범의 강화는 합산됩니다.').replace('기존 병과 교범과 합산해 최대 4중첩.','서로 다른 교범의 강화는 합산됩니다.').replace('모체·탄약 유닛 교범은 높은 쪽만 적용합니다.','모체와 탄약 유닛의 공격 교범은 함께 적용됩니다.')
         effect.update(qa_revision=REVISION,independent_manuals_stack=True)
     catalog['talent_synergy_revision']=REVISION
-    return followup(catalog)
+    followup(catalog)
+    return reviewed_pairs(frontline_manuals(catalog))
+
+
+def frontline_manuals(catalog):
+    # Broad manuals still work in older saves alongside the unit's own manual.
+    broad = {29, 70, 111}
+    unit_manuals = {204, 228, 234, 248, 252, 257}
+    note = '남은 일반 공격 피해가 중첩마다 10%씩 줄어듭니다.'
+    for item in catalog['talents']:
+        ordinal = item.get('effect_ordinal')
+        if item.get('rework_revision') != 5 or ordinal not in broad | unit_manuals:
+            continue
+        effect = item['effect']
+        if ordinal in broad:
+            item['description'] = item['description'].replace(
+                '일반 공격으로 받는 피해도 중첩당 10% 줄어듭니다.', note
+            ).replace('일반 공격으로 받는 피해 -10%.', note)
+        else:
+            for description in (item, effect['unit_growth']):
+                if note not in description['description']:
+                    description['description'] += ' ' + note
+        effect.update(frontline_damage_multiplier_per_rank=0.9, qa_revision=2026111901)
+        item['description_revision'] = 2026111901
+    return catalog
+
+
+def reviewed_pairs(catalog):
+    by = {t['effect_ordinal']: t for t in catalog['talents'] if t.get('rework_revision') == 5}
+    pairs = (
+        (143, 145, '아군이 소환문으로 이동하면 도착지 균열 1개 갱신.'),
+        (41, 50, '체력 30% 이하 생체 아군에게 정화 적중 시 응급 처치 1회. 비용·재사용 시간 공유.'),
+        (49, 63, '직접 봉쇄한 적을 저격 처치하면 6타일 내 1기에 남은 봉쇄 전이. 연쇄 없음.'),
+        (88, 94, '포격에 맞은 주변 지상 적도 2초 감속.'),
+        (190, 98, '착지 후 1초 내 첫 타격이 도약 대상에 명중하면 방어력 감소 2회.'),
+        (114, 323, '잔향으로 회복 시 재충전 대기 3초. 다시 피격되면 6초.'),
+        (197, 135, '감속 중인 적에게 과부하 발동 시 3타일 내 다른 공중 적 1기에 남은 감속 전달.'),
+    )
+    # Keep the complete pair on the native card's eight visible lines.
+    by[63]['description'] = '고스트 락다운: 생체 병력도 봉쇄(지속 최대 2배). 6타일 내 적 최대 6기 추가. 봉쇄·탄착 예정인 적은 후순위.'
+    by[145]['description'] = '아비터 리콜 후 48초간 2초마다 출발지 4타일 내 아군을 재소환. 첫 리콜·재소환 시 일반 공격 피해 +20%, 30초. 재통과 시 시간 갱신.'
+    for first, second, note in pairs:
+        for ordinal, partner in ((first, second), (second, first)):
+            item = by[ordinal]
+            item['effect'].update(synergy_partner_ordinal=partner, qa_revision=2026111902)
+            text = f" [{by[partner]['name']}] {note}"
+            if text not in item['description']:
+                item['description'] += text
+            item['description_revision'] = 2026111902
+    return catalog

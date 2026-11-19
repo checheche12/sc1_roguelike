@@ -127,6 +127,19 @@ inline Dimensions dimensions(U32 id) noexcept {
     std::memcpy(&result,static_cast<const U8*>(field.data)+std::size_t(id)*sizeof(result),sizeof(result));
     return result;
 }
+struct UnitTypeGeometry {U32 flags;Dimensions bounds;};
+// Baseline DAT fields shared by one placement snapshot or damage pass.
+class GeometryCache {
+    std::array<UnitTypeGeometry,228> types;
+    std::array<bool,228> seen{};
+public:
+    UnitTypeGeometry get(std::uint16_t id) noexcept {
+        if(id<seen.size()&&seen[id])return types[id];
+        const UnitTypeGeometry value{original_stat({0,22,id}),dimensions(id)};
+        if(id<seen.size()){types[id]=value;seen[id]=true;}
+        return value;
+    }
+};
 inline bw::Point32 launch_position(bw::Unit* spawner,bw::Unit* target,U32 weapon,U32 direction) noexcept {
     // FireWeapon selects the position before CreateBullet. The callback does
     // not relocate an AppearOnTargetUnit bullet from its supplied coordinates.

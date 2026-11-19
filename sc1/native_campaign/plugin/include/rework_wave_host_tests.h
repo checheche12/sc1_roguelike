@@ -494,8 +494,30 @@ inline void qa85_all_missions_alternate_two_and_two_half_minutes(){
   std::printf("QA85_CADENCE mission=%u departures=%u,%u,%u,%u,%u\n",profile.mission,departures[0],departures[1],departures[2],departures[3],departures[4]);
  }
 }
-inline constexpr std::size_t rework_wave_group_count=27;
+inline void raid_targets_keep_priorities_and_visit_the_map_once(){
+ rework_wave_tests::begin();
+ const U32 owner=player_owner();
+ auto first=add(7,owner,512,512),second=add(41,owner,1800,512);
+ first->flags=second->flags=1;
+ auto base=add(106,owner,512,1024);base->flags=1;
+ auto mineral=add(178,11,1800,896,2560,true);
+ auto neighbor=add(64,owner,768,512);neighbor->flags=0;
+ const auto picked=[&](){
+  ++game.frame_count;const auto scans=host_unit_scans;auto result=rework_waves::mining_worker_target();
+  CHECK(host_unit_scans==scans+1);CHECK(rework_waves::mining_worker_target()==result&&host_unit_scans==scans+1);
+  return result;
+ };
+ CHECK(picked()==first);                  // Base exactly 512 away outranks minerals.
+ base->flags|=4;CHECK(picked()==second);   // Mineral exactly 384 away outranks the extra worker.
+ ++mineral->flingy.position.y;CHECK(picked()==first); // Incomplete neighbor at 256 counts.
+ ++neighbor->flingy.position.x;CHECK(picked()==second); // Nearest mineral breaks a count tie.
+ mineral->order=0;CHECK(picked()==second); // Exact tie follows native traversal order.
+ second->flags|=0x40u;CHECK(picked()==first);
+ first->player=6;CHECK(picked()==nullptr);
+}
+inline constexpr std::size_t rework_wave_group_count=28;
 inline void run_rework_wave_groups(){
+ raid_targets_keep_priorities_and_visit_the_map_once();
  qa85_gradual_volume_keeps_first_and_curse_scaling();
  qa85_all_missions_alternate_two_and_two_half_minutes();
  qa78_dispatch_preserves_blocked_units_and_special_priority();

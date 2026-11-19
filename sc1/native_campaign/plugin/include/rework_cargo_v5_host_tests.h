@@ -110,7 +110,46 @@ inline void bunker_give_preserves_native_manifest(){
  for(U32 i=1;i<=4;i++)CHECK(give_calls[i]==1 && units[i].player==2 && units[i].related==bunker && (units[i].flags&0x60u)==0x60u);
  owner_kill_hook(bunker,native_kill);for(U32 i=1;i<=4;i++)CHECK(death_calls[i]==0 && units[i].order!=0 && !units[i].related);
 }
+inline void refresh_keeps_separate_manifests_and_native_windows(){
+ for(std::size_t slots:{64u,1900u,8191u}){
+  std::vector<bw::Unit> list(slots);
+  Adapter adapter;
+  CHECK(adapter.bind(list.data(),slots,+[](const bw::Unit* u)->unsigned{return u->player==1?16:8;},
+      +[](const bw::Unit* u)->unsigned{return u->unit_id==0?1:0;}));
+  auto setup=[](bw::Unit& u,U32 id,U8 player){
+   u.unit_id=std::uint16_t(id);u.player=player;u.order=2;u.flingy.hitpoints=256;
+   u.flingy.sprite=reinterpret_cast<void*>(1);u.minor_unique_index=30;
+  };
+  auto expanded=&list[0],overflow=&list[1],stock=&list[2];
+  setup(*expanded,11,1);setup(*overflow,42,6);setup(*stock,69,6);
+  // Standard cargo belongs to the engine, including its choice of slot order.
+  stock->loaded_units[5]=91;stock->scr_carried_unit_high_bits=17;
+  for(std::size_t i=0;i<20;++i){
+   auto& p=list[slots-20+i];setup(p,0,6);p.related=(i%2)?overflow:expanded;p.flags=0x40u;
+  }
+  expanded->scr_carried_unit_high_bits=313;overflow->scr_carried_unit_high_bits=313;
+  const auto shows=[&](bw::Unit* carrier,std::size_t slot,bw::Unit* expected){
+   auto w=packed(carrier);if(slots<=1700)w.high=0;
+   return ::sc1::sight_cargo::unpack_slot(w,slot)==adapter.identity(expected);
+  };
+  adapter.refresh();
+  for(std::size_t i=0;i<8;++i){
+   CHECK(shows(expanded,i,&list[slots-20+2*i]));CHECK(shows(overflow,i,&list[slots-19+2*i]));
+  }
+  CHECK(adapter.toggle_page(overflow));CHECK(shows(overflow,1,&list.back()));
+  // Transfer one passenger within a command, then recycle the last passenger.
+  adapter.before_commands();list[slots-2].related=overflow;++list.back().minor_unique_index;
+  adapter.after_commands();
+  CHECK(shows(overflow,1,&list[slots-2])&&shows(overflow,2,&list.back()));
+  CHECK(stock->loaded_units[5]==91&&stock->scr_carried_unit_high_bits==17);
+  if(slots<=1700)CHECK(expanded->scr_carried_unit_high_bits==313&&overflow->scr_carried_unit_high_bits==313);
+  const auto before=packed(overflow);list.back().unit_id=37;adapter.refresh();
+  CHECK(packed(overflow).low==before.low&&packed(overflow).high==before.high);
+  for(auto& p:list)if(p.related==expanded)p.flags=0;
+  adapter.refresh();for(auto handle:expanded->loaded_units)CHECK(!handle);
+ }
 }
-inline constexpr std::size_t rework_cargo_group_count=8;
-inline void run_rework_cargo_groups(){rework_cargo_tests::capacities_and_owner_tech_gate();rework_cargo_tests::sixteen_board_full_unload_and_mixed_overflow();rework_cargo_tests::command_single_unload_and_generation_safe_pages();rework_cargo_tests::death_give_exact_once_and_overflow_recovery();rework_cargo_tests::legacy_twelve_and_two_passenger_layouts();rework_cargo_tests::native_extended_transport_research_gate();rework_cargo_tests::bunker_death_preserves_native_ejection();rework_cargo_tests::bunker_give_preserves_native_manifest();}
+}
+inline constexpr std::size_t rework_cargo_group_count=9;
+inline void run_rework_cargo_groups(){rework_cargo_tests::refresh_keeps_separate_manifests_and_native_windows();rework_cargo_tests::capacities_and_owner_tech_gate();rework_cargo_tests::sixteen_board_full_unload_and_mixed_overflow();rework_cargo_tests::command_single_unload_and_generation_safe_pages();rework_cargo_tests::death_give_exact_once_and_overflow_recovery();rework_cargo_tests::legacy_twelve_and_two_passenger_layouts();rework_cargo_tests::native_extended_transport_research_gate();rework_cargo_tests::bunker_death_preserves_native_ejection();rework_cargo_tests::bunker_give_preserves_native_manifest();}
 }

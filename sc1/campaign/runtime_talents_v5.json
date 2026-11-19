@@ -29364,7 +29364,7 @@
       "id": "2550fdb4-cace-5c0a-bc97-bfc04e0c0f33",
       "name": "보병 화력 교범",
       "target": "마린·파이어뱃·고스트",
-      "description": "마린·파이어뱃·고스트의 공격력 중첩당 +15%, 공격 간격 -4.5%. 파이어뱃은 일반 공격으로 받는 피해도 중첩당 10% 줄어듭니다. 최대 4회.",
+      "description": "마린·파이어뱃·고스트의 공격력 중첩당 +15%, 공격 간격 -4.5%. 파이어뱃은 남은 일반 공격 피해가 중첩마다 10%씩 줄어듭니다. 최대 4회.",
       "trigger": "",
       "numbers": "선택 횟수 제한 없음. 같은 창에서는 동일 재능 1개만 표시. 공격주기 = 원래 주기 × 0.97^중첩 수(해당 교범에만 적용). 엔진 최소 1틱, 매 단계 원본에서 다시 계산.",
       "notes": "일반 병력 교범은 보유 후에도 재등장합니다. 공격력·방어력은 중첩당 수치를 합산하고, 이동 속도는 원래 속도 × (1 + 0.03 × 중첩 수)로 계산합니다. 일꾼·건물·탄약은 제외하며, 인터셉터는 함대 교범의 공격력만 캐리어를 통해 1회 상속합니다. 지상/공중 분류는 겹치지 않습니다. 자폭·튀김의 타격 수와 마법 피해는 늘리지 않습니다. 기존 발급 선택과 과거 기록은 재해석하지 않습니다.",
@@ -29389,9 +29389,10 @@
         "source_id": "2550fdb4-cace-5c0a-bc97-bfc04e0c0f33",
         "weapon_damage_percent_per_rank": 15,
         "weapon_damage_stacking": "additive",
-        "qa_revision": 2026102038,
+        "qa_revision": 2026111901,
         "benefit_power_quarters": 6,
-        "offer_retired": true
+        "offer_retired": true,
+        "frontline_damage_multiplier_per_rank": 0.9
       },
       "target_units": [
         0,
@@ -29441,7 +29442,7 @@
         "qa_revision": 20261016
       },
       "effect_subject": "마린·파이어뱃·고스트",
-      "description_revision": 2026102042
+      "description_revision": 2026111901
     },
     {
       "id": "281b533c-9236-5d60-8e77-19a04f9f3c50",
@@ -30273,7 +30274,7 @@
       "id": "ca27f6d0-8741-5968-a96b-5e258d458f88",
       "name": "정화 호위장",
       "target": "메딕 리스토레이션",
-      "description": "메딕의 리스토레이션이 아군을 20초간 호위합니다. 매초 체력 20 회복, 주변 적 최대 3기에 15 피해.",
+      "description": "메딕의 리스토레이션이 아군을 20초간 호위합니다. 매초 체력 20 회복, 주변 적 최대 3기에 15 피해. [응급 처치] 체력 30% 이하 생체 아군에게 정화 적중 시 응급 처치 1회. 비용·재사용 시간 공유.",
       "trigger": "",
       "numbers": "",
       "notes": "해로운 효과가 없는 아군에게도 시전할 수 있도록 별도 시전 처리를 설계합니다. 원래 정화는 즉시 1회, 첫 회복·공격은 1초 뒤입니다. 같은 소유자의 호위장은 한 대상에 하나만 유지하며 재시전은 시간만 갱신합니다. 실제 최대 체력까지만 회복하고, 구조물·탄약에는 시전하지 않습니다. 대상 사망·소유권 이전 시 종료. 무적·정지 상태를 무시하지 않으며 추가 피해는 재능을 재발동하지 않습니다. 원래 시전 에너지는 한 번만 지불합니다. 새 어댑터와 실제 엔진 검증이 필요합니다.",
@@ -30296,8 +30297,9 @@
         "type": "rework_v5",
         "ordinal": 41,
         "source_id": "ca27f6d0-8741-5968-a96b-5e258d458f88",
-        "qa_revision": 2026102038,
-        "benefit_power_quarters": 10
+        "qa_revision": 2026111902,
+        "benefit_power_quarters": 10,
+        "synergy_partner_ordinal": 50
       },
       "target_units": [
         34
@@ -30335,7 +30337,7 @@
       },
       "bundle_family": 34,
       "effect_subject": "메딕",
-      "description_revision": 2026102042
+      "description_revision": 2026111902
     },
     {
       "id": "dd72e6d0-ba79-5571-a218-e1064b0a7aa3",
@@ -30855,7 +30857,7 @@
       "id": "13e89b70-3b8d-50d4-92f5-2b64f90ba503",
       "name": "집행 저격",
       "target": "고스트 일반 공격",
-      "description": "고스트의 일반 공격 피해 +100%. 대상 체력이 35% 이하면 피해 +300% 추가. 공격 유형이 일반형으로 바뀝니다.",
+      "description": "고스트의 일반 공격 피해 +100%. 대상 체력이 35% 이하면 피해 +300% 추가. 공격 유형이 일반형으로 바뀝니다. [생체 신경 봉쇄] 직접 봉쇄한 적을 저격 처치하면 6타일 내 1기에 남은 봉쇄 전이. 연쇄 없음.",
       "trigger": "",
       "numbers": "",
       "notes": "고스트 계열이라는게 무슨 뜻이야???",
@@ -30878,7 +30880,7 @@
         "type": "rework_v5",
         "ordinal": 49,
         "source_id": "13e89b70-3b8d-50d4-92f5-2b64f90ba503",
-        "qa_revision": 2026110302,
+        "qa_revision": 2026111902,
         "benefit_power_quarters": 10,
         "rarity_promoted": true,
         "focus_legend": true,
@@ -30892,7 +30894,8 @@
         "design_role": "single_target",
         "reflection_requires_attacking": false,
         "reflection_only_releases_on_attack": false,
-        "weapon_damage_type": 3
+        "weapon_damage_type": 3,
+        "synergy_partner_ordinal": 63
       },
       "target_units": [
         1,
@@ -30935,13 +30938,13 @@
       "previous_rarity": "epic",
       "bundle_family": 1,
       "effect_subject": "고스트",
-      "description_revision": 2026102042
+      "description_revision": 2026111902
     },
     {
       "id": "67ef7498-8c62-5ff4-b063-cfc8ddaff1d5",
       "name": "응급 처치",
       "target": "메딕",
-      "description": "메딕이 체력 30% 이하인 생체 아군을 치료하기 시작하면 체력을 즉시 37.5 회복합니다.",
+      "description": "메딕이 체력 30% 이하인 생체 아군을 치료하기 시작하면 체력을 즉시 37.5 회복합니다. [정화 호위장] 체력 30% 이하 생체 아군에게 정화 적중 시 응급 처치 1회. 비용·재사용 시간 공유.",
       "trigger": "",
       "numbers": "",
       "notes": "개편 효과 제안: 체력 30% 이하 생체 아군을 치료하기 시작하면 즉시 15 회복. 에너지 +10, 메딕별 재사용 20초, 같은 대상 5초 재적용 금지.",
@@ -30964,8 +30967,9 @@
         "type": "rework_v5",
         "ordinal": 50,
         "source_id": "67ef7498-8c62-5ff4-b063-cfc8ddaff1d5",
-        "qa_revision": 2026102038,
-        "benefit_power_quarters": 10
+        "qa_revision": 2026111902,
+        "benefit_power_quarters": 10,
+        "synergy_partner_ordinal": 41
       },
       "target_units": [
         34
@@ -31003,7 +31007,7 @@
       },
       "bundle_family": 34,
       "effect_subject": "메딕",
-      "description_revision": 2026102042
+      "description_revision": 2026111902
     },
     {
       "id": "9653d275-b027-51c6-bb5d-920e2bab74c4",
@@ -31960,7 +31964,7 @@
       "id": "dee1eebb-31d8-526f-b895-9785e0f2f5b0",
       "name": "생체 신경 봉쇄",
       "target": "고스트 락다운",
-      "description": "고스트: 락다운은 생체 전투 유닛에도 적용되며 생체 대상 지속 시간이 최대 2배가 됩니다. 주 대상 주변 6타일 안 다른 적 최대 6기 추가 봉쇄. 아직 봉쇄되지 않고 락다운 탄도 향하지 않는 적 우선.",
+      "description": "고스트 락다운: 생체 병력도 봉쇄(지속 최대 2배). 6타일 내 적 최대 6기 추가. 봉쇄·탄착 예정인 적은 후순위. [집행 저격] 직접 봉쇄한 적을 저격 처치하면 6타일 내 1기에 남은 봉쇄 전이. 연쇄 없음.",
       "trigger": "",
       "numbers": "",
       "notes": "건물·원본 면역 대상은 제외.",
@@ -31983,13 +31987,14 @@
         "type": "rework_v5",
         "ordinal": 63,
         "source_id": "dee1eebb-31d8-526f-b895-9785e0f2f5b0",
-        "qa_revision": 2026110303,
+        "qa_revision": 2026111902,
         "benefit_power_quarters": 16,
         "chain_radius_pixels": 192,
         "chain_total_targets": 7,
         "organic_duration_multiplier": 2,
         "prefer_unlocked_unclaimed_targets": true,
-        "lockdown_duration_bonuses_preserve_full_duration": true
+        "lockdown_duration_bonuses_preserve_full_duration": true,
+        "synergy_partner_ordinal": 49
       },
       "target_units": [
         1,
@@ -32031,7 +32036,7 @@
       },
       "bundle_family": 1,
       "effect_subject": "고스트",
-      "description_revision": 2026102260
+      "description_revision": 2026111902
     },
     {
       "id": "b8a603b2-ca89-5cf0-bdab-f5b7549480e4",
@@ -32523,7 +32528,7 @@
       "id": "369d47f3-7d0b-5f3e-9dc5-9831dee8b9b6",
       "name": "돌격 화력 교범",
       "target": "저그 지상 근접",
-      "description": "중첩당 저글링·브루들링 공격력 +1.5, 울트라리스크 +6, 감염된 테란 +60. 공격 간격 -4.5%, 일반 공격으로 받는 피해 -10%. 소수점 공격력은 중첩 합계를 반올림하며 최대 4회.",
+      "description": "중첩당 저글링·브루들링 공격력 +1.5, 울트라리스크 +6, 감염된 테란 +60. 공격 간격 -4.5%, 남은 일반 공격 피해가 중첩마다 10%씩 줄어듭니다. 소수점 공격력은 중첩 합계를 반올림하며 최대 4회.",
       "trigger": "",
       "numbers": "선택 횟수 제한 없음. 같은 창에서는 동일 재능 1개만 표시. 공격주기 = 원래 주기 × 0.97^중첩 수(해당 교범에만 적용). 엔진 최소 1틱, 매 단계 원본에서 다시 계산.",
       "notes": "일반 병력 교범은 보유 후에도 재등장합니다. 공격력·방어력은 중첩당 수치를 합산하고, 이동 속도는 원래 속도 × (1 + 0.03 × 중첩 수)로 계산합니다. 일꾼·건물·탄약은 제외하며, 인터셉터는 함대 교범의 공격력만 캐리어를 통해 1회 상속합니다. 지상/공중 분류는 겹치지 않습니다. 자폭·튀김의 타격 수와 마법 피해는 늘리지 않습니다. 기존 발급 선택과 과거 기록은 재해석하지 않습니다.",
@@ -32546,9 +32551,10 @@
         "type": "rework_v5",
         "ordinal": 70,
         "source_id": "369d47f3-7d0b-5f3e-9dc5-9831dee8b9b6",
-        "qa_revision": 2026102038,
+        "qa_revision": 2026111901,
         "benefit_power_quarters": 6,
-        "offer_retired": true
+        "offer_retired": true,
+        "frontline_damage_multiplier_per_rank": 0.9
       },
       "target_units": [
         37,
@@ -32598,7 +32604,7 @@
         "source_id": "369d47f3-7d0b-5f3e-9dc5-9831dee8b9b6"
       },
       "effect_subject": "저그 지상 근접",
-      "description_revision": 2026102042
+      "description_revision": 2026111901
     },
     {
       "id": "62db7732-c1df-5422-ac36-76749a24b5ef",
@@ -33933,7 +33939,7 @@
       "id": "21df927a-6938-5f2e-97d1-e3e08b6f4302",
       "name": "충격 포격",
       "target": "가디언 일반 공격",
-      "description": "가디언의 포탄이 주변 지상 적 최대 3기에도 50% 피해를 줍니다.",
+      "description": "가디언의 포탄이 주변 지상 적 최대 3기에도 50% 피해를 줍니다. [충격 포낭] 포격에 맞은 주변 지상 적도 2초 감속.",
       "trigger": "",
       "numbers": "",
       "notes": "",
@@ -33956,8 +33962,9 @@
         "type": "rework_v5",
         "ordinal": 88,
         "source_id": "21df927a-6938-5f2e-97d1-e3e08b6f4302",
-        "qa_revision": 2026102038,
-        "benefit_power_quarters": 8
+        "qa_revision": 2026111902,
+        "benefit_power_quarters": 8,
+        "synergy_partner_ordinal": 94
       },
       "target_units": [
         44,
@@ -34002,7 +34009,7 @@
       },
       "bundle_family": 44,
       "effect_subject": "가디언",
-      "description_revision": 2026102042
+      "description_revision": 2026111902
     },
     {
       "id": "75260dd5-debb-5089-9456-ee7cf86d0a4d",
@@ -34411,7 +34418,7 @@
       "id": "567537fb-ab08-5c9f-a427-26d2f77becfb",
       "name": "충격 포낭",
       "target": "가디언 직접 공격",
-      "description": "가디언에게 직접 맞은 지상 적은 5초간 이동 속도 -50%.",
+      "description": "가디언에게 직접 맞은 지상 적은 5초간 이동 속도 -50%. [충격 포격] 포격에 맞은 주변 지상 적도 2초 감속.",
       "trigger": "",
       "numbers": "",
       "notes": "개편 효과 제안: 직접 적중한 지상 적의 이동 속도 20% 감소, 2초. 중첩하지 않고 갱신.",
@@ -34434,9 +34441,10 @@
         "type": "rework_v5",
         "ordinal": 94,
         "source_id": "567537fb-ab08-5c9f-a427-26d2f77becfb",
-        "qa_revision": 2026110303,
+        "qa_revision": 2026111902,
         "benefit_power_quarters": 10,
-        "independent_slow_durations_and_multipliers": true
+        "independent_slow_durations_and_multipliers": true,
+        "synergy_partner_ordinal": 88
       },
       "target_units": [
         44,
@@ -34481,7 +34489,7 @@
       },
       "bundle_family": 44,
       "effect_subject": "가디언",
-      "description_revision": 2026102042
+      "description_revision": 2026111902
     },
     {
       "id": "e3c62acb-9064-59af-b392-7caa09ea918c",
@@ -34737,7 +34745,7 @@
       "id": "a9e0bf57-ae95-514f-8ecd-e8a2b3eb89a1",
       "name": "도약 저글링",
       "target": "저글링",
-      "description": "저글링이 2~4타일 떨어진 적에게 도약합니다. 재사용 약 3.2초.",
+      "description": "저글링이 2~4타일 떨어진 적에게 도약합니다. 재사용 약 3.2초. [끝없는 갑각 분쇄] 착지 후 1초 내 첫 타격이 도약 대상에 명중하면 방어력 감소 2회.",
       "trigger": "",
       "numbers": "",
       "notes": "지상 경로 연결·빈 착지점 필요. 공중 공격은 부여하지 않음.",
@@ -34760,8 +34768,9 @@
         "type": "rework_v5",
         "ordinal": 98,
         "source_id": "a9e0bf57-ae95-514f-8ecd-e8a2b3eb89a1",
-        "qa_revision": 2026102038,
-        "benefit_power_quarters": 10
+        "qa_revision": 2026111902,
+        "benefit_power_quarters": 10,
+        "synergy_partner_ordinal": 190
       },
       "target_units": [
         37,
@@ -34806,7 +34815,7 @@
       },
       "bundle_family": 37,
       "effect_subject": "저글링",
-      "description_revision": 2026102042
+      "description_revision": 2026111902
     },
     {
       "id": "32fec2f1-00ec-5078-97cb-ba0f7bf7dec3",
@@ -35778,7 +35787,7 @@
       "id": "023f3a37-8713-59a6-8b1c-0a7909529a1c",
       "name": "기사단 화력 교범",
       "target": "프로토스 일반 지상 전투 병력",
-      "description": "중첩당 질럿 공격력 +1.5, 드라군 +3, 다크 템플러·아콘 +6, 리버·스캐럽 +15. 공격 간격 -4.5%. 질럿·다크 템플러는 일반 공격으로 받는 피해도 중첩당 10% 줄어듭니다. 공격력 합계 반올림, 최대 4회.",
+      "description": "중첩당 질럿 공격력 +1.5, 드라군 +3, 다크 템플러·아콘 +6, 리버·스캐럽 +15. 공격 간격 -4.5%. 질럿·다크 템플러는 남은 일반 공격 피해가 중첩마다 10%씩 줄어듭니다. 공격력 합계 반올림, 최대 4회.",
       "trigger": "",
       "numbers": "선택 횟수 제한 없음. 같은 창에서는 동일 재능 1개만 표시. 공격주기 = 원래 주기 × 0.97^중첩 수(해당 교범에만 적용). 엔진 최소 1틱, 매 단계 원본에서 다시 계산.",
       "notes": "일반 병력 교범은 보유 후에도 재등장합니다. 공격력·방어력은 중첩당 수치를 합산하고, 이동 속도는 원래 속도 × (1 + 0.03 × 중첩 수)로 계산합니다. 일꾼·건물·탄약은 제외하며, 인터셉터는 함대 교범의 공격력만 캐리어를 통해 1회 상속합니다. 지상/공중 분류는 겹치지 않습니다. 자폭·튀김의 타격 수와 마법 피해는 늘리지 않습니다. 기존 발급 선택과 과거 기록은 재해석하지 않습니다.",
@@ -35801,9 +35810,10 @@
         "type": "rework_v5",
         "ordinal": 111,
         "source_id": "023f3a37-8713-59a6-8b1c-0a7909529a1c",
-        "qa_revision": 2026102038,
+        "qa_revision": 2026111901,
         "benefit_power_quarters": 6,
-        "offer_retired": true
+        "offer_retired": true,
+        "frontline_damage_multiplier_per_rank": 0.9
       },
       "target_units": [
         61,
@@ -35853,7 +35863,7 @@
         "source_id": "023f3a37-8713-59a6-8b1c-0a7909529a1c"
       },
       "effect_subject": "프로토스 일반 지상 전투 병력",
-      "description_revision": 2026102042
+      "description_revision": 2026111901
     },
     {
       "id": "a217d71f-2e7d-5655-a8ca-3f2e7e0acbca",
@@ -36037,7 +36047,7 @@
       "id": "d84de79a-e0b0-535e-8024-204646bbf4b8",
       "name": "보호막 재충전",
       "target": "프로토스 병력·영웅",
-      "description": "프로토스 병력·영웅: 프로토스 병력이 6초간 맞지 않으면 보호막 자연 회복이 3배 빨라집니다.",
+      "description": "프로토스 병력·영웅: 프로토스 병력이 6초간 맞지 않으면 보호막 자연 회복이 3배 빨라집니다. [위상 잔향] 잔향으로 회복 시 재충전 대기 3초. 다시 피격되면 6초.",
       "trigger": "",
       "numbers": "",
       "notes": "현재 소유자의 실제 최대 보호막으로 제한.",
@@ -36060,8 +36070,9 @@
         "type": "rework_v5",
         "ordinal": 114,
         "source_id": "d84de79a-e0b0-535e-8024-204646bbf4b8",
-        "qa_revision": 2026101610,
-        "benefit_power_quarters": 8
+        "qa_revision": 2026111902,
+        "benefit_power_quarters": 8,
+        "synergy_partner_ordinal": 323
       },
       "target_units": [
         60,
@@ -36124,7 +36135,7 @@
         "source_id": "d84de79a-e0b0-535e-8024-204646bbf4b8"
       },
       "effect_subject": "프로토스 병력·영웅",
-      "description_revision": 2026102042
+      "description_revision": 2026111902
     },
     {
       "id": "95731e09-a96a-5723-a329-ef3a8bdda706",
@@ -37534,7 +37545,7 @@
       "id": "c2bf0dea-c215-549e-ace2-a03b9ce8b83a",
       "name": "과부하 교란탄",
       "target": "커세어 일반 공격",
-      "description": "커세어의 네 번째 공격에 맞은 공중 적은 5초간 이동 속도 -50%.",
+      "description": "커세어의 네 번째 공격에 맞은 공중 적은 5초간 이동 속도 -50%. [위상 과부하] 감속 중인 적에게 과부하 발동 시 3타일 내 다른 공중 적 1기에 남은 감속 전달.",
       "trigger": "",
       "numbers": "",
       "notes": "개편 효과 제안: 네 번째 주 공격의 직접 표적 이동 속도 20% 감소, 2초. 스플래시·추가 공격으로 번지지 않음.",
@@ -37557,12 +37568,13 @@
         "type": "rework_v5",
         "ordinal": 135,
         "source_id": "c2bf0dea-c215-549e-ace2-a03b9ce8b83a",
-        "qa_revision": 2026110303,
+        "qa_revision": 2026111902,
         "benefit_power_quarters": 10,
         "attack_counter": "primary_corsair_launch",
         "spells_count_as_attacks": false,
         "secondary_attacks_count": false,
-        "independent_slow_durations_and_multipliers": true
+        "independent_slow_durations_and_multipliers": true,
+        "synergy_partner_ordinal": 197
       },
       "target_units": [
         60,
@@ -37601,7 +37613,7 @@
       },
       "bundle_family": 60,
       "effect_subject": "커세어",
-      "description_revision": 2026102042
+      "description_revision": 2026111902
     },
     {
       "id": "afec03a0-460d-503a-872f-dd2f7a7afb79",
@@ -38170,7 +38182,7 @@
       "id": "65382db3-0f00-582e-ac8b-63ceb20197b0",
       "name": "소환 균열",
       "target": "아비터 리콜",
-      "description": "아비터의 리콜 도착 지점에 7.5초간 균열이 남습니다. 2.5타일 안 지상 적의 이동 속도 -75%.",
+      "description": "아비터의 리콜 도착 지점에 7.5초간 균열이 남습니다. 2.5타일 안 지상 적의 이동 속도 -75%. [전장 소환문] 아군이 소환문으로 이동하면 도착지 균열 1개 갱신.",
       "trigger": "",
       "numbers": "",
       "notes": "",
@@ -38193,9 +38205,10 @@
         "type": "rework_v5",
         "ordinal": 143,
         "source_id": "65382db3-0f00-582e-ac8b-63ceb20197b0",
-        "qa_revision": 2026110303,
+        "qa_revision": 2026111902,
         "benefit_power_quarters": 10,
-        "independent_slow_durations_and_multipliers": true
+        "independent_slow_durations_and_multipliers": true,
+        "synergy_partner_ordinal": 145
       },
       "target_units": [
         71,
@@ -38234,7 +38247,7 @@
       },
       "bundle_family": 71,
       "effect_subject": "아비터",
-      "description_revision": 2026102042
+      "description_revision": 2026111902
     },
     {
       "id": "a5677a0d-735e-5c07-aa45-c03e7a0f73b4",
@@ -38310,7 +38323,7 @@
       "id": "ff1bb721-2dc7-5e9b-bb37-35a9b77a4e5f",
       "name": "전장 소환문",
       "target": "아비터 리콜",
-      "description": "아비터가 리콜한 뒤 48초간 소환문을 남깁니다. 2초마다 출발지 4타일 안 아군을 같은 도착지로 소환합니다. 첫 리콜과 소환문으로 이동한 아군은 30초간 일반 공격 피해 +20%. 재통과하면 지속시간만 갱신됩니다.",
+      "description": "아비터 리콜 후 48초간 2초마다 출발지 4타일 내 아군을 재소환. 첫 리콜·재소환 시 일반 공격 피해 +20%, 30초. 재통과 시 시간 갱신. [소환 균열] 아군이 소환문으로 이동하면 도착지 균열 1개 갱신.",
       "trigger": "",
       "numbers": "",
       "notes": "",
@@ -38333,11 +38346,12 @@
         "type": "rework_v5",
         "ordinal": 145,
         "source_id": "ff1bb721-2dc7-5e9b-bb37-35a9b77a4e5f",
-        "qa_revision": 2026102038,
+        "qa_revision": 2026111902,
         "benefit_power_quarters": 16,
         "recall_attack_bonus_percent": 20,
         "recall_buff_frames": 720,
-        "recall_buff_stacks": false
+        "recall_buff_stacks": false,
+        "synergy_partner_ordinal": 143
       },
       "target_units": [
         71,
@@ -38377,7 +38391,7 @@
       "previous_rarity": "legendary",
       "bundle_family": 71,
       "effect_subject": "아비터",
-      "description_revision": 2026102042
+      "description_revision": 2026111902
     },
     {
       "id": "3bca39ce-0e6b-587c-ae4a-9facdeee2785",
@@ -41977,7 +41991,7 @@
       "race": "zerg",
       "rarity": "legendary",
       "target": "저글링·포식자",
-      "description": "저글링·브루들링의 공격마다 대상의 체력 방어력을 0.33씩 낮춥니다. 방어력이 0 아래로 내려간 누적분은 해당 유닛의 추가 피해가 됩니다.",
+      "description": "저글링·브루들링의 공격마다 대상의 체력 방어력을 0.33씩 낮춥니다. 방어력이 0 아래로 내려간 누적분은 해당 유닛의 추가 피해가 됩니다. [도약 저글링] 착지 후 1초 내 첫 타격이 도약 대상에 명중하면 방어력 감소 2회.",
       "source_description": "저글링의 세 번째 일반 공격마다 주 대상에게 200% 추가 피해, 주변 1.5타일의 다른 지상 적 최대 3기에 100% 피해를 줍니다.",
       "bit_index": 428,
       "category": "combat",
@@ -41997,7 +42011,7 @@
         "type": "rework_v5",
         "ordinal": 190,
         "source_id": "2545a24c-42c8-5235-84e5-c185789687b2",
-        "qa_revision": 2026110303,
+        "qa_revision": 2026111902,
         "benefit_power_quarters": 4,
         "focus_legend": true,
         "focus_mode": 6,
@@ -42018,7 +42032,8 @@
           40,
           54
         ],
-        "generated_attacks_share_target_damage_rules": true
+        "generated_attacks_share_target_damage_rules": true,
+        "synergy_partner_ordinal": 98
       },
       "target_units": [
         37,
@@ -42072,7 +42087,7 @@
       },
       "bundle_family": 37,
       "effect_subject": "저글링",
-      "description_revision": 2026102264
+      "description_revision": 2026111902
     },
     {
       "id": "34bb2ee1-4cb6-5d80-a042-61e97dfb2603",
@@ -42562,7 +42577,7 @@
       "race": "protoss",
       "rarity": "legendary",
       "target": "커세어·라자갈",
-      "description": "커세어가 같은 공중 적을 6회 공격할 때마다 그 주 대상에게 원래 공격의 900% 추가 피해를 줍니다.",
+      "description": "커세어가 같은 공중 적을 6회 공격할 때마다 그 주 대상에게 원래 공격의 900% 추가 피해를 줍니다. [과부하 교란탄] 감속 중인 적에게 과부하 발동 시 3타일 내 다른 공중 적 1기에 남은 감속 전달.",
       "source_description": "커세어의 일반 공격이 명중하면 3타일 안 다른 공중 적 최대 2기에도 원래 공격의 100% 피해를 줍니다. 추가 공격은 다시 연쇄되지 않습니다.",
       "bit_index": 435,
       "category": "combat",
@@ -42582,7 +42597,7 @@
         "type": "rework_v5",
         "ordinal": 197,
         "source_id": "15be3628-2928-5adb-9130-04294e2caf90",
-        "qa_revision": 2026102039,
+        "qa_revision": 2026111902,
         "benefit_power_quarters": 4,
         "focus_legend": true,
         "focus_mode": 2,
@@ -42594,7 +42609,8 @@
         "legacy_area_effect_disabled": true,
         "design_role": "single_target",
         "reflection_requires_attacking": false,
-        "reflection_only_releases_on_attack": false
+        "reflection_only_releases_on_attack": false,
+        "synergy_partner_ordinal": 135
       },
       "target_units": [
         60,
@@ -42642,7 +42658,7 @@
       },
       "bundle_family": 60,
       "effect_subject": "커세어",
-      "description_revision": 2026102042
+      "description_revision": 2026111902
     },
     {
       "id": "f2a0f5e9-54ab-5cf6-9876-d3b0d0af45ce",
@@ -43273,12 +43289,12 @@
         10,
         32
       ],
-      "description": "파이어뱃의 공격력이 중첩당 +15%, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회.",
+      "description": "파이어뱃의 공격력이 중첩당 +15%, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회. 남은 일반 공격 피해가 중첩마다 10%씩 줄어듭니다.",
       "source_description": "파이어뱃의 공격력이 중첩당 +15%, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회. 소수점 공격력은 중첩 합계를 반올림합니다. 기존 병과 교범과 합산해 최대 4중첩.",
       "effect": {
         "type": "rework_v5",
         "ordinal": 204,
-        "qa_revision": 2026110302,
+        "qa_revision": 2026111901,
         "benefit_power_quarters": 4,
         "unit_growth": {
           "race": "terran",
@@ -43291,7 +43307,7 @@
           "rarity": "common",
           "name": "파이어뱃 화력 교범",
           "parent": 29,
-          "description": "파이어뱃의 공격력이 중첩당 +15%, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회. 소수점 공격력은 중첩 합계를 반올림합니다. 서로 다른 교범의 강화는 합산됩니다.",
+          "description": "파이어뱃의 공격력이 중첩당 +15%, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회. 소수점 공격력은 중첩 합계를 반올림합니다. 서로 다른 교범의 강화는 합산됩니다. 남은 일반 공격 피해가 중첩마다 10%씩 줄어듭니다.",
           "ordinal": 204,
           "index": 442,
           "storage": {
@@ -43300,7 +43316,8 @@
             "width": 3
           }
         },
-        "independent_manuals_stack": true
+        "independent_manuals_stack": true,
+        "frontline_damage_multiplier_per_rank": 0.9
       },
       "bit_index": 442,
       "wire_storage": {
@@ -43371,7 +43388,7 @@
       },
       "max_rank": 4,
       "effect_subject": "파이어뱃",
-      "description_revision": 2026102042
+      "description_revision": 2026111901
     },
     {
       "id": "ec0efc70-b62a-59cd-8fa3-42492cb33632",
@@ -45981,12 +45998,12 @@
         37,
         54
       ],
-      "description": "저글링의 공격력이 중첩당 +1.5, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회.",
+      "description": "저글링의 공격력이 중첩당 +1.5, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회. 남은 일반 공격 피해가 중첩마다 10%씩 줄어듭니다.",
       "source_description": "저글링의 공격력이 중첩당 +1.5, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회. 소수점 공격력은 중첩 합계를 반올림합니다. 기존 병과 교범과 합산해 최대 4중첩.",
       "effect": {
         "type": "rework_v5",
         "ordinal": 228,
-        "qa_revision": 2026110302,
+        "qa_revision": 2026111901,
         "benefit_power_quarters": 4,
         "unit_growth": {
           "race": "zerg",
@@ -45999,7 +46016,7 @@
           "rarity": "common",
           "name": "저글링 화력 교범",
           "parent": 70,
-          "description": "저글링의 공격력이 중첩당 +1.5, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회. 소수점 공격력은 중첩 합계를 반올림합니다. 서로 다른 교범의 강화는 합산됩니다.",
+          "description": "저글링의 공격력이 중첩당 +1.5, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회. 소수점 공격력은 중첩 합계를 반올림합니다. 서로 다른 교범의 강화는 합산됩니다. 남은 일반 공격 피해가 중첩마다 10%씩 줄어듭니다.",
           "ordinal": 228,
           "index": 466,
           "storage": {
@@ -46008,7 +46025,8 @@
             "width": 3
           }
         },
-        "independent_manuals_stack": true
+        "independent_manuals_stack": true,
+        "frontline_damage_multiplier_per_rank": 0.9
       },
       "bit_index": 466,
       "wire_storage": {
@@ -46085,7 +46103,7 @@
       },
       "max_rank": 4,
       "effect_subject": "저글링",
-      "description_revision": 2026102042
+      "description_revision": 2026111901
     },
     {
       "id": "be598a26-cfa1-5f1e-adeb-d463788d3a36",
@@ -46665,12 +46683,12 @@
         39,
         48
       ],
-      "description": "울트라리스크의 공격력이 중첩당 +6, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회.",
+      "description": "울트라리스크의 공격력이 중첩당 +6, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회. 남은 일반 공격 피해가 중첩마다 10%씩 줄어듭니다.",
       "source_description": "울트라리스크의 공격력이 중첩당 +6, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회. 소수점 공격력은 중첩 합계를 반올림합니다. 기존 병과 교범과 합산해 최대 4중첩.",
       "effect": {
         "type": "rework_v5",
         "ordinal": 234,
-        "qa_revision": 2026110302,
+        "qa_revision": 2026111901,
         "benefit_power_quarters": 4,
         "unit_growth": {
           "race": "zerg",
@@ -46683,7 +46701,7 @@
           "rarity": "common",
           "name": "울트라리스크 화력 교범",
           "parent": 70,
-          "description": "울트라리스크의 공격력이 중첩당 +6, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회. 소수점 공격력은 중첩 합계를 반올림합니다. 서로 다른 교범의 강화는 합산됩니다.",
+          "description": "울트라리스크의 공격력이 중첩당 +6, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회. 소수점 공격력은 중첩 합계를 반올림합니다. 서로 다른 교범의 강화는 합산됩니다. 남은 일반 공격 피해가 중첩마다 10%씩 줄어듭니다.",
           "ordinal": 234,
           "index": 472,
           "storage": {
@@ -46692,7 +46710,8 @@
             "width": 3
           }
         },
-        "independent_manuals_stack": true
+        "independent_manuals_stack": true,
+        "frontline_damage_multiplier_per_rank": 0.9
       },
       "bit_index": 472,
       "wire_storage": {
@@ -46769,7 +46788,7 @@
       },
       "max_rank": 4,
       "effect_subject": "울트라리스크",
-      "description_revision": 2026102042
+      "description_revision": 2026111901
     },
     {
       "id": "ae970b5b-d463-54c3-ae79-7cbbfb8443ef",
@@ -48253,12 +48272,12 @@
       "target_units": [
         40
       ],
-      "description": "브루드링의 공격력이 중첩당 +1.5, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회.",
+      "description": "브루드링의 공격력이 중첩당 +1.5, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회. 남은 일반 공격 피해가 중첩마다 10%씩 줄어듭니다.",
       "source_description": "브루드링의 공격력이 중첩당 +1.5, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회. 소수점 공격력은 중첩 합계를 반올림합니다. 기존 병과 교범과 합산해 최대 4중첩.",
       "effect": {
         "type": "rework_v5",
         "ordinal": 248,
-        "qa_revision": 2026110302,
+        "qa_revision": 2026111901,
         "benefit_power_quarters": 4,
         "unit_growth": {
           "race": "zerg",
@@ -48270,7 +48289,7 @@
           "rarity": "common",
           "name": "브루드링 화력 교범",
           "parent": 70,
-          "description": "브루드링의 공격력이 중첩당 +1.5, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회. 소수점 공격력은 중첩 합계를 반올림합니다. 서로 다른 교범의 강화는 합산됩니다.",
+          "description": "브루드링의 공격력이 중첩당 +1.5, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회. 소수점 공격력은 중첩 합계를 반올림합니다. 서로 다른 교범의 강화는 합산됩니다. 남은 일반 공격 피해가 중첩마다 10%씩 줄어듭니다.",
           "ordinal": 248,
           "index": 486,
           "storage": {
@@ -48279,7 +48298,8 @@
             "width": 3
           }
         },
-        "independent_manuals_stack": true
+        "independent_manuals_stack": true,
+        "frontline_damage_multiplier_per_rank": 0.9
       },
       "bit_index": 486,
       "wire_storage": {
@@ -48355,7 +48375,7 @@
       },
       "max_rank": 4,
       "effect_subject": "브루드링",
-      "description_revision": 2026102042
+      "description_revision": 2026111901
     },
     {
       "id": "94c763e0-12ff-56c2-b261-604637a82121",
@@ -48689,12 +48709,12 @@
         65,
         77
       ],
-      "description": "질럿의 공격력이 중첩당 +1.5, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회.",
+      "description": "질럿의 공격력이 중첩당 +1.5, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회. 남은 일반 공격 피해가 중첩마다 10%씩 줄어듭니다.",
       "source_description": "질럿의 공격력이 중첩당 +1.5, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회. 소수점 공격력은 중첩 합계를 반올림합니다. 기존 병과 교범과 합산해 최대 4중첩.",
       "effect": {
         "type": "rework_v5",
         "ordinal": 252,
-        "qa_revision": 2026110302,
+        "qa_revision": 2026111901,
         "benefit_power_quarters": 4,
         "unit_growth": {
           "race": "protoss",
@@ -48707,7 +48727,7 @@
           "rarity": "common",
           "name": "질럿 화력 교범",
           "parent": 111,
-          "description": "질럿의 공격력이 중첩당 +1.5, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회. 소수점 공격력은 중첩 합계를 반올림합니다. 서로 다른 교범의 강화는 합산됩니다.",
+          "description": "질럿의 공격력이 중첩당 +1.5, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회. 소수점 공격력은 중첩 합계를 반올림합니다. 서로 다른 교범의 강화는 합산됩니다. 남은 일반 공격 피해가 중첩마다 10%씩 줄어듭니다.",
           "ordinal": 252,
           "index": 490,
           "storage": {
@@ -48716,7 +48736,8 @@
             "width": 3
           }
         },
-        "independent_manuals_stack": true
+        "independent_manuals_stack": true,
+        "frontline_damage_multiplier_per_rank": 0.9
       },
       "bit_index": 490,
       "wire_storage": {
@@ -48787,7 +48808,7 @@
       },
       "max_rank": 4,
       "effect_subject": "질럿",
-      "description_revision": 2026102042
+      "description_revision": 2026111901
     },
     {
       "id": "8ba19df4-6235-52f4-86fe-7d24e2057e2d",
@@ -49237,12 +49258,12 @@
         74,
         75
       ],
-      "description": "다크 템플러의 공격력이 중첩당 +6, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회.",
+      "description": "다크 템플러의 공격력이 중첩당 +6, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회. 남은 일반 공격 피해가 중첩마다 10%씩 줄어듭니다.",
       "source_description": "다크 템플러의 공격력이 중첩당 +6, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회. 소수점 공격력은 중첩 합계를 반올림합니다. 기존 병과 교범과 합산해 최대 4중첩.",
       "effect": {
         "type": "rework_v5",
         "ordinal": 257,
-        "qa_revision": 2026110302,
+        "qa_revision": 2026111901,
         "benefit_power_quarters": 4,
         "unit_growth": {
           "race": "protoss",
@@ -49256,7 +49277,7 @@
           "rarity": "common",
           "name": "다크 템플러 화력 교범",
           "parent": 111,
-          "description": "다크 템플러의 공격력이 중첩당 +6, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회. 소수점 공격력은 중첩 합계를 반올림합니다. 서로 다른 교범의 강화는 합산됩니다.",
+          "description": "다크 템플러의 공격력이 중첩당 +6, 공격 간격이 중첩당 4.5% 감소합니다. 최대 4회. 소수점 공격력은 중첩 합계를 반올림합니다. 서로 다른 교범의 강화는 합산됩니다. 남은 일반 공격 피해가 중첩마다 10%씩 줄어듭니다.",
           "ordinal": 257,
           "index": 495,
           "storage": {
@@ -49265,7 +49286,8 @@
             "width": 3
           }
         },
-        "independent_manuals_stack": true
+        "independent_manuals_stack": true,
+        "frontline_damage_multiplier_per_rank": 0.9
       },
       "bit_index": 495,
       "wire_storage": {
@@ -49337,7 +49359,7 @@
       },
       "max_rank": 4,
       "effect_subject": "다크 템플러",
-      "description_revision": 2026102042
+      "description_revision": 2026111901
     },
     {
       "id": "21881f24-aed7-58a4-81b1-80395e2033cc",
@@ -56893,12 +56915,12 @@
         87,
         98
       ],
-      "description": "프로토스 마법 유닛: 주문 시전 성공 시 시전자 주위 5타일 안 아군 프로토스 병력의 보호막을 최대치의 20% 회복합니다. 같은 대상은 5초에 한 번만 회복합니다.",
+      "description": "프로토스 마법 유닛: 주문 시전 성공 시 시전자 주위 5타일 안 아군 프로토스 병력의 보호막을 최대치의 20% 회복합니다. 같은 대상은 5초에 한 번만 회복합니다. [보호막 재충전] 잔향으로 회복 시 재충전 대기 3초. 다시 피격되면 6초.",
       "source_description": "주문 시전 성공 시 시전자 주위 5타일 안 아군 프로토스 병력의 보호막을 최대치의 20% 회복합니다. 같은 대상은 5초에 한 번만 회복합니다.",
       "effect": {
         "type": "rework_v5",
         "ordinal": 323,
-        "qa_revision": 2026102697,
+        "qa_revision": 2026111902,
         "benefit_power_quarters": 4,
         "unit_growth": {
           "race": "protoss",
@@ -56928,7 +56950,8 @@
         "shield_restore_percent": 20,
         "radius_pixels": 160,
         "recipient_cooldown_frames": 120,
-        "successful_cast_only": true
+        "successful_cast_only": true,
+        "synergy_partner_ordinal": 114
       },
       "bit_index": 561,
       "wire_storage": {
@@ -57002,7 +57025,7 @@
         }
       },
       "effect_subject": "프로토스 마법 유닛",
-      "description_revision": 2026102042
+      "description_revision": 2026111902
     }
   ],
   "curses": [

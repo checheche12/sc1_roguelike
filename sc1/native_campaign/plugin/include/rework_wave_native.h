@@ -84,10 +84,23 @@ inline bool usable_home() {
   if(wave_targeting::headquarters(u->unit_id))hq=true;if(wave_targeting::worker(u->unit_id))worker=true;});
  return hq && worker;
 }
+inline const auto& mission_origins(){
+ using namespace sc1_native::campaign_wave_config;
+ static std::vector<const Origin*> origins;static U32 cached_mission=~0u;
+ const U32 mission=g.mission?g.mission->mission_id:0;
+ if(mission!=cached_mission){
+  origins.clear();for(const auto& origin:kOrigins)if(origin.mission_id==mission)origins.push_back(&origin);
+  cached_mission=mission;
+ }
+ return origins;
+}
 inline U32 capabilities() {
  if(effect_lab::enabled)return policy::GroundPath|policy::AntiAir|policy::Detection|policy::TransportPath;
- U32 value=0;for(const auto& origin:sc1_native::campaign_wave_config::kOrigins)if(g.mission && origin.mission_id==g.mission->mission_id && origin_safe(origin)){
-  const bool only_air=sc1_native::wave_progression::air_only_unit(static_cast<std::uint16_t>(origin.unit1)) && sc1_native::wave_progression::air_only_unit(static_cast<std::uint16_t>(origin.unit2));if(!only_air)value|=policy::GroundPath;}
+ U32 value=0;
+ for(const auto origin:mission_origins()){
+  const bool only_air=sc1_native::wave_progression::air_only_unit(static_cast<std::uint16_t>(origin->unit1)) && sc1_native::wave_progression::air_only_unit(static_cast<std::uint16_t>(origin->unit2));
+  if(!only_air&&placement::safe(*origin)){value|=policy::GroundPath;break;}
+ }
  living_units([&](bw::Unit* u){if(u->player!=player_owner() || !(u->flags&1u) || u->flingy.hitpoints<=0)return;
   const auto flags=original_stat({0,22,u->unit_id});auto gun=effect_body(u);if(valid_unit(gun)&&valid_unit(gun->subunit)&&gun->subunit->subunit==gun)gun=gun->subunit;
   if((u->flags&1u)&&!(u->flags&(0x40u|0x40000000u))&&(owner_stat(u->player,{0,19,u->unit_id})<130||(valid_unit(gun)&&owner_stat(u->player,{0,19,gun->unit_id})<130)))value|=policy::AntiAir;if(flags&0x8000u)value|=policy::Detection;});
@@ -102,12 +115,14 @@ inline bool major_original_assault() {
  return count>=12;
 }
 inline const sc1_native::campaign_wave_config::Origin* choose_origin(bool ground,bool alternate=false) {
- const sc1_native::campaign_wave_config::Origin* found=nullptr;
- for(U32 pass=0;pass<2;pass++)for(const auto& o:sc1_native::campaign_wave_config::kOrigins){
-  if(!placement::safe(o) || (!pass && !placement::base(o)))continue;
-  const bool only_air=sc1_native::wave_progression::air_only_unit(static_cast<std::uint16_t>(o.unit1)) && sc1_native::wave_progression::air_only_unit(static_cast<std::uint16_t>(o.unit2));
-  if(ground && only_air)continue;if(alternate && &o==primary)continue;found=&o;return found;}
- return found;
+ const auto& origins=mission_origins();
+ for(U32 pass=0;pass<2;pass++)for(const auto o:origins){
+  if(alternate&&o==primary)continue;
+  const bool only_air=sc1_native::wave_progression::air_only_unit(static_cast<std::uint16_t>(o->unit1)) && sc1_native::wave_progression::air_only_unit(static_cast<std::uint16_t>(o->unit2));
+  if(ground&&only_air)continue;
+  if(placement::safe(*o)&&(pass||placement::base(*o)))return o;
+ }
+ return nullptr;
 }
 inline bool live_hero(U32 slot) {
  bool found=false;living_units([&](bw::Unit* u){const auto v=rework_curses::identity(u);if(v && rework_curses::marked(u) && v->slot==slot && (original_stat({0,22,u->unit_id})&0x40u))found=true;});return found;
@@ -142,18 +157,27 @@ inline const sc1_native::campaign_wave_config::Origin* raid_owner() noexcept {
 inline bw::Unit* mining_worker_target() noexcept {
  const U32 frame=g.game()->frame_count;
  if(raid_worker_sampled&&raid_worker_frame==frame&&(!raid_worker||(wave_targeting::usable(raid_worker)&&raid_worker->minor_unique_index==raid_worker_unique&&wave_targeting::worker(raid_worker->unit_id))))return raid_worker;
+ std::vector<bw::Unit*> workers;
+ std::vector<bw::Point> minerals,bases;
+ living_units([&](bw::Unit* u){
+  if(u->unit_id>=176&&u->unit_id<=178)minerals.push_back(u->flingy.position);
+  if(!wave_targeting::usable(u))return;
+  if(wave_targeting::worker(u->unit_id))workers.push_back(u);
+  if(wave_targeting::headquarters(u->unit_id)&&(u->flags&1u)&&!(u->flags&4u))bases.push_back(u->flingy.position);
+ });
  bw::Unit* best=nullptr;std::int64_t score=std::numeric_limits<std::int64_t>::max();U32 best_rank=0,best_workers=0;
- living_units([&](bw::Unit* worker){if(!wave_targeting::usable(worker)||!wave_targeting::worker(worker->unit_id)||!(worker->flags&1u))return;
-  const auto p=worker->flingy.position;std::int64_t nearest=std::numeric_limits<std::int64_t>::max();U32 neighbors=0;bool economy=false;
-  living_units([&](bw::Unit* other){const auto q=other->flingy.position;const auto d=wave_targeting::distance(p.x,p.y,q.x,q.y);
-   if(other->unit_id>=176&&other->unit_id<=178&&other->flingy.hitpoints>0)nearest=std::min(nearest,d);
-   if(!wave_targeting::usable(other))return;
-   if(wave_targeting::worker(other->unit_id)&&d<=256ll*256)++neighbors;
-   if(wave_targeting::headquarters(other->unit_id)&&(other->flags&1u)&&!(other->flags&4u)&&d<=512ll*512)economy=true;
-  });
+ for(auto worker:workers){
+  if(!(worker->flags&1u))continue;
+  const auto p=worker->flingy.position;
+  const auto distance=[&](bw::Point q){return wave_targeting::distance(p.x,p.y,q.x,q.y);};
+  auto nearest=std::numeric_limits<std::int64_t>::max();
+  for(auto mineral:minerals)nearest=std::min(nearest,distance(mineral));
+  const auto neighbors=static_cast<U32>(std::count_if(workers.begin(),workers.end(),[&](const bw::Unit* u){return distance(u->flingy.position)<=256ll*256;}));
+  const bool economy=std::any_of(bases.begin(),bases.end(),[&](bw::Point base){return distance(base)<=512ll*512;});
   const U32 rank=(economy?2u:0u)+(nearest<=384ll*384?1u:0u);
   if(!best||rank>best_rank||(rank==best_rank&&(neighbors>best_workers||(neighbors==best_workers&&nearest<score)))){best=worker;score=nearest;best_rank=rank;best_workers=neighbors;}
- });raid_worker=best;raid_worker_unique=best?best->minor_unique_index:0;raid_worker_frame=frame;raid_worker_sampled=true;return best;
+ }
+ raid_worker=best;raid_worker_unique=best?best->minor_unique_index:0;raid_worker_frame=frame;raid_worker_sampled=true;return best;
 }
 inline bw::Unit* finish_created(bw::Unit* u,U32 slot,U32 hp,U32 attack,int x,int y) {
  placement::invalidate();++frame_profile::spawn_successes;
@@ -185,12 +209,15 @@ inline bw::Unit* create(U32 id,U32 slot,U32 hp=100,U32 attack=100,bool alternate
  }
  const bool ground=!(original_stat({0,22,id})&4u);auto preferred=choose_origin(ground,alternate);if(!preferred && alternate)preferred=choose_origin(ground);
  if(!preferred)return ground&&island_slot(slot)?island_create(id,slot,hp,attack,required_owner):nullptr;
- for(U32 pass=0;pass<2;pass++)for(const auto& candidate:sc1_native::campaign_wave_config::kOrigins){
- const auto origin=&candidate;if((pass==0)!=(origin==preferred) || !placement::safe(*origin))continue;
+ const auto& origins=mission_origins();
+ for(U32 pass=0;pass<2;pass++)for(const auto origin:origins){
+ if((pass==0)!=(origin==preferred) || !placement::safe(*origin))continue;
  if(required_owner<12&&origin->owner!=required_owner)continue;
  const bool only_air=sc1_native::wave_progression::air_only_unit(static_cast<std::uint16_t>(origin->unit1)) && sc1_native::wave_progression::air_only_unit(static_cast<std::uint16_t>(origin->unit2));if(ground && only_air)continue;
  for(U32 i=0;i<origin->cell_count;i++){
-  const auto p=origin->cells[(i+unit_ordinal)%origin->cell_count];if(!clear_cell(p.x,p.y,false,id))continue;
+  const auto index=(i+unit_ordinal)%origin->cell_count;
+  if(!placement::clear_origin_cell(*origin,index,id))continue;
+  const auto p=origin->cells[index];
   OwnerDatScope scope(origin->owner,origin->owner);++frame_profile::spawn_attempts;auto u=spawn(id,p.x,p.y,origin->owner);if(!u)continue;
   return finish_created(u,slot,hp,attack,p.x,p.y);
  }}

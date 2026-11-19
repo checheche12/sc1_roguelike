@@ -30,6 +30,7 @@ struct ChoiceOffer {
     std::uint32_t phase_version{};        // 1: three checkpoints, 2: four checkpoints
     std::uint32_t requested_phase{};      // PHC1 UI metadata; legacy 0
     std::uint32_t completed_phase{};
+    std::uint32_t rank_bonus{};           // NGP1 offer metadata; zero for historical runs
 };
 
 enum class MailboxError : std::uint32_t {

@@ -46,15 +46,36 @@ inline std::int32_t focus_damage(bw::Unit* u,bw::Unit* target,U32 weapon,std::in
  }
  return std::int32_t(std::min<std::uint64_t>(0x7fffffffu,std::uint64_t(amount)*(100ull+bonus)/100));
 }
-inline void focus_hit(bw::Unit* u,bw::Unit* target,U32 amount,U32 weapon) {
- if(!focus_source(u)||!eligible(target)||!is_enemy(target->player))return;auto s=focus_state(u),t=state(target);if(!s||!t)return;
+inline void spread_disruption(bw::Unit* target,const UnitState& status,U32 weapon){
+ if(weapon!=100||!air(target)||!rank(135)||status.slow_ends[1]<=now())return;
+ const U32 end=status.slow_ends[1],percent=status.slow_values[1];
+ for(auto other:around(target->flingy.position.x,target->flingy.position.y,96,target,1,true,1)){
+  if(state(other)->slow_ends[1]<end)mark_slow(other,percent,end-now(),135);
+ }
+}
+inline void focus_hit(bw::Unit* u,bw::Unit* target,U32 amount,U32 weapon,bool leap_hit=false,bool lethal=false) {
+ if(!focus_source(u)||!valid_unit(target)||!is_enemy(target->player))return;
+ if(!eligible(target)&&!(lethal&&!live(target)&&in(u->unit_id,{60,98})&&raw_rank(197)&&rank(135)))return;
+ auto s=focus_state(u),t=state(target);if(!s||!t)return;
  const bool same=generation(s->focus_target)==target&&now()-s->focus_last<=72;
  s->focus_hits=same?std::min(0xfffffffeu,s->focus_hits)+1:1;s->focus_last=now();s->focus_target=identity(target);
+ if(lethal&&!live(target)){
+  // The primary can die before its bonus damage, while its neighbours still live.
+  if(s->focus_hits%6==0)spread_disruption(target,*t,weapon);
+  return;
+ }
  for(auto r:legend_focus::rules)if(raw_rank(r.ordinal)&&focus_match(r,u)){
-  if(r.mode==2&&s->focus_hits%r.cadence==0)attack_hurt(target,U32(std::min<std::uint64_t>(0x7fffffffu,std::uint64_t(amount)*r.proc/100)),weapon,u,u->player,r.ordinal);
+  if(r.mode==2&&s->focus_hits%r.cadence==0){
+   if(r.ordinal==197)spread_disruption(target,*t,weapon);
+   attack_hurt(target,U32(std::min<std::uint64_t>(0x7fffffffu,std::uint64_t(amount)*r.proc/100)),weapon,u,u->player,r.ordinal);
+  }
   if(r.mode==10&&s->dragoon_hits==0)attack_hurt(target,U32(std::min<std::uint64_t>(0x7fffffffu,std::uint64_t(amount)*r.proc/100)),weapon,u,u->player,r.ordinal);
   if(r.mode==5&&s->retaliation){const U32 stored=s->retaliation;s->retaliation=0;weapon_hurt(target,stored,weapon,u,u->player);}
-  if(r.mode==6){if(t->erosion_owner!=u->player){t->erosion=0;t->erosion_owner=u->player;}t->erosion=U32(std::min<std::uint64_t>(0xfffffffeu,std::uint64_t(t->erosion)+r.step));}
+  if(r.mode==6){
+   const U32 steps=leap_hit&&rank(98)?2u:1u;
+   if(t->erosion_owner!=u->player){t->erosion=0;t->erosion_owner=u->player;}
+   t->erosion=U32(std::min<std::uint64_t>(0xfffffffeu,std::uint64_t(t->erosion)+steps*r.step));
+  }
  }
 }
 inline void focus_received(bw::Unit* u,bw::Unit* attacker,U32 hp_loss,U32 shield_loss) {

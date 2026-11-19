@@ -45,13 +45,18 @@ inline bool expansion_expiring(bw::Unit* unit) {
 }
 inline U32 expansion_support_frame=~0u;
 inline void expansion_support() {
- if(!talent_power::enabled||now()%24||expansion_support_frame==now())return;
- expansion_support_frame=now();
- const U32 frame=now();std::vector<Identity> sources;
+ const U32 frame=now();
+ if(!talent_power::enabled||frame%24||expansion_support_frame==frame)return;
+ expansion_support_frame=frame;
+ const auto active_support=[](const unit_legend_expansion::Rule& r){
+  return r.mode>=2&&r.mode<=8&&r.mode!=5&&rank(r.ordinal);
+ };
+ if(std::none_of(std::begin(unit_legend_expansion::rules),std::end(unit_legend_expansion::rules),active_support))return;
+ std::vector<Identity> sources;
  living_units([&](bw::Unit* u){if(own(u)&&eligible(u)&&!u->lockdown_timer&&!u->maelstrom_timer&&!(u->flags&(0x10u|0x20u|0x40u)))sources.push_back(identity(u));});
  for(const auto& id:sources){auto source=resolve(id);if(!source)continue;
   for(const auto& r:unit_legend_expansion::rules){
-   if(r.mode<2||r.mode>8||r.mode==5||!rank(r.ordinal)||!expansion_matches(r,source->unit_id))continue;
+   if(!expansion_matches(r,source->unit_id)||!active_support(r))continue;
    for(auto target:around(source->flingy.position.x,source->flingy.position.y,r.radius,nullptr,65536,r.mode==8)){
     if(hallucination(target)||!eligible(target))continue;
     auto s=state(target);if(!s)continue;

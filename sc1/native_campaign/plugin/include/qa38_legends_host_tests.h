@@ -49,7 +49,10 @@ inline void qa38_worker_and_overlord_auras_heal_once_without_stacking(){
   qa9_fixture::begin({pair.first});unit(pair.second,1,100,100,true);unit(pair.second,1,101,100,true);
   auto target=unit(pair.second==7?3:pair.second==64?65:38,1,120,100);target->flingy.hitpoints=10*256;target->shields=0;
   auto enemy=unit(target->unit_id,6,120,100);enemy->flingy.hitpoints=10*256;enemy->shields=0;
-  game.frame_count=120;const auto hp=target->flingy.hitpoints;rework_combat_v5::expansion_support();
+  game.frame_count=120;const auto hp=target->flingy.hitpoints;
+  const auto scans_before=host_unit_scans;
+  rework_combat_v5::expansion_support();
+  CHECK(host_unit_scans==scans_before);
   CHECK(target->shields==0&&target->flingy.hitpoints==hp);
   CHECK(enemy->flingy.hitpoints==10*256&&enemy->shields==0);
   const auto after_hp=target->flingy.hitpoints,after_shield=target->shields;rework_combat_v5::expansion_support();CHECK(target->flingy.hitpoints==after_hp&&target->shields==after_shield);

@@ -248,7 +248,9 @@ bool MailboxProtocol::accept_offer(const std::uint32_t (&words)[96]) noexcept {
     if(wire_version_==2){
         const bool triple=words[36]==0x424e4432u;
         const bool paired=triple||words[36]==0x424e4431u;
-        for(std::size_t index=triple?41u:paired?37u:32u;index<96;++index)if(words[index])return false;
+        const bool ngplus=words[42]==0x4e475031u;
+        if(ngplus){if(phase_version_!=2||words[41]<1||words[41]>253)return false;next.rank_bonus=words[41];}
+        for(std::size_t index=triple?41u:paired?37u:32u;index<96;++index)if(!(ngplus&&(index==41||index==42))&&words[index])return false;
         if(paired){
             if(next.kind!=1)return false;
             bool any=false,any_third=false;
@@ -303,7 +305,8 @@ bool MailboxProtocol::accept_snapshot(const std::uint32_t (&words)[96]) noexcept
         if ((words[9] & 1) && phase != total_phases()) return false;
     } else if (applied_ || words[10]) return false;
     if (words[11] != wire_version_) return false;
-    for(std::size_t i=0;i<16;i++)if(words[12+i]&~frozen::kTalentMasks[i])return false;
+    const bool extended_ranks=wire_version_==2 && (words[27]&0x80000000u);
+    if(!extended_ranks)for(std::size_t i=0;i<16;i++)if(words[12+i]&~frozen::kTalentMasks[i])return false;
     const auto curse_limit=wire_version_==2 ? 64u : 16u;
     const auto curse_count=wire_version_==2 ? frozen::kCurseCount : frozen::kLegacyCurseCount;
     for(std::size_t i=curse_count;i<curse_limit;i++)if((words[28+i/4]>>((i%4)*8))&255u)return false;
@@ -311,7 +314,7 @@ bool MailboxProtocol::accept_snapshot(const std::uint32_t (&words)[96]) noexcept
     if(wire_version_==1)for(std::size_t bit=frozen::kLegacyTalentCount;bit<512;++bit)if((words[12+bit/32]>>(bit%32))&1u)return false;
     if(wire_version_==2) {
         for(std::size_t i=76;i<96;++i)if(words[i])return false;
-        for(std::size_t ordinal=0;ordinal<rework_catalog::kTalentCount;++ordinal){
+        for(std::size_t ordinal=0;!extended_ranks && ordinal<rework_catalog::kTalentCount;++ordinal){
             const auto slot=rework_catalog::kRankSlots[ordinal];if(slot<0)continue;
             const auto bit=rework_catalog::kTalentBase+ordinal;
             const bool owned=((words[12+bit/32]>>(bit%32))&1u)!=0;
@@ -335,6 +338,7 @@ bool MailboxProtocol::accept_snapshot(const std::uint32_t (&words)[96]) noexcept
     if(wire_version_==2)for(std::size_t index=0;index<32;++index)snapshot.talent_ranks[index]=words[44+index];
     if(!curse_scaling::valid_rank_storage<rework_catalog::kRankCount>(snapshot)||!rework_catalog::valid_packed(snapshot))return false;
     if (applied_) {
+        if(playthrough_ranks::enabled(snapshot)!=playthrough_ranks::enabled(snapshot_) || playthrough_ranks::bonus(snapshot)!=playthrough_ranks::bonus(snapshot_))return false;
         for (std::size_t index = 0; index < 16; ++index) {
             if ((snapshot.talent_bits[index] & snapshot_.talent_bits[index] & rework_catalog::kOwnershipMasks[index]) != (snapshot_.talent_bits[index] & rework_catalog::kOwnershipMasks[index])
                 || snapshot.curse_counts[index] < snapshot_.curse_counts[index]) return false;
@@ -880,6 +884,29 @@ void rework_v2_rejects_rank_bit_mismatch_and_reserved_payload() {
     }
 }
 
+void playthrough_snapshot_and_offer_validation() {
+    Fixture f(true,2,2);auto offer=f.offer();offer[23]=1;offer[24]=0;
+    offer[26]=0x50484331;offer[27]=2;offer[28]=1;offer[29]=0;offer[30]=4;
+    offer[14]=1;offer[15]=438;offer[16]=offer[17]=offer[18]=0;
+    offer[41]=4;offer[42]=0x4e475031;f.send(offer);
+    CHECK(f.protocol.offer_active()&&f.host.offer.rank_bonus==4);
+    CHECK(f.protocol.submit_choice(1));auto response=f.load();response[10]=0x50480101;
+    response[27]=0x80000000u;response[25]=4u<<21;
+    auto field=playthrough_ranks::fields[199];response[44+field.slot]=8u<<field.shift;
+    f.send(response);CHECK(f.protocol.ready()&&rework_catalog::rank(f.host.snapshot,199)==8);
+    CHECK(f.protocol.request_phase(2));response=f.load();response[10]=0x50480202;
+    response[27]=0x80000000u;response[25]=4u<<21;response[44+field.slot]=7u<<field.shift;
+    f.send(response);CHECK(f.protocol.failed());
+    for(unsigned damage=0;damage<3;++damage){
+        Fixture bad(true,2,2);auto r=bad.load();r[10]=0x50480101;
+        r[27]=0x80000000u;r[25]=1u<<21;r[44+field.slot]=5u<<field.shift;
+        if(damage==0)r[44+field.slot]=6u<<field.shift;
+        if(damage==1)r[26]=1;
+        if(damage==2)r[25]=0;
+        bad.send(r);CHECK(bad.protocol.failed()&&bad.host.applies==0);
+    }
+}
+
 
 Reply phase_load(Fixture& f, std::uint32_t phase, bool replay = false) {
     auto r=f.load(replay);
@@ -1116,7 +1143,7 @@ int main(int argc, char** argv) {
             reset_quarantines_old_mailbox_and_rejects_old_ack,
             destruction_never_calls_host_but_explicit_shutdown_does, slots_and_request_ownership,
             unsupported_mission_and_corrupt_request_fail_closed, maximum_supported_snapshot_is_valid,
-            complete_bundle_identity_validation,qa55_three_manual_offer_validation,qa16_bundle_numeric_offer_validation,rework_v2_extended_snapshot_and_single_offer,qa10_health_bit_fallback_and_capped_phase_transition,rework_v2_rejects_rank_bit_mismatch_and_reserved_payload
+            complete_bundle_identity_validation,qa55_three_manual_offer_validation,qa16_bundle_numeric_offer_validation,rework_v2_extended_snapshot_and_single_offer,qa10_health_bit_fallback_and_capped_phase_transition,rework_v2_rejects_rank_bit_mismatch_and_reserved_payload,playthrough_snapshot_and_offer_validation
         };
         for (const auto& test : tests) test();
         std::cout << "{\"cpp_tests\":" << tests.size() << ",\"passed\":true,\"game_accessed\":false,\"database_accessed\":false}\n";

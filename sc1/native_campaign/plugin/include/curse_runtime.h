@@ -87,7 +87,7 @@ void update_diversity() {
     const auto frame=g.game()->frame_count;if(frame==g.last_diversity_frame)return;g.last_diversity_frame=frame;
     std::vector<bw::Unit*> living;living_units([&](bw::Unit* u){living.push_back(u);});
     for(auto u:living){auto t=track_unit(u);if(!t)continue;
-        if(u->flingy.hitpoints<t->hp || u->shields<t->shields){t->last_damage_frame=frame;t->last_damage=g.game()->elapsed_seconds;}
+        if(u->flingy.hitpoints<t->hp || u->shields<t->shields){t->echo_recharge=false;t->last_damage_frame=frame;t->last_damage=g.game()->elapsed_seconds;}
         t->hp=u->flingy.hitpoints;t->shields=u->shields;
         if(!curse_regular(u))continue;
         if(t->pair_due && frame>=t->pair_due){t->pair_due=0;heal_enemy(u,effective_max_hp(u)*35u/100u);}

@@ -127,6 +127,7 @@ def load_catalog(path: str | Path | None = None, expected_version: int = 1) -> d
 def encode_growth(catalog: dict, talents: list[str], curses: dict[str, int], ranks: dict[str,int] | None = None) -> list[int]:
     """21 uint32 words: version, 512 talent bits, sixteen curse counts."""
     version=catalog['catalog_version']
+    extended = version == 2 and catalog.get('playthrough_number', 1) > 1 and catalog.get('rank_scaling', True)
     words = [version] + [0] * (64 if version==2 else 20)
     ranks={} if ranks is None else ranks
     if not isinstance(ranks,dict) or any(not isinstance(identity,str) for identity in ranks):
@@ -152,7 +153,7 @@ def encode_growth(catalog: dict, talents: list[str], curses: dict[str, int], ran
         else:
             count=ranks.get(identity,1) if item.get('repeatable') else 1
             if type(count) is not int or not 1<=count<=0xffffffff:raise GrowthError('invalid_growth','유닛 교범 중첩이 잘못되었습니다.')
-            words[storage['word']]|=min(count,item.get('max_rank',1))<<storage['shift']
+            if not extended:words[storage['word']]|=min(count,item.get('max_rank',1))<<storage['shift']
         if known_talents[identity].get('repeatable'):
             count=ranks.get(identity,1)
             if type(count) is not int or not 1<=count<=0xFFFFFFFF:
@@ -170,6 +171,9 @@ def encode_growth(catalog: dict, talents: list[str], curses: dict[str, int], ran
             words[80-index]=count
             count=min(count,255)
         words[17 + index // 4] |= count << (8 * (index % 4))
+    if extended:
+        from .playthrough_ranks import encode
+        words = encode(words, catalog, owned, ranks)
     return words
 
 

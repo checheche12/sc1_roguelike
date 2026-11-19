@@ -51,6 +51,12 @@ inline void qa13_supply_box_reduction_total_rounding_and_once(){
   CHECK(apply_snapshot(nullptr,s));const U32 bonus=total*25;CHECK(game.minerals[1]==1000+bonus && game.gas[1]==500+bonus);CHECK(game.minerals[6]==700&&game.gas[6]==800);
   rework_economy_v5::after_snapshot();CHECK(game.minerals[1]==1000+bonus);s.completed_phase=2;CHECK(apply_snapshot(nullptr,s));CHECK(game.minerals[1]==1000+bonus&&game.gas[1]==500+bonus);end();
  }
+ for(U32 wide:{300u,0xffffffffu}){
+  begin();auto s=snapshot(5);s.curse_counts[0]=2;s.curse_counts[16]=255;s.talent_ranks[31]=wide;
+  const U32 bonus=wide==300u?7550u:0xffffffffu;
+  CHECK(apply_snapshot(nullptr,s));CHECK(game.minerals[1]==bonus&&game.gas[1]==bonus);
+  rework_economy_v5::after_snapshot();CHECK(game.minerals[1]==bonus&&game.gas[1]==bonus);end();
+ }
  begin();auto s=economy_snapshot({});s.curse_counts[0]=2;CHECK(apply_snapshot(nullptr,s));s=snapshot(5);s.completed_phase=2;s.curse_counts[0]=2;CHECK(apply_snapshot(nullptr,s));CHECK(game.minerals[1]==0&&game.gas[1]==0);end();
  begin();s=snapshot(5);s.curse_counts[0]=2;game.minerals[1]=game.gas[1]=0xfffffff0;CHECK(apply_snapshot(nullptr,s));CHECK(game.minerals[1]==0xffffffff&&game.gas[1]==0xffffffff);end();
 }

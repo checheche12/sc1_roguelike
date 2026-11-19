@@ -54,7 +54,7 @@ struct Key { U32 table, field, id; };
 struct Edit { Key key; bw::DatTable* table; U32 before, after; };
 struct OwnerEdit {Key key;bw::DatTable* table;U32 original,friendly,enemy;};
 struct CooldownTrack {U32 weapon=130,reset_frame=0,reset_value=0,fraction=0,denominator=0;bool launched=false,processed=false;};
-struct UnitTrack {bool seen=false,spawned=false;U8 unique=0,owner=12,ground=0,air=0;std::uint16_t id=228;U32 base_speed=0,applied_speed=0,last_damage=0,spawn_second=0;std::int32_t hp=0,shields=0;bool elite=false,barrier=false;
+struct UnitTrack {bool seen=false,spawned=false,echo_recharge=false;U8 unique=0,owner=12,ground=0,air=0;std::uint16_t id=228;U32 base_speed=0,applied_speed=0,last_damage=0,spawn_second=0;std::int32_t hp=0,shields=0;bool elite=false,barrier=false;
     CooldownTrack cooldown[2]{};
     U32 wave_id=0,last_attack_frame=0,last_damage_frame=0,first_attack_end=0,first_attack_bonus=0,command_until=0;
     U32 healed_frame=0,bomb_hit_frame=0,pair_index=0xffffffffu,pair_due=0;U8 pair_unique=0;
@@ -640,7 +640,7 @@ bool apply_snapshot(void*,const GrowthSnapshot& s) noexcept {
     if(s.wire_version!=1 && s.wire_version!=2)return reject_growth("growth_version");
     const U32 talent_limit=s.wire_version==1 ? frozen::kLegacyTalentCount:frozen::kTalentCount;
     const U32 curse_limit=s.wire_version==1 ? frozen::kLegacyCurseCount:frozen::kCurseCount;
-    for(U32 i=0;i<16;i++){const U32 remaining=talent_limit>i*32 ? std::min(32u,talent_limit-i*32):0;const U32 allowed=remaining==32 ? 0xffffffffu:remaining ? (1u<<remaining)-1u:0u;if(s.talent_bits[i]&~(s.wire_version==2?frozen::kTalentMasks[i]:allowed))return reject_growth("talent_bits");}
+    if(!(s.wire_version==2 && playthrough_ranks::enabled(s)))for(U32 i=0;i<16;i++){const U32 remaining=talent_limit>i*32 ? std::min(32u,talent_limit-i*32):0;const U32 allowed=remaining==32 ? 0xffffffffu:remaining ? (1u<<remaining)-1u:0u;if(s.talent_bits[i]&~(s.wire_version==2?frozen::kTalentMasks[i]:allowed))return reject_growth("talent_bits");}
     for(U32 i=curse_limit;i<64;i++)if(s.curse_counts[i])return reject_growth("curse_slots");
     for(U32 i=0;i<curse_limit;i++)if(s.curse_counts[i]>frozen::kCurseMaxStacks[i])return reject_growth("curse_stack_limit");
     if(!sc1_native::curse_scaling::valid_rank_storage<rework_catalog::kRankCount>(s)||!rework_catalog::valid_packed(s))return reject_growth("rank_slots");
@@ -871,7 +871,7 @@ bool record_actual_damage(const DamageObservation& o) noexcept {
     if(!g.active || !g.applied || !same_observed_unit(o))return false;
     const bool damaged=o.unit->flingy.hitpoints<o.hp || o.unit->shields<o.shields;
     if(damaged)if(auto t=existing_track(o.unit)){
-        t->last_damage=g.game()->elapsed_seconds;t->last_damage_frame=g.game()->frame_count;
+        t->last_damage=g.game()->elapsed_seconds;t->last_damage_frame=g.game()->frame_count;t->echo_recharge=false;
     }
     return damaged;
 }

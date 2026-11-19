@@ -1,6 +1,7 @@
 #pragma once
 namespace host_test {
-inline constexpr std::size_t talent_synergy_followup_group_count=13;
+#include "reviewed_synergy_host_tests.h"
+inline constexpr std::size_t talent_synergy_followup_group_count=20;
 inline void synergy2_warmup_combines_and_resets(){
  using namespace rework_fixture;qa9_fixture::begin({16,162});auto u=unit(0,1,100,100);auto s=rework_combat_v5::state(u);
  s->last_launch=100;s->streak=3;CHECK(std::abs(rework_combat_v5::cooldown_ratio(u,0)-0.175)<0.000001);
@@ -161,6 +162,7 @@ inline void synergy2_lockdown_duration_does_not_clip_the_second_talent(){
  target->lockdown_timer=0;pulse(5000);CHECK(!rework_combat_v5::state(target)->lockdown_reserve);qa9_fixture::end();
 }
 inline void run_talent_synergy_followup_groups(){
+ run_reviewed_synergy_groups();
  synergy2_warmup_combines_and_resets();synergy2_ensnare_area_and_strong_slow();synergy2_free_yamato_is_a_triple_cast_once();
  synergy2_spread_spores_keep_amplification_and_duration();synergy2_distinct_slows_expire_independently();synergy2_added_air_range_retains_shared_and_bunker_bonuses();
  synergy2_fast_supply_retains_building_speed();synergy2_generated_hits_share_shield_ignore_acid_and_restore();synergy2_generated_erosion_uses_ghost_normal_type_and_no_reproc();synergy2_generated_defense_and_lifesteal_follow_actual_loss();

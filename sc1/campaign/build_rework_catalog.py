@@ -189,13 +189,16 @@ def build(coverage=None):
 
 
 def generate_rank_header(catalog,root=ROOT):
+    from .playthrough_ranks import generate_header
+    generate_header(root)
     talents=catalog['talents'][238:];curses=catalog['curses'][15:]
     rank_slots=[x.get('rank_slot',-1) for x in talents]
-    lines=['#pragma once','#include <cstdint>','#include <array>','namespace rework_catalog {',
+    lines=['#pragma once','#include <cstdint>','#include <array>','#include "playthrough_ranks.generated.h"','namespace rework_catalog {',
            f'inline constexpr std::uint32_t kTalentBase=238, kTalentCount={len(talents)}, kCurseBase=15, kCurseCount=35;',
            f'inline constexpr std::uint32_t kRankCount=28;',
            'inline constexpr int kRankSlots[kTalentCount]={'+','.join(map(str,rank_slots))+'};',
            'template<class Snapshot> inline std::uint32_t rank(const Snapshot& s,std::uint32_t ordinal) noexcept {',
+           ' if(playthrough_ranks::enabled(s))return playthrough_ranks::rank(s,ordinal);',
            ' if(ordinal>=kTalentCount)return 0; const auto slot=kRankSlots[ordinal];',
            ' if(ordinal>=199u)return packed_rank(s,ordinal);',
            ' const auto bit=kTalentBase+ordinal; const auto owned=(s.talent_bits[bit/32]>>(bit%32))&1u;',
@@ -214,7 +217,7 @@ def generate_rank_header(catalog,root=ROOT):
       '// Immutable wire locations, not cached ranks: snapshot changes remain immediate.',
       'inline constexpr auto kPackedIndex=[](){std::array<Field,kTalentCount> result{};for(auto f:kPackedFields)result[f.ordinal]=f;return result;}();',
       'template<class S> inline unsigned packed_rank(const S& s,unsigned ordinal) noexcept {if(ordinal>=kTalentCount)return 0;const auto& f=kPackedIndex[ordinal];return f.width?(word(s,f.word)>>f.shift)&((1u<<f.width)-1u):0;}',
-      'template<class S> inline bool valid_packed(const S& s) noexcept {for(auto f:kPackedFields)if(f.width==3&&packed_rank(s,f.ordinal)>4)return false;']
+      'template<class S> inline bool valid_packed(const S& s) noexcept {if(playthrough_ranks::enabled(s))return playthrough_ranks::valid(s);for(auto f:kPackedFields)if(f.width==3&&packed_rank(s,f.ordinal)>4)return false;']
     packed.append(' if(packed_rank(s,322u)>2u)return false;')
     for w in range(54,61):packed.append(f' if(s.talent_ranks[{w-33}]&~{masks[w]}u)return false;')
     packed+=[' return true;}']

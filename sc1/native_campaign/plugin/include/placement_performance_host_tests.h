@@ -67,6 +67,21 @@ inline void placement_uses_full_ground_footprints(){
  boxes[106]={260,32,260,47};CHECK(!rework_waves::clear_cell(2240,2000,true,5));
  dat[0][38]=old;
 }
-inline constexpr std::size_t placement_performance_group_count=3;
-inline void run_placement_performance_groups(){placement_spatial_equivalence_and_batch_lifetime();placement_creation_updates_supply_and_blocked_retry_is_linear();placement_uses_full_ground_footprints();}
+inline void placement_origin_retries_observe_new_occupancy(){
+ using namespace rework_waves;
+ rework_wave_tests::begin(310);const auto origin=choose_origin(true);CHECK(origin&&origin->cell_count);
+ const auto point=origin->cells[0];auto blocker=add(65,6,point.x,point.y);blocker->flags=1;
+ {
+  placement::Batch batch;CHECK(!placement::clear_origin_cell(*origin,0,65));
+  const auto visits=frame_profile::placement_visits;CHECK(!placement::clear_origin_cell(*origin,0,8));
+  CHECK(frame_profile::placement_visits==visits);
+  blocker->flingy.position={7500,7500};placement::invalidate();CHECK(placement::clear_origin_cell(*origin,0,65));
+  blocker->flingy.position={std::int16_t(point.x),std::int16_t(point.y)}; // Resample on the next batch.
+ }
+ {placement::Batch batch;CHECK(!placement::clear_origin_cell(*origin,0,65));}
+ rework_wave_tests::begin(105);for(auto o:mission_origins())CHECK(o->mission_id==105);
+ rework_wave_tests::begin(310);CHECK(mission_origins().front()->mission_id==310);
+}
+inline constexpr std::size_t placement_performance_group_count=4;
+inline void run_placement_performance_groups(){placement_spatial_equivalence_and_batch_lifetime();placement_creation_updates_supply_and_blocked_retry_is_linear();placement_uses_full_ground_footprints();placement_origin_retries_observe_new_occupancy();}
 }

@@ -3,6 +3,7 @@
 #include "dialog_ui.h"
 #include "include/legendary_bundles.generated.h"
 #include "include/frozen_catalog.generated.h"
+#include "include/playthrough_ranks.generated.h"
 #include "include/wave_timer_asset.generated.h"
 #include "../dialog_assets/plain_panel_templates.generated.h"
 #include <algorithm>
@@ -126,6 +127,17 @@ std::string offer_intro(const ChoiceOffer& offer) {
     body+="\n번호를 누르면 설명을 확인할 수 있습니다.";
     return body;
 }
+std::string talent_effect(const ChoiceOffer& offer,unsigned index) {
+    std::string text=frozen::talent_effects[index];
+    if(!offer.rank_bonus || index<238 || index-238>=std::size(playthrough_ranks::fields))return text;
+    const auto f=playthrough_ranks::fields[index-238];if(f.width!=8)return text;
+    for(const auto gap:{" ",""})for(const auto suffix:{"회","중첩"}){
+        const auto from=std::string("최대")+gap+std::to_string(f.base)+suffix;
+        const auto to=std::string("최대 ")+std::to_string((std::min)(255u,f.base+offer.rank_bonus))+suffix;
+        std::size_t at=0;while((at=text.find(from,at))!=std::string::npos){text.replace(at,from.size(),to);at+=to.size();}
+    }
+    return text;
+}
 std::string constructor_intro(const ChoiceOffer& offer) {
     // This native-constructor literal is replaced with offer_intro before the
     // first owned redraw. Reserve semantic text storage for every possible next
@@ -134,7 +146,7 @@ std::string constructor_intro(const ChoiceOffer& offer) {
     for(unsigned kind=1;kind<=2;kind++)for(unsigned i=0;i<(kind==1 ? frozen::kTalentCount : frozen::kCurseCount);i++){
         auto detail=std::string(kind==1 ? frozen::talent_names[i] : frozen::curse_names[i])+"\n등급: "+
             (kind==1 ? frozen::talent_rarities[i] : frozen::curse_rarities[i])+"\n"+
-            (kind==1 ? frozen::talent_effects[i] : frozen::curse_effects[i]);
+            (kind==1 ? talent_effect(offer,i) : std::string(frozen::curse_effects[i]));
         if(detail.size()>longest.size())longest=std::move(detail);
     }
     if(body.size()<longest.size()+16)body+="\n"+longest;
@@ -608,7 +620,8 @@ bool DialogUi::refresh() noexcept {
             body=offer_.kind==1 ? frozen::talent_names[index] : frozen::curse_names[index];
             if(partner)body+=" ["+std::to_string(bundle_page_+1)+"/"+(third?"3":"2")+"]";
             body+="\n등급: "+std::string(offer_.kind==1 ? frozen::talent_rarities[index] : frozen::curse_rarities[index]);
-            const auto lines=meaning_lines(offer_.kind==1 ? frozen::talent_effects[index] : frozen::curse_effects[index],line_width(control(-1)));
+            const auto effect=offer_.kind==1 ? talent_effect(offer_,index) : std::string(frozen::curse_effects[index]);
+            const auto lines=meaning_lines(effect.c_str(),line_width(control(-1)));
             // Complete information is written to actual native CTEXT storage.
             // No clipped explanation or button-label fallback can confirm.
             okay=okay && !lines.empty() && lines.size()<=8;

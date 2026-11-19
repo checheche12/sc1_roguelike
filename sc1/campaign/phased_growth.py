@@ -282,8 +282,7 @@ def _freeze(conn, row, phase, response):
         raise GrowthError("phase_incomplete", "현재 단계의 선택이 끝나지 않았습니다.")
     catalog = _run_catalog(conn, row["mission"], row["catalog_version"])
     owned, stacks = growth._json(row["baseline_talents_json"]), growth._json(row["baseline_curses_json"])
-    saved=conn.execute('SELECT ranks_json FROM growth_phase_rank_baselines WHERE mission=?',(row['mission'],)).fetchone() if conn.execute("SELECT 1 FROM sqlite_master WHERE name='growth_phase_rank_baselines'").fetchone() else None
-    ranks=json.loads(saved[0]) if saved else {}
+    ranks = _baseline_ranks(conn, row['mission'])
     selected = conn.execute("""SELECT o.kind,o.selected_id,o.candidates_json FROM growth_phase_offers p
         JOIN growth_offers o USING(offer_id) WHERE p.mission=? AND p.phase<=?
         ORDER BY p.phase, p.kind""", (row["mission"], phase)).fetchall()
@@ -319,6 +318,13 @@ def _freeze_ready_pairs(conn, row, make_response):
         conn.execute("UPDATE growth_phase_runs SET active_phase=? WHERE mission=?", (phase, row["mission"]))
 
 
+def _baseline_ranks(conn, mission):
+    if not conn.execute("SELECT 1 FROM sqlite_master WHERE name='growth_phase_rank_baselines'").fetchone():
+        return {}
+    saved = conn.execute('SELECT ranks_json FROM growth_phase_rank_baselines WHERE mission=?', (mission,)).fetchone()
+    return json.loads(saved[0]) if saved else {}
+
+
 def status(conn, mission=101, requested_phase=None):
     row = run(conn, mission)
     if row is None:
@@ -342,7 +348,8 @@ def status(conn, mission=101, requested_phase=None):
     if latest:
         result["growth_words"] = validate_growth_words(growth._json(latest["words_json"]))
     elif not row["legacy"]:
-        result["growth_words"] = encode_growth(_run_catalog(conn, mission), growth._json(row["baseline_talents_json"]), growth._json(row["baseline_curses_json"]))
+        result["growth_words"] = encode_growth(_run_catalog(conn, mission), growth._json(row["baseline_talents_json"]),
+                                              growth._json(row["baseline_curses_json"]), _baseline_ranks(conn, mission))
     return result
 
 

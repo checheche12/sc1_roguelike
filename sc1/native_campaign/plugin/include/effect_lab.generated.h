@@ -563,6 +563,7 @@ inline constexpr Talent talents[]={
 {16u,26u,1u,4294967295u,1u},
 {16u,27u,1u,4294967295u,1u},
 {16u,28u,2u,4294967295u,2u},
+{16u,30u,1u,4294967295u,1u},
 };
 inline constexpr unsigned roster[]={0u,1u,2u,3u,5u,7u,8u,9u,11u,12u,13u,32u,34u,37u,38u,39u,40u,41u,42u,43u,44u,45u,46u,47u,50u,58u,60u,61u,62u,63u,64u,65u,66u,67u,68u,69u,70u,71u,72u,81u,84u,103u};
 }
